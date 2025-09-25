@@ -1,12 +1,21 @@
+
+
 # Documento de Visão
 
 
 ## Histórico de Revisões
 
 
+<<<<<<< HEAD
 |    Data    | Versão |   Descrição    |               Autores                |
 | :--------: | :----: | :------------: | :----------------------------------: |
 | 24/09/2025 |  0.1   | Versão inicial | Bruno, Eduardo, Lucas, Pedro, Wagner |
+=======
+| Data | Versão | Descrição | Autores |
+| :--: | :----: | :-------: | :-----: |
+| 24/09/2025 | 0.1 | Versão inicial |  Bruno, Eduardo, Lucas, Pedro, Wagner |
+
+>>>>>>> 0d7f83c (primeira versao doc de visao)
 
 
 
@@ -18,6 +27,7 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 
 
 ## 2. Descrição do Problema
+<<<<<<< HEAD
 |              |                                                             |
 | :----------: | :---------------------------------------------------------: |
 | **Problema** |         Dificuldade em organizar os gastos pessoais         |
@@ -34,12 +44,36 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 |  Estudantes   |           Jovens no início da carreira            | Planejar e controlar seus gastos pessoais |
 | Trabalhadores |              Trabalhadores no geral               | Planejar finanças pessoais ou familiares  |
 | Administrador | Usuário que irá gerenciar partes estatica do site | Criar posts para o site/Atualizar cotação |
+=======
+| | |
+| :-: | :-: |
+| **Problema** | Dificuldade em organizar os gastos pessoais |
+| **Afeta** | Todos que não tiveram uma adequada administração financeira | 
+| **Impacta** | Liberdade financeira |
+| **Solução** | Criar uma ferramenta que auxilia as despesas |
+
+
+## 3. Descrição dos Usuários
+
+
+| Usuário | Descrição | Responsabilidades |
+| :-----: | :-------: | :--------------: |
+| Estudantes | Jovens no início da carreira | Auxilia na economi |
+| Trabalhadores | Trabalhadores no geral | ... |
+>>>>>>> 0d7f83c (primeira versao doc de visao)
 
 
 ## 4. Descrição do Ambiente dos Usuários
 
 
+<<<<<<< HEAD
 Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde ficará acessível tanto a desktops indiferente de seu SO quanto também a dispositivos moveis.
+=======
+| Usuário | Ambiente operacional |
+| :-----: | :------------------: |
+| Desktop | Web |
+| Mobile  | Web |
+>>>>>>> 0d7f83c (primeira versao doc de visao)
 
 
 ## 5. Principais Necessidades dos Usuários
@@ -84,6 +118,7 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 ## 7. Regras de Negócio
 
 
+<<<<<<< HEAD
 |  ID   |  Regra  |  Descrição   |
 | :---: | :-----: | :----------: |
 | RN01  | nome... | Descrição... |
@@ -104,12 +139,32 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 |  RF09  |                     Gerenciamento de Posts                     |                            Permitir o administrador crie, edite, exclua posts relacionado a área de finanças.                            |   Baixa    |
 |  RF10  |                       Vizualizar Cotação                       |                                              Permitir vizualizar a cotação de várias moedas                                              |   Baixa    |
 
+=======
+| ID  | Regra | Descrição |
+| :-: | :---: | :-------: |
+| RN01 | nome... | Descrição... |
+| RN02 | ... | ... |
+
+
+## 8. Requisitos Funcionais
+| Código | Nome | Descrição | Prioridade |
+| :----: | :--: | :-------: | :--------: |
+| RF01 | Autenticação | Criar conta do usuário no sistema para que possa começar fazer uso do sistema | Alta |
+| RF02 | Cadastrar usuário | Preencher os dados os dados adicionais para que possa ter controle dos dados do usuário  | Alta |
+| RF03 | Edição de dados do usuário | Usuário poder editar seus dados | Alta |
+| RF04 | Criar gastos |  Criar gasto do usuário com informações detalhadas como tipo e valor | Alta |
+| RF05 | Editar gastos |  Editar gastos do usuário como informações detalhadas como tipo e valor | Alta |
+
+
+
+>>>>>>> 0d7f83c (primeira versao doc de visao)
 
 > **Prioridade**: alta, média ou baixa
 
 
 ## 9. Requisitos Não-funcionais
 
+<<<<<<< HEAD
 
 | Código |             Nome              |                              Descrição                               |      Categoria       | Classificação |
 | :----: | :---------------------------: | :------------------------------------------------------------------: | :------------------: | :-----------: |
@@ -126,3 +181,19 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 
 > **Classificação**: desejável ou obrigatório.
 
+=======
+
+| Código | Nome | Descrição | Categoria | Classificação |
+| :----: | :--: | :-------: | :-------: | :-----------: |
+| NF01 | Ferramenta de desenvolvimento | Utilização de Python e Django para desenvolver o projeto | Restrição de projeto | Obrigatório |
+| NF02 | Banco de Dados | Postgres, MariaDB, sqlite, Oracle | Restrição de projeto | Obrigatório |
+| NF03 | Criptografia | As senhas deve ser armazenadas usando criptografia | Restrição de projeto | Obrigatório |
+| NF04 | Usabilidade | O sistema deve ser acessível em celular e design responsivo | Restrição de projeto | Desejável |
+
+
+> **Categoria** Usabilidade, confiabilidade, performance, suportabilidade, restrição de projeto, implementação, interface e requisito físico - segundo classificação [FURP+](https://pt.wikipedia.org/wiki/FURPS).
+
+
+> **Classificação**: desejável ou obrigatório.
+
+>>>>>>> 0d7f83c (primeira versao doc de visao)
