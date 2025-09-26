@@ -4,9 +4,9 @@
 ## Histórico de Revisões
 
 
-| Data | Versão | Descrição | Autores |
-| :--: | :----: | :-------: | :-----: |
-| 24/09/2025 | 0.1 | Versão inicial |  Bruno, Eduardo, Lucas, Pedro, Wagner |
+|    Data    | Versão |   Descrição    |               Autores                |
+| :--------: | :----: | :------------: | :----------------------------------: |
+| 24/09/2025 |  0.1   | Versão inicial | Bruno, Eduardo, Lucas, Pedro, Wagner |
 
 
 
@@ -18,21 +18,21 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 
 
 ## 2. Descrição do Problema
-| | |
-| :-: | :-: |
-| **Problema** | Dificuldade em organizar os gastos pessoais |
-| **Afeta** | Todos que não tiveram uma adequada administração financeira | 
-| **Impacta** | Liberdade financeira |
-| **Solução** | Criar uma ferramenta que auxilia as despesas |
+|              |                                                             |
+| :----------: | :---------------------------------------------------------: |
+| **Problema** |         Dificuldade em organizar os gastos pessoais         |
+|  **Afeta**   | Todos que não tiveram uma adequada administração financeira |
+| **Impacta**  |                    Liberdade financeira                     |
+| **Solução**  |        Criar uma ferramenta que auxilia as despesas         |
 
 
 ## 3. Descrição dos Usuários
 
 
-| Usuário | Descrição | Responsabilidades |
-| :-----: | :-------: | :--------------: |
-| Estudantes | Jovens no início da carreira | Cria planejamento de gastos |
-| Trabalhadores | Trabalhadores no geral | ... |
+|    Usuário    |          Descrição           |      Responsabilidades      |
+| :-----------: | :--------------------------: | :-------------------------: |
+|  Estudantes   | Jovens no início da carreira | Cria planejamento de gastos |
+| Trabalhadores |    Trabalhadores no geral    |             ...             |
 
 
 ## 4. Descrição do Ambiente dos Usuários
@@ -40,8 +40,8 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 
 | Usuário | Ambiente operacional |
 | :-----: | :------------------: |
-| Desktop | Web |
-| Mobile  | Web |
+| Desktop |         Web          |
+| Mobile  |         Web          |
 
 
 ## 5. Principais Necessidades dos Usuários
@@ -83,19 +83,19 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 ## 7. Regras de Negócio
 
 
-| ID  | Regra | Descrição |
-| :-: | :---: | :-------: |
-| RN01 | nome... | Descrição... |
-| RN02 | ... | ... |
+|  ID   |  Regra  |  Descrição   |
+| :---: | :-----: | :----------: |
+| RN01  | nome... | Descrição... |
+| RN02  |   ...   |     ...      |
 
 
 ## 8. Requisitos Funcionais
-| Código |                     Nome                      |                                   Descrição                                   | Prioridade |
-| :----: | :-------------------------------------------: | :---------------------------------------------------------------------------: | :--------: |
-|  RF01  |                Login e Logout                 | Criar conta do usuário no sistema para que possa começar fazer uso do sistema |    Alta    |
-|  RF02  |  Cadastrar usuário e editar dados do usuário  |       Criação de conta do usuário no sistema e edição de dados do mesmo       |    Alta    |
-|  RF03  |        Criar gastos, editar e excluir         |      Criar gasto do usuário com informações detalhadas como tipo e valor      |    Alta    |
-|  RF04  | Visualização de tabelas e gráficos dos gastos |     Uma área no sistema que o usuário possa ver a evolução de seus gastos     |    Alta    |
+| Código |                     Nome                      |                                                             Descrição                                                              | Prioridade |
+| :----: | :-------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------: | :--------: |
+|  RF01  |                Login e Logout                 | Login: conjunto de credencias e procedimentos usados para identificar,    logout: processo de encerrar uma sessão ativa no sistema |    Alta    |
+|  RF02  |  Cadastrar usuário e editar dados do usuário  |                                 Criação de conta do usuário no sistema e edição de dados do mesmo                                  |    Alta    |
+|  RF03  |        Criar gastos, editar e excluir         |                                Criar gasto do usuário com informações detalhadas como tipo e valor                                 |    Alta    |
+|  RF04  | Visualização de tabelas e gráficos dos gastos |                               Uma área no sistema que o usuário possa ver a evolução de seus gastos                                |   média    |
 
 
 
