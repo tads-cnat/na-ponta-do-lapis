@@ -9,8 +9,6 @@
 
 ## 1. Mapa do Site
 
-> Obs.: propõem-se a utilização de alguma ferramenta que possibilite a representação textual do diagrama. como o seguinte exemplo:
-
 ```mermaid
 ---
 config:
