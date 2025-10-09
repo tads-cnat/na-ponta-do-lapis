@@ -32,7 +32,7 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 |    Usuário    |          Descrição           |      Responsabilidades      |
 | :-----------: | :--------------------------: | :-------------------------: |
 |  Estudantes   | Jovens no início da carreira | Cria planejamento de gastos |
-| Trabalhadores |    Trabalhadores no geral    |             ...             |
+| Trabalhadores |    Trabalhadores no geral    | Cria planejamento de gastos |
 
 
 ## 4. Descrição do Ambiente dos Usuários
@@ -90,14 +90,18 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 
 
 ## 8. Requisitos Funcionais
-| Código |                     Nome                      |                                                             Descrição                                                              | Prioridade |
-| :----: | :-------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------: | :--------: |
-|  RF01  |                Login e Logout                 | Login: conjunto de credencias e procedimentos usados para identificar,    logout: processo de encerrar uma sessão ativa no sistema |    Alta    |
-|  RF02  |  Cadastrar usuário e editar dados do usuário  |                                 Criação de conta do usuário no sistema e edição de dados do mesmo                                  |    Alta    |
-|  RF03  |        Criar gastos, editar e excluir         |                                Criar gasto do usuário com informações detalhadas como tipo e valor                                 |    Alta    |
-|  RF04  | Visualização de tabelas e gráficos dos gastos |                               Uma área no sistema que o usuário possa ver a evolução de seus gastos                                |   média    |
-
-
+| Código |                              Nome                              |                                                                Descrição                                                                 | Prioridade |
+| :----: | :------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------: | :--------: |
+|  RF01  | Sistema de Autenticação de usuario e gerenciamento de usuários |                Permitir que o usuario se autentique no sistema, cadastre uma nova conta, edite seus dados e faça logout.                 |    Alta    |
+|  RF02  |                    Gerenciamento de gastos                     |                                     Permitir o registro, edição, exclusão e vizualização de gastos.                                      |    Alta    |
+|  RF03  |                   Vizualização de Relatórios                   |                        Permitir ao usuário a vizualização de tabelas, gráficos e relatório de evolução de gastos.                        |    Alta    |
+|  RF04  |                        Sistema de Metas                        | O sistema terá um sistema de metas baseada nas entradas e gastos, será definido a partir do perfil do usuario ou de forma personalizada. |   Baixa    |
+|  RF05  |                    Gerenciamento de Contas.                    |    Permitir o cadastro, edição, exclusão e vizualização de contas bancárias vinculadas ao sistema, afim de vincular entradas e saidas    |   Média    |
+|  RF06  |                    Categorização dos Gastos                    |                   Permitir o cadastro, edição, exclusão , vizualização das categorias e vincular um gasto a categoria.                   |   Média    |
+|  RF07  |                   Sistema de Grupo Familiar                    |     Permitir que o usuário crie, edite e exclua grupos familiares, além de visualizar os gastos individuais e totais de cada membro.     |   Baixa    |
+|  RF08  |                     Seleção de tema visual                     |                                        Permitir o usuário alternar entre o tema claro e o escuro.                                        |   Baixa    |
+|  RF09  |                     Gerenciamento de Posts                     |                            Permitir o administrador crie, edite, exclua posts relacionado a área de finanças.                            |   Baixa    |
+|  RF10  |                       Vizualizar Cotação                       |                                              Permitir vizualizar a cotação de várias moedas                                              |   Baixa    |
 
 
 > **Prioridade**: alta, média ou baixa
@@ -106,12 +110,14 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 ## 9. Requisitos Não-funcionais
 
 
-| Código |             Nome              |                          Descrição                          |      Categoria       | Classificação |
-| :----: | :---------------------------: | :---------------------------------------------------------: | :------------------: | :-----------: |
-|  NF01  | Ferramenta de desenvolvimento |  Utilização de Python e Django para desenvolver o projeto   | Restrição de projeto |  Obrigatório  |
-|  NF02  |        Banco de Dados         |                           sqlite                            | Restrição de projeto |  Obrigatório  |
-|  NF03  |         Criptografia          |     As senhas deve ser armazenadas usando criptografia      | Restrição de projeto |  Obrigatório  |
-|  NF04  |          Usabilidade          | O sistema deve ser acessível em celular e design responsivo |          UI          |   Desejável   |
+| Código |             Nome              |                              Descrição                               |      Categoria       | Classificação |
+| :----: | :---------------------------: | :------------------------------------------------------------------: | :------------------: | :-----------: |
+|  NF01  | Ferramenta de desenvolvimento |       Utilização de Python e Django para desenvolver o projeto       | Restrição de projeto |  Obrigatório  |
+|  NF02  |        Banco de Dados         |                                SQLite                                | Restrição de projeto |  Obrigatório  |
+|  NF03  |         Criptografia          |          As senhas deve ser armazenadas usando criptografia          |      Segurança       |  Obrigatório  |
+|  NF04  |        Renponsividade         |                O sistema deve ter o design responsivo                |     Usabilidade      |   Desejável   |
+|  NF05  |        Acessibilidade         |    O sistema deverá ter algumas funcionalidades a acessibilidade     |     Usabilidade      |   Desejável   |
+|  NF06  |    Facilidade de Navegação    | Todas as funcionalidades devem poder ser acessadas com poucos clicks |     Usabilidade      |  Obrigatório  |
 
 
 > **Categoria** Usabilidade, confiabilidade, performance, suportabilidade, restrição de projeto, implementação, interface e requisito físico - segundo classificação [FURP+](https://pt.wikipedia.org/wiki/FURPS).
