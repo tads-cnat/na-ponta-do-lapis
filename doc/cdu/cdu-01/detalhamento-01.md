@@ -6,9 +6,9 @@
 
 - **Resumo**:  O caso de uso Login permite que um usuário já cadastrado acesse o sistema utilizando suas credenciais. O processo começa quando o usuário informa seu e-mail e senha na tela de login. O sistema verifica se os dados correspondem a um usuário existente e se a conta está ativa. Se as informações estiverem corretas, o sistema concede acesso e cria uma sessão para o usuário. Caso contrário, o acesso é negado e uma mensagem de erro é exibida solicitando a correção dos dados.
 
-- **Pré-condição**: O sistema e o banco de dados estão online.
+- **Pré-condição**: Usuário não deve esta autenticado
 
-- **Pós-Condição**: ...
+- **Pós-Condição**: Usuário é autenticado no sistema.
 
 ## Fluxo Principal
 | Ações do ator | Ações do sistema |
