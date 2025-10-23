@@ -1,10 +1,15 @@
-# CDU 18. Nome... 
+# CDU 18. Manter Transação(Persistente)
 
 - **Ator principal**: ...
+
 - **Atores secundários**: ...	 
-- **Resumo**: ...
-- **Pré-condição**: ...
-- **Pós-Condição**: ...
+
+- **Resumo**: O Sistema exibe os campos para criar uma transação, como por exemplo campo, nome, valor, tipo e categoria. O Usuário preenche todos os campos obrigatórios e confirma o cadastro.
+
+- **Pré-condição**: O usuário deve estar autenticado no sistema para conseguir registrar uma transação.
+
+- **Pós-Condição**: O sistema valida as informações e se estiver tudo correto é salvo no banco de dados.
+
 
 ## Fluxo Principal
 | Ações do ator | Ações do sistema |
