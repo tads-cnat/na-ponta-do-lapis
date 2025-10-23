@@ -1,6 +1,6 @@
 # CDU 18. Manter Transação(Persistente)
 
-- **Ator principal**: ...
+- **Ator principal**: Usuário
 
 - **Atores secundários**: ...	 
 
@@ -8,7 +8,7 @@
 
 - **Pré-condição**: O usuário deve estar autenticado no sistema para conseguir registrar uma transação.
 
-- **Pós-Condição**: O sistema valida as informações e se estiver tudo correto é salvo no banco de dados.
+- **Pós-Condição**: O sistema persiste os dados e salva no banco.
 
 
 ## Fluxo Principal
