@@ -9,7 +9,7 @@
 
 ## 1. Diagrama de Casos de Uso
 
-![diagrama de casos de uso](./imgs/cdu.svg)
+![diagrama de casos de uso](./imgs/cdu.png)
 
 ## 2. Listagem dos Detalhamentos dos Casos de Uso
 
