@@ -1,9 +1,9 @@
-# CDU 19. Manter Conta Financeira
+# CDU 19. Manter Conta Financeira (Persistente)
  
 
-- **Ator principal**: ...
+- **Ator principal**: Usuário
 
-- **Atores secundários**: ...	 
+- **Atores secundários**: não existe.	 
 
 - **Resumo**: O sistema exibe uma página contendo as contas criadas até então e as ações que podem ser feitas, caso já haja outras contas, o usuário apertará o botão de “Adicionar Conta” para realizar a operação, um formulário aparecerá e deve ser preenchido corretamente nos campos obrigatórios, caso algum campo não tenha sido preenchido da forma certa, o sistema avisará que não poderá criar a conta devido à falta de informações.
 
