@@ -1,9 +1,9 @@
 # CDU 22. Adicionar membro à família
 
-- **Ator principal**: ...
-- **Atores secundários**: ...	
+- **Ator principal**: Usuário.
+- **Atores secundários**: Não existe.	
 
-- **Resumo**:  Na página “Grupo Familiar” o usuário que criou a família aperta o botão “adicionar membro”. 
+- **Resumo**:  Na página “Grupo Familiar” o usuário aperta o botão “adicionar” para adicionar um novo membro à sua família, caso ainda não tenha membros a família será criada. 
 
 - **Pré-condição**: Usuário deve estar cadastrado e autenticado no sistema.
 
@@ -12,8 +12,10 @@
 ## Fluxo Principal
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: | 
-| 1 - ... | |  
-| | 2 - ... | 
+| 1 - O usuário aperta o botão "adicionar". | |  
+| | 2 - O sistema retorna um formulário. |
+| 3 - O usuário preenche o formulário com as informações do novo membro e aperta "concluir". | |
+| | 4 - O sistema vincula a conta do novo membro à familia, persiste as informaçôes e retorna um pop-up escrito "adicionado com sucesso". |
 
 ## Fluxo Alternativo I - ...
 | Ações do ator | Ações do sistema |
