@@ -4,12 +4,12 @@
 
 | Data | Versão | Descrição | Autores |
 | :--: | :----: | :-------: | :-----: |
-| - | - | Versão inicial |  - |
+| 26/10/2025 | 1.0 | Versão inicial |  Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
 | - | - | - |  - |
 
 ## 1. Diagrama das Classes Conceituais do Domínio
 
->Descrição e imagem do diagrama de classes de domínio...
+![Diagrama Modelo de Domínio](../dominio/img/Diagrama%20de%20Domínio%20NPL.png)
 
 ## 2. Glossário (sugestão)
 
