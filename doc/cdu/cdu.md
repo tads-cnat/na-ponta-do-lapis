@@ -29,7 +29,7 @@
 1. [CDU-14 - Manter Cotação](./cdu-14/detalhamento-14.md)
 1. [CDU-15 - Manter Conta de Administrador](./cdu-15/detalhamento-15.md)
 1. [CDU-16 - Manter Categoria (Persistente)](./cdu-16/detalhamento-16.md)
-1. [CDU-17 - Manter Meta (Persistente)](./cdu-17/detalhamento-17.md)
+1. [CDU-17 - Manter Meta (Persistente)](./cdu-17/detalhamento-17.md) :white_check_mark:
 1. [CDU-18 - Manter Transação (Persistente)](./cdu-18/detalhamento-18.md) :white_check_mark:
 1. [CDU-19 - Manter Conta Financeira (Persistente)](./cdu-19/detalhamento-19.md) :white_check_mark:
 1. [CDU-20 - Atualizar Perfil](./cdu-20/detalhamento-20.md)
