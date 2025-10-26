@@ -1,30 +1,36 @@
-# CDU 17. Moderar publicação de portifólio 
+# CDU 17. Manter Meta (Persistente)
 
-- **Ator principal**: Administrador.
-- **Atores secundários**: não possui.	 
-- **Resumo**: o administrador realiza uma ação de moderação quanto a um portifólio de um dado aluno. As ações possíveis são: (i) suspender a publicação de um projeto específico OU (ii) suspender a publicação do portifólio como um todo, adicionando uma justificativa para tal.
-- **Pré-condição**: portifólio devidamente cadastrado com vários projetos.
-- **Pós-Condição**: projeto/portifólio terá a sua visualização suspensa para o público.
+- **Ator principal**: Usuario.
+- **Atores secundários**: N/A.	 
+- **Resumo**: Ao apertar no botão "Meta", é apresentado um quadro com todas as metas ja criadas e seus devidos progressos, sendo possivel a adição, edição e exclusão das mesmas. 
+- **Pré-condição**: O usuario deverá está autenticado
+- **Pós-Condição**: As açõoes do usuario serão salvas do banco de dados.
 
 ## Fluxo Principal
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: | 
-| 0 - visualizando a lista de alunos com portifólio publicado, o administrador seleciona a opção moderar portifólio associado a um dado aluno | |  
-| | 1 - o sistema apresenta algumas informações do aluno e a lista dos projetos. Ao lado das informações gerais e ao lado de cada projeto o sistema apresenta uma caixa de seleção (para suspender publicação). Ao final, é apresentado uma caixa de texto para uma justificativa e um botão para submeter |
-| 2 - o administrador seleciona o portifólio como um todo OU um ou mais projetos específicos para suspender a publicação, informa uma justificativa e submete o formulário | |
-| | 3 - o sistema apresenta novamente as informações do portifólio, contendo agora uma marcação especial indicando a suspensão da publicação do portifólio como um todo, OU assiciado aos projetos afetados |
-| | 4 - nessa mesma tela, para cada indicação de suspensão deverá ser apresentado também um botão de ação para a reversão da suspensão |
+| 0 - No menu lateral o usuario seleciona a opção "Metas" | |  
+| | 1 - O sistema apresenta um quadro com todas as metas incluindo a porcentagem de progresso, descrição e prazo. alem disso as opções de edição e exclusão |
+| 2 - Ao pressionar o botão de adicionar nova meta | |
+| | 3 - o sistema apresenta um formulario para definir a descrição da meta, o valor, prazo e uma imagem |
+| 4 - O usuario preenche os dados e clicka no botão "Salvar" | |
+|| 5 - O sistema valida as informações e salva na persistencia 
 
 
-## Fluxo Alternativo I - Nenhuma caixa de selação marcada
+## Fluxo Alternativo I - Edição
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: | 
-| | 3.1 - retorna ao passo 2 do fluxo principal, contendo uma mensagem de erro indicando que ao menos uma seleção precisa ser feita - ou do portifólio como um todo ou de um (ou mais) projeto(s) específico(s) |  
+| 2.1 - O usuario aperta no botão de editar |  |  
+||3.1 - O sistema mostra o mesmo formulario do passo 3 porem ja preenchido com as informações previamente inseridas|
+| Retorna ao passo 4||
 
-## Fluxo Alternativo II - Seleção simultânea do portifólio e de projetos específicos
+## Fluxo Alternativo II - Exclusão
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: |  
-| | 3.2 - o sistema apresenta novamente as informações do portifólio, contendo agora uma marcação especial indicando a suspensão do portifólio como um todo (nesse caso, serão DESCONSIDERADAS as marcações individuais nos projetos) |  
+| 2.2 - O usuario aperta no botão de Excluir |  |  
+|| 3.2 - É exibido uma tela de confirmação de exclusão|
+|4.2 - O usuario confirma a exclusão | |
+||5.2 - O Sistema remove a meta da persistência|
 
 > Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
 
