@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class TestetailwindConfig(AppConfig):
+class UsuarioConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'testeTailwind'
+    name = 'usuario'
