@@ -5,16 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch:css": "npx @tailwindcss/cli -i ./static/admin/css/tailwind_css/style.css -o ./static/admin/css/tailwind_css/dist/output.css --watch"
+    "watch:css": "npx @tailwindcss/cli -i ./static/admin/css/tailwind_css/input.css -o ./static/admin/css/tailwind_css/dist/output.css --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "@tailwindcss/cli": "^4.1.14",
-    "tailwindcss": "^4.1.14"
-  },
   "devDependencies": {
-    "daisyui": "^5.3.7"
+    "daisyui": "^5.3.7",
+    "tailwindcss": "^4.1.16"
   }
 }
