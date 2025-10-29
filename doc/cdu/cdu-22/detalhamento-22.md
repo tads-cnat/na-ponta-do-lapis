@@ -26,7 +26,7 @@
 | 5.1 - O usuário preenche o formulário e aperta no botão "concluir". | |
 | | 6.1 - O sistema vincula a conta do novo membro à familia, persiste as informaçôes e retorna um pop-up escrito "adicionado com sucesso". |
 
-## Fluxo Alternativo II - Dado inválido
+## Fluxo Alternativo II - Dado do formulário inválido
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: | 
 | | 4.2 - O sistema retorna uma mensagem "Dado(s) Inválido(s)" e mostra novamente o formulário com o/os campo/os inválido/os em vermelho com uma pequena mensagem em vermelho embaixo do campo. |  
