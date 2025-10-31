@@ -4,7 +4,7 @@
 
 - **Atores secundários**: ...	 
 
-- **Resumo**: O Sistema exibe os campos para criar, editar e exluir uma transação, como por exemplo campo, nome, valor, tipo e categoria. O Usuário preenche todos os campos obrigatórios e confirma o cadastro.
+- **Resumo**: O Sistema exibe os campos para criar, editar e excluir uma transação, como por exemplo campo, nome, valor, tipo e categoria. O Usuário preenche todos os campos obrigatórios e confirma o cadastro.
 
 - **Pré-condição**: O usuário deve estar autenticado no sistema para conseguir registrar uma transação.
 
@@ -15,7 +15,7 @@
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: | 
 | 1 - Usuário clica no botão "Transação" | |  
-| | 2 - Sistema exibe um formuário com os campos nescessários para preencher para concluir o cadastro de transação(descrição, valor, tipo) | 
+| | 2 - Sistema exibe um formuário com os campos necessários para preencher para concluir o cadastro de transação(descrição, valor, tipo) | 
   |  3 - o usuário preenche os campos de input e clica em salvar.    |
   |                    |  4 - O sistema verifica se as informações estão de acordo com as validações   |  
 
@@ -36,7 +36,10 @@
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: | 
 | 1.3 - Usuário seleciona uma transação já existente e clica no icone de lixeira para excluir transação | |  
-| | 2.3 - Transação é excluida e reflete no gráfico e tabela |  
+| | 2.3. O Sistema exibe um pop-up de confirmação com a mensagem: “Deseja realmente excluir esta transação?”. |
+|  3.3. O Usuário confirma a exclusão. |
+| | 4.3. O Sistema remove a transação.
+|| 5.3. O Sistema atualiza automaticamente o gráfico e a tabela de transações, refletindo a exclusão.
 
 > Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
 
