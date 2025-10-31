@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-bg-preto-p1">
+<head>
+     {% load static %}
+    <link rel="stylesheet" href="{% static 'admin/css/tailwind_css/dist/output.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+</head>
+<body>
+
+    <div class=" min-h-screen flex items-center justify-center">
+        
+        <div class="bg-bg-preto-p2 flex rounded-2xl max-w-3xl p-6 ">
+            <!--formulario -->
+            <div class="sm:w-1/2 px-10">
+                <h2 class="text-4xl text-white font-semibold mt-4">Entre</h2>
+                <p class="text-sm mt-3 text-text-cinza-p1">Entre e acesse todos os recursos do no sistema</p>
+
+                <form action="" class="mt-3 flex flex-col gap-3">
+                    <input type="email" name="email" placeholder="email@gmail.com" class="input validator input-neutral rounded-2xl	  p-2 mt-1 bg-bg-preto-p1"
+                    
+                     required/>
+                     <div class="validator-hint hidden">Entre com email validor tipo: email@gmail.com </div>
+                    <input type="password" name="senha" placeholder="senha" 
+                    class="input validator input-neutral p-2 mt-1 bg-bg-preto-p1 rounded-2xl"
+                    minlength="8"
+                    required
+                    title="A senha deve ter mais de 8 caracteres, incluindo número e letra minuscula e maiuscúla"/>
+                    <p class="validator-hint hidden">
+                        A senha deve ter mais de 8 caracteres, incluindo número e letra minuscula e maiuscúla
+                    </p>
+                    <a href="" class="text-xs ">esqueceu a senha</a>
+                    <button type="submit" class="btn bg-bg-azul-p1 rounded-2xl flex my-5">Login</button>
+                </form>
+                <a href="{% url 'cadastro' %}" class="text-xs font-semibold">Não tenho <span class="text-text-azul-p1 ">conta</span></a>
+            </div>
+              <!--imagem -->
+              <div class="sm:block hidden w-1/2 ">
+                <img class=" rounded-2xl w-150" src="{% static 'admin/img/login-image/login-image.jpg' %}" alt="image">
+              </div>
+        </div>
+    </div>
+    
+</body>
+</html>

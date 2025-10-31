@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" class="bg-bg-preto-p1">
+<head>
+     {% load static %}
+    <link rel="stylesheet" href="{% static 'admin/css/tailwind_css/dist/output.css' %}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastre-se</title>
+</head>
+<body>
+
+    <div class=" min-h-screen flex items-center justify-center">
+
+        <div class="bg-bg-preto-p2 flex rounded-2xl max-w-3xl p-5">
+            <!--imagem-->
+            <div class="sm:block hidden sm:w-1/2">
+                <img class="rounded-2xl h-full w-full object-cover" src="{% static 'admin/img/login-image/cadastro-image.jpg' %}" alt="">
+            </div>
+
+            <!--formulario-->
+            <div class="sm:w-1/2 px-10 ">
+                <h2 class="text-4xl text-white font-semibold mt-4">Cadastre-se</h2>
+                <p class="text-sm text-text-cinza-p1">Crie sua conta e venha ser NPL</p>
+
+                <form action="" class=" mt-3 flex flex-col gap-3">
+                     <input type="email" name="email" placeholder="email@gmail.com" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1" required>
+                     <div class="validator-hint hidden">Entre com email validor tipo: email@gmail.com </div>
+                      <input type="text"  pattern="[A-Za-zÀ-ú\s]+" name="nome" placeholder="Nome Completo" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1" minlength="8" required>
+                            <p class="validator-hint hidden">
+                        Apenas letras e espaços são permitidos no nome.
+                    </p>
+                      <input type="password" name="senha" placeholder="Senha" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1"   minlength="8" required>
+                          <p class="validator-hint hidden">
+                        A senha deve ter mais de 8 caracteres, incluindo número e letra minuscula e maiuscúla
+                    </p>
+                      <input type="password" name="confirma_senha" placeholder="Confime a senha" class=" input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1" minlength="8" required>
+                       <p class="validator-hint hidden">
+                        A senha deve ter mais de 8 caracteres, incluindo número e letra minuscula e maiuscúla
+                    </p>
+                      <button type="submit" class="btn bg-bg-azul-p1 rounded-2xl flex my-5">Cadastre-se</button>
+
+                      <a href="{% url 'login' %}" class="text-xs font-semibold">Já tenho <span class="text-text-azul-p1 ">conta</span></a>
+                </form>
+            </div>
+            
+            
+            
+            
+        </div>
+    </div>
+
+    
+</body>
+</html>
