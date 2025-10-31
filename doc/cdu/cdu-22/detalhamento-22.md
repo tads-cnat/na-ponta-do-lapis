@@ -13,7 +13,7 @@
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: | 
 | 1 - O usuário aperta o botão "adicionar". | |  
-| | 2 - O sistema retorna um formulário. |
+| | 2 - Se o usuário já tiver uma família, o sistema retorna um formulário. |
 | 3 - O usuário preenche o formulário com as informações do novo membro e aperta "concluir". | |
 | | 4 - O sistema vincula a conta do novo membro à familia, persiste as informaçôes e retorna um pop-up escrito "adicionado com sucesso". |
 
@@ -22,16 +22,15 @@
 | :-----------------: |:-----------------: | 
 | | 2.1 - O sistema retorna um fomulário para criar a família. |  
 | 3.1 - O usuário preenche e aperta o botão "criar". |  |
-| | 4.1 - O sistema persiste os dados de criação da família e retorna um formulário para adicionar o primeiro membro. |
-| 5.1 - O usuário preenche o formulário e aperta no botão "concluir". | |
-| | 6.1 - O sistema vincula a conta do novo membro à familia, persiste as informaçôes e retorna um pop-up escrito "adicionado com sucesso". |
+| | 4.1 - O sistema persiste os dados de criação da família. |
+| 5.1 - (retorna para o passo 2 do fluxo principal) | |
+
 
 ## Fluxo Alternativo II - Dado do formulário inválido
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: | 
 | | 4.2 - O sistema retorna uma mensagem "Dado(s) Inválido(s)" e mostra novamente o formulário com o/os campo/os inválido/os em vermelho com uma pequena mensagem em vermelho embaixo do campo. |  
-| 5.2 - O usuário preenche novamente e aperta em "concluir". | | 
-| | 6.2 - O sistema vincula a conta do novo membro à familia, persiste as informaçôes e retorna um pop-up escrito "adicionado com sucesso". | 
+| 5.2 - (retorna para o passo 3 do fluxo principal) | | 
 
 > Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
 
