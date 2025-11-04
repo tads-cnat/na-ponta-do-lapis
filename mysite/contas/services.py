@@ -1,0 +1,2 @@
+class ContaService:
+    pass

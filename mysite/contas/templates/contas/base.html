@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'admin/css/tailwind_css/dist/output.css' %}">
+    {% block head %}
+    {% endblock %}
+</head>
+
+<body class="bg-gray-300 h-screen">
+    <nav>
+        <ul class="menu bg-gray-900 h-screen text-base">
+            <li><a href="">Transações</a></li>
+            <li><a href="">Relatórios</a></li>
+            <li><a href="">Metas</a></li>
+            <li><a href="">Contas Financeiras</a></li>
+            <li><a href="">Categorias</a></li>
+            <li><a href="">Grupo Familiar</a></li>
+            <li><a href="">Configurações</a></li>
+        </ul>
+       
+    </nav>
+    <main>
+        {% block main %}
+
+        {% endblock %}
+    </main>
+    
+</body>
+</html>
