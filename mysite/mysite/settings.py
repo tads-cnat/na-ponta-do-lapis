@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +41,6 @@ INSTALLED_APPS = [
     'baseteste',
     'usuario',
     'contas',
-    'grupo_familiar',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +58,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['mysite/templates'],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,3 +133,8 @@ MEDIA_ROOT = '/home/pdsweb/mysite/media'
 MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/pdsweb/mysite/static'
 STATIC_URL = '/static/'
+
+if 'CODESPACE_NAME' in os.environ:
+    codespace_name = os.getenv("CODESPACE_NAME")
+    codespace_domain = os.getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN")
+    CSRF_TRUSTED_ORIGINS = [f'https://{codespace_name}-8000.{codespace_domain}','https://localhost:8000']
