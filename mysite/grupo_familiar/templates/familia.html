@@ -1,7 +1,74 @@
 {% extends 'mysite/base.html' %}
+{% load static %}
 {% block title %} Main Menu {% endblock%}
 {% block main %}
-    <h1 class="btn btn-secondary">Teste</h1>
-    <h3 class="btn btn-link"> ola</h3>
+    
+    <div class="grid grid-cols-2 gap-4 max-w-xl mx-auto">
+        <!-- Linha 1 -->
+        <div class="bg-blue-300 p-4 rounded-lg text-center">Bloco 1
+            <h1 class="text-left">Grupo Familiar</h1>
+            <img src="{% static 'familia/images/iconeGrupoFamiliar.png' %}" alt="" class="w-32 h-32 mx-auto">
+            <h2>Família Medeiros</h2>
+        </div>
+        <div class="bg-green-300 p-4 rounded-lg">
+            <img src="{% static 'familia/images/pai.png' %}" alt="" class="w-28 h-14 mx-auto">
+            <div class="grid grid-cols-3 gap-4 place-items-center w-60 h-22 rounded-2xl bg-white mx-auto p-4">
+                <img src="{% static 'familia/images/joao.png' %}" alt="" class="obect-cover">
+                <img src="{% static 'familia/images/leticia.png' %}" alt="" class="object-cover">
+                <img src="{% static 'familia/images/maria.png' %}" alt="" class="object-cover">
+                <div></div>
+                <button class="btn btn-primary btn-xs gap-2 rounded-xl">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        <!-- Linha 2 -->
+        <div class="bg-red-300 p-4 rounded-lg col-span-2">Bloco 3
+            <table class="table w-full border border-gray-400 bg-gray-200 text-black">
+  <thead>
+    <tr class="border-b border-gray-400 text-black">
+      <th class="border-r border-gray-400">Data</th>
+      <th class="border-r border-gray-400">Valor</th>
+      <th class="border-r border-gray-400">Descrição</th>
+      <th class="border-r border-gray-400">Tipo</th>
+      <th class="border-r border-gray-400">Categoria</th>
+      <th class="border-r border-gray-400">Membro</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr class="border-b border-gray-400">
+      <td class="border-r border-gray-400">João</td>
+      <td class="border-r border-gray-400">25</td>
+      <td class="border-r border-gray-400">São Paulo</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>
+        <button class="btn btn-sm btn-primary">Editar</button>
+        <button class="btn btn-sm btn-error">Excluir</button>
+      </td>
+    </tr>
+    <tr class="border-b border-gray-400">
+      <td class="border-r border-gray-400">Maria</td>
+      <td class="border-r border-gray-400">30</td>
+      <td class="border-r border-gray-400">Rio de Janeiro</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td>
+        <button class="btn btn-sm btn-primary">Editar</button>
+        <button class="btn btn-sm btn-error">Excluir</button>
+      </td>
+    </tr>
+    
+  </tbody>
+</table>
 
+        </div>
+    </div>
+        
+    
 {% endblock %}
