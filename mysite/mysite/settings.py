@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'baseteste',
     'usuario',
-    'grupo_familiar'
+    'contas',
+    'grupo_familiar',
 ]
 
 MIDDLEWARE = [
