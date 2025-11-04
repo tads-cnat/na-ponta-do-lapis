@@ -13,9 +13,9 @@
 
 ## 2. Listagem dos Detalhamentos dos Casos de Uso
 
-1. [CDU-01 - Login](./cdu-01/detalhamento-01.md) :white_check_mark:
-1. [CDU-02 - Logout](./cdu-02/detalhamento-02.md) :white_check_mark:
-1. [CDU-03 - Cadastro](./cdu-03/detalhamento-03.md) :white_check_mark:
+1. [CDU-01 - Login](./cdu-01/detalhamento-01.md) 
+1. [CDU-02 - Logout](./cdu-02/detalhamento-02.md) 
+1. [CDU-03 - Cadastro](./cdu-03/detalhamento-03.md) 
 1. [CDU-04 - Recuperar Senha](./cdu-04/detalhamento-04.md)
 1. [CDU-05 - Visualizar Cotação](./cdu-05/detalhamento-05.md)
 1. [CDU-06 - Visualizar Relatório Pessoal](./cdu-06/detalhamento-06.md)
