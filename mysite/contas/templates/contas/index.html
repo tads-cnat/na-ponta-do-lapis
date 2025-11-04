@@ -2,9 +2,26 @@
 {% block title %} Contas Financeiras {% endblock%}
 {% block head %}
 {% load static %}
-<link rel="stylesheet" href="{% static 'contas/css/style.css'%}">
+<link rel="stylesheet" href="{% static 'contas/style.css'%}">
+<style>
+    *{
+        font-family: 'Fira Sans', sans-serif;
+    }
+</style>
 {% endblock %}
 {% block main %}
-    <h1 id="titulo" style="display: inline-block;">Minhas Contas</h1>
+    <h1 id="titulo" style="font-size: 50px; font-family: 'Fira Sans', sans-serif;">Minhas Contas</h1>
+    <div class="botao" id="conta-anterior" style="font-family: 'Fira Sans', sans-serif;"></div>
+    <div class="placeholder" id="nome-placeholder" style="font-family: 'Fira Sans', sans-serif;"></div>
+    <div class="placeholder" id="tipo-placeholder" style="font-family: 'Fira Sans', sans-serif;"></div>
+    <div class="placeholder" id="saldo-placeholder" style="font-family: 'Fira Sans', sans-serif;"></div>
+    <img src="../contas/imgs/Conta-Credito-Debito-Modelo.png" alt="">
+    <img src="../contas/imgs/Conta-Debito-Modelo.png" alt="">
+    <img src="../contas/imgs/Conta-Credito-Modelo.png" alt="">
+    <div class="botao" id="conta-posterior"></div>
+    <div class="botao" id="visualizar" style="font-family: 'Fira Sans', sans-serif;">Visualizar Conta</div>
+    <div class="botao" id="adicionar" style="font-family: 'Fira Sans', sans-serif;">Adicionar Conta</div>
+    <div class="botao" id="editar" style="font-family: 'Fira Sans', sans-serif;">Editar Conta</div>
+    <div class="botao" id="excluir"style="font-family: 'Fira Sans', sans-serif;">Excluir Conta</div>
 
 {% endblock %}
