@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'baseteste',
     'usuario',
     'contas',
+    'grupo_familiar',
 ]
 
 MIDDLEWARE = [
