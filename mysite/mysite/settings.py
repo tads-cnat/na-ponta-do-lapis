@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'usuario',
     'contas',
     'transacoes',
+    'config',
     'grupo_familiar',
 ]
 
