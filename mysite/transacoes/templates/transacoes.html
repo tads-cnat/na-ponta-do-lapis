@@ -5,7 +5,7 @@
     <div class="container flex mb-8">
         <div class="cabecalho1 w-1/2">
             <div class="busca mb-8">
-                <label class="input w-full">
+                <label class="input w-full bg-white border border-gray-300">
                     <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <g
                         stroke-linejoin="round"
@@ -18,19 +18,19 @@
                         <path d="m21 21-4.3-4.3"></path>
                         </g>
                     </svg>
-                    <input type="search" class="grow bg-white" placeholder="Buscar.." />
+                    <input type="search" class="grow" placeholder="Buscar.." />
                 </label>
             </div>
             <div class="filtros flex w-full">
                 <div class="filtro1">
                     <details class="dropdown ">
-                        <summary class="btn m-1 bg-gray-500">
+                        <summary class="btn m-1 bg-npl-roxo">
                             <span>Periodo</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="10" viewBox="0 0 19 12" fill="none">
                                 <path d="M0 0C0 0 5.86713 6.00368 9.62652 11.1321L18.1591 0H16.0801L9.51525 7.90341L2.07897 0H0Z" fill="black"/>
                             </svg>
                         </summary>
-                        <ul class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                        <ul class="menu dropdown-content bg-white rounded-box z-1 w-52 p-2 shadow-sm">
                             <li><a>Item 1</a></li>
                             <li><a>Item 2</a></li>
                         </ul>
@@ -38,13 +38,13 @@
                 </div>
                 <div class="filtro1">
                     <details class="dropdown">
-                        <summary class="btn m-1 bg-gray-500">
+                        <summary class="btn m-1 bg-npl-roxo">
                             <span>Tipo</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="10" viewBox="0 0 19 12" fill="none">
                                 <path d="M0 0C0 0 5.86713 6.00368 9.62652 11.1321L18.1591 0H16.0801L9.51525 7.90341L2.07897 0H0Z" fill="black"/>
                             </svg>
                         </summary>
-                        <ul class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                        <ul class="menu dropdown-content bg-white rounded-box z-1 w-52 p-2 shadow-sm">
                             <li><a>Item 1</a></li>
                             <li><a>Item 2</a></li>
                         </ul>
@@ -52,13 +52,13 @@
                 </div>
                 <div class="filtro1">
                     <details class="dropdown">
-                        <summary class="btn m-1 bg-gray-500">
+                        <summary class="btn m-1 bg-npl-roxo">
                             <span> Categoria</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="10" viewBox="0 0 19 12" fill="none">
                                 <path d="M0 0C0 0 5.86713 6.00368 9.62652 11.1321L18.1591 0H16.0801L9.51525 7.90341L2.07897 0H0Z" fill="black"/>
                             </svg>
                         </summary>
-                        <ul class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                        <ul class="menu dropdown-content bg-white rounded-box z-1 w-52 p-2 shadow-sm">
                             <li><a>Item 1</a></li>
                             <li><a>Item 2</a></li>
                         </ul>
@@ -66,13 +66,13 @@
                 </div>
                 <div class="filtro1">
                     <details class="dropdown">
-                        <summary class="btn m-1 bg-gray-500">
+                        <summary class="btn m-1 bg-npl-roxo">
                             <span>Conta</span>
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="10" viewBox="0 0 19 12" fill="none">
                                 <path d="M0 0C0 0 5.86713 6.00368 9.62652 11.1321L18.1591 0H16.0801L9.51525 7.90341L2.07897 0H0Z" fill="black"/>
                             </svg>
                         </summary>
-                        <ul class="menu dropdown-content bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                        <ul class="menu dropdown-content bg-white rounded-box z-1 w-52 p-2 shadow-sm">
                             <li><a>Item 1</a></li>
                             <li><a>Item 2</a></li>
                         </ul>
@@ -98,7 +98,7 @@
         <div class="overflow-x-auto">
             <table class="table">
                 <thead>
-                    <tr class="bg-gray-200">
+                    <tr class="bg-gray-200 text-gray-700">
                         <th>Estado</th>
                         <th>Data/Hora</th>
                         <th>Valor</th>
@@ -118,7 +118,7 @@
                             </svg>
                         </td>
                         <td>26/08 14:32</td>
-                        <td>R$ 44,90</td>
+                        <td class="text-red-400">R$ 44,90</td>
                         <td>Netflix</td>
                         <td>Despesa</td>
                         <td>Streaming</td>  
@@ -150,7 +150,7 @@
                             </svg>
                         </td>
                         <td>22/08 03:00</td>
-                        <td>R$ 600,90</td>
+                        <td class="text-green-400">R$ 600,90</td>
                         <td>Salário</td>
                         <td>Receita</td>
                         <td>Renda Fixa</td>  
