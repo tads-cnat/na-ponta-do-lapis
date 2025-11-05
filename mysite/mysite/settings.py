@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'usuario',
     'contas',
     'transacoes',
+    'grupo_familiar',
 ]
 
 MIDDLEWARE = [
