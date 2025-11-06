@@ -9,7 +9,7 @@
 
 ## 1. Diagrama ER
 
->   <img src="./DER.png" alt="descrição da imagem">
+>   <img src="./DER.jpeg" alt="descrição da imagem">
 
 ## 2. Modelo Relacional
 
