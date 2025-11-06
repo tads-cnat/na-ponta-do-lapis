@@ -17,7 +17,7 @@
                 <h2 class="text-4xl text-white font-semibold mt-4">Entre</h2>
                 <p class="text-sm mt-3 text-text-cinza-p1">Entre e acesse todos os recursos do no sistema</p>
 
-                <form action="" class="mt-3 flex flex-col gap-3">
+                <form action="{% url 'transacoes_index' %}" class="mt-3 flex flex-col gap-3">
                     <input type="email" name="email" placeholder="email@gmail.com" class="input validator input-neutral rounded-2xl	  p-2 mt-1 bg-bg-preto-p1"
                     
                      required/>
@@ -31,7 +31,7 @@
                         A senha deve ter mais de 8 caracteres, incluindo número e letra minuscula e maiuscúla
                     </p>
                     <a href="" class="text-xs ">esqueceu a senha</a>
-                    <button type="submit" class="btn bg-bg-azul-p1 rounded-2xl flex my-5">Login</button>
+                    <button type="submit"  class="btn bg-bg-azul-p1 rounded-2xl flex my-5">Login</button>
                 </form>
                 <a href="{% url 'cadastro' %}" class="text-xs font-semibold">Não tenho <span class="text-text-azul-p1 ">conta</span></a>
             </div>
