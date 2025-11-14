@@ -19,7 +19,7 @@
 1. [CDU-04 - Recuperar Senha](./cdu-04/detalhamento-04.md)
 1. [CDU-05 - Visualizar Cotação](./cdu-05/detalhamento-05.md)
 1. [CDU-06 - Visualizar Relatório Pessoal](./cdu-06/detalhamento-06.md)
-1. [CDU-07 - Visualizar Post](./cdu-07/detalhamento-07.md)
+1. [CDU-07 - Visualizar Post](./cdu-07/detalhamento-07.md) :white_check_mark:
 1. [CDU-08 - Manter Meta (Temporária)](./cdu-08/detalhamento-08.md)
 1. [CDU-09 - Manter Conta Financeira (Temporária)](./cdu-09/detalhamento-09.md)
 1. [CDU-10 - Manter Transação (Temporária)](./cdu-10/detalhamento-10.md)
