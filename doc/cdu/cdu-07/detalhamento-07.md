@@ -9,14 +9,13 @@
 ## Fluxo Principal
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: | 
-| 1 - ... | |  
-| | 2 - ... | 
+| 1 - O Usuário/Visitante entra na página investimentos | |  
+| | 2 - Retorna os posts publicados | 
 
-## Fluxo Alternativo I - ...
+## Fluxo Alternativo I - Nenhum Post Publicado
 | Ações do ator | Ações do sistema |
 | :-----------------: |:-----------------: | 
-| 1.1 - ... | |  
-| | 1.2 - ... |
+| | 2.1 - Retorna uma mensagem "Nenhum Post Publicado" |  
 
 ## Fluxo Alternativo II - ...
 | Ações do ator | Ações do sistema |
