@@ -25,7 +25,7 @@
 1. [CDU-10 - Manter Transação (Temporária)](./cdu-10/detalhamento-10.md)
 1. [CDU-11 - Manter Categoria (Temporária)](./cdu-11/detalhamento-11.md)
 1. [CDU-12 - Alterar Tema](./cdu-12/detalhamento-12.md)
-1. [CDU-13 - Manter Post](./cdu-13/detalhamento-13.md)
+1. [CDU-13 - Manter Post](./cdu-13/detalhamento-13.md) :white_check_mark:
 1. [CDU-14 - Manter Cotação](./cdu-14/detalhamento-14.md)
 1. [CDU-15 - Manter Conta de Administrador](./cdu-15/detalhamento-15.md) :white_check_mark:
 1. [CDU-16 - Manter Categoria (Persistente)](./cdu-16/detalhamento-16.md):white_check_mark:
