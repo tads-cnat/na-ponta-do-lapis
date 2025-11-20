@@ -23,12 +23,6 @@
 | 1.1 - Usuário informa um e-mail não cadastrado |                                                                                      |
 |                                                | 1.2 - Sistema retorna mensagem: "E-mail não encontrado. Verifique e tente novamente" |
 
-
-## Fluxo Alternativo II - Sem acesso a internet
-|                              Ações do ator                             |                        Ações do sistema                       |
-| :--------------------------------------------------------------------: | :-----------------------------------------------------------: |
-| 1.3 - Usuário tenta solicitar a recuperação sem conexão com a internet |                                                               |
-|                                                                        | 1.4 - Sistema retorna mensagem: "Erro: sem acesso à internet" |
   
 ## Fluxo Alternativo III - Link expirado ou inválido
 |                    Ações do ator                    |                                  Ações do sistema                                  |
