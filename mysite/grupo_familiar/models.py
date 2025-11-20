@@ -6,9 +6,9 @@ class Familia(models.Model):
 
     @property
     def membros(self):
-        return Usuario.objects.filter(familia=self).exclude(pessoa__papel='adminFamilia')
+        return Usuario.objects.filter(id_familia=self).exclude(Usuario__papel='adminFamilia')
     @property
     def chefes(self):
-        return Usuario.objects.filter(familia=self, pessoa__papel='adminFamilia')
+        return Usuario.objects.filter(id_familia=self, Usuario__papel='adminFamilia')
     def __str__(self):
         return f"{self.nome}"
