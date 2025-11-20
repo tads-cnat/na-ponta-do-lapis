@@ -1,6 +1,6 @@
 # CDU 01. Login
 
-- **Ator principal**: Usuario
+- **Ator principal**: Visitante 
 
 - **Atores secundários**: 
 
@@ -11,22 +11,24 @@
 - **Pós-Condição**: Usuário é autenticado no sistema.
 
 ## Fluxo Principal
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: | 
-| 1 - Usuario com acesso a internet informa suas credenciais (email e senha) | |  
-| | 2 - Sistema valida informações, autentica usuario e redireciona para pagina inicial | 
+| **Ações do Ator**                                              | **Ações do Sistema**                                                                  |
+| -------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| 1. Usuário acessa a tela de login.                             |                                                                                       |
+| 2. Usuário informa o email e a senha nos campos do formulário. |                                                                                       |
+|                                                                | 3. Sistema recebe as credenciais.                                                     |
+|                                                                | 4. Sistema valida o formato do email e verifica se todos os campos foram preenchidos. |
+|                                                                | 5. Sistema verifica a existência do usuário no banco de dados.                        |
+|                                                                | 6. Sistema valida a senha informada comparando com a senha armazenada.                |
+|                                                                | 7. Sistema autentica o usuário.                                                       |
+|                                                                | 8. Sistema cria uma sessão válida para o usuário.                                     |
+|                                                                | 9. Sistema redireciona o usuário para a página inicial.                               |
+
 
 ## Fluxo Alternativo I - Credenciais invalidas ou inexistentes
 | Ações do ator | Ações do sistema |
 | :-----------------: |:-----------------: | 
 | 1.1 - Usuario informa email ou senha incorreto | |  
 | | 1.2 - Sistema retorna um feedback informando que a email, senha ou usuario não esta cadastrado |
-
-## Fluxo Alternativo II - Sem acesso a internet
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: | 
-| 1.3 - Usuario tenta fazer login | |  
-| | 1.4 - Sistema informa que o usuario esta sema acesso a internet |  
 
 > Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
 
