@@ -3,11 +3,8 @@
 - **Ator principal**: Administrador do site
 
 - **Atores secundários**: não existe.
-
 - **Resumo**: O sistema exibe uma página contendo uma lista de cotações criadas até então, caso já haja outras criadas. Cada registro mostra o nome, valor e data de cada uma. O Administrador do site clica no botão de “Registrar nova cotação” para realizar a operação. Um formulário aparece e deve ser preenchido corretamente nos campos obrigatórios. Caso algum campo não tenha sido preenchido da forma certa, o sistema avisa que não pode finalizar o processo devido à falta de informações.
-
 - **Pré-condição**: O administrador do site deverá estar devidamente autenticado e acessar a aba “Cotação”
-
 - **Pós-Condição**: Uma nova cotação será registrada e aparecerá na página de “Cotação” através de uma lista cotações criadas ordenada cronologicamente, da mais recente à mais antiga.
 
 ## Fluxo Principal

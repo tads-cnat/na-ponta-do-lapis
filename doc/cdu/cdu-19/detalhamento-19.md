@@ -3,11 +3,8 @@
 - **Ator principal**: Usuário
 
 - **Atores secundários**: não existe.
-
 - **Resumo**: O sistema exibe uma página contendo as contas criadas até então, e as ações que podem ser feitas, caso já haja outras contas. Uma das contas já estará selecionada e será mostrado seu nome, tipo e saldo, cada tipo terá uma imagem genérica para sua representação. O usuário clica no botão de “Adicionar Conta” para realizar a operação. Um formulário aparece e deve ser preenchido corretamente nos campos obrigatórios. Caso algum campo não tenha sido preenchido da forma certa, o sistema avisa que não pode criar a conta devido à falta de informações. Também as operações de atualizar e excluir podem ser feitas.
-
 - **Pré-condição**: O usuário deverá estar devidamente autenticado e acessar a aba “Contas Financeiras”
-
 - **Pós-Condição**: Uma nova conta aparecerá na página de “Contas Financeiras”, possibilitando as demais ações de uma conta.
 
 ## Fluxo Principal

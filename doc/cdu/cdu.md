@@ -4,8 +4,8 @@
 
 | Data | Versão | Descrição | Autores |
 | :--: | :----: | :-------: | :-----: |
-| 22/10/2025 | 1.0 | Versão inicial |  Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
-| - | - | - |  - |
+| 22/10/2025 | 1.0 | Versão inicial | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
+| 21/11/2025 | 2.0 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
 
 ## 1. Diagrama de Casos de Uso
 
@@ -14,6 +14,7 @@
 ## 2. Listagem dos Detalhamentos dos Casos de Uso
 
 1. [CDU-01 - Login](./cdu-01/detalhamento-01.md) :white_check_mark:
+
 1. [CDU-02 - Logout](./cdu-02/detalhamento-02.md) :white_check_mark:
 1. [CDU-03 - Cadastro](./cdu-03/detalhamento-03.md) :white_check_mark:
 1. [CDU-04 - Recuperar Senha](./cdu-04/detalhamento-04.md) :white_check_mark:
@@ -24,9 +25,9 @@
 1. [CDU-09 - Manter Conta Financeira (Temporária)](./cdu-09/detalhamento-09.md)
 1. [CDU-10 - Manter Transação (Temporária)](./cdu-10/detalhamento-10.md)
 1. [CDU-11 - Manter Categoria (Temporária)](./cdu-11/detalhamento-11.md)
-1. [CDU-12 - Alterar Tema](./cdu-12/detalhamento-12.md)
+1. [CDU-12 - Alterar Tema](./cdu-12/detalhamento-12.md) :white_check_mark:
 1. [CDU-13 - Manter Post](./cdu-13/detalhamento-13.md) :white_check_mark:
-1. [CDU-14 - Manter Cotação](./cdu-14/detalhamento-14.md)
+1. [CDU-14 - Manter Cotação](./cdu-14/detalhamento-14.md) :white_check_mark:
 1. [CDU-15 - Manter Conta de Administrador](./cdu-15/detalhamento-15.md) :white_check_mark:
 1. [CDU-16 - Manter Categoria (Persistente)](./cdu-16/detalhamento-16.md):white_check_mark:
 1. [CDU-17 - Manter Meta (Persistente)](./cdu-17/detalhamento-17.md) :white_check_mark:
