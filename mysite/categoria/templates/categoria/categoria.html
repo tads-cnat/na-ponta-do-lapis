@@ -1,0 +1,559 @@
+{% extends 'base.html' %}
+{% block page_title %} Categorias {% endblock %}
+{% block title %} Categorias {% endblock %}
+{% block main %}            
+        
+
+
+<div class="flex max-h-10/12 overflow-hidden">
+    
+    <!-- Lado esquerdo: fixo -->
+    <div class="w-1/2 overflow-hidden ml-14">
+        
+        
+        <div class="p-4  rounded-box w-full max-w-xl   shadow-md rounded-xl ml-10">
+          <h2 class="text-xl font-bold ">Gráfico</h2>
+          <button id="switch" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-white shadow-md hover:bg-gray-100 hover:scale-105 active:scale-95 transition-all float-right cursor-pointer">
+
+              <!-- Ícone de alternar gráfico -->
+              <svg xmlns="http://www.w3.org/2000/svg" 
+                  class="h-6 w-6 text-gray-700 transition-transform duration-200 group-hover:rotate-180"
+                  fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                      d="M4 4h7v7H4zM13 4h7v4h-7zM13 10h7v10h-7zM4 13h7v7H4z" />
+              </svg>
+
+              <span class="text-sm font-medium text-gray-700">Trocar gráfico</span>
+          </button>
+          <canvas id="grafico"></canvas>
+        </div>
+        
+        
+
+    </div>
+
+
+
+    
+    
+    
+    <!-- Lado direito: scroll interno -->
+    <div class="w-1/2 ">
+        <h3 class="text-xl font-bold mb-4 ml-40">Marcadores
+            <button id="open-popup" class="btn btn-primary btn-xs gap-2 rounded-xl">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+            </button>
+    
+        </h3>
+        
+        
+        
+        
+        <div class=" p-6 overflow-y-auto max-h-3/4 mr-20  ">
+
+
+            
+            <div class="space-y-4 scale-75 origin-top">
+
+
+
+
+
+
+
+
+
+              <div class="w-full max-w-md mx-auto">
+    <h2 class="text-3xl font-bold mb-2">Alimentação</h2>
+
+    <div class="bg-white rounded-3xl overflow-hidden shadow-md border">
+        
+        <!-- Cabeçalho -->
+        <div class="grid grid-cols-3 bg-gray-100 px-6 py-3 text-gray-600 font-semibold text-lg">
+            <div>Valor</div>
+            <div class="text-center">Tipo</div>
+            <div class="text-right">Tag</div>
+        </div>
+
+        <!-- Linha 1 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Mercado
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 2 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-red-600 font-bold text-lg">Despesa</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-yellow-200 text-yellow-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Moradia
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 3 (Botão "+") -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <button class="bg-green-200 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold leading-none">
+                    +
+                </button>
+            </div>
+        </div>
+
+        <!-- Linha 4 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Mercado
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 5 -->
+        <div class="grid grid-cols-3 px-4 py-3 items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-red-600 font-bold text-lg">Despesa</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    Farmacia
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+            
+
+
+
+
+
+
+
+
+
+              <div class="w-full max-w-md mx-auto mt-9">
+    <h2 class="text-3xl font-bold mb-2">Educação</h2>
+
+    <div class="bg-white rounded-3xl overflow-hidden shadow-md border">
+        
+        <!-- Cabeçalho -->
+        <div class="grid grid-cols-3 bg-gray-100 px-6 py-3 text-gray-600 font-semibold text-lg">
+            <div>Valor</div>
+            <div class="text-center">Tipo</div>
+            <div class="text-right">Tag</div>
+        </div>
+
+        <!-- Linha 1 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Mercado
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 2 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-red-600 font-bold text-lg">Despesa</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-yellow-200 text-yellow-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Moradia
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 3 (Botão "+") -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <button class="bg-green-200 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold leading-none">
+                    +
+                </button>
+            </div>
+        </div>
+
+        <!-- Linha 4 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Mercado
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 5 -->
+        <div class="grid grid-cols-3 px-4 py-3 items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-red-600 font-bold text-lg">Despesa</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    Farmacia
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+            
+
+
+
+
+
+
+
+
+
+              <div class="w-full max-w-md mx-auto mt-9">
+    <h2 class="text-3xl font-bold mb-2">Entretenimento</h2>
+
+    <div class="bg-white rounded-3xl overflow-hidden shadow-md border">
+        
+        <!-- Cabeçalho -->
+        <div class="grid grid-cols-3 bg-gray-100 px-6 py-3 text-gray-600 font-semibold text-lg">
+            <div>Valor</div>
+            <div class="text-center">Tipo</div>
+            <div class="text-right">Tag</div>
+        </div>
+
+        <!-- Linha 1 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Mercado
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 2 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-red-600 font-bold text-lg">Despesa</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-yellow-200 text-yellow-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Moradia
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 3 (Botão "+") -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <button class="bg-green-200 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold leading-none">
+                    +
+                </button>
+            </div>
+        </div>
+
+        <!-- Linha 4 -->
+        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-green-600 font-bold text-lg">Receita</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
+                    Mercado
+                </span>
+            </div>
+        </div>
+
+        <!-- Linha 5 -->
+        <div class="grid grid-cols-3 px-4 py-3 items-center">
+            <div>
+                <span class="font-semibold text-lg">R$152,02</span><br>
+                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
+            </div>
+
+            <div class="text-center">
+                <span class="text-red-600 font-bold text-lg">Despesa</span>
+            </div>
+
+            <div class="text-right">
+                <span class="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
+                    Farmacia
+                </span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+                <!-- quantos quiser -->
+            </div>
+
+
+
+
+        </div>
+    </div>
+                
+
+</div>
+
+
+
+
+
+
+
+<!-- Fundo escurecido -->
+<div id="popup-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-40"></div>
+
+<!-- Pop-up -->
+<div id="popup" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
+    bg-white p-6 rounded-xl shadow-xl w-[420px] hidden z-50">
+
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">Criar marcador:</h2>
+        <button id="close-popup" class="text-gray-500 hover:text-black text-xl">✕</button>
+    </div>
+
+    <label class="font-semibold">Nome</label>
+    <input type="text" class="input input-bordered w-full mb-4" placeholder="Adicione seu marcador aqui">
+
+    <label class="font-semibold">Cor</label>
+    <input type="color" class="ml-2">
+
+    <button class="btn btn-primary mt-4 float-right">Salvar</button>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('grafico');
+  let tipoAtual = "pie";
+
+  let grafico = new Chart(ctx, {
+    type: tipoAtual,
+    data: {
+        labels: ["Alimentação", "Farmácia", "Moradia"],
+        datasets: [{
+            data: [80, 55, 30],
+            backgroundColor: ["#4caf50", "#2196f3", "#f06292"]
+        }]
+    }
+});
+
+document.getElementById("switch").addEventListener("click", () => {
+    // alterna o tipo
+    tipoAtual = tipoAtual === "pie" ? "bar" : "pie";
+
+    // destrói o gráfico atual
+    grafico.destroy();
+
+    // cria o novo gráfico com o novo tipo
+    grafico = new Chart(ctx, {
+        type: tipoAtual,
+        data: {
+            labels: ["Alimentação", "Farmácia", "Moradia"],
+            datasets: [{
+                data: [80, 55, 30],
+                backgroundColor: ["#4caf50", "#2196f3", "#f06292"]
+            }]
+        }
+    });
+});
+
+
+
+  const openBtn = document.getElementById("open-popup");
+  const closeBtn = document.getElementById("close-popup");
+  const popup = document.getElementById("popup");
+  const overlay = document.getElementById("popup-overlay");
+
+  // Abrir
+  openBtn.addEventListener("click", () => {
+      popup.classList.remove("hidden");
+      overlay.classList.remove("hidden");
+  });
+
+  // Fechar
+  closeBtn.addEventListener("click", () => {
+      popup.classList.add("hidden");
+      overlay.classList.add("hidden");
+  });
+
+  // Fechar clicando no fundo escuro
+  overlay.addEventListener("click", () => {
+      popup.classList.add("hidden");
+      overlay.classList.add("hidden");
+  });
+
+
+
+
+
+  const switchBtn = document.getElementById("switch");
+  const icon = switchBtn.querySelector("svg");
+
+  switchBtn.addEventListener("click", () => {
+      icon.classList.toggle("rotate-180");
+  });
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+            
+{% endblock %}

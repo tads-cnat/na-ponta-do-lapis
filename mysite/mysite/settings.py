@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'transacoes',
     'config',
     'grupo_familiar',
+    'categoria',
 ]
 
 MIDDLEWARE = [
