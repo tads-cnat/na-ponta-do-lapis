@@ -1,4 +1,5 @@
 from django.db import models
+"""
 from grupo_familiar.models import Familia
 
 # Create your models here.
@@ -39,4 +40,4 @@ class Usuario(models.Model):
     def tornar_usuario(self):
         self.papel = self.Papel.USUARIO
         self.save()
-
+"""

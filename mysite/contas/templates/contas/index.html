@@ -90,7 +90,7 @@
 
     <!-- Botões de ação em grid 2x2 -->
     <div class="grid grid-cols-2 gap-6 px-24">
-        <a href="#"
+        <a href="{% url 'contas:visualizar_conta' %}"
             class="btn btn-ghost border-2 border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600 font-medium h-28 text-xl transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -100,7 +100,7 @@
             </svg>
             Visualizar Conta
         </a>
-        <a href="#"
+        <a href="{% url 'contas:add_conta' %}"
             class="btn btn-ghost border-2 border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600 font-medium h-28 text-xl transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
@@ -109,7 +109,7 @@
             </svg>
             Adicionar Conta
         </a>
-        <a href="#"
+        <a href="{% url 'contas:editar_conta' %}"
             class="btn btn-ghost border-2 border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600 font-medium h-28 text-xl transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
                 <path
@@ -117,7 +117,7 @@
             </svg>
             Editar Conta
         </a>
-        <a href="#"
+        <a href="{% url 'contas:excluir_conta' %}"
             class="btn btn-ghost border-2 border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600 font-medium h-28 text-xl transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
