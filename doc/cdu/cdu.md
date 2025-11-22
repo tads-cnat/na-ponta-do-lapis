@@ -4,8 +4,8 @@
 
 | Data | Versão | Descrição | Autores |
 | :--: | :----: | :-------: | :-----: |
-| 22/10/2025 | 1.0 | Versão inicial |  Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
-| - | - | - |  - |
+| 22/10/2025 | 1.0 | Versão inicial | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
+| 21/11/2025 | 2.0 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
 
 ## 1. Diagrama de Casos de Uso
 
@@ -14,6 +14,7 @@
 ## 2. Listagem dos Detalhamentos dos Casos de Uso
 
 1. [CDU-01 - Login](./cdu-01/detalhamento-01.md) :white_check_mark:
+
 1. [CDU-02 - Logout](./cdu-02/detalhamento-02.md) :white_check_mark:
 1. [CDU-03 - Cadastro](./cdu-03/detalhamento-03.md) :white_check_mark:
 1. [CDU-04 - Recuperar Senha](./cdu-04/detalhamento-04.md) :white_check_mark:
