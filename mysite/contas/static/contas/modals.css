@@ -1,0 +1,74 @@
+/* Modal Styles */
+#addAccountModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 50;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+#addAccountModal.show {
+    display: flex;
+}
+
+/* Responsividade do Modal */
+@media (max-width: 768px) {
+    #addAccountModal .bg-gray-300 {
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+
+    #addAccountModal .grid {
+        grid-template-columns: 1fr;
+    }
+
+    #addAccountModal .flex.gap-4 {
+        flex-direction: column;
+    }
+
+    #addAccountModal .text-3xl {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    #addAccountModal .bg-gray-300 {
+        margin: 0.5rem;
+        padding: 1rem;
+    }
+
+    #addAccountModal h2 {
+        font-size: 1.25rem;
+    }
+
+    #addAccountModal .text-lg {
+        font-size: 1rem;
+    }
+
+    #addAccountModal input,
+    #addAccountModal button {
+        font-size: 1rem;
+    }
+}
+
+/* Animação de entrada */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+#addAccountModal.show .bg-gray-300 {
+    animation: slideIn 0.3s ease-out;
+}

@@ -3,6 +3,12 @@
 {% block page_title %}Contas Financeiras{% endblock %}
 {% block title %}Minhas Contas{% endblock %}
 
+{% block head %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'contas/modals.css' %}">
+<script src="{% static 'contas/modals.js' %}"></script>
+{% endblock %}
+
 {% block main %}
 <div class="w-full max-w-5xl mx-auto px-4">
     <!-- Carousel de contas -->
@@ -100,15 +106,16 @@
             </svg>
             Visualizar Conta
         </a>
-        <a href="{% url 'contas:add_conta' %}"
-            class="btn btn-ghost border-2 border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600 font-medium h-28 text-xl transition-all duration-200">
+        <button
+            class="btn btn-ghost border-2 border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600 font-medium h-28 text-xl transition-all duration-200 addAccountBtn"
+            type="button">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
                 <path fill-rule="evenodd"
                     d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
                     clip-rule="evenodd" />
             </svg>
             Adicionar Conta
-        </a>
+        </button>
         <a href="{% url 'contas:editar_conta' %}"
             class="btn btn-ghost border-2 border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600 font-medium h-28 text-xl transition-all duration-200">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
@@ -128,5 +135,72 @@
         </a>
     </div>
 </div>
+
+<!-- Modal de Adicionar Conta -->
+<div id="addAccountModal" class="hidden fixed inset-0 bg-black bg-opacity-50 justify-center items-center z-50"
+    style="display: none;">
+    <div class="bg-gray-300 rounded-lg shadow-2xl w-full max-w-2xl mx-4 p-8">
+        <!-- Cabeçalho do Modal -->
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-3xl font-bold text-black">Nova Conta</h2>
+            <button id="closeAddAccountModal" class="text-2xl text-black hover:text-gray-700">
+                ✕
+            </button>
+        </div>
+
+        <!-- Formulário -->
+        <form id="addAccountForm" class="space-y-6">
+            <!-- Nome e Saldo -->
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-lg font-semibold text-black mb-2">Nome da Conta</label>
+                    <input type="text" id="accountName" placeholder="Digite o nome da conta"
+                        class="w-full px-4 py-3 bg-white border-2 border-gray-400 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-lg font-semibold text-black mb-2">Saldo da Conta</label>
+                    <input type="text" id="accountBalance" placeholder="R$ 0,00"
+                        class="w-full px-4 py-3 bg-white border-2 border-gray-400 rounded-lg text-black placeholder-gray-500 focus:outline-none focus:border-blue-500">
+                </div>
+            </div>
+
+            <!-- Tipo de Conta -->
+            <div>
+                <label class="block text-lg font-semibold text-black mb-3">Selecione um tipo</label>
+                <div class="flex gap-4 justify-center">
+                    <button type="button"
+                        class="account-type-btn border-2 border-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all"
+                        data-type="CREDITO">
+                        CRÉDITO
+                    </button>
+                    <button type="button"
+                        class="account-type-btn border-2 border-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all"
+                        data-type="DEBITO">
+                        DÉBITO
+                    </button>
+                    <button type="button"
+                        class="account-type-btn border-2 border-gray-300 text-gray-800 px-6 py-3 rounded-lg font-semibold hover:bg-gray-200 transition-all"
+                        data-type="CREDITO_DEBITO">
+                        CRÉDITO E DÉBITO
+                    </button>
+                </div>
+                <input type="hidden" id="selectedAccountType" value="">
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="flex gap-4 justify-center mt-8">
+                <button type="button" id="cancelAddAccountBtn"
+                    class="flex items-center gap-2 px-6 py-3 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition-all">
+                    <span>✕</span> Cancelar
+                </button>
+                <button type="submit"
+                    class="flex items-center gap-2 px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-all">
+                    <span>✓</span> Salvar
+                </button>
+            </div>
+        </form>
+    </div>
 </div>
+
+<script src="{% static 'contas/modals.js' %}"></script>
 {% endblock %}
