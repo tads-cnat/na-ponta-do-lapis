@@ -1,5 +1,5 @@
 from django.db import models
-from transacoes.models import Transacao
+
 
 # Create your models here.
 class marcador(models.Model):

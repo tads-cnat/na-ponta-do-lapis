@@ -22,5 +22,6 @@ urlpatterns = [
     path('contas/', include('contas.urls')),
     path('transacoes/', include('transacoes.urls')),
     path('config/', include('config.urls')),
+    path('categoria/', include('categoria.urls')),
     path('familia/', include('grupo_familiar.urls')),
 ]
