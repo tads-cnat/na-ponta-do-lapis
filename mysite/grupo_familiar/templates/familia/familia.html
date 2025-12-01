@@ -12,7 +12,19 @@
         </div>
         <!-- Bloco 2 -->
         <div class="flex-1 p-4 rounded-lg mx-auto">
-            <img src="{% static 'familia/images/pai.png' %}" alt="" class="object-cover mx-auto">
+            <div class="grid grid-cols-1 place-items-center">
+                <div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="91" height="91" viewBox="0 0 91 91" fill="none">
+                        <path d="M45.241 45.241C53.5729 45.241 60.3214 38.4925 60.3214 30.1607C60.3214 21.8288 53.5729 15.0803 45.241 15.0803C36.9091 15.0803 30.1607 21.8288 30.1607 30.1607C30.1607 38.4925 36.9091 45.241 45.241 45.241ZM45.241 52.7812C35.1749 52.7812 15.0804 57.8331 15.0804 67.8615V75.4017H75.4017V67.8615C75.4017 57.8331 55.3072 52.7812 45.241 52.7812Z" fill="black"/>
+                    </svg>
+                </div>
+                <button class="text-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none">
+                        <path d="M8 1C4.1 1 1 4.1 1 8C1 11.9 4.1 15 8 15C11.9 15 15 11.9 15 8C15 4.1 11.9 1 8 1ZM8 14C4.7 14 2 11.3 2 8C2 4.7 4.7 2 8 2C11.3 2 14 4.7 14 8C14 11.3 11.3 14 8 14Z" fill="black"/>
+                        <path d="M10.7 11.5L8 8.8L5.3 11.5L4.5 10.7L7.2 8L4.5 5.3L5.3 4.5L8 7.2L10.7 4.5L11.5 5.3L8.8 8L11.5 10.7L10.7 11.5Z" fill="black"/>
+                    </svg>
+                </button>
+            </div>
             <div class="grid grid-cols-3 gap-4 place-items-center w-150 h-44 rounded-2xl bg-white mx-auto p-4 shadow-lg">
                 <img src="{% static 'familia/images/joao.png' %}" alt="" class="object-cover">
                 <img src="{% static 'familia/images/leticia.png' %}" alt="" class="object-cover">
