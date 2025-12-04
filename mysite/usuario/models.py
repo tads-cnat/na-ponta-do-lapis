@@ -6,7 +6,7 @@ from .UsuarioManagerCustom import UsuarioManagerCustom
 
 # Create your models here.
 
-class UsuarioCustom(AbstractUser):
+class Usuario(AbstractUser):
 
     class Papel(models.TextChoices):
         ADMIN = "admin", "Administrador"

@@ -1,5 +1,5 @@
 from django.db import models
-from usuario.models import UsuarioCustom as Usuario
+from usuario.models import Usuario
 # Create your models here.
 class Familia(models.Model):
     nome = models.CharField(max_length=100, blank=False, null=False)
