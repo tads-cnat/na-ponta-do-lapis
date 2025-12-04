@@ -10,6 +10,8 @@ class FamiliaServices:
         user = Usuario.objects.filter(email)
         if user:
             user.id_familia = id_familia
-
-
+            user.save()
+    def tornar_adminFamilia(user):
+        user.papel = Usuario.Papel.ADMIN_FAMILIA
+        user.save()
 
