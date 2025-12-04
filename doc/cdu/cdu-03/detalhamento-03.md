@@ -1,10 +1,10 @@
-# CDU 03. Cadastro
+# CDU 03. Cadastro Usuário
 
 - **Ator principal**: Visitante
 
 - **Atores secundários**: NT
 - **Resumo**: O caso de uso Cadastro de Usuário permite que uma nova pessoa crie uma conta no sistema. O processo começa quando o usuário preenche um formulário com suas informações básicas (nome, e-mail e senha). O sistema valida os dados, verifica se o e-mail é único e, se tudo estiver certo, cria a conta. Dependendo da política de segurança, o usuário pode precisar confirmar o e-mail antes de ativar o acesso. Depois disso, o sistema está pronto para autenticar o novo usuário no login.
-- **Pré-condição**: Usurio deve estar com acesso a internet e não deve ter conta criada com o mesmo email
+- **Pré-condição**:
 - **Pós-Condição**: Usuário consegue cria conta no sistema
 
 ## Fluxo Principal
