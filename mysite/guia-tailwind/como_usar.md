@@ -1,28 +1,35 @@
-### Coloque isso no seu arquivo HTML
+# Guia de uso do Tailwind CSS no Django com Daisy UI na IDE VS Code
+
+**Coloque isto no head do seu arquivo HTML:**
 
 ```html
  {% load static %}
 
     <link rel="stylesheet" href="{% static 'admin/css/tailwind_css/dist/output.css' %}">
 ```
-### com os dois terminais aberto execute ```npm run watch:css``` e no outro execute ```python manager.py runserver```  
-que em um terminal irá copilar o taiwind e no outro executar o servidor django
-#### 1.Como copilar as classes do tailwind 
+
+Com dois terminais abertos, execute ```python manager.py runserver``` para rodar a aplicação que deseja verificar a formatação da ferramenta e no outro execute ```npm run watch:css``` no diretório do projeto para que o framework faça efeito no seu código
+
+## Principal comando para compilar as classes do Tailwind
 
 ```bash
 npm run watch:css
 ```
 
-#### instalar essa extensão do vs code "Tailwind CSS IntelliSense!"
+Instalar esta extensão do VS Code para facilitar a modificação e manipulação de suas classes: "Tailwind CSS IntelliSense"
 
-### Caso estiver com duvidas
-[tailwind_css_for_django](https://www.youtube.com/watch?v=rx1PqrqLwZk)
+---
 
+Caso esteja com dúvidas, acesse este vídeo como guia de como instalá-lo e usá-lo:
 
-### Documentação de como instalar
-[Documentação oficial](https://tailwindcss.com/docs/installation/tailwind-cli)  
+[Tailwind CSS para Django com Daisy UI](https://www.youtube.com/watch?v=rx1PqrqLwZk)
 
+## Documentação Oficial do Framework
 
+[Tailwind CSS](https://tailwindcss.com/docs/installation/tailwind-cli)  
 
-# 
-By:Lucaasshq  
+## Autores deste documento
+
+- Criado por: Lucaasshq
+
+- Editado por: DuduPOG
