@@ -1,35 +1,25 @@
-# CDU 03. Cadastro de Usuário
+# CDU 03. Cadastro Usuário
 
 - **Ator principal**: Visitante
 
-- **Atores secundários**: ...	
-
+- **Atores secundários**: NT
 - **Resumo**: Permite que uma nova pessoa crie uma conta no sistema. O processo começa quando o usuário preenche um formulário com suas informações básicas (nome, e-mail e senha). O sistema valida os dados, verifica se o e-mail é único e, se tudo estiver certo, cria a conta.
-
-
-- **Pré-condição**: O usuário não deve estar autenticado no sistema.
-
-
-- **Pós-Condição**: 
-
+- **Pré-condição**:
+- **Pós-Condição**: Usuário consegue cria conta no sistema
 
 ## Fluxo Principal
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: | 
-| 1 - ... | |  
-| | 2 - ... | 
 
-## Fluxo Alternativo I - ...
 | Ações do ator | Ações do sistema |
-| :-----------------: |:-----------------: | 
-| 1.1 - ... | |  
-| | 1.2 - ... |
+| :-----------------: | :-----------------: |
+| 1 - Usuário preenche formulário de cadastro (nome completo, email e senha) | |
+| | 2 - Sistema valida as informações e, se tudo estiver correto, mostra feedback: "Conta criada com sucesso"|
 
-## Fluxo Alternativo II - ...
+## Fluxo Alternativo II - Email já em uso
+
 | Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: | 
-| 2.1 - ... | |  
-| | 2.2 - ... |  
+| :-----------------: | :-----------------: |
+| 1.3 - Usuário preenche formulário com e-mail já cadastrado | |
+| | 1.4 - Sistema retorna mensagem: "E-mail já existente"|
 
 > Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
 

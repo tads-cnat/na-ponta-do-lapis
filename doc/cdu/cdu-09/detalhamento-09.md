@@ -1,28 +1,32 @@
-# CDU 09. Nome... 
+# CDU 09. Nome...
 
 - **Ator principal**: ...
-- **Atores secundários**: ...	 
+
+- **Atores secundários**: ...
 - **Resumo**: ...
 - **Pré-condição**: ...
 - **Pós-Condição**: ...
 
 ## Fluxo Principal
+
 | Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: | 
-| 1 - ... | |  
-| | 2 - ... | 
+| :-----------------: | :-----------------: |
+| 1 - ... | |
+| | 2 - ... |
 
 ## Fluxo Alternativo I - ...
+
 | Ações do ator | Ações do sistema |
-| :-----------------: |:-----------------: | 
-| 1.1 - ... | |  
+| :-----------------: |:-----------------: |
+| 1.1 - ... | |
 | | 1.2 - ... |
 
 ## Fluxo Alternativo II - ...
+
 | Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: | 
-| 2.1 - ... | |  
-| | 2.2 - ... |  
+| :-----------------: | :-----------------: |
+| 2.1 - ... | |
+| | 2.2 - ... |
 
 > Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
 

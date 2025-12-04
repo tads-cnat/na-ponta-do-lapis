@@ -1,6 +1,8 @@
 from django.urls import path
-from config.views  import config
+from config import views
+
+app_name = 'config'
 
 urlpatterns = [
-    path("", config, name="configuracao"),
+    path("", views.config, name="config"),
 ]

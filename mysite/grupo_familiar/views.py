@@ -1,5 +1,5 @@
 from django.shortcuts import render
 
 # Create your views here.
-def index(request):
-    return render(request, 'familia.html')
+def familia(request):
+    return render(request, 'familia/familia.html')

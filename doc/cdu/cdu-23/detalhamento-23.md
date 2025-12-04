@@ -1,28 +1,29 @@
-# CDU 23. Nome... 
+# CDU 23. Tornar Administrador da Família
 
-- **Ator principal**: ...
-- **Atores secundários**: ...	 
-- **Resumo**: ...
-- **Pré-condição**: ...
-- **Pós-Condição**: ...
+- **Ator principal**: Administrador da Família
+
+- **Atores secundários**: Usuário
+- **Resumo**: O Administrador acessa a aba de "Membros" e seleciona um dos membros de sua família. Vendo suas informações detalhadas e históricos, ele clica na opção de "Tornar Administrador da Família" e a operação é efetuada. Caso o membro selecionado já seja um administrador da família, a opção estará desabilitada.
+- **Pré-condição**: Administrador da Família devidamente autenticado
+- **Pós-Condição**: O Usuário envolvido se torna um Administrador da Família
 
 ## Fluxo Principal
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: | 
-| 1 - ... | |  
-| | 2 - ... | 
 
-## Fluxo Alternativo I - ...
 | Ações do ator | Ações do sistema |
-| :-----------------: |:-----------------: | 
-| 1.1 - ... | |  
-| | 1.2 - ... |
+| :-----------------: | :-----------------: |
+| 1 - O Administrador da Família acessa a aba de "Membros" | |
+| | 2 - O sistema mostra os usuários ligados à família (membros) |
+| 3 - Administrador da Família seleciona um dos membros | |
+| | 4 - O sistema mostra uma visão detalhada do membro, incluindo seu histórico de transações e uma opção chamada "Tornar Administrador da Família" |
+| 5 - O Administrador da Família seleciona a opção e confirma sua ação | |
+| | 6 - O sistema faz a operação e envia uma mensagem: "O (Usuário selecionado) agora é um Administrador da Família" |
 
-## Fluxo Alternativo II - ...
+## Fluxo Alternativo I - O Usuário já é um Administrador da Família
+
 | Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: | 
-| 2.1 - ... | |  
-| | 2.2 - ... |  
+| :-----------------: | :-----------------: |
+| | 6.1 - Enquanto o Administrador da Família tenta selecionar a opção "Tornar Administrador da Família", O sistema mostra uma mensagem: "A operação não pode ser feita pois este membro já é um Administrador da Família", sua inviabilidade é evidenciada pela cor da fonte estar menos opaca |
+| | (O sistema permanece na ação 4 do fluxo principal) |
 
 > Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
 
