@@ -22,24 +22,34 @@
                 <h2 class="text-4xl text-white font-semibold mt-4">Cadastre-se</h2>
                 <p class="text-sm text-text-cinza-p1">Crie sua conta e venha ser NPL</p>
 
-                <form action="" class=" mt-3 flex flex-col gap-3">
-                     <input type="email" name="email" placeholder="email@gmail.com" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1" required>
+                <form action="{% url 'cadastro' %}" method="POST" class=" mt-3 flex flex-col gap-3" >
+                    {% csrf_token %}
+                     <input type="email" name="email" placeholder="email@gmail.com" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1 text-white" required>
                      <div class="validator-hint hidden">Entre com email validor tipo: email@gmail.com </div>
-                      <input type="text"  pattern="[A-Za-zÀ-ú\s]+" name="nome" placeholder="Nome Completo" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1" minlength="8" required>
+                      <input type="text"  pattern="[A-Za-zÀ-ú\s]+" name="nome" placeholder="Nome Completo" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1 text-white" minlength="8" required>
                             <p class="validator-hint hidden">
                         Apenas letras e espaços são permitidos no nome.
                     </p>
-                      <input type="password" name="senha" placeholder="Senha" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1"   minlength="8" required>
+                      <input type="password" name="senha" placeholder="Senha" class="input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1 text-white"   minlength="8" required>
                           <p class="validator-hint hidden">
                         A senha deve ter mais de 8 caracteres, incluindo número e letra minuscula e maiuscúla
                     </p>
-                      <input type="password" name="confirma_senha" placeholder="Confime a senha" class=" input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1" minlength="8" required>
+                      <input type="password" name="confirma_senha" placeholder="Confime a senha" class=" input validator input-neutral rounded-2xl p-2 mt-1 bg-bg-preto-p1 text-white" minlength="8" required>
                        <p class="validator-hint hidden">
                         A senha deve ter mais de 8 caracteres, incluindo número e letra minuscula e maiuscúla
                     </p>
-                      <button type="submit" class="btn bg-bg-azul-p1 rounded-2xl flex my-5">Cadastre-se</button>
+                    {% if messages %}
+                        <div>
+                            {% for message in messages %}
+                            <p class="text-red-500 text-sm">
+                                {{ message }}
+                            </p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                      <button type="submit" class="btn bg-bg-azul-p1  text-white rounded-2xl flex my-5">Cadastre-se</button>
 
-                      <a href="{% url 'login' %}" class="text-xs font-semibold">Já tenho <span class="text-text-azul-p1 ">conta</span></a>
+                      <a href="{% url 'login' %}" class="text-xs font-semibold  text-white">Já tenho <span class="text-text-azul-p1 ">conta</span></a>
                 </form>
             </div>
             
