@@ -5,7 +5,7 @@ from grupo_familiar.models import Familia
 
 # Create your models here.
 
-class UsuarioCustom(AbstractUser):
+class Usuario(AbstractUser):
 
     class Papel(models.TextChoices):
         ADMIN = "admin", "Administrador"

@@ -16,7 +16,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-AUTH_USER_MODEL = 'usuario.UsuarioCustom'
+AUTH_USER_MODEL = 'usuario.Usuario'
 
 
 # Quick-start development settings - unsuitable for production
