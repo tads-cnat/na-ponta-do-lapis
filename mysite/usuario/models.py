@@ -1,8 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .UsuarioManagerCustom import UsuarioManagerCustom
-
-#from grupo_familiar.models import Familia
+from grupo_familiar.models import Familia
 
 # Create your models here.
 
@@ -18,7 +17,7 @@ class UsuarioCustom(AbstractUser):
     email = models.EmailField(unique=True, null=False, blank=False, verbose_name="Email")
     foto_perfil = models.ImageField(upload_to="fotos_perfil/", null=True, blank=True, verbose_name="Foto de Perfil")
     papel = models.CharField(max_length=50, choices=Papel.choices, default=Papel.USUARIO, null=False, blank=False, verbose_name="Papel do Usuário")
-    id_familia = models.ForeignKey('grupo_familiar.Familia', null=True, on_delete=models.SET_NULL, related_name="usuarios", verbose_name="Família")
+    id_familia = models.ForeignKey(Familia, null=True, on_delete=models.SET_NULL, related_name="usuarios", verbose_name="Família")
 
     REQUIRED_FIELDS = ['nome_completo']
     EMAIL_FIELD = 'email'
