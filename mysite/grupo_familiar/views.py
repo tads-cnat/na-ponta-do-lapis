@@ -14,9 +14,9 @@ def familia(request):
 @login_required
 def criarfamilia(request):
     nome = request.POST.get('nome')
-    FamiliaServices.adicionarfamilia(nome)
+    familia = FamiliaServices.adicionarfamilia(nome)
     user = request.user
-    user.tornar_adminFamilia()
+    FamiliaServices.tornar_adminFamilia(user, familia.id)
     return render(request, 'familia/familia_inicio.html', {'familia' : True, 'nome' : nome})
 
 @login_required
