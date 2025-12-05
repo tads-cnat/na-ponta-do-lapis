@@ -1,16 +1,7 @@
 from django.db import models
-<<<<<<< HEAD
-<<<<<<< HEAD
-"""
-from grupo_familiar.models import Familia
-=======
-#from grupo_familiar.models import Familia
->>>>>>> origin
-=======
 from django.contrib.auth.models import AbstractUser
 from .UsuarioManagerCustom import UsuarioManagerCustom
 from grupo_familiar.models import Familia
->>>>>>> origin
 
 # Create your models here.
 
@@ -61,4 +52,3 @@ class Usuario(AbstractUser):
     def tornar_usuario(self):
         self.papel = self.Papel.USUARIO
         self.save()
-"""
