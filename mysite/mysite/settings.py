@@ -132,6 +132,14 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+# Authentication redirects
+# URL (path) where `login_required` redirects when user is not authenticated.
+# Our login view is registered at the project root with name 'login', so
+# using '/' ensures the redirect goes to the correct view.
+LOGIN_URL = '/'
+# Optional: where to redirect after a successful login when not using `next=`.
+LOGIN_REDIRECT_URL = '/transacoes/'
+
 # default static files settings for PythonAnywhere.
 # see https://help.pythonanywhere.com/pages/DjangoStaticFiles for more info
 MEDIA_ROOT = '/home/pdsweb/mysite/media'
