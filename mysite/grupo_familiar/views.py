@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from .services import FamiliaServices
 from .models import Familia
-from .models import Usuario
+from usuario import models
+from usuario.models import Usuario
 from django.contrib.auth.decorators import login_required, user_passes_test
 
 # Create your views here.

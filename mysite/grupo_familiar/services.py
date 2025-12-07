@@ -1,5 +1,6 @@
 from .models import Familia
-from .models import Usuario
+from usuario import models
+from usuario.models import Usuario
 
 class FamiliaServices:
     @staticmethod
