@@ -4,11 +4,11 @@ class Familia(models.Model):
 
     @property
     def membros(self):
-        return UsuarioCustom.objects.filter(id_familia=self).exclude(papel='adminFamilia')
+        return Usuario.objects.filter(id_familia=self).exclude(papel='adminFamilia')
     
     @property
     def chefes(self):
-        return UsuarioCustom.objects.filter(id_familia=self, papel='adminFamilia')
+        return Usuario.objects.filter(id_familia=self, papel='adminFamilia')
 
     def __str__(self):
         return f"{self.nome}"
