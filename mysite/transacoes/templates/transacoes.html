@@ -95,14 +95,81 @@
                     <form method="dialog">
                         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     </form>
-                    <h3 class="text-lg font-bold">Cadastro de Transação</h3>
-                    <form action="#" class="mt-3">
-                        <div class="form-control w-full">
-                            <label class="label">
-                                <span class="label-text">Descrição</span>
+                    <h3 class="text-xl font-bold mb-7">Cadastro de Transação</h3>
+                    <form action="{% url 'adicionar_transacao' %}" method="POST" class="mt-3">
+                        {% csrf_token %}
+                        <div class="form-control w-full mt-3">
+                            <label class="input w-full">
+                                <span class="label">Descrição</span>
+                                <input type="text" name="descricao" placeholder="Descrição da transação" />
                             </label>
-                            <input type="text" placeholder="Descrição da transação" class="input input-bordered w-full" />
                         </div>
+                        <div class="form-control w-full mt-3">
+                            <label class="input w-full">
+                                <span class="label">Valor</span>
+                                <input type="number" name="valor" placeholder="Valor da transação" />
+                            </label>
+                        </div>
+                        <div class="form-control w-full mt-3">
+                            <label class="select w-full">
+                                <span class="label">Categoria</span>
+                                <select name="categoria">
+                                    {% for valor, label in categorias %}
+                                        <option value="{{ valor }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                 
+                        </div>
+                        <div class="form-control w-full mt-3">
+                            <label class="select w-full">
+                                <span class="label">Estado</span>
+                                <select name="estado">
+                                      {% for valor, label in estados %}
+                                        <option value="{{ valor }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                        <div class="form-control w-full mt-3">
+                            <label class="select w-full">
+                                <span class="label">Tipo</span>
+                                <select name="tipo">
+                                       {% for valor, label in tipos %}
+                                        <option value="{{ valor }}">{{ label }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                        </div>
+                        <div class="form-control w-full mt-3">
+                            <label class="input w-full">
+                                <span class="label">Data</span>
+                                <input type="datetime-local" name="data_hora" placeholder="Tipo da transação"  />
+                            </label>
+                        </div>
+                        <div class="form-control w-full mt-3">
+                            <label class="select w-full">
+                                <span class="label">Conta Financeira</span>
+                                <select name="conta_financeira">
+                                    {% for conta in contas %}
+                                        <option value="{{ conta.id }}">{{ conta.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                            
+                        </div>
+                        <div class="form-control w-full mt-3">
+                            <label class="select w-full">
+                                <span class="label">Marcadores</span>
+                                <select name="marcadores">
+                                      {% for marcador in marcadores %}
+                                        <option value="{{ marcador.id }}">{{ marcador.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </label>
+                            
+                        </div>
+                        <input  type="submit" class="btn mt-6" value="Adicionar Transação">
                     </form>
                 </div>
             </dialog>

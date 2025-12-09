@@ -28,9 +28,9 @@ class Transacao(models.Model):
     categoria = models.CharField(max_length=50, choices=Categoria, default=Categoria.OUTROS, null=False, blank=False, verbose_name="Categoria")
     estado = models.CharField(max_length=50, choices=EstadoTransacao, default=EstadoTransacao.REALIZADA, null=False, blank=False, verbose_name="Estado da Transação")
     tipo = models.CharField(max_length=50, choices=TipoTransacao, default=TipoTransacao.DESPESA, null=False, blank=False, verbose_name="Tipo da Transação")
-    data = models.DateField(null=False, blank=False, verbose_name="Data")
-    id_conta_financeira = models.ForeignKey('contas.ContaFinanceira', null=False, on_delete=models.CASCADE, related_name="transacoes", verbose_name="Conta Financeira")
-    id_marcadores = models.ManyToManyField('categoria.Marcador', blank=True, related_name="transacoes", verbose_name="Marcadores")
+    data_hora = models.DateTimeField(null=False, blank=False, verbose_name="Data")
+    conta_financeira = models.ForeignKey('contas.ContaFinanceira', null=False, on_delete=models.CASCADE, related_name="transacoes", verbose_name="Conta Financeira")
+    marcadores = models.ManyToManyField('categoria.Marcador', blank=True, related_name="transacoes", verbose_name="Marcadores")
 
     #=== Métodos do modelo Transacao ===#
     def __str__(self):

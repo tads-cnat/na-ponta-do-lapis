@@ -30,8 +30,10 @@ class ContaFinanceira(Model):
         if not self.saldo:
             erros['saldo'] = 'O saldo da conta é obrigatório.'
         
-        if self.tipo not in self.tipo.choices:
-            erros['tipo'] = 'O tipo da conta deve ser Crédito, Crédito e Débito ou Débito'
+        #=== NOTA - Com essa validação nao esta sendo possivel criar uma conta pelo django admin, é necessario uma correção ===#
+        # if self.tipo not in self.tipo.choices:           
+        #     erros['tipo'] = 'O tipo da conta deve ser Crédito, Crédito e Débito ou Débito'
+        #============================================================
         
         if not self.tipo:
             erros['tipo'] = 'O tipo da conta é obrigatório.'
