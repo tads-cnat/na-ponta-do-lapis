@@ -13,6 +13,7 @@ def transacoes_index(request):
         'marcadores':Marcador.objects.all,
         'minhas_transacoes':ts.obter_minhas_transacoes
     }
+
     return render(request, "transacoes.html", context=context)
 
 def adicionar_transacao_view(request):
@@ -38,14 +39,18 @@ def adicionar_transacao_view(request):
     )
     return redirect(transacoes_index)
 
-def filtrar_transacao(request, categoria):
-    
+def filtrar_transacao(request):
+    filtro_categoria = request.GET.get("categoria")
+    filtro_tipo = request.GET.get("tipo")
+    filtro_conta = request.GET.get("conta")
+
+    filtro = ts.filtrar_transacao(filtro_categoria, filtro_tipo, filtro_conta)
     context = {
         'categorias':ts.obter_categorias,
         'estados':ts.obter_estados,
         'tipos':ts.obter_tipos,
         'contas': ContaFinanceira.objects.all,
         'marcadores':Marcador.objects.all,
-        'minhas_transacoes':ts.obter_transacoes_categoria(categoria)
+        'minhas_transacoes': filtro
     }
     return render(request, "transacoes.html", context=context)

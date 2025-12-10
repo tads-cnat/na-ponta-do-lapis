@@ -27,6 +27,18 @@ class TransacaoService:
             raise Exception(f"erro: {erro}") 
         
     @staticmethod
+    def filtrar_transacao( categoria,tipo, conta):
+        transacoes = TransacaoService.obter_minhas_transacoes()
+        if categoria:
+            transacoes = transacoes.filter(categoria=categoria)
+        if tipo:
+            transacoes = transacoes.filter(tipo=tipo)
+        if conta:
+            transacoes = transacoes.filter(conta_financeira=conta)
+
+        return transacoes
+        
+    @staticmethod
     def obter_minhas_transacoes():
         return Transacao.objects.all()
     
