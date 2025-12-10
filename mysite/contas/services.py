@@ -24,7 +24,14 @@ class ContaService:
 
     @staticmethod
     def VisualizarContaService(conta_id):
-        pass
+        conta = ContaService.obter_conta_por_id(conta_id)
+        
+        if conta == None:
+            return conta
+        
+        transacoes = Transacao.objects.filter(conta_financeira=conta).order_by('-data_hora')
+        return transacoes
+
 
     @staticmethod
     def AddContaService(nome, saldo, tipo, usuario=None):
