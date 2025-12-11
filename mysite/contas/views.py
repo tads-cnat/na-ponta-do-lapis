@@ -6,12 +6,12 @@ from .services import ContaService
 
 # Create your views here.
 
-@login_required(login_url='usuario:login')
+#@login_required(login_url='usuario:login')
 def index(request):
     """
     View principal que exibe as contas do usuário logado.
     Redireciona para login se o usuário não estiver autenticado.
-    """
+    
     print(f"DEBUG: Acessando index - Usuário autenticado: {request.user.is_authenticated}")
     print(f"DEBUG: Usuário: {request.user}")
     print(f"DEBUG: ID do usuário: {request.user.id if request.user.is_authenticated else 'Não autenticado'}")
@@ -32,13 +32,15 @@ def index(request):
             'tres_ou_mais': quantidade_contas >= 3,
         }
         
-        return render(request, 'contas/index.html', contexto)
+        
     except Exception as e:
         print(f"DEBUG: Erro ao carregar contas: {str(e)}")
         messages.error(request, f'Erro ao carregar contas: {str(e)}')
         return redirect('usuario:login')
+    """
+    return render(request, 'contas/index.html', contexto)
 
-@login_required(login_url='usuario:login')
+#@login_required(login_url='usuario:login')
 def visualizar_conta(request, conta_id):
     """
     View para visualizar uma conta específica.
@@ -72,7 +74,7 @@ def visualizar_conta(request, conta_id):
         return redirect('contas:index')
 
 
-@login_required(login_url='usuario:login')
+#@login_required(login_url='usuario:login')
 def add_conta(request):
     """
     View para adicionar uma nova conta financeira.
@@ -100,7 +102,7 @@ def add_conta(request):
         messages.error(request, f'Erro ao criar conta: {str(e)}')
         return redirect('contas:index')
 
-@login_required(login_url='usuario:login')
+#@login_required(login_url='usuario:login')
 def editar_conta(request, conta_id):
     """
     View para editar uma conta específica.

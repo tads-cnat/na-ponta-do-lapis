@@ -198,7 +198,6 @@
         </div>
     </div>
 </div>
-{% endwith %}
 </div>
 </div>
 
@@ -228,8 +227,7 @@
     <!-- Botão Visualizar -->
     <button
         class="btn border-2 h-28 text-xl font-medium transition-all duration-200 viewAccountBtn {% if tem_contas %}btn-ghost border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600{% else %}btn-disabled opacity-50 border-gray-300 text-gray-400{% endif %}"
-        type="button" {% if tem_contas
-        %}data-conta-id="{% if uma_conta %}{{ contas.0.id }}{% elif duas_contas %}{{ contas.0.id }}{% elif tres_ou_mais %}{{ contas.0.id }}{% endif %}"
+        type="button" {% if tem_contas %} data-conta-id="{% if uma_conta %}{{ contas.0.id }}{% elif duas_contas %}{{ contas.0.id }}{% elif tres_ou_mais %}{{ contas.0.id }}{% endif %}"
         {% endif %} {% if not tem_contas %}disabled{% endif %}>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
@@ -255,8 +253,7 @@
     <!-- Botão Editar -->
     <button
         class="btn border-2 h-28 text-xl font-medium transition-all duration-200 editAccountBtn {% if tem_contas %}btn-ghost border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600{% else %}btn-disabled opacity-50 border-gray-300 text-gray-400{% endif %}"
-        type="button" {% if tem_contas
-        %}data-conta-id="{% if uma_conta %}{{ contas.0.id }}{% elif duas_contas %}{{ contas.0.id }}{% elif tres_ou_mais %}{{ contas.0.id }}{% endif %}"
+        type="button" {% if tem_contas %} data-conta-id="{% if uma_conta %}{{ contas.0.id }}{% elif duas_contas %}{{ contas.0.id }}{% elif tres_ou_mais %}{{ contas.0.id }}{% endif %}"
         {% endif %} {% if not tem_contas %}disabled{% endif %}>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -268,8 +265,7 @@
     <!-- Botão Excluir -->
     <button
         class="btn border-2 h-28 text-xl font-medium transition-all duration-200 deleteAccountBtn {% if tem_contas %}btn-ghost border-gray-600 hover:border-black hover:bg-white hover:text-black text-gray-600{% else %}btn-disabled opacity-50 border-gray-300 text-gray-400{% endif %}"
-        type="button" {% if tem_contas
-        %}data-conta-id="{% if uma_conta %}{{ contas.0.id }}{% elif duas_contas %}{{ contas.0.id }}{% elif tres_ou_mais %}{{ contas.0.id }}{% endif %}"
+        type="button" {% if tem_contas %} data-conta-id="{% if uma_conta %}{{ contas.0.id }}{% elif duas_contas %}{{ contas.0.id }}{% elif tres_ou_mais %}{{ contas.0.id }}{% endif %}"
         {% endif %} {% if not tem_contas %}disabled{% endif %}>
         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 mr-3" viewBox="0 0 20 20" fill="currentColor">
             <path fill-rule="evenodd"
