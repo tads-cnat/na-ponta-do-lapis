@@ -1,39 +1,41 @@
-# CDU 11. Nome...
+# CDU 16. Manter Marcador (Temporário)
 
-- **Ator principal**: ...
-
-- **Atores secundários**: ...
-- **Resumo**: ...
-- **Pré-condição**: ...
-- **Pós-Condição**: ...
+- **Ator principal**: Visitante
+- **Atores secundários**: Não tem
+- **Resumo**: O visitante pode criar marcador, remover e atualizar para separar em grupos os seus gastos, porém nenhuma das ações refletirá na DB, somente na sessão do usuario anônimo de forma temporária.
+- **Pré-condição**: N/A
+- **Pós-Condição**: N/A
 
 ## Fluxo Principal
 
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
-| 1 - ... | |
-| | 2 - ... |
+| 1 - O visitante tenta cria uma nova marcador. | |
+| | 2 - O sistema valida se não exite outra marcador com o mesmo nome. |
+| | 3 - Após a validação uma nova marcador é criada. |
 
-## Fluxo Alternativo I - ...
-
-| Ações do ator | Ações do sistema |
-| :-----------------: |:-----------------: |
-| 1.1 - ... | |  
-| | 1.2 - ... |
-
-## Fluxo Alternativo II - ...
+## Fluxo de Excessão
 
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
-| 2.1 - ... | |  
-| | 2.2 - ... |  
+| | 2.1 - Caso haja uma marcador com o nome informado ela é rejeitada. |
+| | 3.1 - Um alerta aparece para o visitante informar um novo nome. |
+| | 4.1 - Retorna ao passo 2. |
 
-> Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
+## Fluxo Alternativo I - Editar
 
-## Diagrama de Interação (Sequência ou Comunicação)
+| Ações do ator | Ações do sistema |
+| :-----------------: |:-----------------: |
+| 3.1 - O visitante tenta editar uma marcador existente. | |
+| | 4.1 - O sistema valida o novo nome da marcador. |
+| | 5.1 - A marcador é atualizada. |
 
-> Substituir pela imagem correspondente...
+## Fluxo Alternativo II - Remover
 
-## Diagrama de Classes de Projeto
+| Ações do ator | Ações do sistema |
+| :-----------------: | :-----------------: |
+| 3.2 - O visitante inicia a exlusão de uma marcador. | |
+| | 4.2 - O sistema verifica se a marcador esta vazia. |
+| | 5.2 - Se estiver vazia é apagada imediatamente. |
+| | 6.2 - Caso não esteja o sistema remove em cascata os dados daquela marcador. |
 
-> Substituir pela imagem contendo as classes (modelo, visão e templates) que implementam o respectivo CDU...
