@@ -1,39 +1,9 @@
-# CDU 06. Nome...
+# CDU 06. Visualizar Relatorio Pessoal
 
-- **Ator principal**: ...
+- **Ator principal**: Usuario e Visitante
 
-- **Atores secundários**: ...
-- **Resumo**: ...
-- **Pré-condição**: ...
-- **Pós-Condição**: ...
+- **Atores secundários**: N/A
+- **Resumo**: Ao iniciar a funcionalidade no menu lateral o sistema deverá apresentar um gráfico detalhado sobre os filtros: "Despesa por Categoria", "Receita por Categoria", "Despesa por Conta" e "Receita por Conta", podendo ser alternado entre gráficos de barra, pizza, e linhas, clickando em alguma area do gráfico podera ser redirecionado para a pagina de transacoes ja com filtros pre definidos pelos gráficos.
+- **Pré-condição**: O Ator deverá ter cadastrado alguma transação referente ao filtro indicado para que o gráfico seja gerado.
+- **Pós-Condição**: N/A
 
-## Fluxo Principal
-
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: |
-| 1 - ... | |
-| | 2 - ... |
-
-## Fluxo Alternativo I - ...
-
-| Ações do ator | Ações do sistema |
-| :-----------------: |:-----------------: |
-| 1.1 - ... | |
-| | 1.2 - ... |
-
-## Fluxo Alternativo II - ...
-
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: |
-| 2.1 - ... | |
-| | 2.2 - ... |
-
-> Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
-
-## Diagrama de Interação (Sequência ou Comunicação)
-
-> Substituir pela imagem correspondente...
-
-## Diagrama de Classes de Projeto
-
-> Substituir pela imagem contendo as classes (modelo, visão e templates) que implementam o respectivo CDU...
