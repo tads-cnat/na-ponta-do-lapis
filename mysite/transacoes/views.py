@@ -1,17 +1,19 @@
 from django.shortcuts import render, redirect
-from .services import TransacaoService as TS
+from .services import TransacaoService as ts
 from contas.models import ContaFinanceira
 from categoria.models import Marcador
 
 # Create your views here.
 def transacoes_index(request):
     context = {
-        'categorias':TS.obter_categorias,
-        'estados':TS.obter_estados,
-        'tipos':TS.obter_tipos,
+        'categorias':ts.obter_categorias,
+        'estados':ts.obter_estados,
+        'tipos':ts.obter_tipos,
         'contas': ContaFinanceira.objects.all,
         'marcadores':Marcador.objects.all,
+        'minhas_transacoes':ts.obter_minhas_transacoes
     }
+
     return render(request, "transacoes.html", context=context)
 
 def adicionar_transacao_view(request):
@@ -24,7 +26,7 @@ def adicionar_transacao_view(request):
     conta_financeira =  request.POST.get('conta_financeira')
     marcadores = request.POST.get('marcadores')
 
-    TS.adicionar_transacao(
+    ts.adicionar_transacao(
         descricao = descricao,
         valor= valor,
         categoria= categoria,
@@ -36,3 +38,26 @@ def adicionar_transacao_view(request):
 
     )
     return redirect(transacoes_index)
+
+def excluir_transacao(request, id):
+    ts.excluir_transacao(id)
+    return redirect(transacoes_index)
+
+def filtrar_transacao(request):
+    filtro_categoria = request.GET.get("categoria")
+    filtro_tipo = request.GET.get("tipo")
+    filtro_conta = request.GET.get("conta")
+
+    if not (filtro_categoria or filtro_tipo or filtro_conta):
+         return redirect(transacoes_index)
+
+    filtro = ts.filtrar_transacao(filtro_categoria, filtro_tipo, filtro_conta)
+    context = {
+        'categorias':ts.obter_categorias,
+        'estados':ts.obter_estados,
+        'tipos':ts.obter_tipos,
+        'contas': ContaFinanceira.objects.all,
+        'marcadores':Marcador.objects.all,
+        'minhas_transacoes': filtro
+    }
+    return render(request, "transacoes.html", context=context)

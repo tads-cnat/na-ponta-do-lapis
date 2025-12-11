@@ -27,6 +27,33 @@ class TransacaoService:
             raise Exception(f"erro: {erro}") 
     
     @staticmethod
+    def excluir_transacao(id_transacao):
+        try:
+            Transacao.objects.get(id=id_transacao).delete()
+        except Exception as e:
+            raise Exception("{e}")
+        
+    @staticmethod
+    def filtrar_transacao( categoria,tipo, conta):
+        transacoes = TransacaoService.obter_minhas_transacoes()
+        if categoria:
+            transacoes = transacoes.filter(categoria=categoria)
+        if tipo:
+            transacoes = transacoes.filter(tipo=tipo)
+        if conta:
+            transacoes = transacoes.filter(conta_financeira=conta)
+
+        return transacoes
+        
+    @staticmethod
+    def obter_minhas_transacoes():
+        return Transacao.objects.all()
+    
+    @staticmethod
+    def obter_transacoes_categoria(categoria):
+        return Transacao.objects.filter(categoria=categoria)
+    
+    @staticmethod
     def obter_categorias():
         return Transacao.Categoria.choices
     
@@ -37,3 +64,4 @@ class TransacaoService:
     @staticmethod
     def obter_tipos():
         return Transacao.TipoTransacao.choices
+    
