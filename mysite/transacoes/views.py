@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from mysite.decorators import papel_requerido
 from .services import TransacaoService as ts
 from contas.models import ContaFinanceira
 from categoria.models import Marcador
 
 # Create your views here.
 @login_required
+@papel_requerido('admin','usuario')
 def transacoes_index(request):
     context = {
         'categorias':ts.obter_categorias,
