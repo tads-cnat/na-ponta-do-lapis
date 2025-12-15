@@ -15,15 +15,15 @@ class Transacao(models.Model):
         OUTROS = "outros", "Outros"
 
     class EstadoTransacao(models.TextChoices):
-        PENDENTE = "pendente", "Pendente"
         REALIZADA = "realizada", "Realizada"
+        PENDENTE = "pendente", "Pendente"
 
     class TipoTransacao(models.TextChoices):
         RECEITA = "receita", "Receita"
         DESPESA = "despesa", "Despesa"
 
     #=== Campos do modelo Transacao ===#
-    descricao = models.CharField(max_length=255, null=False, blank=False, verbose_name="Descrição")
+    descricao = models.CharField(max_length=50, null=False, blank=False, verbose_name="Descrição")
     valor = models.DecimalField(max_digits=12, decimal_places=2, null=False, blank=False, verbose_name="Valor")
     categoria = models.CharField(max_length=50, choices=Categoria, default=Categoria.OUTROS, null=False, blank=False, verbose_name="Categoria")
     estado = models.CharField(max_length=50, choices=EstadoTransacao, default=EstadoTransacao.REALIZADA, null=False, blank=False, verbose_name="Estado da Transação")
@@ -35,3 +35,7 @@ class Transacao(models.Model):
     #=== Métodos do modelo Transacao ===#
     def __str__(self):
         return f"{self.descricao} - {self.valor} ({self.get_tipo_display()})"
+    
+    @property
+    def get_valor_display(self):
+        return f'{self.valor}'.replace('.',',')
