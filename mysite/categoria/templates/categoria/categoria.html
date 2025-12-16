@@ -125,9 +125,7 @@
             </div>
 
             <div class="text-right">
-                <button class="bg-green-200 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold leading-none">
-                    +
-                </button>
+                <button id="abrirPopup" class="btn rounded-full">+</button>
             </div>
         </div>
 
@@ -450,18 +448,35 @@
     </div>
 
     <label class="font-semibold">Nome</label>
-    <input type="text" class="input input-bordered w-full mb-4" placeholder="Adicione seu marcador aqui">
+    <input id="nome-marcador" type="text" class="input input-bordered w-full mb-4" placeholder="Adicione seu marcador aqui">
 
     <label class="font-semibold">Cor</label>
-    <input type="color" class="ml-2">
+    <input id="cor-marcador" type="color" class="ml-2">
 
-    <button class="btn btn-primary mt-4 float-right">Salvar</button>
+    <button id="salvar-marcador" class="btn btn-primary mt-4 float-right">Salvar</button>
 </div>
 
+{% csrf_token %}
 
 
 
 
+
+<div id="popupVincular" class="modal hidden">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Vincular Marcador</h3>
+
+    <label class="label">Escolha um marcador:</label>
+    <select id="selectMarcador" class="select select-bordered w-full mt-1">
+        <option>Carregando...</option>
+    </select>
+
+    <div class="modal-action">
+      <button id="btnVincular" class="btn btn-primary">Vincular</button>
+      <button id="fecharPopup" class="btn">Fechar</button>
+    </div>
+  </div>
+</div>
 
 
 
@@ -471,6 +486,81 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
+
+
+document.getElementById("abrirPopup").addEventListener("click", async () => {
+
+    const modal = document.getElementById("popupVincular");
+    modal.classList.remove("hidden");
+    modal.classList.add("modal-open");
+
+    // Buscar marcadores
+    const response = await fetch("{% url 'categoria:listar_marcadores' %}");
+    const marcadores = await response.json();
+
+    const select = document.getElementById("selectMarcador");
+    select.innerHTML = ""; // limpa
+
+    marcadores.forEach(m => {
+    const opt = document.createElement("option");
+    opt.value = m.id;
+    opt.textContent = m.nome;
+    opt.dataset.cor = m.cor;   // ← SALVA A COR AQUI
+    select.appendChild(opt);
+    });
+});
+
+
+
+document.getElementById("fecharPopup").addEventListener("click", () => {
+    const modal = document.getElementById("popupVincular");
+    modal.classList.add("hidden");
+    modal.classList.remove("modal-open");
+});
+
+
+
+
+document.getElementById("btnVincular").addEventListener("click", () => {
+
+    const select = document.getElementById("selectMarcador");
+
+    // Dados do marcador selecionado
+    const marcadorNome = select.options[select.selectedIndex].textContent;
+    const marcadorCor = select.options[select.selectedIndex].dataset.cor;
+
+    const btn = document.getElementById("abrirPopup");
+
+    // Aplicar nome
+    btn.textContent = marcadorNome;
+
+    // Aplicar cor
+    btn.style.backgroundColor = marcadorCor;
+    btn.style.color = "white";
+
+    // Estilizar como tag/pill
+    btn.classList.remove(
+        "w-8", "h-8", "text-3xl", "rounded-full"
+    ); // remove visual de "bolinha +"
+
+    btn.classList.add(
+        "px-4", "py-1", "rounded-full", "font-semibold", "text-sm"
+    );
+
+    // Fechar modal
+    const modal = document.getElementById("popupVincular");
+    modal.classList.add("hidden");
+    modal.classList.remove("modal-open");
+});
+
+
+
+
+
+
+
+
+
   const ctx = document.getElementById('grafico');
   let tipoAtual = "pie";
 
@@ -505,6 +595,35 @@ document.getElementById("switch").addEventListener("click", () => {
     });
 });
 
+
+
+document.getElementById("salvar-marcador").addEventListener("click", async () => {
+
+    const nome = document.getElementById("nome-marcador").value;
+    const cor = document.getElementById("cor-marcador").value;
+    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    const response = await fetch("{% url 'categoria:criar_marcador' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify({
+            nome: nome,
+            cor: cor
+        })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+        console.log("Criado:", data);
+        alert("Marcador criado!");
+    } else {
+        alert(data.erro);
+    }
+});
 
 
   const openBtn = document.getElementById("open-popup");

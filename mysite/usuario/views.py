@@ -14,10 +14,8 @@ def login_usuario(request):
     if request.method == "POST":
         email = request.POST.get("email")
         senha = request.POST.get("senha")
-        print(email, senha)
 
         usuario = authenticate(request, email=email, password=senha)
-
         if usuario is not None:
             auth_login(request, usuario)
             return redirect("transacoes_index")
