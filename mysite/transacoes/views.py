@@ -6,8 +6,8 @@ from contas.models import ContaFinanceira
 from categoria.models import Marcador
 
 # Create your views here.
-@login_required
-@papel_requerido('admin','usuario')
+#@login_required
+#@papel_requerido('admin','usuario')
 def transacoes_index(request):
     context = {
         'categorias':ts.obter_categorias,
@@ -28,7 +28,7 @@ def adicionar_transacao_view(request):
     tipo =  request.POST.get('tipo')
     data_hora =  request.POST.get('data_hora')
     conta_financeira =  request.POST.get('conta_financeira')
-    marcadores = request.POST.get('marcadores')
+    marcadores = request.POST.getlist('marcadores')
 
     ts.adicionar_transacao(
         descricao = descricao,
