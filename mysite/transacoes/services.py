@@ -25,6 +25,24 @@ class TransacaoService:
 
         except Exception as erro:
             raise Exception(f"erro: {erro}") 
+        
+
+    @staticmethod
+    def editar_transacao(id_transacao, descricao, valor, categoria, estado, tipo, data_hora, conta_financeira_id, marcadores_ids):
+        transacao = Transacao.objects.get(id=id_transacao)
+
+        transacao.descricao = descricao
+        transacao.valor = valor
+        transacao.categoria = categoria
+        transacao.estado = estado
+        transacao.tipo = tipo
+        transacao.data_hora = data_hora
+        transacao.conta_financeira = ContaFinanceira.objects.get(id=conta_financeira_id)
+        transacao.marcadores.set(Marcador.objects.filter(id__in=marcadores_ids))
+        transacao.save()
+
+        return transacao
+
     
     @staticmethod
     def excluir_transacao(id_transacao):

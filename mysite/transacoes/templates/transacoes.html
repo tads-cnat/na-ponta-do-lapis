@@ -331,7 +331,7 @@
                                             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                         </form>
                                         <h3 class="text-xl font-bold mb-7">Edição de Transação</h3>
-                                        <form action="{% url 'adicionar_transacao' %}" method="POST" class="mt-4">
+                                        <form action="{% url 'editar_transacao' id=transacao.id %}" method="POST" class="mt-4">
                                             {% csrf_token %}
                                             <div class="form-control w-full mt-4">
                                                 <label class="input w-full">
@@ -391,9 +391,8 @@
                                             <div class="form-control w-full mt-4">
                                                 <label class="input w-full">
                                                     <span class="label">Data</span>
-                                                    <input type="datetime-local" name="data_hora" placeholder="Tipo da transação" value="2000-06-03" />
+                                                    <input type="datetime-local" name="data_hora" value="{{transacao.data_hora|date:'Y-m-d\\TH:i'}}" />
                                                 </label>
-                                                <!-- {{transacao.data_hora|date:'Y-m-d'}} -->
                                             </div>
                                             <!-- Box Conta e Marcador -->
                                             <div class="flex">
@@ -408,6 +407,7 @@
                                                                 class="btn"
                                                                 type="checkbox"
                                                                 name="marcadores"
+                                                                value="{{marcador.id}}"
                                                                 aria-label="{{ marcador.nome}}"
                                                                 {% for marcador_transacao in transacao.marcadores.all %}
                                                                     {% if marcador_transacao.id == marcador.id %} checked {% endif %}
