@@ -2,30 +2,47 @@
 {% block page_title %} Transações {% endblock%}
 {% block title %} Transações {% endblock%}
 {% block main %}
+    <!-- Alerta -->
+    
+    {% if messages %}
+   
+    {% for msg in messages %}
+    <div role="alert" class="alert alert-{{msg.tags}}">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0 stroke-current" fill="none" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>{{ msg }}</span>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <!-- Fim alerta -->
     <div class="container flex mb-8">
         <!-- Campos de busca e filtros -->
         <div class="cabecalho1 w-1/2">
-            <!-- Campo de Busca -->
-            <div class="busca mb-8">
-                <label class="input w-full bg-white border border-gray-300">
-                    <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <g
-                        stroke-linejoin="round"
-                        stroke-linecap="round"
-                        stroke-width="2.5"
-                        fill="none"
-                        stroke="currentColor"
-                        >
-                        <circle cx="11" cy="11" r="8"></circle>
-                        <path d="m21 21-4.3-4.3"></path>
-                        </g>
-                    </svg>
-                    <input type="search" class="grow" placeholder="Buscar.." />
-                </label>
-            </div>
-            <!-- Campos de Filtros -->
-            <div class="filtros flex w-full">
-                <form action="{% url 'filtrar_transacao' %}" method="get">
+            <form action="{% url 'filtrar_transacao' %}" method="get">
+                <!-- Campo de Busca -->
+                <div class="busca mb-8">
+                    <label class="input w-full bg-white border border-gray-300">
+                        <button type="submit" class="cursor-pointer inline-block p-2">
+                            <svg class="h-[1em] opacity-50" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                                <g
+                                stroke-linejoin="round"
+                                stroke-linecap="round"
+                                stroke-width="2.5"
+                                fill="none"
+                                stroke="currentColor"
+                                >
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.3-4.3"></path>
+                                </g>
+                            </svg>
+                        </button>
+                        <input type="search" class="grow" name="busca" placeholder="Buscar.." value="{{ request.GET.busca }}" />
+                    </label>
+                </div>
+                <!-- Campos de Filtros -->
+                <div class="filtros flex w-full">
                     <div class="dropdown dropdown-hover">
                         <div tabindex="0" class="btn m-1 bg-npl-roxo flex items-center gap-2">
                             <span>Periodo</span>
@@ -55,7 +72,7 @@
                             </li>
                 
                         </ul>
-                       
+                    
                     </div>
                     <div class="dropdown dropdown-hover">
                         <div tabindex="0" class="btn m-1 bg-npl-roxo flex items-center gap-2">
@@ -94,7 +111,7 @@
                         </div>
 
                         <ul tabindex="0" class="dropdown-content menu bg-white rounded-box z-10 w-52 p-2 shadow-sm">
-                             <li><input type="radio" class="btn" name="categoria" aria-label="Tudo" value="" onclick="this.form.submit()"/></li>
+                            <li><input type="radio" class="btn" name="categoria" aria-label="Tudo" value="" onclick="this.form.submit()"/></li>
                             {% for valor, rotulo in categorias %}
                             <li>
                                 <input
@@ -132,14 +149,13 @@
                                     onclick="this.form.submit()"
                                     {% if request.GET.conta == conta.id|stringformat:"s" %} checked {% endif %}
                                 />
-                              
+                            
                             </li>
                             {% endfor %}
                         </ul>
                     </div>
-                </form>
-            </div>
-    
+                </div>
+            </form>
         </div>
         <!-- Botão de adicionar transação com modal -->
         <div class="cabecalho2 w-1/2 flex flex-col  items-center ">
@@ -155,6 +171,7 @@
             </a>
             <dialog id="my_modal_3" class="modal">
                 <div class="modal-box">
+                    <!-- Inicio do formulario de adiconar transação -->
                     <form method="dialog">
                         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     </form>
@@ -163,20 +180,20 @@
                         {% csrf_token %}
                         <div class="form-control w-full mt-4">
                             <label class="input w-full">
-                                <span class="label">Descrição</span>
-                                <input type="text" name="descricao" placeholder="Descrição da transação" />
+                                <span class="label">Descrição*</span>
+                                <input type="text" name="descricao" placeholder="Ex: Roupas do Natal..." minlength="3" required />
                             </label>
                         </div>
                         <div class="form-control w-full mt-4">
                             <label class="input w-full">
-                                <span class="label">Valor</span>
-                                <input type="number" step="0.01" name="valor" placeholder="Valor da transação" />
+                                <span class="label">Valor*</span>
+                                <input type="number" step="0.01" min="0.01" name="valor" placeholder="Ex: 10,99..." required />
                             </label>
                         </div>
                         <div class="form-control w-full mt-4">
                             <label class="select w-full">
-                                <span class="label">Categoria</span>
-                                <select name="categoria">
+                                <span class="label">Categoria*</span>
+                                <select name="categoria" required>
                                         <option disabled>Selecione uma categoria: </option>
                                     {% for valor, label in categorias %}
                                         <option value="{{ valor }}">{{ label }}</option>
@@ -189,8 +206,9 @@
                         <div class="flex">
                             <div class="form-control w-1/2 mt-4 mr-1.5">
                                 <label class="select">
-                                    <span class="label">Tipo</span>
-                                    <select name="tipo">
+                                    <span class="label">Tipo*</span>
+                                    <select name="tipo" required>
+                                        <option disabled> Selecione o tipo de sua transação: </option>
                                         {% for valor, label in tipos %}
                                         <option value="{{ valor }}">{{ label }}</option>
                                         {% endfor %}
@@ -199,7 +217,7 @@
                             </div>
                             <!-- Elemento de input de estado -->
                             <div class="form-control w-1/2 mt-4 input ml-1.5 ">
-                                <span class="label">Foi paga/recebida</span>
+                                <span class="label">Foi paga/recebida*</span>
                                 <input type="hidden" name="estado" value="pendente"  />
                                 <label class="toggle text-base-content">
                                     <input type="checkbox" name="estado" value="realizada" checked/>
@@ -219,8 +237,8 @@
                         </div>
                         <div class="form-control w-full mt-4">
                             <label class="input w-full">
-                                <span class="label">Data</span>
-                                <input type="datetime-local" name="data_hora" placeholder="Tipo da transação"  />
+                                <span class="label">Data*</span>
+                                <input type="datetime-local" name="data_hora" placeholder="Tipo da transação"  required/>
                             </label>
                         </div>
                         <!-- Conteiner marcadores e conta -->
@@ -282,6 +300,21 @@
                     </tr>
                 </thead>
                 <tbody>
+                    {% if minhas_transacoes.count == 0 %}
+                        <tr>
+                            <td colspan="7">
+                                <div class="alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info h-6 w-6 shrink-0">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span>
+                                        <strong>Nenhuma transação encontrada.</strong> 
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endif %}
                     {% for transacao in minhas_transacoes %}
                         <tr class="hover:bg-purple-50">
                             <td>
@@ -335,20 +368,21 @@
                                             {% csrf_token %}
                                             <div class="form-control w-full mt-4">
                                                 <label class="input w-full">
-                                                    <span class="label">Descrição</span>
-                                                    <input type="text" name="descricao" placeholder="Descrição da transação" value="{{transacao.descricao}}" />
+                                                    <span class="label">Descrição*</span>
+                                                    <input type="text" name="descricao" placeholder="Ex: Roupas do Natal..." value="{{transacao.descricao}}" minlength="3" required  />
                                                 </label>
                                             </div>
                                             <div class="form-control w-full mt-4">
                                                 <label class="input w-full">
-                                                    <span class="label">Valor</span>
-                                                    <input type="number" step="0.01" name="valor" placeholder="Valor da transação" value="{{transacao.valor}}"/>
+                                                    <span class="label">Valor*</span>
+                                                    <input type="number" step="0.01" min="0.01" required name="valor" placeholder="Ex: 9,99" value="{{transacao.valor}}"/>
                                                 </label>
                                             </div>
                                             <div class="form-control w-full mt-4">
                                                 <label class="select w-full">
-                                                    <span class="label">Categoria</span>
-                                                    <select name="categoria">
+                                                    <span class="label">Categoria*</span>
+                                                    <select name="categoria" required>
+                                                        <option disabled>Selecione uma categoria: </option>
                                                         {% for valor, label in categorias %}
                                                         <option value="{{ valor }}" {% if transacao.categoria == valor %} selected {%endif%}>{{ label }}</option>
                                                         {% endfor %}
@@ -360,8 +394,9 @@
                                                 
                                                 <div class="form-control w-1/2 mt-4">
                                                     <label class="select">
-                                                        <span class="label">Tipo</span>
-                                                        <select name="tipo">
+                                                        <span class="label">Tipo*</span>
+                                                        <select name="tipo" required>
+                                                            <option disabled> Selecione o tipo de sua transação: </option>
                                                             {% for valor, label in tipos %}
                                                             <option value="{{ valor }}"  {% if transacao.tipo == valor %} selected {%endif%}>{{ label }}</option>
                                                             {% endfor %}
@@ -370,7 +405,7 @@
                                                 </div>
                                                 <!-- Elemento de input de estado -->
                                                 <div class="form-control w-1/2 mt-4 input ml-1.5 ">
-                                                    <span class="label">Foi paga/recebida</span>
+                                                    <span class="label">Foi paga/recebida*</span>
                                                     <input type="hidden" name="estado" value="pendente"  />
                                                     <label class="toggle text-base-content">
                                                         <input type="checkbox" name="estado" value="realizada" {% if transacao.estado == "realizada" %} checked {% endif %} />
@@ -390,7 +425,7 @@
                                             <!-- Data -->
                                             <div class="form-control w-full mt-4">
                                                 <label class="input w-full">
-                                                    <span class="label">Data</span>
+                                                    <span class="label">Data*</span>
                                                     <input type="datetime-local" name="data_hora" value="{{transacao.data_hora|date:'Y-m-d\\TH:i'}}" />
                                                 </label>
                                             </div>
@@ -419,8 +454,9 @@
                                                 </div>
                                                 <div class="form-control w-full mt-4">
                                                     <label class="select w-full">
-                                                        <span class="label">Conta Financeira</span>
+                                                        <span class="label">Conta Financeira*</span>
                                                         <select name="conta_financeira">
+                                                            <option disabled>Selecione uma Conta Financeira: </option>
                                                             {% for conta in contas %}
                                                             <option value="{{ conta.id }}"  {% if transacao.conta_financeira_id == conta.id %} selected {%endif%}>{{ conta.nome }}</option>
                                                             {% endfor %}

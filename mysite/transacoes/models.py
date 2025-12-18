@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 # Create your models here.
 
 class Transacao(models.Model):
@@ -33,9 +34,24 @@ class Transacao(models.Model):
     marcadores = models.ManyToManyField('categoria.Marcador', blank=True, related_name="transacoes", verbose_name="Marcadores")
 
     #=== Métodos do modelo Transacao ===#
+    
+    def clean(self):
+        erros = {}
+        if len(self.descricao.strip()) < 3:
+            erros['descricao'] = 'A descrição deve ter pelo menos 3 caracteres.'
+        if self.valor and self.valor <= 0:
+            erros['valor'] = 'O valor da transação deve ser superior a 0.'
+        if erros:
+            raise ValidationError(erros)
+
     def __str__(self):
         return f"{self.descricao} - {self.valor} ({self.get_tipo_display()})"
     
     @property
     def get_valor_display(self):
         return f'{self.valor}'.replace('.',',')
+    
+    class Meta:
+        verbose_name = 'Transação'
+        verbose_name_plural = 'Transações'
+        #ordering = ['-data_hora']

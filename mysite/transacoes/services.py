@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from .models import Transacao
 from contas.models import ContaFinanceira
 from categoria.models import Marcador
@@ -7,6 +8,8 @@ class TransacaoService:
     @staticmethod
     def adicionar_transacao(descricao, valor, categoria, estado, tipo, data_hora, conta_financeira_id, marcadores_ids = None ):
         try:
+            conta = ContaFinanceira.objects.get(id=conta_financeira_id)
+
             transacao = Transacao(
                 descricao = descricao,
                 valor= valor,
@@ -14,46 +17,83 @@ class TransacaoService:
                 estado = estado,
                 tipo = tipo,
                 data_hora = data_hora,
-                conta_financeira = ContaFinanceira.objects.get(id=conta_financeira_id)
+                conta_financeira = conta
             )
+            transacao.full_clean()
             transacao.save()
 
             if marcadores_ids:
                 marcadores = Marcador.objects.filter(id__in=marcadores_ids)
-                transacao.marcadores.add(*marcadores)
-                transacao.save()
 
-        except Exception as erro:
-            raise Exception(f"erro: {erro}") 
+                if marcadores.count() > 3:
+                    raise ValidationError({'marcadores':'So é permitido no maximo 3 marcadores por transação.'})
+                
+                if marcadores.count() != len(marcadores_ids):
+                    raise ValidationError({'marcadores':'1 ou mais marcadores não foram estão invalidos'})
+                transacao.marcadores.set(marcadores)
+
+            return transacao
+        
+        except ContaFinanceira.DoesNotExist:
+            raise ValidationError({'conta_financeira':'Conta Financeira Inexistente.'})
+  
         
 
     @staticmethod
     def editar_transacao(id_transacao, descricao, valor, categoria, estado, tipo, data_hora, conta_financeira_id, marcadores_ids):
-        transacao = Transacao.objects.get(id=id_transacao)
 
-        transacao.descricao = descricao
-        transacao.valor = valor
-        transacao.categoria = categoria
-        transacao.estado = estado
-        transacao.tipo = tipo
-        transacao.data_hora = data_hora
-        transacao.conta_financeira = ContaFinanceira.objects.get(id=conta_financeira_id)
-        transacao.marcadores.set(Marcador.objects.filter(id__in=marcadores_ids))
-        transacao.save()
+        try:
+            transacao = TransacaoService.obter_transacoes_id(id_transacao)
+            conta =  ContaFinanceira.objects.get(id=conta_financeira_id)
 
-        return transacao
+            transacao.descricao = descricao
+            transacao.valor = valor
+            transacao.categoria = categoria
+            transacao.estado = estado
+            transacao.tipo = tipo
+            transacao.data_hora = data_hora
+            transacao.conta_financeira = conta
+            
+            transacao.full_clean()
+            transacao.save()
 
+            if marcadores_ids is not None:
+                marcadores = Marcador.objects.filter(id__in=marcadores_ids)
+
+                if marcadores.count() > 3:
+                    raise ValidationError({'marcadores':'So é permitido no máximo 3 marcadores por transação.'})
+                
+                if marcadores.count() != len(marcadores_ids):
+                    raise ValidationError({'marcadores':'1 ou mais marcadores não foram estão invalidos'})
+                transacao.marcadores.set(marcadores)
+      
+            return transacao
+        
+        except Transacao.DoesNotExist:
+            raise ValidationError({'transacao':'Transação não encontrada'})
+        
+        except ContaFinanceira.DoesNotExist:
+            raise ValidationError({'conta_financeira':"Conta Financeira não encontrada"})
     
     @staticmethod
     def excluir_transacao(id_transacao):
         try:
-            Transacao.objects.get(id=id_transacao).delete()
-        except Exception as e:
-            raise Exception("{e}")
+           TransacaoService.obter_transacoes_id(id_transacao).delete()
+        except Transacao.DoesNotExist:
+            raise ValidationError({'transacao':'Transação não encontrada'})
         
     @staticmethod
-    def filtrar_transacao( categoria,tipo, conta):
+    def obter_minhas_transacoes():
+        return Transacao.objects.all()
+    
+    def obter_transacoes_id(transacao_id):
+        return Transacao.objects.get(id=transacao_id)
+    
+    @staticmethod
+    def filtrar_transacao(busca, categoria, tipo, conta):
         transacoes = TransacaoService.obter_minhas_transacoes()
+        if busca:
+            transacoes = transacoes.filter(descricao__icontains=busca)
         if categoria:
             transacoes = transacoes.filter(categoria=categoria)
         if tipo:
@@ -63,14 +103,6 @@ class TransacaoService:
 
         return transacoes
         
-    @staticmethod
-    def obter_minhas_transacoes():
-        return Transacao.objects.all()
-    
-    @staticmethod
-    def obter_transacoes_categoria(categoria):
-        return Transacao.objects.filter(categoria=categoria)
-    
     @staticmethod
     def obter_categorias():
         return Transacao.Categoria.choices
