@@ -1,0 +1,230 @@
+GUIA DE TESTE - VALIDAÇÃO DE CONTAS
+═══════════════════════════════════════════════════════════════════════════════
+
+PRÉ-REQUISITOS:
+  • Django server rodando: python manage.py runserver
+  • URL: http://127.0.0.1:8000
+  • Estar logado em uma conta
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 1: Validação de Nome (Vazio)
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS:
+  1. Navegue para http://127.0.0.1:8000/contas/
+  2. Clique em "Adicionar Conta" (ou "Criar Primeira Conta")
+  3. Modal abre com campos vazios
+  4. Deixe o campo "Nome da Conta" vazio
+  5. Clique no botão "Salvar"
+
+RESULTADO ESPERADO:
+  ✅ Dentro do modal, em vermelho:
+     "Erros encontrados:
+      • Nome da conta é obrigatório"
+  ✅ Modal não fecha
+  ✅ Formulário não é enviado
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 2: Validação de Nome (Muito Curto)
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS:
+  1. Modal ainda aberto
+  2. Digite no campo "Nome da Conta": "AB" (apenas 2 caracteres)
+  3. Clique no botão "Salvar"
+
+RESULTADO ESPERADO:
+  ✅ Dentro do modal, em vermelho:
+     "Erros encontrados:
+      • Nome da conta deve ter pelo menos 3 caracteres"
+  ✅ Modal não fecha
+  ✅ Formulário não é enviado
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 3: Validação de Saldo (Vazio)
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS:
+  1. Modal ainda aberto
+  2. Digite no campo "Nome da Conta": "Minha Conta" (válido)
+  3. Deixe o campo "Saldo da Conta" vazio
+  4. Clique no botão "Salvar"
+
+RESULTADO ESPERADO:
+  ✅ Dentro do modal, em vermelho:
+     "Erros encontrados:
+      • Saldo da conta é obrigatório"
+  ✅ Modal não fecha
+  ✅ Formulário não é enviado
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 4: Validação de Saldo (Inválido)
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS:
+  1. Modal ainda aberto
+  2. Campo "Nome da Conta": "Minha Conta" (já preenchido)
+  3. Digite no campo "Saldo da Conta": "abc123" (não é número)
+  4. Clique no botão "Salvar"
+
+RESULTADO ESPERADO:
+  ✅ Dentro do modal, em vermelho:
+     "Erros encontrados:
+      • Saldo deve ser um número válido e não-negativo"
+  ✅ Modal não fecha
+  ✅ Formulário não é enviado
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 5: Validação de Tipo (Não Selecionado)
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS:
+  1. Modal ainda aberto
+  2. Nome: "Minha Conta" (preenchido)
+  3. Saldo: "1000" (preenchido)
+  4. Não clique em nenhum botão de tipo
+  5. Clique no botão "Salvar"
+
+RESULTADO ESPERADO:
+  ✅ Dentro do modal, em vermelho:
+     "Erros encontrados:
+      • Tipo de conta é obrigatório"
+  ✅ Modal não fecha
+  ✅ Formulário não é enviado
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 6: Criação Bem-Sucedida
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS:
+  1. Modal ainda aberto
+  2. Nome: "Minha Poupança" (3+ caracteres)
+  3. Saldo: "5000.50"
+  4. Clique em um dos 3 botões de tipo (ex: "CRÉDITO E DÉBITO")
+     └─ Note que o botão fica com destaque amarelo quando selecionado
+  5. Clique no botão "Salvar"
+
+RESULTADO ESPERADO:
+  ✅ Modal fecha
+  ✅ Página recarrega
+  ✅ No topo da página, em VERDE com ícone ✅:
+     "Sucesso
+      Conta 'Minha Poupança' criada com sucesso!"
+  ✅ Sua nova conta aparece no carousel
+  ✅ Se for a primeira conta, o carousel agora mostra cards
+  ✅ Se houver múltiplas contas, você pode navegar com ← e →
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 7: Erro do Backend (Simulado)
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS (Avançado - apenas se souber usar DevTools):
+  1. Abra o DevTools (F12)
+  2. Vá para a aba "Elements" ou "Inspector"
+  3. Encontre o campo hidden: <input type="hidden" id="selectedAccountType">
+  4. Via console ou alteração manual, mude seu valor para algo inválido
+  5. Envie o formulário
+
+RESULTADO ESPERADO:
+  ✅ Modal fecha
+  ✅ Página recarrega
+  ✅ No topo da página, em VERMELHO com ícone ❌:
+     "Erro
+      TIPO: O tipo da conta deve ser um de: Crédito ou Crédito/Débito ou Débito"
+  ✅ Nenhuma conta é criada
+  ✅ Você pode tentar novamente
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 8: Editar Conta
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS:
+  1. Na página de contas, clique no botão "Editar" de uma conta
+  2. Modal de edição abre
+  3. Tente os mesmos testes de validação (nome vazio, tipo etc)
+  4. Preencha corretamente com novos dados
+  5. Clique "Salvar Alterações"
+
+RESULTADO ESPERADO:
+  ✅ Mesma validação que "Adicionar Conta"
+  ✅ Modal com exibição de erros
+  ✅ Mensagem de sucesso em verde quando salvo
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTE 9: Múltiplas Contas
+═══════════════════════════════════════════════════════════════════════════════
+
+PASSOS:
+  1. Crie 5-10 contas diferentes (nomes variados)
+  2. Navegue com os botões ← e →
+  3. Clique nos dots para ir a uma conta específica
+  4. Verifique que cada conta mostra os dados corretos
+
+RESULTADO ESPERADO:
+  ✅ Carousel funciona com qualquer número de contas
+  ✅ Navegação fluida
+  ✅ Cada botão CRUD funciona para a conta correta
+
+═══════════════════════════════════════════════════════════════════════════════
+RESUMO DOS ERROS CAPTURADOS
+═══════════════════════════════════════════════════════════════════════════════
+
+ERRO                              LOCAL                QUANDO
+────────────────────────────────────────────────────────────────────────────
+Nome vazio                        Modal em vermelho    Antes de enviar
+Nome < 3 caracteres               Modal em vermelho    Antes de enviar
+Saldo vazio                        Modal em vermelho    Antes de enviar
+Saldo inválido (não número)        Modal em vermelho    Antes de enviar
+Tipo não selecionado               Modal em vermelho    Antes de enviar
+Tipo inválido                      Página em vermelho   Após enviar
+─────────────────────────────────────────────────────────────────────────────
+Sucesso                            Página em verde      Após criar
+
+═══════════════════════════════════════════════════════════════════════════════
+CHECKLIST DE TESTES
+═══════════════════════════════════════════════════════════════════════════════
+
+[ ] Teste 1: Nome vazio - Erro capturado no modal
+[ ] Teste 2: Nome muito curto - Erro capturado no modal
+[ ] Teste 3: Saldo vazio - Erro capturado no modal
+[ ] Teste 4: Saldo inválido - Erro capturado no modal
+[ ] Teste 5: Tipo não selecionado - Erro capturado no modal
+[ ] Teste 6: Criação bem-sucedida - Conta criada, mensagem verde
+[ ] Teste 7: Múltiplas contas - Carousel funciona
+[ ] Teste 8: Edição - Mesmo comportamento da criação
+[ ] Teste 9: Navegação - Carousel responsivo
+
+═══════════════════════════════════════════════════════════════════════════════
+DOCUMENTAÇÃO CRIADA
+═══════════════════════════════════════════════════════════════════════════════
+
+✅ RESUMO_EXECUTIVO.txt
+   └─ Resumo visual de tudo que foi feito
+
+✅ GUIA_VALIDACAO.txt
+   └─ Guia detalhado com diagramas de fluxo
+
+✅ IMPLEMENTACAO_FINAL.txt
+   └─ Documentação técnica completa
+
+✅ CORRECOES_VALIDACAO.txt
+   └─ Detalhes de cada correção implementada
+
+✅ SYSTEM_STATUS.txt
+   └─ Status do sistema e credenciais de teste
+
+✅ Este arquivo: GUIA_DE_TESTE.txt
+   └─ Instruções passo-a-passo para testar
+
+═══════════════════════════════════════════════════════════════════════════════
+PRÓXIMOS PASSOS
+═══════════════════════════════════════════════════════════════════════════════
+
+1. Execute os testes conforme descrito acima
+2. Se tudo passar, sistema está pronto para usar
+3. Se houver problemas, verifique:
+   - Console do navegador (F12) para erros JavaScript
+   - Terminal do Django para erros no servidor
+   - Banco de dados para contas criadas
+
+═══════════════════════════════════════════════════════════════════════════════

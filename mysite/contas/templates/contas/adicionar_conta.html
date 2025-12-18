@@ -7,6 +7,12 @@
             class="btn btn-sm btn-ghost absolute right-4 top-4">✕</label>
         <h3 class="text-3xl font-bold text-black text-center mb-6">Nova Conta</h3>
 
+        <!-- Exibição de Erros -->
+        <div id="errorContainer" class="hidden mb-4 p-4 bg-red-100 border-2 border-red-500 rounded-lg">
+            <div class="text-red-800 font-semibold mb-2">Erros encontrados:</div>
+            <ul id="errorList" class="text-red-700 space-y-1"></ul>
+        </div>
+
         <!-- Formulário -->
         <form id="addAccountForm" class="space-y-6" method="post" action="{% url 'contas:add_conta' %}">
             {% csrf_token %}
@@ -52,3 +58,66 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addAccountForm = document.getElementById('addAccountForm');
+        const accountNameInput = document.getElementById('accountName');
+        const accountBalanceInput = document.getElementById('accountBalance');
+        const selectedAccountType = document.getElementById('selectedAccountType');
+        const errorContainer = document.getElementById('errorContainer');
+        const errorList = document.getElementById('errorList');
+        const accountTypeButtons = document.querySelectorAll('.account-type-btn');
+
+        // Gerenciar seleção de tipo de conta
+        accountTypeButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                accountTypeButtons.forEach(btn => {
+                    btn.classList.remove('ring-2', 'ring-yellow-400');
+                    btn.style.opacity = '1';
+                });
+                this.classList.add('ring-2', 'ring-yellow-400');
+                selectedAccountType.value = this.dataset.type;
+            });
+        });
+
+        // Validação de formulário
+        addAccountForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            errorList.innerHTML = '';
+            errorContainer.classList.add('hidden');
+
+            const errors = [];
+
+            // Validar nome
+            if (!accountNameInput.value.trim()) {
+                errors.push('Nome da conta é obrigatório');
+            } else if (accountNameInput.value.trim().length < 3) {
+                errors.push('Nome da conta deve ter pelo menos 3 caracteres');
+            }
+
+            // Validar saldo
+            if (!accountBalanceInput.value.trim()) {
+                errors.push('Saldo da conta é obrigatório');
+            } else {
+                const saldo = parseFloat(accountBalanceInput.value.replace(/[^0-9,.-]/g, '').replace(',', '.'));
+                if (isNaN(saldo) || saldo < 0) {
+                    errors.push('Saldo deve ser um número válido e não-negativo');
+                }
+            }
+
+            // Validar tipo
+            if (!selectedAccountType.value) {
+                errors.push('Tipo de conta é obrigatório');
+            }
+
+            if (errors.length > 0) {
+                errorList.innerHTML = errors.map(err => `<li>• ${err}</li>`).join('');
+                errorContainer.classList.remove('hidden');
+            } else {
+                this.submit();
+            }
+        });
+    });
+</script>

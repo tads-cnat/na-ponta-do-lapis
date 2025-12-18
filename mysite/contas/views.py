@@ -2,20 +2,17 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.http import Http404
+from django.core.exceptions import ValidationError
 from .services import ContaService
 
 # Create your views here.
 
-#@login_required(login_url='usuario:login')
+@login_required(login_url='usuario:login')
 def index(request):
     """
     View principal que exibe as contas do usuário logado.
     Redireciona para login se o usuário não estiver autenticado.
-    
-    print(f"DEBUG: Acessando index - Usuário autenticado: {request.user.is_authenticated}")
-    print(f"DEBUG: Usuário: {request.user}")
-    print(f"DEBUG: ID do usuário: {request.user.id if request.user.is_authenticated else 'Não autenticado'}")
-    
+    """
     try:
         # Obter contas do usuário logado
         contas = ContaService.obter_contas_usuario(request.user)
@@ -32,15 +29,12 @@ def index(request):
             'tres_ou_mais': quantidade_contas >= 3,
         }
         
-        
+        return render(request, 'contas/index.html', contexto)
     except Exception as e:
-        print(f"DEBUG: Erro ao carregar contas: {str(e)}")
         messages.error(request, f'Erro ao carregar contas: {str(e)}')
         return redirect('usuario:login')
-    """
-    return render(request, 'contas/index.html', contexto)
 
-#@login_required(login_url='usuario:login')
+@login_required(login_url='usuario:login')
 def visualizar_conta(request, conta_id):
     """
     View para visualizar uma conta específica.
@@ -58,26 +52,19 @@ def visualizar_conta(request, conta_id):
             messages.error(request, 'Você não tem permissão para acessar essa conta.')
             return redirect('contas:index')
         
-        # Buscar transações da conta usando o serviço
-        transacoes = ContaService.VisualizarContaService(conta_id)
-
-        contexto = {
-            'conta': conta,
-            'transacoes': transacoes
-        }
+        contexto = {'conta': conta}
         return render(request, 'contas/visualizar_conta.html', contexto)
-    
     except Http404:
         raise
     except Exception as e:
         messages.error(request, f'Erro ao visualizar conta: {str(e)}')
         return redirect('contas:index')
 
-
-#@login_required(login_url='usuario:login')
+@login_required(login_url='usuario:login')
 def add_conta(request):
     """
     View para adicionar uma nova conta financeira.
+    Captura erros de validação e os exibe ao usuário.
     """
     try:
         if request.method == 'POST':
@@ -98,11 +85,23 @@ def add_conta(request):
                 return redirect('contas:index')
         
         return redirect('contas:index')
+    except ValidationError as e:
+        # Capturar erros de validação do modelo
+        if hasattr(e, 'message_dict'):
+            # Erros de campo específicos
+            for campo, erros in e.message_dict.items():
+                for erro in erros:
+                    messages.error(request, f'{campo.upper()}: {erro}')
+        else:
+            # Erros genéricos
+            for erro in e.messages:
+                messages.error(request, erro)
+        return redirect('contas:index')
     except Exception as e:
         messages.error(request, f'Erro ao criar conta: {str(e)}')
         return redirect('contas:index')
 
-#@login_required(login_url='usuario:login')
+@login_required(login_url='usuario:login')
 def editar_conta(request, conta_id):
     """
     View para editar uma conta específica.
@@ -138,6 +137,18 @@ def editar_conta(request, conta_id):
         
         contexto = {'conta': conta}
         return render(request, 'contas/editar_conta.html', contexto)
+    except ValidationError as e:
+        # Capturar erros de validação do modelo
+        if hasattr(e, 'message_dict'):
+            # Erros de campo específicos
+            for campo, erros in e.message_dict.items():
+                for erro in erros:
+                    messages.error(request, f'{campo.upper()}: {erro}')
+        else:
+            # Erros genéricos
+            for erro in e.messages:
+                messages.error(request, erro)
+        return redirect('contas:index')
     except Http404:
         raise
     except Exception as e:

@@ -7,8 +7,14 @@
             class="btn btn-sm btn-ghost absolute right-4 top-4">✕</label>
         <h3 class="text-3xl font-bold text-black text-center mb-6">Editar Conta</h3>
 
+        <!-- Exibição de Erros -->
+        <div id="editErrorContainer" class="hidden mb-4 p-4 bg-red-100 border-2 border-red-500 rounded-lg">
+            <div class="text-red-800 font-semibold mb-2">Erros encontrados:</div>
+            <ul id="editErrorList" class="text-red-700 space-y-1"></ul>
+        </div>
+
         <!-- Formulário -->
-        <form id="editAccountForm" class="space-y-6" method="post" action="{% url 'contas:editar_conta' %}">
+        <form id="editAccountForm" class="space-y-6" method="post" action="#">
             {% csrf_token %}
             <div class="grid grid-cols-2 gap-6">
                 <div>
@@ -52,3 +58,66 @@
         </form>
     </div>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const editAccountForm = document.getElementById('editAccountForm');
+        const editAccountNameInput = document.getElementById('editAccountName');
+        const editAccountBalanceInput = document.getElementById('editAccountBalance');
+        const selectedEditAccountType = document.getElementById('selectedEditAccountType');
+        const editErrorContainer = document.getElementById('editErrorContainer');
+        const editErrorList = document.getElementById('editErrorList');
+        const editAccountTypeButtons = document.querySelectorAll('.edit-account-type-btn');
+
+        // Gerenciar seleção de tipo de conta
+        editAccountTypeButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                editAccountTypeButtons.forEach(btn => {
+                    btn.classList.remove('ring-2', 'ring-yellow-400');
+                    btn.style.opacity = '1';
+                });
+                this.classList.add('ring-2', 'ring-yellow-400');
+                selectedEditAccountType.value = this.dataset.type;
+            });
+        });
+
+        // Validação de formulário
+        editAccountForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            editErrorList.innerHTML = '';
+            editErrorContainer.classList.add('hidden');
+
+            const errors = [];
+
+            // Validar nome
+            if (!editAccountNameInput.value.trim()) {
+                errors.push('Nome da conta é obrigatório');
+            } else if (editAccountNameInput.value.trim().length < 3) {
+                errors.push('Nome da conta deve ter pelo menos 3 caracteres');
+            }
+
+            // Validar saldo
+            if (!editAccountBalanceInput.value.trim()) {
+                errors.push('Saldo da conta é obrigatório');
+            } else {
+                const saldo = parseFloat(editAccountBalanceInput.value.replace(/[^0-9,.-]/g, '').replace(',', '.'));
+                if (isNaN(saldo) || saldo < 0) {
+                    errors.push('Saldo deve ser um número válido e não-negativo');
+                }
+            }
+
+            // Validar tipo
+            if (!selectedEditAccountType.value) {
+                errors.push('Tipo de conta é obrigatório');
+            }
+
+            if (errors.length > 0) {
+                editErrorList.innerHTML = errors.map(err => `<li>• ${err}</li>`).join('');
+                editErrorContainer.classList.remove('hidden');
+            } else {
+                this.submit();
+            }
+        });
+    });
+</script>

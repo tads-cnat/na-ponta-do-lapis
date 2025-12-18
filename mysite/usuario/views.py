@@ -11,14 +11,25 @@ from django.db import IntegrityError
 Usuario = get_user_model()
 
 def login_usuario(request):
+    # Se usuário já está logado, redireciona para contas
+    if request.user.is_authenticated:
+        return redirect("contas:index")
+    
     if request.method == "POST":
-        email = request.POST.get("email")
-        senha = request.POST.get("senha")
+        email = request.POST.get("email", "").strip()
+        senha = request.POST.get("senha", "").strip()
 
-        usuario = authenticate(request, email=email, password=senha)
+        # Validação básica
+        if not email or not senha:
+            messages.error(request, "Email e senha são obrigatórios.")
+            return render(request, "login.html")
+        
+        # Authenticate using the USERNAME_FIELD (email is USERNAME_FIELD in custom user)
+        # Django's default `authenticate` expects the username kwarg name to be `username`.
+        usuario = authenticate(request, username=email, password=senha)
         if usuario is not None:
             auth_login(request, usuario)
-            return redirect("transacoes_index")
+            return redirect("contas:index")
         else:
             messages.error(request, "Email ou senha inválidos.")
             return render(request, "login.html")
@@ -42,13 +53,13 @@ def cadastro_usuario(request):
         try:
             usuario = Usuario.objects.create_user(email=email, nome_completo=nome, password=senha)
             messages.success(request, "Usuário cadastrado com sucesso.")
-            return redirect("login")
+            return redirect("usuario:login")
         except IntegrityError:
             messages.error(request, "Email já cadastrado.")    
             return render(request, "cadastro.html")
 
 def logout_usuario(request):
     auth_logout(request)
-    return redirect("login")
+    return redirect("usuario:login")
 
 

@@ -6,7 +6,7 @@ from contas.models import ContaFinanceira
 from categoria.models import Marcador
 
 # Create your views here.
-@login_required
+@login_required(login_url='usuario:login')
 @papel_requerido('admin','usuario')
 def transacoes_index(request):
     context = {

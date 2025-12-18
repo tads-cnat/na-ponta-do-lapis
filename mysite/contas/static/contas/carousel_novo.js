@@ -1,8 +1,5 @@
 /**
- * Carousel Manager - Gerencia navegação entre contas com suporte a 3+ cards
- * Navegação: Direita (→) = próxima conta (mais recente)
- *           Esquerda (←) = conta anterior (mais antiga)
- * Loop automático: primeira → esquerda → última; última → direita → primeira
+ * Carousel Manager - Gerencia navegação entre contas
  */
 class CarouselManager {
     constructor() {
@@ -58,20 +55,12 @@ class CarouselManager {
         });
     }
 
-    /**
-     * Vai para a conta anterior (esquerda = mais antiga)
-     * Com loop automático: primeira → esquerda → última
-     */
     prevCard() {
         this.currentIndex = (this.currentIndex - 1 + this.cards.length) % this.cards.length;
         this.updateDisplay();
         this.updateCrudButtons();
     }
 
-    /**
-     * Vai para a próxima conta (direita = mais recente)
-     * Com loop automático: última → direita → primeira
-     */
     nextCard() {
         this.currentIndex = (this.currentIndex + 1) % this.cards.length;
         this.updateDisplay();
@@ -79,57 +68,39 @@ class CarouselManager {
     }
 
     updateDisplay() {
-        // Mostrar card atual + preview dos adjacentes com animação fluida
+        // Atualizar visibilidade e z-index dos cards
         this.cards.forEach((card, index) => {
-            // Calcular offset do card em relação ao card atual
-            let offset = index - this.currentIndex;
-
-            // Ajustar offset para loop circular
-            if (offset > this.cards.length / 2) {
-                offset -= this.cards.length;
-            } else if (offset < -(this.cards.length / 2)) {
-                offset += this.cards.length;
-            }
-
-            let newOpacity, newZIndex, newTransform;
+            const offset = (index - this.currentIndex + this.cards.length) % this.cards.length;
 
             if (offset === 0) {
-                // Card atual - no centro, visível
-                newOpacity = '1';
-                newZIndex = '20';
-                newTransform = 'scale(1) translateX(0)';
+                // Card atual - no centro
+                card.style.opacity = '1';
+                card.style.zIndex = '20';
+                card.style.transform = 'scale(1) translateX(0)';
             } else if (offset === 1) {
-                // Card próximo - à direita, semi-visível
-                newOpacity = '0.6';
-                newZIndex = '10';
-                newTransform = 'scale(0.9) translateX(250px)';
-            } else if (offset === -1) {
-                // Card anterior - à esquerda, semi-visível
-                newOpacity = '0.6';
-                newZIndex = '10';
-                newTransform = 'scale(0.9) translateX(-250px)';
+                // Card próximo - à direita
+                card.style.opacity = '0.6';
+                card.style.zIndex = '10';
+                card.style.transform = 'scale(0.9) translateX(250px)';
+            } else if (offset === this.cards.length - 1) {
+                // Card anterior - à esquerda
+                card.style.opacity = '0.6';
+                card.style.zIndex = '10';
+                card.style.transform = 'scale(0.9) translateX(-250px)';
             } else {
                 // Cards muito distantes - invisíveis
-                newOpacity = '0';
-                newZIndex = '-1';
-                newTransform = 'scale(0.9) translateX(0)';
-                card.style.pointerEvents = 'none';
+                card.style.opacity = '0';
+                card.style.zIndex = '-1';
+                card.style.transform = 'scale(0.9) translateX(0)';
             }
-
-            // Aplicar estilos
-            card.style.opacity = newOpacity;
-            card.style.zIndex = newZIndex;
-            card.style.transform = newTransform;
         });
 
-        // Atualizar indicadores (dots) - mostram qual conta está selecionada
+        // Atualizar indicadores
         this.indicators.forEach((indicator, index) => {
             if (index === this.currentIndex) {
-                // Indicador ativo (conta selecionada)
                 indicator.classList.remove('bg-gray-400');
                 indicator.classList.add('bg-gray-900', 'w-3', 'h-3');
             } else {
-                // Indicador inativo
                 indicator.classList.remove('bg-gray-900', 'w-3', 'h-3');
                 indicator.classList.add('bg-gray-400');
             }
@@ -203,16 +174,16 @@ class CarouselManager {
             });
         }
 
-        // Botão Adicionar (pode haver múltiplos - um na seção vazia e outro na grid)
-        const addBtns = document.querySelectorAll('.addAccountBtn');
-        addBtns.forEach(addBtn => {
+        // Botão Adicionar
+        const addBtn = document.querySelector('.addAccountBtn');
+        if (addBtn) {
             addBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 if (modalManager) {
                     modalManager.openAddAccountModal();
                 }
             });
-        });
+        }
     }
 }
 
