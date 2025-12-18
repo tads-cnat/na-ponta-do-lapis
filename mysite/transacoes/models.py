@@ -39,7 +39,7 @@ class Transacao(models.Model):
         erros = {}
         if len(self.descricao.strip()) < 3:
             erros['descricao'] = 'A descrição deve ter pelo menos 3 caracteres.'
-        if self.valor <= 0:
+        if self.valor and self.valor <= 0:
             erros['valor'] = 'O valor da transação deve ser superior a 0.'
         if erros:
             raise ValidationError(erros)

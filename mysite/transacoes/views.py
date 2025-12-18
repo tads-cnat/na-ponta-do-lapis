@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
+from django.core.exceptions import ValidationError
+from django.contrib import messages
 from mysite.decorators import papel_requerido
 from .services import TransacaoService as ts
 from contas.models import ContaFinanceira
@@ -28,19 +30,25 @@ def adicionar_transacao_view(request):
     data_hora =  request.POST.get('data_hora')
     conta_financeira =  request.POST.get('conta_financeira')
     marcadores = request.POST.getlist('marcadores')
+    try:
+        ts.adicionar_transacao(
+            descricao = descricao,
+            valor= valor,
+            categoria= categoria,
+            estado = estado,
+            tipo = tipo,
+            data_hora = data_hora,
+            conta_financeira_id = conta_financeira,
+            marcadores_ids = marcadores
 
-    ts.adicionar_transacao(
-        descricao = descricao,
-        valor= valor,
-        categoria= categoria,
-        estado = estado,
-        tipo = tipo,
-        data_hora = data_hora,
-        conta_financeira_id = conta_financeira,
-        marcadores_ids = marcadores
+        )
+    except ValidationError as e:
+        messages.error(request,e)
+        return redirect(transacoes_index)
 
-    )
-    return redirect(transacoes_index)
+    else:
+        messages.success(request, "Transação salva com sucesso." )
+        return redirect(transacoes_index)
 
 def editar_transacao(request, id):
     descricao =  request.POST.get('descricao')
