@@ -44,12 +44,57 @@ class ModalManager {
         if (form) {
             form.action = `/contas/editar/${accountId}/`;
         }
+
+        // Carregar dados da conta via API
+        this.loadAccountData(accountId);
+    }
+
+    loadAccountData(accountId) {
+        // Buscar dados da conta via API JSON
+        fetch(`/contas/api/obter/${accountId}/`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.sucesso) {
+                    // Preencher formulário com dados da conta
+                    document.getElementById('editAccountName').value = data.nome;
+                    document.getElementById('editAccountBalance').value = data.saldo.toFixed(2);
+
+                    // Selecionar tipo de conta
+                    const typeButtons = document.querySelectorAll('.edit-account-type-btn');
+                    typeButtons.forEach(btn => {
+                        btn.classList.remove('!bg-red-500', '!border-red-500', '!text-white');
+                        if (btn.getAttribute('data-type') === data.tipo) {
+                            btn.classList.add('!bg-red-500', '!border-red-500', '!text-white');
+                        }
+                    });
+                    document.getElementById('selectedEditAccountType').value = data.tipo;
+                } else {
+                    alert('Erro ao carregar dados da conta: ' + data.erro);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao carregar conta:', error);
+                alert('Erro ao carregar dados da conta');
+            });
     }
 
     closeEditAccountModal() {
         const toggle = document.getElementById('editAccountModalToggle');
         if (toggle) toggle.checked = false;
+        this.resetFormEdit();
         this.currentAccountId = null;
+    }
+
+    resetFormEdit() {
+        const form = document.getElementById('editAccountForm');
+        if (form) {
+            form.reset();
+            document.querySelectorAll('.edit-account-type-btn').forEach(btn => {
+                btn.classList.remove('!bg-red-500', '!border-red-500', '!text-white');
+                btn.classList.add('border-2', 'border-gray-300');
+            });
+            document.getElementById('selectedEditAccountType').value = '';
+        }
     }
 
     // ==================== MODAL EXCLUIR CONTA ====================
@@ -66,12 +111,94 @@ class ModalManager {
     }
 
     confirmDeleteAccount() {
+        console.log('confirmDeleteAccount chamado');
+        console.log('currentAccountId:', this.currentAccountId);
+
         if (!this.currentAccountId) {
             alert('Nenhuma conta selecionada');
             return;
         }
-        // Redirecionar para a view de exclusão
-        window.location.href = `/contas/excluir/${this.currentAccountId}/`;
+
+        // Obter CSRF token
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+            document.querySelector('[name="csrfmiddlewaretoken"]')?.value;
+
+        console.log('CSRF Token:', csrfToken);
+        console.log('Enviando DELETE para:', `/contas/excluir/${this.currentAccountId}/`);
+
+        // Enviar POST fetch para excluir
+        fetch(`/contas/excluir/${this.currentAccountId}/`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({})
+        })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response data:', data);
+                this.closeDeleteAccountModal();
+
+                if (data.sucesso) {
+                    // Criar alerta de sucesso
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-success shadow-lg fixed top-8 left-8 right-8 z-50';
+                    alertDiv.innerHTML = `
+                    <div class="flex items-start gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div class="flex-grow">
+                            <h3 class="font-bold">Sucesso</h3>
+                            <div class="text-sm">${data.mensagem}</div>
+                        </div>
+                    </div>
+                `;
+                    document.body.appendChild(alertDiv);
+
+                    // Auto-dismiss após 5 segundos
+                    setTimeout(() => {
+                        alertDiv.style.transition = 'opacity 0.3s ease-out';
+                        alertDiv.style.opacity = '0';
+                        setTimeout(() => alertDiv.remove(), 300);
+                    }, 5000);
+
+                    // Recarregar página após 500ms
+                    setTimeout(() => location.reload(), 500);
+                } else {
+                    // Criar alerta de erro
+                    const alertDiv = document.createElement('div');
+                    alertDiv.className = 'alert alert-error shadow-lg fixed top-8 left-8 right-8 z-50';
+                    alertDiv.innerHTML = `
+                    <div class="flex items-start gap-4">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current flex-shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l-2-2m0 0l-2-2m2 2l2-2m-2 2l-2 2m2-2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        <div class="flex-grow">
+                            <h3 class="font-bold">Erro</h3>
+                            <div class="text-sm">${data.erro}</div>
+                        </div>
+                    </div>
+                `;
+                    document.body.appendChild(alertDiv);
+
+                    // Auto-dismiss após 5 segundos
+                    setTimeout(() => {
+                        alertDiv.style.transition = 'opacity 0.3s ease-out';
+                        alertDiv.style.opacity = '0';
+                        setTimeout(() => alertDiv.remove(), 300);
+                    }, 5000);
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao excluir conta:', error);
+                this.closeDeleteAccountModal();
+                alert('Erro ao excluir a conta. Tente novamente.');
+            });
     }
 
     // ==================== MODAL VISUALIZAR CONTA ====================

@@ -119,5 +119,15 @@
                 this.submit();
             }
         });
+
+        // Resetar formulário quando modal fechar
+        const editToggle = document.getElementById('editAccountModalToggle');
+        if (editToggle) {
+            editToggle.addEventListener('change', function () {
+                if (!this.checked && modalManager) {
+                    modalManager.resetFormEdit();
+                }
+            });
+        }
     });
 </script>

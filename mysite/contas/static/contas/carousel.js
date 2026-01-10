@@ -24,6 +24,7 @@ class CarouselManager {
 
         // Mostrar primeiro card
         this.updateDisplay();
+        this.updateCrudButtons();
 
         // Setup botões de navegação
         this.setupNavigation();
@@ -158,6 +159,15 @@ class CarouselManager {
                 btn.setAttribute('data-conta-id', contaId);
             }
         });
+
+        // Ativar botões se há conta
+        if (contaId) {
+            document.querySelectorAll('.viewAccountBtn, .editAccountBtn, .deleteAccountBtn').forEach(btn => {
+                btn.removeAttribute('disabled');
+                btn.classList.remove('btn-disabled', 'opacity-50', 'border-gray-300', 'text-gray-400');
+                btn.classList.add('btn-ghost', 'border-gray-600', 'hover:border-black', 'hover:bg-white', 'hover:text-black', 'text-gray-600');
+            });
+        }
     }
 
     setupCrudButtons() {

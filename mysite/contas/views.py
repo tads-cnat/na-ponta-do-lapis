@@ -1,8 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.http import Http404
+from django.http import Http404, JsonResponse
 from django.core.exceptions import ValidationError
+from django.views.decorators.http import require_http_methods
+from django.views.decorators.cache import never_cache
 from .services import ContaService
 
 # Create your views here.
@@ -156,35 +158,60 @@ def editar_conta(request, conta_id):
         return redirect('contas:index')
 
 @login_required(login_url='usuario:login')
+@login_required(login_url='usuario:login')
+@require_http_methods(['POST'])
+@never_cache
 def excluir_conta(request, conta_id):
     """
-    View para excluir uma conta específica.
+    View para excluir uma conta específica via POST.
     Apenas o proprietário da conta pode excluí-la.
+    Retorna JSON com resultado da operação.
     """
     try:
         conta = ContaService.obter_conta_por_id(conta_id)
         
         if not conta:
-            messages.error(request, 'Conta não encontrada.')
-            raise Http404('Conta não encontrada')
+            return JsonResponse({'sucesso': False, 'erro': 'Conta não encontrada'}, status=404)
         
         # Verificar se o usuário é o proprietário
         if conta.id_usuario != request.user:
-            messages.error(request, 'Você não tem permissão para excluir essa conta.')
-            return redirect('contas:index')
+            return JsonResponse({'sucesso': False, 'erro': 'Sem permissão para excluir essa conta'}, status=403)
         
-        # Excluir apenas se for POST
-        if request.method == 'POST':
-            nome_conta = conta.nome
-            ContaService.ExcluirContaService(conta_id)
-            messages.success(request, f'Conta "{nome_conta}" excluída com sucesso!')
-            return redirect('contas:index')
+        # Excluir a conta
+        nome_conta = conta.nome
+        ContaService.ExcluirContaService(conta_id)
         
-        # GET - mostrar página de confirmação
-        contexto = {'conta': conta}
-        return render(request, 'contas/excluir_conta.html', contexto)
-    except Http404:
-        raise
+        return JsonResponse({
+            'sucesso': True,
+            'mensagem': f'Conta "{nome_conta}" excluída com sucesso!',
+            'nome_conta': nome_conta
+        })
     except Exception as e:
-        messages.error(request, f'Erro ao excluir conta: {str(e)}')
-        return redirect('contas:index')
+        return JsonResponse({'sucesso': False, 'erro': str(e)}, status=500)
+
+@login_required(login_url='usuario:login')
+def obter_conta_json(request, conta_id):
+    """
+    API que retorna dados da conta em JSON.
+    Usado pelo JavaScript para preencher os formulários de edição.
+    """
+    try:
+        conta = ContaService.obter_conta_por_id(conta_id)
+        
+        if not conta:
+            return JsonResponse({'erro': 'Conta não encontrada'}, status=404)
+        
+        # Verificar se o usuário é o proprietário
+        if conta.id_usuario != request.user:
+            return JsonResponse({'erro': 'Permissão negada'}, status=403)
+        
+        # Retornar dados da conta em JSON
+        return JsonResponse({
+            'id': conta.id,
+            'nome': conta.nome,
+            'saldo': float(conta.saldo),
+            'tipo': conta.tipo,
+            'sucesso': True
+        })
+    except Exception as e:
+        return JsonResponse({'erro': str(e)}, status=500)

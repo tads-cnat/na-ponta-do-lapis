@@ -81,6 +81,16 @@
                     }, 300);
                 }, 5000);
             });
+
+            // Desabilitar botões CRUD quando não há contas
+            const temContas = {{ tem_contas | lower }};
+        if (!temContas) {
+            document.querySelectorAll('.viewAccountBtn, .editAccountBtn, .deleteAccountBtn').forEach(btn => {
+                btn.setAttribute('disabled', 'disabled');
+                btn.classList.remove('btn-ghost', 'border-gray-600', 'hover:border-black', 'hover:bg-white', 'hover:text-black', 'text-gray-600');
+                btn.classList.add('btn-disabled', 'opacity-50', 'border-gray-300', 'text-gray-400');
+            });
+        }
         });
     </script>
 
