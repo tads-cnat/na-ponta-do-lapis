@@ -28,7 +28,7 @@ SECRET_KEY = 'django-insecure-tk&-i3kn-^kzy0^ka)bvbq^m_bd^4922y+w+u0v8tqt#_0mr!2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['pdsweb.pythonanywhere.com','127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['pdsweb.pythonanywhere.com','127.0.0.1', 'localhost', 'testserver']
 
 
 # Application definition
@@ -63,7 +63,9 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': ['mysite/templates'],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'mysite', 'templates'),
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -112,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pt-br'
 
 TIME_ZONE = 'UTC'
 
@@ -143,3 +145,11 @@ if 'CODESPACE_NAME' in os.environ:
     codespace_name = os.getenv("CODESPACE_NAME")
     codespace_domain = os.getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN")
     CSRF_TRUSTED_ORIGINS = [f'https://{codespace_name}-8000.{codespace_domain}','https://localhost:8000']
+
+# Login Configuration
+LOGIN_URL = 'usuario:login'
+# Authentication Backends
+AUTHENTICATION_BACKENDS = [
+    'usuario.backends.EmailBackend',  # Backend customizado para autenticação via email
+    'django.contrib.auth.backends.ModelBackend',  # Backend padrão do Django como fallback
+]

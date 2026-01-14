@@ -1,0 +1,43 @@
+<!-- Modal de Excluir Conta (DaisyUI) -->
+<!-- toggle input control (DaisyUI) -->
+<input type="checkbox" id="deleteAccountModalToggle" class="modal-toggle" style="display:none;" />
+<div class="modal">
+    <div class="modal-box relative bg-gray-300 rounded-xl max-w-2xl p-8">
+        <label for="deleteAccountModalToggle" id="closeDeleteAccountModal"
+            class="btn btn-sm btn-ghost absolute right-4 top-4">✕</label>
+        <h3 class="text-3xl font-bold text-black text-center mb-6">Excluir Conta</h3>
+
+        <!-- Mensagem de Confirmação -->
+        <div class="text-center mb-8 space-y-2">
+            <p class="text-2xl text-black font-bold">
+                Você realmente deseja excluir esta conta?
+            </p>
+            <p class="text-lg text-black font-semibold">
+                Transações e metas que lhe estão relacionadas
+            </p>
+            <p class="text-lg text-black font-semibold mb-4">
+                também serão apagadas.
+            </p>
+            <p class="text-lg text-black font-bold">
+                Após confirmação essa ação será irreversível.
+            </p>
+        </div>
+
+        <!-- Botões de Ação -->
+        <div class="flex gap-8 justify-center">
+            <label for="deleteAccountModalToggle" id="cancelDeleteAccountBtn"
+                class="flex items-center gap-3 px-8 py-4 bg-red-300 text-red-900 font-semibold rounded-lg cursor-pointer hover:bg-red-400">
+                <span class="text-2xl">✕</span> Cancelar
+            </label>
+            <button type="button" id="confirmDeleteAccountBtn" onclick="return false;"
+                class="flex items-center gap-3 px-8 py-4 bg-green-400 text-green-900 font-semibold rounded-lg hover:bg-green-500">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd"
+                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                        clip-rule="evenodd" />
+                </svg>
+                Sim, desejo excluí-la
+            </button>
+        </div>
+    </div>
+</div>

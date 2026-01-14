@@ -5,7 +5,7 @@ from usuario.models import Usuario
 # Create your models here.
 
 class ContaFinanceira(Model):
-    TIPOS_CONTA = (('CREDITO', 'Crédito'), ('CREDITO/DEBITO', 'Crédito/Débito'), ('DEBITO', 'Débito'))
+    TIPOS_CONTA = (('CREDITO', 'Crédito'), ('CREDITO_DEBITO', 'Crédito/Débito'), ('DEBITO', 'Débito'))
     nome = CharField('Nome da Conta', max_length=100, blank=False, null=False)
     saldo = FloatField('Saldo da Conta', default=0.0, blank=False, null=False)
     tipo = CharField('Tipo da Conta', max_length=14, choices=TIPOS_CONTA, default='', blank=False, null=False)
@@ -30,10 +30,10 @@ class ContaFinanceira(Model):
         if not self.saldo:
             erros['saldo'] = 'O saldo da conta é obrigatório.'
         
-        #=== NOTA - Com essa validação nao esta sendo possivel criar uma conta pelo django admin, é necessario uma correção ===#
-        # if self.tipo not in self.tipo.choices:           
-        #     erros['tipo'] = 'O tipo da conta deve ser Crédito, Crédito e Débito ou Débito'
-        #============================================================
+        # Validar tipo de conta
+        tipos_validos = [tipo[0] for tipo in self.TIPOS_CONTA]
+        if self.tipo and self.tipo not in tipos_validos:
+            erros['tipo'] = f'O tipo da conta deve ser um de: {" ou ".join([t[1] for t in self.TIPOS_CONTA])}'
         
         if not self.tipo:
             erros['tipo'] = 'O tipo da conta é obrigatório.'

@@ -33,7 +33,7 @@
 1. [CDU-18 - Manter Transação (Persistente)](./cdu-18/detalhamento-18.md) :white_check_mark:
 1. [CDU-19 - Manter Conta Financeira (Persistente)](./cdu-19/detalhamento-19.md) :white_check_mark:
 1. [CDU-20 - Atualizar Perfil](./cdu-20/detalhamento-20.md)
-1. [CDU-21 - Remover Membro da Família](./cdu-21/detalhamento-21.md)
+1. [CDU-21 - Remover Membro da Família](./cdu-21/detalhamento-21.md) :white_check_mark:
 1. [CDU-22 - Adicionar Membro à Família](./cdu-22/detalhamento-22.md) :white_check_mark:
 1. [CDU-23 - Tornar Administrador da Fámilia](./cdu-23/detalhamento-23.md) :white_check_mark:
 1. [CDU-24 - Visualizar Relatório da Família](./cdu-24/detalhamento-24.md)
