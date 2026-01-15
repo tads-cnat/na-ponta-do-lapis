@@ -10,7 +10,7 @@ def papel_requerido(*papeis_permitidos):
         def wrapper(request, *args, **kwargs):
 
             if not request.user.is_authenticated:
-                return redirect('usuario:login')
+                return redirect('login')
             
             if request.user.papel not in papeis_permitidos:
                 raise PermissionDenied("Você não tem permissão para acessar a página.")
