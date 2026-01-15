@@ -1,0 +1,123 @@
+<!-- Modal de Adicionar Conta (DaisyUI) -->
+<!-- toggle input control (DaisyUI) -->
+<input type="checkbox" id="addAccountModalToggle" class="modal-toggle" style="display:none;" />
+<div class="modal">
+    <div class="modal-box relative bg-gray-300 rounded-xl max-w-3xl p-8">
+        <label for="addAccountModalToggle" id="closeAddAccountModal"
+            class="btn btn-sm btn-ghost absolute right-4 top-4">✕</label>
+        <h3 class="text-3xl font-bold text-black text-center mb-6">Nova Conta</h3>
+
+        <!-- Exibição de Erros -->
+        <div id="errorContainer" class="hidden mb-4 p-4 bg-red-100 border-2 border-red-500 rounded-lg">
+            <div class="text-red-800 font-semibold mb-2">Erros encontrados:</div>
+            <ul id="errorList" class="text-red-700 space-y-1"></ul>
+        </div>
+
+        <!-- Formulário -->
+        <form id="addAccountForm" class="space-y-6" method="post" action="{% url 'contas:add_conta' %}">
+            {% csrf_token %}
+            <div class="grid grid-cols-2 gap-6">
+                <div>
+                    <label class="block text-lg font-semibold text-black mb-2">Nome da Conta</label>
+                    <input type="text" id="accountName" name="nome" placeholder="Digite o nome da conta"
+                        class="w-full px-6 py-4 bg-white rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black text-xl" />
+                </div>
+                <div>
+                    <label class="block text-lg font-semibold text-black mb-2">Saldo da Conta</label>
+                    <input type="text" id="accountBalance" name="saldo" placeholder="R$ 0,00"
+                        class="w-full px-6 py-4 bg-white rounded-lg text-black placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-black text-xl text-right font-bold" />
+                </div>
+            </div>
+
+            <!-- Tipo de Conta -->
+            <div>
+                <label class="block text-lg font-semibold text-black mb-3">Selecione um tipo</label>
+                <div class="flex gap-6 justify-center">
+                    <button type="button" data-type="CREDITO"
+                        class="account-type-btn px-8 py-6 rounded-lg font-bold text-2xl bg-white text-black border-2 border-gray-300 shadow-md">CRÉDITO</button>
+                    <button type="button" data-type="DEBITO"
+                        class="account-type-btn px-8 py-6 rounded-lg font-bold text-2xl bg-gray-900 text-white shadow-md">DÉBITO</button>
+                    <button type="button" data-type="CREDITO_DEBITO"
+                        class="account-type-btn px-8 py-6 rounded-lg font-bold text-2xl bg-red-500 text-white shadow-md">CRÉDITO
+                        E<br />DÉBITO</button>
+                </div>
+                <input type="hidden" id="selectedAccountType" name="tipo" value="">
+            </div>
+
+            <!-- Botões de Ação -->
+            <div class="flex gap-8 justify-center mt-8">
+                <label for="addAccountModalToggle" id="cancelAddAccountBtn"
+                    class="flex items-center gap-3 px-8 py-4 bg-red-300 text-red-900 font-semibold rounded-lg cursor-pointer hover:bg-red-400">
+                    <span class="text-2xl">✕</span> Cancelar
+                </label>
+                <button type="submit"
+                    class="flex items-center gap-3 px-8 py-4 bg-green-400 text-green-900 font-semibold rounded-lg hover:bg-green-500">
+                    <span class="text-2xl">✓</span> Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const addAccountForm = document.getElementById('addAccountForm');
+        const accountNameInput = document.getElementById('accountName');
+        const accountBalanceInput = document.getElementById('accountBalance');
+        const selectedAccountType = document.getElementById('selectedAccountType');
+        const errorContainer = document.getElementById('errorContainer');
+        const errorList = document.getElementById('errorList');
+        const accountTypeButtons = document.querySelectorAll('.account-type-btn');
+
+        // Gerenciar seleção de tipo de conta
+        accountTypeButtons.forEach(button => {
+            button.addEventListener('click', function (e) {
+                e.preventDefault();
+                accountTypeButtons.forEach(btn => {
+                    btn.classList.remove('ring-2', 'ring-yellow-400');
+                    btn.style.opacity = '1';
+                });
+                this.classList.add('ring-2', 'ring-yellow-400');
+                selectedAccountType.value = this.dataset.type;
+            });
+        });
+
+        // Validação de formulário
+        addAccountForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            errorList.innerHTML = '';
+            errorContainer.classList.add('hidden');
+
+            const errors = [];
+
+            // Validar nome
+            if (!accountNameInput.value.trim()) {
+                errors.push('Nome da conta é obrigatório');
+            } else if (accountNameInput.value.trim().length < 3) {
+                errors.push('Nome da conta deve ter pelo menos 3 caracteres');
+            }
+
+            // Validar saldo
+            if (!accountBalanceInput.value.trim()) {
+                errors.push('Saldo da conta é obrigatório');
+            } else {
+                const saldo = parseFloat(accountBalanceInput.value.replace(/[^0-9,.-]/g, '').replace(',', '.'));
+                if (isNaN(saldo) || saldo < 0) {
+                    errors.push('Saldo deve ser um número válido e não-negativo');
+                }
+            }
+
+            // Validar tipo
+            if (!selectedAccountType.value) {
+                errors.push('Tipo de conta é obrigatório');
+            }
+
+            if (errors.length > 0) {
+                errorList.innerHTML = errors.map(err => `<li>• ${err}</li>`).join('');
+                errorContainer.classList.remove('hidden');
+            } else {
+                this.submit();
+            }
+        });
+    });
+</script>
