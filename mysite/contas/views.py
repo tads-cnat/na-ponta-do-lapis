@@ -36,7 +36,7 @@ def index(request):
         messages.error(request, f'Erro ao carregar contas: {str(e)}')
         return redirect('login')
 
-@login_required(login_url='login')
+@login_required(login_url='usuario:login')
 def visualizar_conta(request, conta_id):
     """
     View para visualizar uma conta específica.
@@ -211,6 +211,44 @@ def obter_conta_json(request, conta_id):
             'saldo': float(conta.saldo),
             'tipo': conta.tipo,
             'sucesso': True
+        })
+    except Exception as e:
+        return JsonResponse({'sucesso': False, 'erro': str(e)}, status=500)
+
+@login_required(login_url='usuario:login')
+def obter_transacoes_conta(request, conta_id):
+    """
+    API que retorna as transações de uma conta em JSON.
+    Usado pelo modal de visualização de conta.
+    """
+    try:
+        conta = ContaService.obter_conta_por_id(conta_id)
+        
+        if not conta:
+            return JsonResponse({'sucesso': False, 'erro': 'Conta não encontrada'}, status=404)
+        
+        # Verificar se o usuário é o proprietário
+        if conta.usuario != request.user:
+            return JsonResponse({'sucesso': False, 'erro': 'Permissão negada'}, status=403)
+        
+        # Obter transações da conta (tenta importar do serviço de contas)
+        transacoes = ContaService.VisualizarContaService(conta_id)
+        
+        # Se houver erro ao buscar transações (app ainda não finalizada)
+        if transacoes is None:
+            transacoes = []
+        
+        # Montar resposta com dados da conta e transações
+        return JsonResponse({
+            'sucesso': True,
+            'conta': {
+                'id': conta.id,
+                'nome': conta.nome,
+                'saldo': float(conta.saldo),
+                'tipo': conta.tipo,
+            },
+            'transacoes': transacoes if isinstance(transacoes, list) and len(transacoes) > 0 else [],
+            'tem_transacoes': isinstance(transacoes, list) and len(transacoes) > 0
         })
     except Exception as e:
         return JsonResponse({'sucesso': False, 'erro': str(e)}, status=500)

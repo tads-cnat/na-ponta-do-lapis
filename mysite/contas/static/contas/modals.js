@@ -3,6 +3,8 @@
  * Gerencia abertura/fechamento de modais e submissão de formulários
  */
 
+console.log('modals.js carregado com sucesso');
+
 class ModalManager {
     constructor() {
         this.currentAccountId = null;
@@ -214,10 +216,133 @@ class ModalManager {
 
     // ==================== MODAL VISUALIZAR CONTA ====================
     openViewAccountModal(accountId) {
+        console.log('Abrindo modal de visualizar conta:', accountId);
         this.currentAccountId = accountId;
         const toggle = document.getElementById('viewAccountModalToggle');
         if (toggle) toggle.checked = true;
-        // Aqui você pode carregar dados da conta se necessário
+
+        // Carregar dados da conta e transações
+        this.loadAccountTransactions(accountId);
+    }
+
+    loadAccountTransactions(accountId) {
+        console.log('Carregando transações para conta:', accountId);
+
+        // Buscar dados da conta e transações via API JSON
+        fetch(`/contas/api/transacoes/${accountId}/`)
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(data => {
+                console.log('Dados de transações recebidos:', data);
+
+                if (data.sucesso) {
+                    console.log('Preenchendo modal com dados da conta');
+
+                    // Preencher dados da conta - verificar se elementos existem
+                    const nameEl = document.getElementById('viewAccountName');
+                    const balanceEl = document.getElementById('viewAccountBalance');
+                    const typeEl = document.getElementById('viewAccountType');
+
+                    if (!nameEl || !balanceEl || !typeEl) {
+                        console.error('Elementos do modal não encontrados!');
+                        console.error('viewAccountName:', nameEl);
+                        console.error('viewAccountBalance:', balanceEl);
+                        console.error('viewAccountType:', typeEl);
+                        alert('Erro ao exibir dados da conta: elementos não encontrados');
+                        return;
+                    }
+
+                    nameEl.textContent = data.conta.nome;
+                    balanceEl.textContent = 'R$ ' + parseFloat(data.conta.saldo).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                    typeEl.textContent = data.conta.tipo;
+
+                    // Verificar se há transações
+                    if (data.tem_transacoes && data.transacoes.length > 0) {
+                        console.log('Renderizando tabela de transações');
+                        this.renderTransactionsTable(data.transacoes);
+                    } else {
+                        console.log('Sem transações - mostrando mensagem');
+                        this.showNoTransactionsMessage();
+                    }
+                } else {
+                    console.error('Erro da API:', data.erro);
+                    alert('Erro ao carregar transações: ' + data.erro);
+                }
+            })
+            .catch(error => {
+                console.error('Erro na requisição fetch de transações:', error);
+                alert('Erro ao carregar transações: ' + error.message);
+            });
+    }
+
+    renderTransactionsTable(transacoes) {
+        console.log('Renderizando transações:', transacoes.length);
+
+        const container = document.getElementById('viewTransactionsContainer');
+
+        // Template HTML da tabela
+        let html = `
+            <div class="mb-4">
+                <h3 class="text-lg font-bold text-black bg-white p-3 rounded-lg">Histórico (${transacoes.length} transações)</h3>
+            </div>
+            <div class="overflow-x-auto mb-6">
+                <table class="w-full bg-white rounded-lg overflow-hidden">
+                    <thead class="bg-gray-400 text-black">
+                        <tr>
+                            <th class="px-4 py-3 text-left font-semibold">Estado</th>
+                            <th class="px-4 py-3 text-left font-semibold">Data/Hora</th>
+                            <th class="px-4 py-3 text-left font-semibold">Valor</th>
+                            <th class="px-4 py-3 text-left font-semibold">Descrição</th>
+                            <th class="px-4 py-3 text-left font-semibold">Tipo</th>
+                            <th class="px-4 py-3 text-left font-semibold">Categoria</th>
+                            <th class="px-4 py-3 text-left font-semibold">Conta</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-black">
+        `;
+
+        // Adicionar linhas de transações (placeholder - app de transações ainda não finalizada)
+        transacoes.forEach((transacao, index) => {
+            html += `
+                <tr class="border-b border-gray-200 hover:bg-gray-50">
+                    <td class="px-4 py-3">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
+                        </svg>
+                    </td>
+                    <td class="px-4 py-3">-</td>
+                    <td class="px-4 py-3 font-semibold">-</td>
+                    <td class="px-4 py-3">-</td>
+                    <td class="px-4 py-3"><span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm font-semibold">-</span></td>
+                    <td class="px-4 py-3"><span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm font-semibold">-</span></td>
+                    <td class="px-4 py-3">-</td>
+                </tr>
+            `;
+        });
+
+        html += `
+                    </tbody>
+                </table>
+            </div>
+        `;
+
+        container.innerHTML = html;
+    }
+
+    showNoTransactionsMessage() {
+        console.log('Mostrando modal de sem transações');
+
+        // Limpar container
+        document.getElementById('viewTransactionsContainer').innerHTML = '';
+
+        // Fechar modal de visualizar
+        this.closeViewAccountModal();
+
+        // Abrir modal de sem transações
+        const toggle = document.getElementById('noTransactionsModalToggle');
+        if (toggle) toggle.checked = true;
     }
 
     closeViewAccountModal() {
@@ -249,6 +374,7 @@ class ModalManager {
 // Inicializar quando o documento carregar
 let modalManager;
 document.addEventListener('DOMContentLoaded', function () {
+    console.log('DOMContentLoaded - Inicializando modals');
     modalManager = new ModalManager();
 
     // ==================== MODAL ADICIONAR ====================
@@ -351,16 +477,23 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // ==================== MODAL VISUALIZAR ====================
-    const viewAccountBtn = document.querySelector('.viewAccountBtn');
-    if (viewAccountBtn) {
-        viewAccountBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-            const accountId = this.getAttribute('data-conta-id');
-            if (accountId) {
-                modalManager.openViewAccountModal(accountId);
-            } else {
-                alert('Selecione uma conta para visualizar');
-            }
+    console.log('Buscando botões viewAccountBtn');
+    const viewAccountBtns = document.querySelectorAll('.viewAccountBtn');
+    console.log('Encontrados ' + viewAccountBtns.length + ' botões visualizar');
+
+    if (viewAccountBtns.length > 0) {
+        viewAccountBtns.forEach((btn, index) => {
+            console.log('Adicionando listener ao botão ' + index);
+            btn.addEventListener('click', function (e) {
+                e.preventDefault();
+                const accountId = this.getAttribute('data-conta-id');
+                console.log('Clicado botão visualizar, accountId:', accountId);
+                if (accountId && accountId !== '0') {
+                    modalManager.openViewAccountModal(accountId);
+                } else {
+                    alert('Selecione uma conta para visualizar');
+                }
+            });
         });
     }
 
@@ -369,6 +502,16 @@ document.addEventListener('DOMContentLoaded', function () {
         viewToggle.addEventListener('change', function () {
             if (!this.checked) {
                 modalManager.closeViewAccountModal();
+            }
+        });
+    }
+
+    // ==================== MODAL SEM TRANSAÇÕES ====================
+    const noTransactionsToggle = document.getElementById('noTransactionsModalToggle');
+    if (noTransactionsToggle) {
+        noTransactionsToggle.addEventListener('change', function () {
+            if (!this.checked) {
+                // Modal fechado
             }
         });
     }
