@@ -24,4 +24,5 @@ urlpatterns = [
     path('config/', include('config.urls')),
     path('categoria/', include('categoria.urls')),
     path('familia/', include('grupo_familiar.urls')),
+    path('dashboard/', include('dashboard.urls')),
 ]
