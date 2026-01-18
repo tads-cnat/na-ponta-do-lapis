@@ -50,7 +50,7 @@ def visualizar_conta(request, conta_id):
             raise Http404('Conta não encontrada')
         
         # Verificar se o usuário é o proprietário
-        if conta.id_usuario != request.user:
+        if conta.usuario != request.user:
             messages.error(request, 'Você não tem permissão para acessar essa conta.')
             return redirect('contas:index')
         
@@ -117,7 +117,7 @@ def editar_conta(request, conta_id):
             raise Http404('Conta não encontrada')
         
         # Verificar se o usuário é o proprietário
-        if conta.id_usuario != request.user:
+        if conta.usuario != request.user:
             messages.error(request, 'Você não tem permissão para editar essa conta.')
             return redirect('contas:index')
         
@@ -173,7 +173,7 @@ def excluir_conta(request, conta_id):
             return JsonResponse({'sucesso': False, 'erro': 'Conta não encontrada'}, status=404)
         
         # Verificar se o usuário é o proprietário
-        if conta.id_usuario != request.user:
+        if conta.usuario != request.user:
             return JsonResponse({'sucesso': False, 'erro': 'Sem permissão para excluir essa conta'}, status=403)
         
         # Excluir a conta
@@ -201,7 +201,7 @@ def obter_conta_json(request, conta_id):
             return JsonResponse({'sucesso': False, 'erro': 'Conta não encontrada'}, status=404)
         
         # Verificar se o usuário é o proprietário
-        if conta.id_usuario != request.user:
+        if conta.usuario != request.user:
             return JsonResponse({'sucesso': False, 'erro': 'Permissão negada'}, status=403)
         
         # Retornar dados da conta em JSON

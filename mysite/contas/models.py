@@ -9,7 +9,7 @@ class ContaFinanceira(Model):
     nome = CharField('Nome da Conta', max_length=100, blank=False, null=False)
     saldo = FloatField('Saldo da Conta', default=0.0, blank=False, null=False)
     tipo = CharField('Tipo da Conta', max_length=14, choices=TIPOS_CONTA, default='', blank=False, null=False)
-    id_usuario = ForeignKey(Usuario, on_delete=CASCADE, blank=False, null=False, related_name="contas_financeiras", verbose_name='Usuário da Conta')
+    usuario = ForeignKey(Usuario, on_delete=CASCADE, blank=False, null=False, related_name="contas_financeiras", verbose_name='Usuário da Conta')
 
     class Meta:
         verbose_name = 'Conta Financeira'

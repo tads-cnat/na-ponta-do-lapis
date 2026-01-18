@@ -1,4 +1,5 @@
 from .models import ContaFinanceira
+from usuario.models import Usuario
 from transacoes.models import Transacao
 from django.core.exceptions import ValidationError
 
@@ -11,14 +12,14 @@ class ContaService:
 
         except ContaFinanceira.DoesNotExist:
             return None
-
+        
     @staticmethod
     def obter_contas_usuario(usuario):
         """
         Retorna todas as contas financeiras de um usuário específico.
         """
         try:
-            return ContaFinanceira.objects.filter(id_usuario=usuario).order_by('id')
+            return ContaFinanceira.objects.filter(usuario=usuario).order_by('id')
         except:
             return []
 
@@ -35,7 +36,7 @@ class ContaService:
 
     @staticmethod
     def AddContaService(nome, saldo, tipo, usuario=None):
-        conta = ContaFinanceira(nome=nome, saldo=saldo, tipo=tipo, id_usuario=usuario)
+        conta = ContaFinanceira(nome=nome, saldo=saldo, tipo=tipo, usuario=usuario)
 
         try:
             conta.full_clean()
