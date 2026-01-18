@@ -96,10 +96,14 @@
             <div >
                 <div class="divider " ></div>
                 <div class="login flex justify-between">
-                    <img src="{% static 'base/img/usr.png'%}" alt="">
+                    {% if user.foto_perfil %}
+                        <img src="{{ user.foto_perfil.url }}" alt="Foto de {{ user.nome_completo }}" class="w-12 h-12 rounded-full object-cover">
+                    {% else %}
+                        <img src="{% static 'base/img/usr.png'%}" alt="Usuário">
+                    {% endif %}
                     <div>
-                        <p><b>Alexandre B. Sousa</b></p>
-                        <p class="text-gray-400 text-sm">Premium</p>
+                        <p><b>{{ user.nome_completo|default:"Usuário" }}</b></p>
+                        <p class="text-gray-400 text-sm">{{ user.get_papel_display|default:"Premium" }}</p>
                     </div>
                     <div>
                         <a href="{%url 'logout' %}">

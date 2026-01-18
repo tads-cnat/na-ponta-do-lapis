@@ -3,6 +3,168 @@
 {% block title %} Dashboard {% endblock%}
 {% block main %}
  
-    <h2>Dashboard</h2>
+    <h2 class="text-2xl font-bold mb-6">Geral</h2>
+    
+    <div class="grid grid-cols-4 gap-4">
+        <!-- Card Receita -->
+        <div class="bg-green-400 rounded-lg p-4 text-white">
+            <h3 class="text-base font-semibold mb-2">Receita</h3>
+            <p class="text-xl font-bold">R$ {{ total_receita|floatformat:2 }}</p>
+        </div>
+        
+        <!-- Card Total -->
+        <div class="bg-gray-900 rounded-lg p-4 text-white">
+            <h3 class="text-base font-semibold mb-2">Total</h3>
+            <p class="text-xl font-bold">R$ {{ total|floatformat:2 }}</p>
+        </div>
+        
+        <!-- Card Gastos -->
+        <div class="bg-red-500 rounded-lg p-4 text-white">
+            <h3 class="text-base font-semibold mb-2">Gastos</h3>
+            <p class="text-xl font-bold">R$ {{ total_despesa|floatformat:2 }}</p>
+        </div>
+
+        <!-- Card Moedas -->
+        <div class="bg-white rounded-lg p-4 text-black">
+            <h3 class="text-base font-semibold mb-2">Moedas</h3>
+            <div class="space-y-1">
+                <p class="text-sm">USD: $1.00</p>
+                <p class="text-sm">CAD: $1.35</p>
+                <p class="text-sm">EUR: €0.92</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Gráfico de Gastos por Categoria e Histórico -->
+    <div class="mt-6 grid grid-cols-2 gap-6">
+        <!-- Tabela de Histórico -->
+        <div class="fieldset border border-gray-300 rounded-box bg-white">
+            <h3 class="text-xl font-bold m-3">Transações recentes</h3>
+            <div class="overflow-x-auto">
+                <table class="table">
+                    <thead>
+                        <tr class="bg-gray-200 text-gray-700">
+                            <th>Estado</th>
+                            <th>Data/Hora</th>
+                            <th>Valor</th>
+                            <th>Descrição</th>
+                            <th>Categoria</th>
+                            <th>Conta</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for transacao in historico %}
+                        <tr class="hover:bg-purple-50">
+                            <td>
+                                {% if transacao.estado == 'realizada' %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                                        <circle cx="15" cy="15" r="15" fill="#22C55E"/>
+                                        <path d="M7.5 15L12.5 20L22.5 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    </svg>
+                                {% else %}
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+                                        <circle cx="15" cy="15" r="15" fill="#EF4444"/>
+                                        <path d="M10 10L20 20M20 10L10 20" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                                    </svg>
+                                {% endif %}
+                            </td>
+                            <td class="text-gray-600 font-medium">
+                                {{ transacao.data_hora|date:"d/m/Y" }}<br>
+                                <span class="text-xs">{{ transacao.data_hora|time:"H:i" }}</span>
+                            </td>
+                            {% if transacao.tipo == 'receita' %}
+                                <td class="text-green-500 font-semibold">+ R$ {{ transacao.valor|floatformat:2 }}</td>
+                            {% elif transacao.tipo == 'despesa' %}
+                                <td class="text-red-500 font-semibold">- R$ {{ transacao.valor|floatformat:2 }}</td>
+                            {% endif %}
+                            <td>{{ transacao.descricao }}</td>
+                            <td>{{ transacao.get_categoria_display }}</td>
+                            <td>{{ transacao.conta_financeira.nome }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6">
+                                <div class="alert" role="alert">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="stroke-info h-6 w-6 shrink-0">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                    </svg>
+                                    <span>Nenhuma transação encontrada</span>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Gráfico -->
+        <div class="bg-white rounded-lg p-6 shadow">
+            <h3 class="text-lg font-semibold mb-4">Gastos por Categoria</h3>
+            <div class="flex items-center justify-center">
+                <div style="width: 250px; height: 250px;">
+                    <canvas id="gastosChart"></canvas>
+                </div>
+            </div>
+            
+            <!-- Legenda -->
+            <div class="mt-4 space-y-2">
+                {% for item in gastos_por_categoria %}
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center">
+                        <span class="w-3 h-3 rounded-full mr-2" style="background-color: {{ item.cor }}"></span>
+                        <span class="text-sm">{{ item.categoria|title }}</span>
+                    </div>
+                    <span class="text-sm font-semibold">R$ {{ item.total|floatformat:2 }}</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const ctx = document.getElementById('gastosChart').getContext('2d');
+        
+        const categorias = {{ categorias_json|safe }};
+        const valores = {{ valores_json|safe }};
+        
+        // Cores para as categorias
+        const cores = [
+            '#86efac',  // verde claro
+            '#fde047',  // amarelo
+            '#ef4444',  // vermelho
+            '#60a5fa',  // azul
+            '#a78bfa',  // roxo
+            '#f97316',  // laranja
+            '#ec4899',  // rosa
+            '#14b8a6',  // teal
+            '#8b5cf6',  // violeta
+        ];
+        
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: categorias.map(cat => cat.charAt(0).toUpperCase() + cat.slice(1)),
+                datasets: [{
+                    data: valores,
+                    backgroundColor: cores.slice(0, categorias.length),
+                    borderWidth: 2,
+                    borderColor: '#ffffff',
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                cutout: '65%',
+            }
+        });
+    </script>
    
 {% endblock%}
