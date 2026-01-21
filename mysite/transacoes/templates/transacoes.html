@@ -170,7 +170,7 @@
                 
             </a>
             <dialog id="my_modal_3" class="modal">
-                <div class="modal-box">
+                <div class="modal-box bg-white">
                     <!-- Inicio do formulario de adiconar transação -->
                     <form method="dialog">
                         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -179,19 +179,19 @@
                     <form action="{% url 'adicionar_transacao' %}" method="POST" class="mt-4">
                         {% csrf_token %}
                         <div class="form-control w-full mt-4">
-                            <label class="input w-full">
+                            <label class="input w-full bg-white border border-gray-300">
                                 <span class="label">Descrição*</span>
                                 <input type="text" name="descricao" placeholder="Ex: Roupas do Natal..." minlength="3" required />
                             </label>
                         </div>
                         <div class="form-control w-full mt-4">
-                            <label class="input w-full">
+                            <label class="input w-full bg-white border border-gray-300">
                                 <span class="label">Valor*</span>
                                 <input type="number" step="0.01" min="0.01" name="valor" placeholder="Ex: 10,99..." required />
                             </label>
                         </div>
                         <div class="form-control w-full mt-4">
-                            <label class="select w-full">
+                            <label class="select w-full bg-white border border-gray-300">
                                 <span class="label">Categoria*</span>
                                 <select name="categoria" required>
                                         <option disabled>Selecione uma categoria: </option>
@@ -205,7 +205,7 @@
                         <!-- Container Estado e tipo -->
                         <div class="flex">
                             <div class="form-control w-1/2 mt-4 mr-1.5">
-                                <label class="select">
+                                <label class="select bg-white border border-gray-300">
                                     <span class="label">Tipo*</span>
                                     <select name="tipo" required>
                                         <option disabled> Selecione o tipo de sua transação: </option>
@@ -216,18 +216,18 @@
                                 </label>
                             </div>
                             <!-- Elemento de input de estado -->
-                            <div class="form-control w-1/2 mt-4 input ml-1.5 ">
+                            <div class="form-control w-1/2 mt-4 input ml-1.5 bg-white border border-gray-300">
                                 <span class="label">Foi paga/recebida*</span>
                                 <input type="hidden" name="estado" value="pendente"  />
-                                <label class="toggle text-base-content">
+                                <label class="toggle text-gray-800 bg-white">
                                     <input type="checkbox" name="estado" value="realizada" checked/>
                                     <svg aria-label="disabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                        stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+                                        stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
                                         <path d="M18 6 6 18" />
                                         <path d="m6 6 12 12" />
                                     </svg>
                                     <svg aria-label="enabled" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                                        <g stroke-linejoin="round" stroke-linecap="round" stroke-width="4" fill="none" stroke="currentColor">
+                                        <g stroke-linejoin="round" stroke-linecap="round" stroke-width="4" fill="none" stroke="white">
                                             <path d="M20 6 9 17l-5-5"></path>
                                         </g>
                                     </svg>
@@ -236,18 +236,18 @@
                             
                         </div>
                         <div class="form-control w-full mt-4">
-                            <label class="input w-full">
+                            <label class="input w-full bg-white border border-gray-300">
                                 <span class="label">Data*</span>
                                 <input type="datetime-local" name="data_hora" placeholder="Tipo da transação"  required/>
                             </label>
                         </div>
                         <!-- Conteiner marcadores e conta -->
                         <div class="flex">
-                            <div class="dropdown dropdown-right dropdown-center mt-4 mr-3">
-                                <div tabindex="0" role="button" class="select ">
+                            <div class="dropdown dropdown-right dropdown-center mt-4 mr-3 b">
+                                <div tabindex="0" role="button" class="select bg-white border border-gray-300">
                                     <span class="text-gray-500">Marcadores</span>
                                 </div>
-                                <ul tabindex="-1" class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm">
+                                <ul tabindex="-1" class="dropdown-content menu bg-white rounded-box z-1 w-52 p-2 shadow-sm">
                                     {% for marcador in marcadores %}
                                     <li>
                                         <input class="btn" type="checkbox" value="{{marcador.id}}" name="marcadores" aria-label="{{ marcador.nome}}">
@@ -257,7 +257,7 @@
                                 </ul>
                             </div>
                             <div class="form-control w-full mt-4">
-                                <label class="select w-full">
+                                <label class="select w-full bg-white border border-gray-300">
                                     <span class="label">Conta Financeira</span>
                                     <select name="conta_financeira">
                                             <option disabled>Selecione uma Conta Financeira: </option>

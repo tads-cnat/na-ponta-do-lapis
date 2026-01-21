@@ -2,6 +2,8 @@ from django.core.exceptions import ValidationError
 from .models import Transacao
 from contas.models import ContaFinanceira
 from categoria.models import Marcador
+from contas.services import ContaService
+from django.db.models import Q
 
 class TransacaoService:
 
@@ -83,15 +85,17 @@ class TransacaoService:
             raise ValidationError({'transacao':'Transação não encontrada'})
         
     @staticmethod
-    def obter_minhas_transacoes():
-        return Transacao.objects.all()
-    
+    def obter_minhas_transacoes(usuario):
+        contas = ContaService.obter_contas_usuario(usuario.id)
+        return Transacao.objects.filter(conta_financeira__in=contas)
+   
+    @staticmethod
     def obter_transacoes_id(transacao_id):
         return Transacao.objects.get(id=transacao_id)
     
     @staticmethod
-    def filtrar_transacao(busca, categoria, tipo, conta):
-        transacoes = TransacaoService.obter_minhas_transacoes()
+    def filtrar_transacao(busca, categoria, tipo, conta, usuario):
+        transacoes = TransacaoService.obter_minhas_transacoes(usuario)
         if busca:
             transacoes = transacoes.filter(descricao__icontains=busca)
         if categoria:

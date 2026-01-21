@@ -16,7 +16,7 @@ def transacoes_index(request):
         'tipos':ts.obter_tipos,
         'contas': ContaFinanceira.objects.all,
         'marcadores':Marcador.objects.all,
-        'minhas_transacoes':ts.obter_minhas_transacoes
+        'minhas_transacoes':ts.obter_minhas_transacoes(request.user)
     }
 
     return render(request, "transacoes.html", context=context)
@@ -84,11 +84,12 @@ def filtrar_transacao(request):
     filtro_tipo = request.GET.get("tipo")
     filtro_conta = request.GET.get("conta")
     filtro_busca = request.GET.get("busca")
+    usuario = request.user
 
     if not (filtro_busca or filtro_categoria or filtro_tipo or filtro_conta):
          return redirect(transacoes_index)
 
-    filtro = ts.filtrar_transacao(filtro_busca, filtro_categoria, filtro_tipo, filtro_conta)
+    filtro = ts.filtrar_transacao(filtro_busca, filtro_categoria, filtro_tipo, filtro_conta, usuario)
     context = {
         'categorias':ts.obter_categorias,
         'tipos':ts.obter_tipos,
