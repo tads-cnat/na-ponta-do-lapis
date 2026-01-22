@@ -1,21 +1,32 @@
+from datetime import datetime
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.contrib import messages
 from .services import TransacaoService as ts
 from contas.services import ContaService
-from contas.models import ContaFinanceira
 from categoria.models import Marcador
 
 # Create your views here.
-#@login_required
 def transacoes_index(request):
+    print(request.session.get("transacoes","----Vazio----"))
+
+    if request.user.is_authenticated:
+        transacoes = ts.obter_minhas_transacoes(request.user)
+    else:
+        transacoes = request.session.get("transacoes",[])
+        for t in transacoes:
+            t["data_hora"] = datetime.strptime(
+                t["data_hora"],
+                "%Y-%m-%d %H:%M:%S"
+            )
+        
+
     context = {
         'categorias':ts.obter_categorias,
         'tipos':ts.obter_tipos,
         'contas': ContaService.obter_contas_usuario(request.user),
         'marcadores':Marcador.objects.all,
-        'minhas_transacoes':ts.obter_minhas_transacoes(request.user)
+        'minhas_transacoes': transacoes
     }
 
     return render(request, "transacoes.html", context=context)
@@ -29,8 +40,30 @@ def adicionar_transacao_view(request):
     data_hora =  request.POST.get('data_hora')
     conta_financeira =  request.POST.get('conta_financeira')
     marcadores = request.POST.getlist('marcadores')
-    try:
-        ts.adicionar_transacao(
+
+    if request.user.is_authenticated:
+        try:
+            ts.salvar_transacao_db(
+                descricao = descricao,
+                valor= valor,
+                categoria= categoria,
+                estado = estado,
+                tipo = tipo,
+                data_hora = data_hora,
+                conta_financeira_id = conta_financeira,
+                marcadores_ids = marcadores
+
+            )
+        except ValidationError as e:
+            messages.error(request,e)
+            return redirect(transacoes_index)
+
+        else:
+            messages.success(request, "Transação salva com sucesso." )
+            return redirect(transacoes_index)
+    else:
+        ts.salvar_transacao_sessao(
+            request = request,
             descricao = descricao,
             valor= valor,
             categoria= categoria,
@@ -39,14 +72,7 @@ def adicionar_transacao_view(request):
             data_hora = data_hora,
             conta_financeira_id = conta_financeira,
             marcadores_ids = marcadores
-
         )
-    except ValidationError as e:
-        messages.error(request,e)
-        return redirect(transacoes_index)
-
-    else:
-        messages.success(request, "Transação salva com sucesso." )
         return redirect(transacoes_index)
 
 def editar_transacao(request, id):
