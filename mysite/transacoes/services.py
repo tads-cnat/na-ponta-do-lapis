@@ -1,7 +1,10 @@
 from django.core.exceptions import ValidationError
+from django.db.models import Q
+from datetime import datetime
 from .models import Transacao
 from contas.models import ContaFinanceira
 from categoria.models import Marcador
+from contas.services import ContaService
 
 class TransacaoService:
 
@@ -83,15 +86,17 @@ class TransacaoService:
             raise ValidationError({'transacao':'Transação não encontrada'})
         
     @staticmethod
-    def obter_minhas_transacoes():
-        return Transacao.objects.all()
-    
+    def obter_minhas_transacoes(usuario):
+        contas = ContaService.obter_contas_usuario(usuario.id)
+        return Transacao.objects.filter(conta_financeira__in=contas)
+   
+    @staticmethod
     def obter_transacoes_id(transacao_id):
         return Transacao.objects.get(id=transacao_id)
     
     @staticmethod
-    def filtrar_transacao(busca, categoria, tipo, conta):
-        transacoes = TransacaoService.obter_minhas_transacoes()
+    def filtrar_transacao(busca, categoria, tipo, conta, data_inicio, data_fim , usuario):
+        transacoes = TransacaoService.obter_minhas_transacoes(usuario)
         if busca:
             transacoes = transacoes.filter(descricao__icontains=busca)
         if categoria:
@@ -100,6 +105,12 @@ class TransacaoService:
             transacoes = transacoes.filter(tipo=tipo)
         if conta:
             transacoes = transacoes.filter(conta_financeira=conta)
+        if data_inicio:
+            data_inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+            transacoes = transacoes.filter(data_hora__gte = data_inicio)
+        if data_fim:
+            data_fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
+            transacoes = transacoes.filter(data_hora__lte = data_fim)
 
         return transacoes
         
