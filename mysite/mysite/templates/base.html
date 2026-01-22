@@ -16,7 +16,7 @@
 <body class="bg-npl-bg min-h-screen flex ">
     <nav class="w-1/8 h-full fixed">
         <ul class="menu menu-lg justify-between text-gray-100 bg-npl-nav h-screen w-full min-w-[250px] ">
-            <div class="sidebar-menu">
+            <div class="sidebar-menu text-base">
                 <li class="flex items-center ">
                    <img src="{% static 'base/img/logo (1).svg' %}" alt="">
     
@@ -99,19 +99,19 @@
                     {% if user.foto_perfil %}
                         <img src="{{ user.foto_perfil.url }}" alt="Foto de {{ user.nome_completo }}" class="w-12 h-12 rounded-full object-cover">
                     {% else %}
-                        <img src="{% static 'base/img/usr.png'%}" alt="Usuário">
+                        <img src="{% static 'base/img/usr_df.png'%}" alt="Usuário">
                     {% endif %}
-                    <div>
-                        <p><b>{{ user.nome_completo|default:"Usuário"| truncatewords:2 }}</b></p>
-                        <p class="text-gray-400 text-sm">{{ user.get_papel_display|default:"Premium" }}</p>
+                    <div class="w-full px-3" >
+                        <p class="text-sm"><b>{{ user.nome_completo|default:"Convidado"| truncatewords:2 }}</b></p>
+                        <p class="text-gray-400 text-xs">{{ user.get_papel_display|default:"Demonstração" }}</p>
                     </div>
                     <div>
-                        <a href="{%url 'logout' %}">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="26" height="20" viewBox="0 0 26 20" fill="none">
-                                <path d="M16.9565 13.973V18.9189C16.9565 19.5135 16.5043 20 15.8826 20H1.13043C0.508696 20 0 19.5135 0 18.9189V1.08108C0 0.486486 0.508696 0 1.13043 0H15.8826C16.5043 0 16.9565 0.486486 16.9565 1.08108V6.02703C16.9565 6.62162 16.4478 7.10811 15.8261 7.10811C15.2043 7.10811 14.6957 6.62162 14.6957 6.02703V2.16216H2.26087V17.8378H14.6957V13.973C14.6957 13.3784 15.2043 12.8919 15.8261 12.8919C16.4478 12.8919 16.9565 13.3784 16.9565 13.973ZM25.6609 9.18919L21.2522 4.91892C20.8 4.48649 20.0935 4.48649 19.6413 4.91892C19.1891 5.35135 19.1891 6.02703 19.6413 6.45946L22.1565 8.89189L8.45 8.91892C7.82826 8.91892 7.31956 9.40541 7.31956 10C7.31956 10.5946 7.82826 11.0811 8.45 11.0811L22.1565 11.0541L19.6413 13.4865C19.1891 13.9189 19.2174 14.5946 19.6413 15.027C19.8674 15.2432 20.15 15.3514 20.4326 15.3514C20.7152 15.3514 21.0261 15.2432 21.2239 15.027L25.6609 10.7568C26.113 10.2973 26.113 9.62162 25.6609 9.18919Z" fill="white"/>
-                            </svg>
-                            <p>Sair</p>
-                        </a>
+                      <a href="{% if user.is_authenticated %} {% url 'logout' %} {% else %} {% url 'login' %} {% endif %}">
+                          <svg xmlns="http://www.w3.org/2000/svg" width="26" height="20" viewBox="0 0 26 20" fill="none">
+                            <path d="M16.9565 13.973V18.9189C16.9565 19.5135 16.5043 20 15.8826 20H1.13043C0.508696 20 0 19.5135 0 18.9189V1.08108C0 0.486486 0.508696 0 1.13043 0H15.8826C16.5043 0 16.9565 0.486486 16.9565 1.08108V6.02703C16.9565 6.62162 16.4478 7.10811 15.8261 7.10811C15.2043 7.10811 14.6957 6.62162 14.6957 6.02703V2.16216H2.26087V17.8378H14.6957V13.973C14.6957 13.3784 15.2043 12.8919 15.8261 12.8919C16.4478 12.8919 16.9565 13.3784 16.9565 13.973ZM25.6609 9.18919L21.2522 4.91892C20.8 4.48649 20.0935 4.48649 19.6413 4.91892C19.1891 5.35135 19.1891 6.02703 19.6413 6.45946L22.1565 8.89189L8.45 8.91892C7.82826 8.91892 7.31956 9.40541 7.31956 10C7.31956 10.5946 7.82826 11.0811 8.45 11.0811L22.1565 11.0541L19.6413 13.4865C19.1891 13.9189 19.2174 14.5946 19.6413 15.027C19.8674 15.2432 20.15 15.3514 20.4326 15.3514C20.7152 15.3514 21.0261 15.2432 21.2239 15.027L25.6609 10.7568C26.113 10.2973 26.113 9.62162 25.6609 9.18919Z" fill="white"/>
+                          </svg>
+                          <p class="text-sm mt-1">{% if  user.is_authenticated %}Sair{% else %}Entrar{% endif %}</p>
+                      </a>
 
                     </div>
                 </div>

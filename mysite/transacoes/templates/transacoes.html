@@ -56,14 +56,28 @@
                             <li>
                                 <label class="input">
                                     <span class="label">Início</span>
-                                    <input type="date" id="filtro-data-inicio" name="data-inicio"/>
+                                    <input
+                                      type="date"
+                                      id="filtro-data-inicio"
+                                      name="data_inicio"
+                                      {% if request.GET.data_inicio %}
+                                        value={{ request.GET.data_inicio }} 
+                                      {% endif %}
+                                    />
                                 </label>
                             </li>
                 
                             <li class="my-3">
                                 <label class="input">
                                     <span class="label">Fim</span>
-                                    <input type="date" id="filtro-data-fim" name="data-fim" />
+                                    <input
+                                      type="date"
+                                      id="filtro-data-fim"
+                                      name="data_fim"
+                                      {% if request.GET.data_fim %}
+                                        value = {{ request.GET.data_fim }}
+                                      {% endif %}
+                                      />
                                 </label>
                             </li>
                 
