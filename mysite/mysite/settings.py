@@ -140,6 +140,10 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = '/home/pdsweb/mysite/static'
 STATIC_URL = '/static/'
 
+
+#Sessão encerra ao fechar o navegador
+SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+
 if 'CODESPACE_NAME' in os.environ:
     codespace_name = os.getenv("CODESPACE_NAME")
     codespace_domain = os.getenv("GITHUB_CODESPACES_PORT_FORWARDING_DOMAIN")

@@ -344,18 +344,31 @@
                                         <path d="M12 15.9883V15.9983" stroke="#DD3340" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 {% else %}
-                                    <span>Erro no estado da transacao</span>
+                                    <span>X</span>
                                 {% endif %}
                             </td>
-                            <td class=" text-gray-600 font-medium">{{ transacao.data_hora|date:"d/m/Y" }} <br> <span class="text-xs">{{transacao.data_hora|time:"H:i"}} </span></td>
+                            <td class=" text-gray-600 font-medium">
+                
+                                {{ transacao.data_hora|date:"d/m/Y" }}<br>
+                                <span class="text-xs">{{transacao.data_hora|time:"H:i"}}</span>
+                               
+                            </td>
                             {% if transacao.tipo == "receita" %}
-                                <td class="text-green-500 font-semibold">+ R$ {{ transacao.get_valor_display }} </td>
+                                <td class="text-green-500 font-semibold">
+                                    + R$ {% if user.is_authenticated %} {{ transacao.get_valor_display }} {% else %} {{transacao.valor}} {% endif %}
+                                </td>
                             {% elif transacao.tipo == "despesa" %}
-                                <td class="text-red-500 font-semibold">- R$ {{ transacao.get_valor_display }} </td>
+                                <td class="text-red-500 font-semibold">
+                                    - R$ {% if user.is_authenticated %} {{ transacao.get_valor_display }} {% else %} {{transacao.valor}} {% endif %}
+                                </td>
                             {% endif %}
                             <td>{{ transacao.descricao }}</td>
-                            <td>{{ transacao.get_categoria_display }}</td>  
-                            <td>{{ transacao.conta_financeira.nome }}</td>
+                            <td>
+                                {% if user.is_authenticated %}{{ transacao.get_categoria_display }}{% else %}{{ transacao.categoria|capfirst }}{% endif %}
+                            </td>  
+                            <td>
+                                {% if user.is_authenticated %}{{ transacao.conta_financeira.nome }}{% else %}{{ transacao.conta_financeira_id }}{% endif %}
+                            </td>
 
                             <!-- Botões de editar/exluir -->
                             <td class="flex">
@@ -516,6 +529,7 @@
                                         </form>
                                     </div>
                                 </dialog>
+                            </td>
                         </tr>
                     {% endfor %}
                    
