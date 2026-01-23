@@ -64,32 +64,46 @@
 
     <!-- Script para Auto-dismiss de Mensagens -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Encontrar todos os alertas
-            const alerts = document.querySelectorAll('.alert');
-
-            alerts.forEach(alert => {
-                // Timer de 5 segundos (5000ms)
+        function setupAlertDismiss(alert) {
+            setTimeout(function () {
+                alert.style.transition = 'opacity 0.3s ease-out';
+                alert.style.opacity = '0';
                 setTimeout(function () {
-                    // Adicionar animação de fade out
-                    alert.style.transition = 'opacity 0.3s ease-out';
-                    alert.style.opacity = '0';
+                    alert.remove();
+                }, 300);
+            }, 5000);
+        }
 
-                    // Remover do DOM após a animação terminar
-                    setTimeout(function () {
-                        alert.remove();
-                    }, 300);
-                }, 5000);
+        document.addEventListener('DOMContentLoaded', function () {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => setupAlertDismiss(alert));
+
+            const observer = new MutationObserver(function (mutations) {
+                mutations.forEach(function (mutation) {
+                    if (mutation.addedNodes.length) {
+                        mutation.addedNodes.forEach(function (node) {
+                            if (node.nodeType === 1) {
+                                if (node.classList && node.classList.contains('alert')) {
+                                    setupAlertDismiss(node);
+                                }
+                                const alerts = node.querySelectorAll && node.querySelectorAll('.alert');
+                                if (alerts) {
+                                    alerts.forEach(alert => setupAlertDismiss(alert));
+                                }
+                            }
+                        });
+                    }
+                });
             });
 
-            // Desabilitar botões CRUD quando não há contas
+            observer.observe(document.body, { childList: true, subtree: true });
+
             const temContas = {{ tem_contas | lower
         }};
         if (!temContas) {
             document.querySelectorAll('.viewAccountBtn, .editAccountBtn, .deleteAccountBtn').forEach(btn => {
                 btn.setAttribute('disabled', 'disabled');
-                btn.classList.remove('btn-ghost', 'border-gray-600', 'hover:border-black', 'hover:bg-white', 'hover:text-black', 'text-gray-600');
-                btn.classList.add('btn-disabled', 'opacity-50', 'border-gray-300', 'text-gray-400');
+                btn.classList.add('btn-disabled', 'opacity-50');
             });
         }
         });

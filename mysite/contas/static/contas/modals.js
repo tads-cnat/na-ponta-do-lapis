@@ -258,6 +258,10 @@ class ModalManager {
                     balanceEl.textContent = 'R$ ' + parseFloat(data.conta.saldo).toLocaleString('pt-BR', { minimumFractionDigits: 2 });
                     typeEl.textContent = data.conta.tipo;
 
+                    console.log('data.tem_transacoes:', data.tem_transacoes);
+                    console.log('data.transacoes:', data.transacoes);
+                    console.log('data.transacoes.length:', data.transacoes.length);
+
                     // Verificar se há transações
                     if (data.tem_transacoes && data.transacoes.length > 0) {
                         console.log('Renderizando tabela de transações');
@@ -303,21 +307,17 @@ class ModalManager {
                     <tbody class="text-black">
         `;
 
-        // Adicionar linhas de transações (placeholder - app de transações ainda não finalizada)
+        // Adicionar linhas de transações
         transacoes.forEach((transacao, index) => {
             html += `
                 <tr class="border-b border-gray-200 hover:bg-gray-50">
-                    <td class="px-4 py-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd" />
-                        </svg>
-                    </td>
-                    <td class="px-4 py-3">-</td>
-                    <td class="px-4 py-3 font-semibold">-</td>
-                    <td class="px-4 py-3">-</td>
-                    <td class="px-4 py-3"><span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm font-semibold">-</span></td>
-                    <td class="px-4 py-3"><span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm font-semibold">-</span></td>
-                    <td class="px-4 py-3">-</td>
+                    <td class="px-4 py-3">${transacao.estado}</td>
+                    <td class="px-4 py-3">${transacao.data_hora}</td>
+                    <td class="px-4 py-3 font-semibold">${transacao.valor}</td>
+                    <td class="px-4 py-3">${transacao.descricao}</td>
+                    <td class="px-4 py-3"><span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm font-semibold">${transacao.tipo}</span></td>
+                    <td class="px-4 py-3"><span class="bg-gray-200 text-gray-800 px-2 py-1 rounded text-sm font-semibold">${transacao.categoria}</span></td>
+                    <td class="px-4 py-3">${transacao.conta}</td>
                 </tr>
             `;
         });
@@ -332,17 +332,22 @@ class ModalManager {
     }
 
     showNoTransactionsMessage() {
-        console.log('Mostrando modal de sem transações');
+        console.log('Mostrando mensagem de sem transações');
 
-        // Limpar container
-        document.getElementById('viewTransactionsContainer').innerHTML = '';
+        const container = document.getElementById('viewTransactionsContainer');
 
-        // Fechar modal de visualizar
-        this.closeViewAccountModal();
-
-        // Abrir modal de sem transações
-        const toggle = document.getElementById('noTransactionsModalToggle');
-        if (toggle) toggle.checked = true;
+        // Renderizar mensagem de sem transações no container
+        container.innerHTML = `
+            <div class="text-center py-12">
+                <div class="text-6xl mb-4">📭</div>
+                <h3 class="text-2xl font-bold text-gray-700 mb-2">Sem Transações</h3>
+                <p class="text-gray-600 mb-6">Esta conta ainda não possui transações registradas.</p>
+                <a href="/transacoes/"
+                    class="px-6 py-3 bg-green-400 text-green-900 font-semibold rounded-lg hover:bg-green-500 inline-block">
+                    Ir para Transações
+                </a>
+            </div>
+        `;
     }
 
     closeViewAccountModal() {

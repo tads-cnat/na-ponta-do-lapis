@@ -232,11 +232,24 @@ def obter_transacoes_conta(request, conta_id):
             return JsonResponse({'sucesso': False, 'erro': 'Permissão negada'}, status=403)
         
         # Obter transações da conta (tenta importar do serviço de contas)
-        transacoes = ContaService.VisualizarContaService(conta_id)
+        transacoes_qs = ContaService.VisualizarContaService(conta_id)
         
-        # Se houver erro ao buscar transações (app ainda não finalizada)
-        if transacoes is None:
-            transacoes = []
+        # Converter QuerySet para lista de dicionários
+        transacoes = []
+        if transacoes_qs:
+            for transacao in transacoes_qs:
+                transacoes.append({
+                    'id': transacao.id,
+                    'estado': transacao.get_estado_display(),
+                    'data_hora': transacao.data_hora.strftime('%d/%m/%Y %H:%M') if transacao.data_hora else '-',
+                    'valor': f"R$ {float(transacao.valor):.2f}".replace('.', ','),
+                    'descricao': transacao.descricao,
+                    'tipo': transacao.get_tipo_display(),
+                    'categoria': transacao.get_categoria_display(),
+                    'conta': transacao.conta_financeira.nome if transacao.conta_financeira else '-',
+                })
+        
+        tem_transacoes = len(transacoes) > 0
         
         # Montar resposta com dados da conta e transações
         return JsonResponse({
@@ -247,8 +260,8 @@ def obter_transacoes_conta(request, conta_id):
                 'saldo': float(conta.saldo),
                 'tipo': conta.tipo,
             },
-            'transacoes': transacoes if isinstance(transacoes, list) and len(transacoes) > 0 else [],
-            'tem_transacoes': isinstance(transacoes, list) and len(transacoes) > 0
+            'transacoes': transacoes,
+            'tem_transacoes': tem_transacoes
         })
     except Exception as e:
         return JsonResponse({'sucesso': False, 'erro': str(e)}, status=500)
