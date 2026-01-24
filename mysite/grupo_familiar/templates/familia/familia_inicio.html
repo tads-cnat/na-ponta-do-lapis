@@ -13,6 +13,7 @@
             {% endif %}
         </div>
         <div class="flex-1 p-4 rounded-lg mt-20">
+            
             {% if familia %}
             <div class="grid grid-cols-2 text-left">
                 <div class="text-right mb-6" id="chefe">
@@ -105,6 +106,7 @@
                 </div>
                 <span></span>
                 <span></span>
+                {% if user.is_authenticated %}
                 <div class="text-center self-start">
                     <h2 class="mx-auto">Criar Familia</h2>
                     <label for="modal-form" class="btn btn-primary btn-xs gap-2 rounded-xl mx-auto">
@@ -114,6 +116,13 @@
                     </label>
                 </div>
                 <span></span>
+                {% else %}
+                <div class="text-left self-start">
+                    <a href="{% url 'login' %}" class="link">Entre na conta</a>
+                    <h2 class="mx-auto"> para criar uma família!</h2>
+                </div>
+                <span></span>
+                {% endif %}
             </div>
             {% endif %}
             
