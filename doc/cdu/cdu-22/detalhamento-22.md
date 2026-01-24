@@ -37,8 +37,8 @@
 
 ## Diagrama de Interação (Sequência ou Comunicação)
 
-> Substituir pela imagem correspondente...
+![diagrama de sequencia cdu 22](sequencia_cdu22.png)
 
 ## Diagrama de Classes de Projeto
 
-> Substituir pela imagem contendo as classes (modelo, visão e templates) que implementam o respectivo CDU...
+![diagram de classes cdu 22](classes_cdu22.png)
