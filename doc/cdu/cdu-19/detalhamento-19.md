@@ -53,8 +53,12 @@
 
 ## Diagrama de Interação (Sequência ou Comunicação)
 
-> Substituir pela imagem correspondente...
+![Diagrama de Sequência - Parte 1](./CDU%2019%20-%20Diagrama%20de%20Sequência%20Parte%201.png)
+![Diagrama de Sequência - Parte 2](./CDU%2019%20-%20Diagrama%20de%20Sequência%20Parte%202.png)
+![Diagrama de Sequência - Parte 3](./CDU%2019%20-%20Diagrama%20de%20Sequência%20Parte%203.png)
+![Diagrama de Sequência - Parte 4](./CDU%2019%20-%20Diagrama%20de%20Sequência%20Parte%204.png)
 
 ## Diagrama de Classes de Projeto
 
-> Substituir pela imagem contendo as classes (modelo, visão e templates) que implementam o respectivo CDU...
+![Diagrama de Classes de Projeto - CDU 19](./Diagrama%20de%20Classes%20de%20Projeto%20-%20CDU%2019.png)
+ 
