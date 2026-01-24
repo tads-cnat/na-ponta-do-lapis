@@ -72,3 +72,19 @@
 #addAccountModal.show .bg-gray-300 {
     animation: slideIn 0.3s ease-out;
 }
+
+/* Estilos para botões de tipo de conta */
+.account-type-btn,
+.edit-account-type-btn {
+    transition: all 200ms ease-in-out;
+}
+
+.account-type-btn.scale-105,
+.edit-account-type-btn.scale-105 {
+    transform: scale(1.05);
+    border: 2px solid #000000;
+}
+
+.selected-label {
+    transition: visibility 200ms ease-in-out;
+}

@@ -4,6 +4,10 @@
 {% block page_title %}Contas Financeiras{% endblock %}
 {% block title %}Minhas Contas{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'contas/modals.css' %}">
+{% endblock %}
+
 {% block main %}
 <div class="container mx-auto p-8">
     <!-- Exibição de Mensagens (Erros e Sucesso) -->
