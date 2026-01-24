@@ -32,14 +32,23 @@
             <!-- Tipo de Conta -->
             <div>
                 <label class="block text-lg font-semibold text-black mb-3">Selecione um tipo</label>
-                <div class="flex gap-6 justify-center">
-                    <button type="button" data-type="CREDITO"
-                        class="account-type-btn px-8 py-6 rounded-lg font-bold text-2xl bg-white text-black border-2 border-gray-300 shadow-md">CRÉDITO</button>
-                    <button type="button" data-type="DEBITO"
-                        class="account-type-btn px-8 py-6 rounded-lg font-bold text-2xl bg-gray-900 text-white shadow-md">DÉBITO</button>
-                    <button type="button" data-type="CREDITO_DEBITO"
-                        class="account-type-btn px-8 py-6 rounded-lg font-bold text-2xl bg-red-500 text-white shadow-md">CRÉDITO
-                        E<br />DÉBITO</button>
+                <div class="flex gap-6 justify-center items-end">
+                    <div class="flex flex-col items-center">
+                        <button type="button" data-type="CREDITO"
+                            class="account-type-btn px-8 py-6 rounded-lg border-black font-bold text-2xl bg-white text-black border-2 border-gray-300 shadow-md transition-all duration-200">CRÉDITO</button>
+                        <div class="selected-label border-black text-black font-bold mt-2 h-6 text-sm invisible">SELECIONADO</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <button type="button" data-type="DEBITO"
+                            class="account-type-btn px-8 py-6 rounded-lg border-black font-bold text-2xl bg-gray-900 text-white border-2 border-gray-900 shadow-md transition-all duration-200">DÉBITO</button>
+                        <div class="selected-label border-black text-black font-bold mt-2 h-6 text-sm invisible">SELECIONADO</div>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <button type="button" data-type="CREDITO_DEBITO"
+                            class="account-type-btn px-8 py-6 rounded-lg border-black font-bold text-2xl bg-white text-black border-2 shadow-md transition-all duration-200">CRÉDITO
+                            E<br />DÉBITO</button>
+                        <div class="selected-label border-black text-black font-bold mt-2 h-6 text-sm invisible">SELECIONADO</div>
+                    </div>
                 </div>
                 <input type="hidden" id="selectedAccountType" name="tipo" value="">
             </div>
@@ -75,10 +84,13 @@
             button.addEventListener('click', function (e) {
                 e.preventDefault();
                 accountTypeButtons.forEach(btn => {
-                    btn.classList.remove('ring-2', 'ring-yellow-400');
-                    btn.style.opacity = '1';
+                    btn.classList.remove('scale-105');
+                    btn.style.borderColor = btn.dataset.type === 'DEBITO' ? '#1f2937' : '#d1d5db';
+                    btn.parentElement.querySelector('.selected-label').classList.add('invisible');
                 });
-                this.classList.add('ring-2', 'ring-yellow-400');
+                this.classList.add('scale-105');
+                this.style.borderColor = '#000000';
+                this.parentElement.querySelector('.selected-label').classList.remove('invisible');
                 selectedAccountType.value = this.dataset.type;
             });
         });

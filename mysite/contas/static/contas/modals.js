@@ -28,8 +28,9 @@ class ModalManager {
         if (form) {
             form.reset();
             document.querySelectorAll('.account-type-btn').forEach(btn => {
-                btn.classList.remove('!bg-red-500', '!border-red-500', '!text-white');
-                btn.classList.add('border-2', 'border-gray-300', 'text-gray-800');
+                btn.classList.remove('scale-105');
+                btn.style.borderColor = btn.dataset.type === 'DEBITO' ? '#1f2937' : '#d1d5db';
+                btn.parentElement.querySelector('.selected-label').classList.add('invisible');
             });
             document.getElementById('selectedAccountType').value = '';
         }
@@ -73,9 +74,13 @@ class ModalManager {
                     // Selecionar tipo de conta
                     const typeButtons = document.querySelectorAll('.edit-account-type-btn');
                     typeButtons.forEach(btn => {
-                        btn.classList.remove('!bg-red-500', '!border-red-500', '!text-white');
+                        btn.classList.remove('scale-105');
+                        btn.style.borderColor = btn.getAttribute('data-type') === 'DEBITO' ? '#1f2937' : '#d1d5db';
+                        btn.parentElement.querySelector('.selected-label').classList.add('invisible');
                         if (btn.getAttribute('data-type') === data.tipo) {
-                            btn.classList.add('!bg-red-500', '!border-red-500', '!text-white');
+                            btn.classList.add('scale-105');
+                            btn.style.borderColor = '#000000';
+                            btn.parentElement.querySelector('.selected-label').classList.remove('invisible');
                         }
                     });
                     document.getElementById('selectedEditAccountType').value = data.tipo;
@@ -103,8 +108,9 @@ class ModalManager {
         if (form) {
             form.reset();
             document.querySelectorAll('.edit-account-type-btn').forEach(btn => {
-                btn.classList.remove('!bg-red-500', '!border-red-500', '!text-white');
-                btn.classList.add('border-2', 'border-gray-300');
+                btn.classList.remove('scale-105');
+                btn.style.borderColor = btn.dataset.type === 'DEBITO' ? '#1f2937' : '#d1d5db';
+                btn.parentElement.querySelector('.selected-label').classList.add('invisible');
             });
             document.getElementById('selectedEditAccountType').value = '';
         }
