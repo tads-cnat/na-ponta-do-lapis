@@ -27,10 +27,10 @@ def familia(request):
         chefe = Usuario.objects.filter(id_familia=familia_obj, papel=Usuario.Papel.ADMIN_FAMILIA).first()
         return render(request, 'familia/familia_inicio.html', {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user})
     return render(request, 'familia/familia_inicio.html', {'familia': False, 'user': user})
-class FamiliaView(LoginRequiredMixin, View):
+class FamiliaView(View):
     def get(self, request):
         user = request.user
-        if user.id_familia:
+        if user.is_authenticated and user.id_familia:
             familia_obj = user.id_familia
             nome = familia_obj.nome
             membros = familia_obj.membros
@@ -41,7 +41,7 @@ class FamiliaView(LoginRequiredMixin, View):
         return render(request, 'familia/familia_inicio.html', {'familia': False, 'user': user})
     def post(self, request):
         user = request.user
-        if user.id_familia:
+        if user.is_authenticated and user.id_familia:
             familia_obj = user.id_familia
             nome = familia_obj.nome
             membros = familia_obj.membros
@@ -75,8 +75,12 @@ def criarfamilia(request):
         else:
             messages.error(request, "Nome da família é obrigatório.")
     return render(request, 'familia/familia_inicio.html', {'familia': False, 'user' : request.user})
-class CriarFamiliaView(LoginRequiredMixin, View):
+class CriarFamiliaView(View):
     def post(self, request):
+        if not request.user.is_authenticated:
+            messages.error(request, "Você precisa estar autenticado para criar uma família.")
+            return render(request, 'familia/familia_inicio.html', {'familia': False, 'user': request.user})
+        
         nome = request.POST.get('nome')
         print(f"Nome: {nome}")
         if nome:
