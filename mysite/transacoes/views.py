@@ -1,49 +1,70 @@
-from datetime import datetime
 from django.shortcuts import render, redirect
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+from django.views.generic import View
+from datetime import datetime
 from .services import TransacaoService as ts
 from contas.services import ContaService
 from categoria.models import Marcador
 
-# Create your views here.
-def transacoes_index(request):
-    print(request.session.get("transacoes","----Vazio----"))
+class TransacaoIndex(View):
 
-    if request.user.is_authenticated:
-        transacoes = ts.obter_minhas_transacoes(request.user)
-    else:
-        transacoes = request.session.get("transacoes",[])
-        for t in transacoes:
-            t["data_hora"] = datetime.strptime(
-                t["data_hora"],
-                "%Y-%m-%d %H:%M:%S"
-            )
-        
+    def get(self, request):
+        if request.user.is_authenticated:
+            transacoes = ts.obter_minhas_transacoes(request.user)
+        else:
+            transacoes = request.session.get("transacoes",[])
+            for t in transacoes:
+                t["data_hora"] = datetime.strptime(
+                    t["data_hora"],
+                    "%Y-%m-%d %H:%M:%S"
+                )
 
-    context = {
-        'categorias':ts.obter_categorias,
-        'tipos':ts.obter_tipos,
-        'contas': ContaService.obter_contas_usuario(request.user),
-        'marcadores':Marcador.objects.all,
-        'minhas_transacoes': transacoes
-    }
+        context = {
+            'categorias':ts.obter_categorias,
+            'tipos':ts.obter_tipos,
+            'contas': ContaService.obter_contas_usuario(request.user),
+            'marcadores':Marcador.objects.all,
+            'minhas_transacoes': transacoes
+        }
 
-    return render(request, "transacoes.html", context=context)
+        return render(request, "transacoes.html", context=context)
 
-def adicionar_transacao_view(request):
-    descricao =  request.POST.get('descricao')
-    valor =  request.POST.get('valor')
-    categoria =  request.POST.get('categoria')
-    estado =  request.POST.get('estado')
-    tipo =  request.POST.get('tipo')
-    data_hora =  request.POST.get('data_hora')
-    conta_financeira =  request.POST.get('conta_financeira')
-    marcadores = request.POST.getlist('marcadores')
+class TransacaoSalvar(View):
 
-    if request.user.is_authenticated:
-        try:
-            ts.salvar_transacao_db(
+    def post(self, request):
+        descricao =  request.POST.get('descricao')
+        valor =  request.POST.get('valor')
+        categoria =  request.POST.get('categoria')
+        estado =  request.POST.get('estado')
+        tipo =  request.POST.get('tipo')
+        data_hora =  request.POST.get('data_hora')
+        conta_financeira =  request.POST.get('conta_financeira')
+        marcadores = request.POST.getlist('marcadores')
+
+        if request.user.is_authenticated:
+            try:
+                ts.salvar_transacao_db(
+                    descricao = descricao,
+                    valor= valor,
+                    categoria= categoria,
+                    estado = estado,
+                    tipo = tipo,
+                    data_hora = data_hora,
+                    conta_financeira_id = conta_financeira,
+                    marcadores_ids = marcadores
+
+                )
+            except ValidationError as e:
+                messages.error(request,e)
+                return redirect('transacoes:index')
+
+            else:
+                messages.success(request, "Transação salva com sucesso." )
+                return redirect('transacoes:index')
+        else:
+            ts.salvar_transacao_sessao(
+                request = request,
                 descricao = descricao,
                 valor= valor,
                 categoria= categoria,
@@ -52,77 +73,86 @@ def adicionar_transacao_view(request):
                 data_hora = data_hora,
                 conta_financeira_id = conta_financeira,
                 marcadores_ids = marcadores
-
             )
-        except ValidationError as e:
-            messages.error(request,e)
-            return redirect(transacoes_index)
+            return redirect('transacoes:index')
+        
+class TransacaoEditar(View):
 
+    def post(self, request, id):
+        descricao =  request.POST.get('descricao')
+        valor =  request.POST.get('valor')
+        categoria =  request.POST.get('categoria')
+        estado =  request.POST.get('estado')
+        tipo =  request.POST.get('tipo')
+        data_hora =  request.POST.get('data_hora')
+        conta_financeira =  request.POST.get('conta_financeira')
+        marcadores = request.POST.getlist('marcadores')
+
+        if request.user.is_authenticated:
+            ts.editar_transacao_db(
+                id_transacao= id,
+                descricao = descricao,
+                valor= valor,
+                categoria= categoria,
+                estado = estado,
+                tipo = tipo,
+                data_hora = data_hora,
+                conta_financeira_id = conta_financeira,
+                marcadores_ids = marcadores
+            )
         else:
-            messages.success(request, "Transação salva com sucesso." )
-            return redirect(transacoes_index)
-    else:
-        ts.salvar_transacao_sessao(
-            request = request,
-            descricao = descricao,
-            valor= valor,
-            categoria= categoria,
-            estado = estado,
-            tipo = tipo,
-            data_hora = data_hora,
-            conta_financeira_id = conta_financeira,
-            marcadores_ids = marcadores
-        )
-        return redirect(transacoes_index)
+             ts.editar_transacao_sessao(
+                request=request,
+                id_transacao= id,
+                descricao = descricao,
+                valor= valor,
+                categoria= categoria,
+                estado = estado,
+                tipo = tipo,
+                data_hora = data_hora,
+                conta_financeira_id = conta_financeira,
+                marcadores_ids = marcadores
+            )
 
-def editar_transacao(request, id):
-    descricao =  request.POST.get('descricao')
-    valor =  request.POST.get('valor')
-    categoria =  request.POST.get('categoria')
-    estado =  request.POST.get('estado')
-    tipo =  request.POST.get('tipo')
-    data_hora =  request.POST.get('data_hora')
-    conta_financeira =  request.POST.get('conta_financeira')
-    marcadores = request.POST.getlist('marcadores')
-    print(marcadores)
+        return redirect('transacoes:index')
 
-    ts.editar_transacao(
-        id_transacao= id,
-        descricao = descricao,
-        valor= valor,
-        categoria= categoria,
-        estado = estado,
-        tipo = tipo,
-        data_hora = data_hora,
-        conta_financeira_id = conta_financeira,
-        marcadores_ids = marcadores
+class TransacaoExcluir(View):
 
-    )
-    return redirect(transacoes_index)
+    def post(self, request, id):
+        if request.user.is_authenticated:
+            ts.excluir_transacao_db(id)
+        else:
+            ts.excluir_transacao_sessao(request, id)
+        return redirect('transacoes:index')
+    
+class TransacaoFiltrar(View):
+    
+    def get(self, request):
+        filtro_categoria = request.GET.get("categoria")
+        filtro_tipo = request.GET.get("tipo")
+        filtro_conta = request.GET.get("conta")
+        filtro_busca = request.GET.get("busca")
+        filtro_data_inicio = request.GET.get("data_inicio")
+        filtro_data_fim = request.GET.get("data_fim")
 
-def excluir_transacao(request, id):
-    ts.excluir_transacao(id)
-    return redirect(transacoes_index)
+        usuario = request.user
 
-def filtrar_transacao(request):
-    filtro_categoria = request.GET.get("categoria")
-    filtro_tipo = request.GET.get("tipo")
-    filtro_conta = request.GET.get("conta")
-    filtro_busca = request.GET.get("busca")
-    filtro_data_inicio = request.GET.get("data_inicio")
-    filtro_data_fim = request.GET.get("data_fim")
+        if not (filtro_busca or filtro_categoria or filtro_tipo or filtro_conta or filtro_data_inicio or filtro_data_fim):
+            return redirect('transacoes:index')
 
-    usuario = request.user
+        filtro = ts.filtrar_transacao(request, usuario, filtro_busca, filtro_categoria, filtro_tipo, filtro_conta, filtro_data_inicio, filtro_data_fim)
 
-    if not (filtro_busca or filtro_categoria or filtro_tipo or filtro_conta or filtro_data_inicio or filtro_data_fim):
-         return redirect(transacoes_index)
+        for t in filtro:
+            t["data_hora"] = datetime.strptime(
+                t["data_hora"],
+                "%Y-%m-%d %H:%M:%S"
+            )
 
-    filtro = ts.filtrar_transacao(filtro_busca, filtro_categoria, filtro_tipo, filtro_conta, filtro_data_inicio, filtro_data_fim ,usuario)
-    context = {
-        'categorias':ts.obter_categorias,
-        'tipos':ts.obter_tipos,
-        'contas': ContaService.obter_contas_usuario(request.user),
-        'marcadores':Marcador.objects.all,
-        'minhas_transacoes': filtro
-    }
-    return render(request, "transacoes.html", context=context)
+        context = {
+            'categorias':ts.obter_categorias,
+            'tipos':ts.obter_tipos,
+            'contas': ContaService.obter_contas_usuario(request.user),
+            'marcadores':Marcador.objects.all,
+            'minhas_transacoes': filtro
+        }
+        return render(request, "transacoes.html", context=context)

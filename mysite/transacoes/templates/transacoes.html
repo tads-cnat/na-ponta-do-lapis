@@ -16,11 +16,12 @@
     </div>
     {% endfor %}
     {% endif %}
+  
     <!-- Fim alerta -->
     <div class="container flex mb-8">
         <!-- Campos de busca e filtros -->
         <div class="cabecalho1 w-1/2">
-            <form action="{% url 'filtrar_transacao' %}" method="get">
+            <form action="{% url 'transacoes:filtrar' %}" method="get">
                 <!-- Campo de Busca -->
                 <div class="busca mb-8">
                     <label class="input w-full bg-white border border-gray-300">
@@ -190,7 +191,7 @@
                         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     </form>
                     <h3 class="text-xl font-bold mb-7">Nova Transação</h3>
-                    <form action="{% url 'adicionar_transacao' %}" method="POST" class="mt-4">
+                    <form action="{% url 'transacoes:adicionar' %}" method="POST" class="mt-4">
                         {% csrf_token %}
                         <div class="form-control w-full mt-4">
                             <label class="input w-full bg-white border border-gray-300">
@@ -391,7 +392,7 @@
                                             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                         </form>
                                         <h3 class="text-xl font-bold mb-7">Edição de Transação</h3>
-                                        <form action="{% url 'editar_transacao' id=transacao.id %}" method="POST" class="mt-4">
+                                        <form action="{% url 'transacoes:editar' id=transacao.id %}" method="POST" class="mt-4">
                                             {% csrf_token %}
                                             <div class="form-control w-full mt-4">
                                                 <label class="input w-full">
@@ -521,7 +522,7 @@
                                         <form method="dialog">
                                             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                         </form>
-                                        <form action="{% url 'excluir_transacao' id=transacao.id %}" method="post">
+                                        <form action="{% url 'transacoes:excluir' id=transacao.id %}" method="post">
                                             {% csrf_token %}
                                             <h3 class="text-lg font-bold">Atenção!</h3>
                                             <p class="py-4">Tem certeza que deseja continuar e <strong>excluir</strong> a transação?</p>

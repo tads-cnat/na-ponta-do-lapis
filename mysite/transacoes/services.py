@@ -1,7 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from datetime import datetime
-from django.utils import timezone
 from .models import Transacao
 from contas.models import ContaFinanceira
 from contas.services import ContaService
@@ -47,7 +46,7 @@ class TransacaoService:
         contador = request.session.get("contador_id", "")
 
         if not contador:
-            contador = 0
+            contador = 1
             request.session["contador_id"] = contador
         else:
             contador += 1 
@@ -76,7 +75,7 @@ class TransacaoService:
         
 
     @staticmethod
-    def editar_transacao(id_transacao, descricao, valor, categoria, estado, tipo, data_hora, conta_financeira_id, marcadores_ids):
+    def editar_transacao_db(id_transacao, descricao, valor, categoria, estado, tipo, data_hora, conta_financeira_id, marcadores_ids):
 
         try:
             transacao = TransacaoService.obter_transacoes_id(id_transacao)
@@ -110,13 +109,52 @@ class TransacaoService:
         
         except ContaFinanceira.DoesNotExist:
             raise ValidationError({'conta_financeira':"Conta Financeira não encontrada"})
+        
+    @staticmethod
+    def editar_transacao_sessao(request, id_transacao, descricao, valor, categoria, estado, tipo, data_hora, conta_financeira_id, marcadores_ids = None ):
+        transacoes = request.session.get("transacoes", [])
+
+        data_hora = datetime.strptime(data_hora,'%Y-%m-%dT%H:%M')
+        data_hora = data_hora.strftime('%Y-%m-%d %H:%M:%S')
+
+        t = {
+            "id": id_transacao,
+            "descricao":descricao,
+            "valor":valor,
+            "categoria":categoria,
+            "estado":estado,
+            "tipo":tipo,
+            "data_hora":data_hora,
+            "conta_financeira_id":conta_financeira_id,
+            "marcadores_ids":marcadores_ids
+        }
+
+        for i, transacao in enumerate(transacoes):
+            if transacao["id"] == id_transacao:
+                transacoes[i] = t
+                break
+
+        request.session["transacoes"] = transacoes
+        request.session.modified = True
     
     @staticmethod
-    def excluir_transacao(id_transacao):
+    def excluir_transacao_db(id_transacao):
         try:
            TransacaoService.obter_transacoes_id(id_transacao).delete()
         except Transacao.DoesNotExist:
             raise ValidationError({'transacao':'Transação não encontrada'})
+        
+    @staticmethod
+    def excluir_transacao_sessao(request, id_transacao):
+        transacoes = request.session.get("transacoes")
+        
+        for t in transacoes:
+            if t['id'] == id_transacao:
+                transacoes.remove(t)
+                request.session["transacoes"] = transacoes
+                request.session.modified = True
+                
+
         
     @staticmethod
     def obter_minhas_transacoes(usuario):
@@ -127,23 +165,53 @@ class TransacaoService:
     def obter_transacoes_id(transacao_id):
         return Transacao.objects.get(id=transacao_id)
     
+    
     @staticmethod
-    def filtrar_transacao(busca, categoria, tipo, conta, data_inicio, data_fim , usuario):
-        transacoes = TransacaoService.obter_minhas_transacoes(usuario)
-        if busca:
-            transacoes = transacoes.filter(descricao__icontains=busca)
-        if categoria:
-            transacoes = transacoes.filter(categoria=categoria)
-        if tipo:
-            transacoes = transacoes.filter(tipo=tipo)
-        if conta:
-            transacoes = transacoes.filter(conta_financeira=conta)
-        if data_inicio:
-            data_inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
-            transacoes = transacoes.filter(data_hora__gte = data_inicio)
-        if data_fim:
-            data_fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
-            transacoes = transacoes.filter(data_hora__lte = data_fim)
+    def filtrar_transacao(request, usuario, busca=None, categoria=None, tipo=None, conta=None, data_inicio=None, data_fim=None):
+        if request.user.is_authenticated:
+            transacoes = TransacaoService.obter_minhas_transacoes(usuario)
+            if busca:
+                transacoes = transacoes.filter(descricao__icontains=busca)
+            if categoria:
+                transacoes = transacoes.filter(categoria=categoria)
+            if tipo:
+                transacoes = transacoes.filter(tipo=tipo)
+            if conta:
+                transacoes = transacoes.filter(conta_financeira=conta)
+            if data_inicio:
+                data_inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+                transacoes = transacoes.filter(data_hora__gte = data_inicio)
+            if data_fim:
+                data_fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
+                transacoes = transacoes.filter(data_hora__lte = data_fim)
+
+        else:
+            transacoes = request.session.get("transacoes", None)
+            if busca:
+                transacoes = [t for t in transacoes if busca.lower() in t['descricao'].lower()]
+
+            if categoria:
+                transacoes = [ t for t in transacoes if categoria == t['categoria']]
+
+            if tipo:
+                transacoes = [ t for t in transacoes if tipo == t['tipo']]
+
+            if conta:
+                transacoes = [ t for t in transacoes if conta == t['conta']]
+
+            if data_inicio:
+                data_inicio = datetime.strptime(data_inicio, "%Y-%m-%d").date()
+                transacoes = [
+                    t for t in transacoes
+                    if datetime.strptime(t['data_hora'], "%Y-%m-%d %H:%M:%S").date() >= data_inicio
+                ]
+
+            if data_fim:
+                data_fim = datetime.strptime(data_fim, "%Y-%m-%d").date()
+                transacoes = [
+                    t for t in transacoes
+                    if datetime.strptime(t['data_hora'], "%Y-%m-%d %H:%M:%S").date() <= data_fim
+                ]
 
         return transacoes
         
