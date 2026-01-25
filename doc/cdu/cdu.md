@@ -6,6 +6,7 @@
 | :--: | :----: | :-------: | :-----: |
 | 22/10/2025 | 1.0 | Versão inicial | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
 | 21/11/2025 | 2.0 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
+| 25/01/2025 | 2.1 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
 
 ## 1. Diagrama de Casos de Uso
 
