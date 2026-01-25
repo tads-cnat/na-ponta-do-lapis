@@ -37,14 +37,15 @@ Tabela : [nome da tabela 1]
 
 *Observações* : O usuário pode assumir o papel de usuário comum, administrador do site ou administrador de uma família
 
-| Colunas        | Descrição                | Tipo de Dado | Tamanho | Null | PK | FK | Unique | Identity | Default | Constraints                                           |
-| -------------- | -------------------------| ------------ | ------- | ---- | -- | -- | ------ | -------- | ------- | ----------------------------------------------------- |
-| **id**         | Identificação do usuário | INTEGER      |    –    |  []  |[X] | [] |   []   |   [X]    |    –    | `id >= 1`                                             |
-| **nome**       | Nome do usuário          | VARCHAR      | 254     |  []  | [] | [] |   []   |    []    |    –    |                         –                             |
-| **email**      | E-mail do usuário        | VARCHAR      | 254     |  []  | [] | [] |  [X]   |    []    |    –    |                         –                             |
-| **senha**      | Senha do usuário         | VARCHAR      | 254     |  []  | [] | [] |   []   |    []    |    –    | `LENGTH(senha) >= 8`                                  |
-| **papel**      | Papel do usuário         | VARCHAR      | 50      |  []  | [] | [] |   []   |    []    |    –    | `papel IN ('Usuario', 'Admin Site', 'Admin Familia')` |
-| **id_familia** | ID da família associada  | INTEGER      |    –    | [X]  | [] |[X] |   []   |    []    |    –    |                         –                             |
+| Colunas        | Descrição                         | Tipo de Dado | Tamanho | Null | PK | FK | Unique | Identity | Default | Constraints                                           |
+| -------------- | ----------------------------------| ------------ | ------- | ---- | -- | -- | ------ | -------- | ------- | ----------------------------------------------------- |
+| **id**         | Identificação do usuário          | INTEGER      |    –    |  []  |[X] | [] |   []   |   [X]    |    –    | `id >= 1`                                             |
+| **nome**       | Nome do usuário                   | VARCHAR      | 254     |  []  | [] | [] |   []   |    []    |    –    |                         –                             |
+| **email**      | E-mail do usuário                 | VARCHAR      | 254     |  []  | [] | [] |  [X]   |    []    |    –    |                         –                             |
+| **foto_perfil**| URL da Foto de perfil do usuário  | VARCHAR      | 254     | [X]  | [] | [] |  []    |    []    |    -    |                                                       |
+| **senha**      | Senha do usuário                  | VARCHAR      | 254     |  []  | [] | [] |   []   |    []    |    –    | `LENGTH(senha) >= 8`                                  |
+| **papel**      | Papel do usuário                  | VARCHAR      | 50      |  []  | [] | [] |   []   |    []    |    –    | `papel IN ('Usuario', 'Admin Site', 'Admin Familia')` |
+| **id_familia** | ID da família associada           | INTEGER      |    –    | [X]  | [] |[X] |   []   |    []    |    –    |                         –                             |
 
 ### Tabela: Conta Financeira
 
@@ -73,8 +74,7 @@ Tabela : [nome da tabela 1]
 | **categoria**            | Categoria da transação              | VARCHAR      | 50      |  []  | [] | [] |   []   |    []    |      –     | `categoria IN ('ALIMENTACAO', 'EDUCACAO', 'ENTRETENIMENTO', 'FINANCEIRO', 'IMPREVISTOS', 'SAUDE', 'TRABALHO', 'TRANSPORTE', 'OUTROS')` |
 | **estado**               | Estado da transação                 | VARCHAR      | 50      |  []  | [] | [] |   []   |    []    | 'Pendente' | `estado IN ('Pendente', 'Realizada')` |
 | **tipo**                 | Tipo da transação                   | VARCHAR      | 50      |  []  | [] | [] |   []   |    []    |      –     | `tipo IN ('Receita', 'Despesa')` |
-| **data**                 | Data da transação                   | TIMESTAMP    |    –    |  []  | [] | [] |   []   |    []    |      –     |                –                 |
-| **id_usuario**           | ID do usuário associado à transação | INTEGER      |    –    |  []  | [] |[X] |   []   |    []    |      –     | `id_usuario >= 1`                |
+| **data_hora**            | Data e hora da transação            | TIMESTAMP    |    –    |  []  | [] | [] |   []   |    []    |      –     |                –                 |
 | **id_marcadortransacao** | ID dos marcadores da transação      | INTEGER      |    –    | [X]  | [] |[X] |   []   |    []    |      –     |                –                 |
 | **id_conta_financeira**  | ID associado à conta financeira     | INTEGER      |    –    |  []  | [] |[X] |   []   |    []    |      –     |                –                 |
 
@@ -89,7 +89,6 @@ Tabela : [nome da tabela 1]
 | **id**         | Identificação do marcador            | INTEGER      |    –    |  []  |[X] | [] |   []   |   [X]    |    –    |      –      |
 | **nome**       | Nome do marcador                     | VARCHAR      | 100     |  []  | [] | [] |  [X]   |    []    |    –    |      –      |
 | **cor**        | Cor do marcador                      | VARCHAR      |    –    |  []  | [] | [] |   []   |    []    |    –    |      –      |
-| **id_usuario** | Identificação do usuário do marcador | INTEGER      |    –    |  []  |[X] |[X] |   []   |   [X]    |    –    |      –      |
 
 ### Tabela : **Família**
 
@@ -145,3 +144,4 @@ Tabela : [nome da tabela 1]
 | **nome**  | Nome da moeda            | VARCHAR      | 120     |  []  | [] | [] |  [X]   |    []    |    –    |      –      |
 | **valor** | Valor da moeda           | FLOAT        | 10      |  []  | [] | [] |   []   |    []    |    –    | `valor > 0` |
 | **data**  | Data da cotação          | TIMESTAMP    | 14      |  []  | [] | [] |   []   |    []    |    –    |      –      |
+ 
