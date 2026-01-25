@@ -17,8 +17,6 @@
 
 ## 3. Dicionário de Dados
 
----
-
 ### Template do Dicionário de Dados de cada Tabela
 
 Tabela : [nome da tabela 1]
