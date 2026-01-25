@@ -32,14 +32,17 @@
 
 **Tabela** : [Usuario]
 
-| Colunas        | Descrição                        | Tipo de Dado | Tamanho | Null | PK | FK | Unique | Identity | Default | Check                        |
-| -------------- | -------------------------------- | ------------ | ------- | ---- | -- | -- | ------ | -------- | ------- | ---------------------------- |
-| **id**         | Identificação do usuário         | INTEGER      | –       | ☐    | ☑️ | ☐  | ☐      | ☑️       | –       | `id >= 1`                    |
-| **nome**       | Nome do usuário                  | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☐      | ☐        | –       | –                            |
-| **email**      | E-mail do usuário                | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☑️     | ☐        | –       | –                            |
-| **senha**      | Senha do usuário                 | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☐      | ☐        | –       | `LENGTH(senha) >= 8`         |
-| **papel**      | Papel do usuário (User ou Admin) | VARCHAR      | 50      | ☐    | ☐  | ☐  | ☐      | ☐        | –       | `papel IN ('User', 'Admin')` |
-| **id_familia** | ID da família associada          | INTEGER      | –       | ☑️   | ☐  | ☑️ | ☐      | ☐        | –       | –                            |
+| Colunas           | Descrição                                   | Tipo de Dado | Tamanho | Null | PK | FK | Unique | Identity | Default   | Check                                         |
+| ----------------- | ------------------------------------------- | ------------ | ------- | ---- | -- | -- | ------ | -------- | --------- | --------------------------------------------- |
+| **id**            | Identificação do usuário                    | INTEGER      | –       | ☐    | ☑️ | ☐  | ☐      | ☑️       | –         | `id >= 1`                                     |
+| **username**      | Username                                    | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☑️     | ☐        | –         | –                                             |
+| **nome_completo** | Nome completo do usuário                    | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☐      | ☐        | –         | –                                             |
+| **email**         | E-mail do usuário (login)                   | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☑️     | ☐        | –         | –                                             |
+| **foto_perfil**   | Caminho da foto de perfil                   | VARCHAR      | 254     | ☑️   | ☐  | ☐  | ☐      | ☐        | –         | –                                             |
+| **password**      | Senha criptografada do usuário              | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☐      | ☐        | –         | –                                             |
+| **papel**         | Papel do usuário no sistema                 | VARCHAR      | 50      | ☐    | ☐  | ☐  | ☐      | ☐        | `usuario` | `papel IN ('admin','adminFamilia','usuario')` |
+| **id_familia**    | Família associada ao usuário                | INTEGER      | –       | ☑️   | ☐  | ☑️ | ☐      | ☐        | –         | –                                             |
+
 
 
 ### **Tabela** : [Conta financeira]
