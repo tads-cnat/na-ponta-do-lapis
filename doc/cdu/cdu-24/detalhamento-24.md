@@ -2,18 +2,16 @@
 
 - **Ator principal**: Usuário.
 - **Atores secundários**: Não existe.	 
-- **Resumo**: O usuário que é chefe ou membro da fámilia visualiza o relatório do balanço financeiro da família em determinado tempo.
+- **Resumo**: O usuário que é chefe ou membro da fámilia visualiza o relatório do balanço financeiro da família.
 - **Pré-condição**: Usuário cadastrado e autenticado e pertencente à família.
-- **Pós-Condição**: O usuário visualiza o relatório financeiro da família de determinado tempo.
+- **Pós-Condição**: O usuário visualiza o relatório financeiro da família.
 
 ## Fluxo Principal
 
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
 | 1 - Aperta o botão "visualizar relatório". | |  
-| | 2 - O sistema retorna um modal com 3 opções, 7, 15 e 30 dias. |
-| 3 - Seleciona, entre as caixas de escolha, o tempo do relatório e aperta "visualizar". | |
-| | 4 - Retorna o relatório. |
+| | 2 - O sistema retorna um modal com o relatório de transações da família.|
 
 > Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
 

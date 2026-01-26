@@ -35,8 +35,11 @@ class FamiliaView(View):
             nome = familia_obj.nome
             membros = familia_obj.membros
             minhas_transacoes = Transacao.objects.filter(conta_financeira__usuario__id_familia=familia_obj)
+            
             chefe = Usuario.objects.filter(id_familia=familia_obj, papel=Usuario.Papel.ADMIN_FAMILIA).first()
-            contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes}
+            relatorio_saldos = FamiliaServices.relatorio_saldos_familia(familia_obj.id)
+            total = FamiliaServices.total(familia_obj.id)
+            contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes, 'total': total, 'relatorio_saldos': relatorio_saldos}
             return render(request, 'familia/familia_inicio.html', contexto)
         return render(request, 'familia/familia_inicio.html', {'familia': False, 'user': user})
     def post(self, request):
@@ -47,7 +50,9 @@ class FamiliaView(View):
             membros = familia_obj.membros
             chefe = Usuario.objects.filter(id_familia=familia_obj, papel=Usuario.Papel.ADMIN_FAMILIA).first()
             minhas_transacoes = Transacao.objects.filter(conta_financeira__usuario__id_familia=familia_obj)
-            contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes}
+            total = FamiliaServices.total(familia_obj.id)
+            relatorio_saldos = FamiliaServices.relatorio_saldos_familia(familia_obj.id)
+            contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes, 'total': total, 'relatorio_saldos': relatorio_saldos}
             return render(request, 'familia/familia_inicio.html', contexto)
         return render(request, 'familia/familia_inicio.html', {'familia': False, 'user': user})
 
@@ -95,7 +100,9 @@ class CriarFamiliaView(View):
                 membros = familia.membros
                 chefe = Usuario.objects.filter(id_familia=familia, papel=Usuario.Papel.ADMIN_FAMILIA).first()
                 minhas_transacoes = Transacao.objects.filter(conta_financeira__usuario__id_familia=familia)
-                contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes}
+                relatorio_saldos = FamiliaServices.relatorio_saldos_familia(familia.id)
+                total = FamiliaServices.total(familia.id)
+                contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes, 'total': total, 'relatorio_saldos': relatorio_saldos}
                 return render(request, 'familia/familia_inicio.html', contexto)
             except Exception as e:
                 messages.error(request, f"Erro ao criar família: {str(e)}")
@@ -107,20 +114,25 @@ class CriarFamiliaView(View):
 def adicionarmembro(request, id_familia):
     if request.method == 'POST':
         email = request.POST.get('email')
+        familia = Familia.objects.get(id=id_familia)
+        user = request.user
+        nome = familia.nome
+        membros = familia.membros
+        chefe = Usuario.objects.filter(id_familia=familia, papel=Usuario.Papel.ADMIN_FAMILIA).first()
+        
         if email:
             try:
-                familia = Familia.objects.get(id=id_familia)
                 FamiliaServices.adicionarmembro(email, familia)
                 messages.success(request, "Membro adicionado com sucesso!")
-                user = request.user
-                nome = familia.nome
-                membros = familia.membros
-                chefe = Usuario.objects.filter(id_familia=familia, papel=Usuario.Papel.ADMIN_FAMILIA).first()
-                return render(request, 'familia/familia_inicio.html', {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user})
+            except ValueError as e:
+                messages.error(request, str(e))
             except Exception as e:
                 messages.error(request, f"Erro ao adicionar membro: {str(e)}")
         else:
             messages.error(request, "Email é obrigatório para adicionar um membro.")
+        
+        return render(request, 'familia/familia_inicio.html', {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user})
+    
     user = request.user
     familia = Familia.objects.get(id=id_familia)
     nome = familia.nome
@@ -132,22 +144,28 @@ class AdicionarMembroView(LoginRequiredMixin, UserPassesTestMixin, View):
         return self.request.user.papel == Usuario.Papel.ADMIN_FAMILIA
     def post(self, request, id_familia):
         email = request.POST.get('email')
+        user = request.user
+        familia = Familia.objects.get(id=id_familia)
+        nome = familia.nome
+        membros = familia.membros
+        minhas_transacoes = Transacao.objects.filter(conta_financeira__usuario__id_familia=familia)
+        chefe = Usuario.objects.filter(id_familia=familia, papel=Usuario.Papel.ADMIN_FAMILIA).first()
+        relatorio_saldos = FamiliaServices.relatorio_saldos_familia(familia.id)
+        total = FamiliaServices.total(familia.id)
+        contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes, 'total': total, 'relatorio_saldos': relatorio_saldos}
+        
         if email:
             try:
-                familia = Familia.objects.get(id=id_familia)
                 FamiliaServices.adicionarmembro(email, familia)
                 messages.success(request, "Membro adicionado com sucesso!")
-                user = request.user
-                nome = familia.nome
-                membros = familia.membros
-                minhas_transacoes = Transacao.objects.filter(conta_financeira__usuario__id_familia=familia)
-                chefe = Usuario.objects.filter(id_familia=familia, papel=Usuario.Papel.ADMIN_FAMILIA).first()
-                contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes}
-                return render(request, 'familia/familia_inicio.html', contexto)
+            except ValueError as e:
+                messages.error(request, str(e))
             except Exception as e:
                 messages.error(request, f"Erro ao adicionar membro: {str(e)}")
         else:
             messages.error(request, "Email é obrigatório para adicionar um membro.")
+        
+        return render(request, 'familia/familia_inicio.html', contexto)
     def get(self, request, id_familia):
         user = request.user
         familia = Familia.objects.get(id=id_familia)
@@ -155,7 +173,9 @@ class AdicionarMembroView(LoginRequiredMixin, UserPassesTestMixin, View):
         membros = familia.membros
         chefe = Usuario.objects.filter(id_familia=familia, papel=Usuario.Papel.ADMIN_FAMILIA).first()
         minhas_transacoes = Transacao.objects.filter(conta_financeira__usuario__id_familia=familia)
-        contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes}
+        relatorio_saldos = FamiliaServices.relatorio_saldos_familia(familia.id)
+        total = FamiliaServices.total(familia.id)
+        contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes, 'total': total, 'relatorio_saldos': relatorio_saldos}
         return render(request, 'familia/familia_inicio.html', contexto)
 
 @login_required
@@ -192,7 +212,9 @@ class TirarMembroView(LoginRequiredMixin, UserPassesTestMixin, View):
             membros = familia.membros
             chefe = Usuario.objects.filter(id_familia=familia, papel=Usuario.Papel.ADMIN_FAMILIA).first()
             minhas_transacoes = Transacao.objects.filter(conta_financeira__usuario__id_familia=familia)
-            contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes}
+            relatorio_saldos = FamiliaServices.relatorio_saldos_familia(familia.id)
+            total = FamiliaServices.total(familia.id)
+            contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes, 'total': total, 'relatorio_saldos': relatorio_saldos}
             return render(request, 'familia/familia_inicio.html', contexto)
         except Exception as e:
             messages.error(request, f"Erro ao remover membro: {str(e)}")
@@ -203,5 +225,7 @@ class TirarMembroView(LoginRequiredMixin, UserPassesTestMixin, View):
         membros = familia.membros
         chefe = Usuario.objects.filter(id_familia=familia, papel=Usuario.Papel.ADMIN_FAMILIA).first()
         minhas_transacoes = Transacao.objects.filter(conta_financeira__usuario__id_familia=familia)
-        contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes}
+        relatorio_saldos = FamiliaServices.relatorio_saldos_familia(familia.id)
+        total = FamiliaServices.total(familia.id)
+        contexto = {'familia': True, 'nome': nome, 'membros': membros, 'chefe': chefe, 'user': user, 'minhas_transacoes': minhas_transacoes, 'total': total, 'relatorio_saldos': relatorio_saldos}
         return render(request, 'familia/familia_inicio.html', contexto)
