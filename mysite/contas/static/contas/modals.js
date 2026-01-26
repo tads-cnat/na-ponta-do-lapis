@@ -117,10 +117,33 @@ class ModalManager {
     }
 
     // ==================== MODAL EXCLUIR CONTA ====================
-    openDeleteAccountModal(accountId) {
+    openDeleteAccountModal(accountId, accountName) {
         this.currentAccountId = accountId;
         const toggle = document.getElementById('deleteAccountModalToggle');
         if (toggle) toggle.checked = true;
+
+        // Preencher o nome da conta
+        const nameElement = document.getElementById('deleteAccountName');
+        if (nameElement) {
+            if (accountName) {
+                nameElement.textContent = accountName;
+            } else {
+                // Fallback: carregar via API se nome não foi passado
+                fetch(`/contas/api/obter/${accountId}/`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.sucesso) {
+                            nameElement.textContent = data.nome;
+                        } else {
+                            nameElement.textContent = 'Conta desconhecida';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao carregar nome da conta:', error);
+                        nameElement.textContent = 'Conta desconhecida';
+                    });
+            }
+        }
     }
 
     closeDeleteAccountModal() {

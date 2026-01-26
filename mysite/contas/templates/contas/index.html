@@ -12,7 +12,7 @@
 <div class="container mx-auto p-8">
     <!-- Exibição de Mensagens (Erros e Sucesso) -->
     {% if messages %}
-    <div class="space-y-4 mb-8">
+    <div class="space-y-4 mb-8" id="alertsContainer">
         {% for message in messages %}
         {% if message.tags == 'error' %}
         <div class="alert alert-error shadow-lg" role="alert">
@@ -26,6 +26,13 @@
                     <h3 class="font-bold">Erro</h3>
                     <div class="text-sm">{{ message }}</div>
                 </div>
+                <button class="btn btn-ghost btn-sm close-alert" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
         </div>
         {% elif message.tags == 'success' %}
@@ -40,6 +47,13 @@
                     <h3 class="font-bold">Sucesso</h3>
                     <div class="text-sm">{{ message }}</div>
                 </div>
+                <button class="btn btn-ghost btn-sm close-alert" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
         </div>
         {% else %}
@@ -54,6 +68,13 @@
                     <h3 class="font-bold">Informação</h3>
                     <div class="text-sm">{{ message }}</div>
                 </div>
+                <button class="btn btn-ghost btn-sm close-alert" type="button">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
             </div>
         </div>
         {% endif %}
@@ -69,19 +90,37 @@
     <!-- Script para Auto-dismiss de Mensagens -->
     <script>
         function setupAlertDismiss(alert) {
-            setTimeout(function () {
+            // Função para remover o alerta com animação
+            function removeAlert() {
                 alert.style.transition = 'opacity 0.3s ease-out';
                 alert.style.opacity = '0';
                 setTimeout(function () {
                     alert.remove();
                 }, 300);
-            }, 5000);
+            }
+
+            // Auto-dismiss após 5 segundos
+            const timeoutId = setTimeout(removeAlert, 5000);
+
+            // Botão de fechar manual
+            const closeButton = alert.querySelector('.close-alert');
+            if (closeButton) {
+                closeButton.addEventListener('click', function () {
+                    clearTimeout(timeoutId);
+                    removeAlert();
+                });
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const alerts = document.querySelectorAll('.alert');
-            alerts.forEach(alert => setupAlertDismiss(alert));
+            // Aplicar para alertas existentes
+            const alertsContainer = document.getElementById('alertsContainer');
+            if (alertsContainer) {
+                const alerts = alertsContainer.querySelectorAll('.alert');
+                alerts.forEach(alert => setupAlertDismiss(alert));
+            }
 
+            // Observar adições de novos alertas (se houver reload parcial)
             const observer = new MutationObserver(function (mutations) {
                 mutations.forEach(function (mutation) {
                     if (mutation.addedNodes.length) {
@@ -100,17 +139,20 @@
                 });
             });
 
-            observer.observe(document.body, { childList: true, subtree: true });
+            if (alertsContainer) {
+                observer.observe(alertsContainer, { childList: true, subtree: true });
+            }
+        });
+    </script>
 
-            const temContas = {{ tem_contas | lower
-        }};
+    <script>
+        const temContas = {{ tem_contas | lower }};
         if (!temContas) {
             document.querySelectorAll('.viewAccountBtn, .editAccountBtn, .deleteAccountBtn').forEach(btn => {
                 btn.setAttribute('disabled', 'disabled');
                 btn.classList.add('btn-disabled', 'opacity-50');
             });
         }
-        });
     </script>
 
     <!-- Se não tem contas -->
@@ -142,7 +184,7 @@
             <!-- Renderizar todas as contas como cards do carousel -->
             {% for conta in contas %}
             <div class="carousel-card absolute w-[500px] h-[285px] transition-all duration-500"
-                data-conta-id="{{ conta.id }}" data-index="{{ forloop.counter0 }}">
+                data-conta-id="{{ conta.id }}" data-conta-nome="{{ conta.nome }}" data-index="{{ forloop.counter0 }}">
                 <div class="card w-full h-full bg-gray-950 text-white shadow-2xl">
                     <div class="card-body p-10">
                         <div class="flex flex-col h-full">

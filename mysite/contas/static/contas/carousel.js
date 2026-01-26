@@ -146,6 +146,17 @@ class CarouselManager {
         return null;
     }
 
+    getCurrentAccountName() {
+        if (this.cards.length > this.currentIndex) {
+            const card = this.cards[this.currentIndex];
+            const nameElement = card.querySelector('[data-conta-nome]');
+            if (nameElement) {
+                return nameElement.getAttribute('data-conta-nome');
+            }
+        }
+        return null;
+    }
+
     updateCrudButtons() {
         const contaId = this.getCurrentAccountId();
 
@@ -207,8 +218,9 @@ class CarouselManager {
                 if (deleteBtn.hasAttribute('disabled')) return;
 
                 const contaId = this.getCurrentAccountId();
+                const contaNome = this.getCurrentAccountName();
                 if (contaId && modalManager) {
-                    modalManager.openDeleteAccountModal(contaId);
+                    modalManager.openDeleteAccountModal(contaId, contaNome);
                 }
             });
         }
