@@ -34,21 +34,7 @@ Tabela : [nome da tabela 1]
 
 ### Tabela: **Usuário**
 
-<<<<<<< HEAD
 *Descrição* : Armazena os dados pessoais do usuários cadastrados
-=======
-| Colunas           | Descrição                                   | Tipo de Dado | Tamanho | Null | PK | FK | Unique | Identity | Default   | Check                                         |
-| ----------------- | ------------------------------------------- | ------------ | ------- | ---- | -- | -- | ------ | -------- | --------- | --------------------------------------------- |
-| **id**            | Identificação do usuário                    | INTEGER      | –       | ☐    | ☑️ | ☐  | ☐      | ☑️       | –         | `id >= 1`                                     |
-| **username**      | Username                                    | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☑️     | ☐        | –         | –                                             |
-| **nome_completo** | Nome completo do usuário                    | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☐      | ☐        | –         | –                                             |
-| **email**         | E-mail do usuário (login)                   | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☑️     | ☐        | –         | –                                             |
-| **foto_perfil**   | Caminho da foto de perfil                   | VARCHAR      | 254     | ☑️   | ☐  | ☐  | ☐      | ☐        | –         | –                                             |
-| **password**      | Senha criptografada do usuário              | VARCHAR      | 254     | ☐    | ☐  | ☐  | ☐      | ☐        | –         | –                                             |
-| **papel**         | Papel do usuário no sistema                 | VARCHAR      | 50      | ☐    | ☐  | ☐  | ☐      | ☐        | `usuario` | `papel IN ('admin','adminFamilia','usuario')` |
-| **id_familia**    | Família associada ao usuário                | INTEGER      | –       | ☑️   | ☐  | ☑️ | ☐      | ☐        | –         | –                                             |
-
->>>>>>> origin
 
 *Observações* : O usuário pode assumir o papel de usuário comum, administrador do site ou administrador de uma família
 
