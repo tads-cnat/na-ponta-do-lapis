@@ -51,11 +51,11 @@
         
         
         
-        <div class=" p-6 overflow-y-auto max-h-3/4 mr-20  ">
+        <div class="p-6 h-[50vh] overflow-y-auto mr-20">
 
 
             
-            <div class="space-y-4 scale-75 origin-top">
+            <div class="space-y-4 text-sm">
 
 
 
@@ -68,343 +68,43 @@
               <div class="w-full max-w-md mx-auto">
     <h2 class="text-3xl font-bold mb-2">Alimentação</h2>
 
-    <div class="bg-white rounded-3xl overflow-hidden shadow-md border">
-        
-        <!-- Cabeçalho -->
-        <div class="grid grid-cols-3 bg-gray-100 px-6 py-3 text-gray-600 font-semibold text-lg">
-            <div>Valor</div>
-            <div class="text-center">Tipo</div>
-            <div class="text-right">Tag</div>
-        </div>
 
-        <!-- Linha 1 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
 
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
+{% for transacao in transacoes %}
 
-            <div class="text-right">
-                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Mercado
+<div class="flex justify-between items-center border p-2 mb-2">
+
+    <!-- descrição da transação -->
+    <div>
+        {{ transacao.descricao }} - R$ {{ transacao.valor }}
+    </div>
+
+    <!-- marcadores -->
+    <div class="text-right">
+
+        {% if transacao.marcadores.exists %}
+            {% for marcador in transacao.marcadores.all %}
+                <span
+                    class="px-4 py-1 rounded-full text-sm font-semibold"
+                    style="background-color: {{ marcador.cor }}; color: white;"
+                >
+                    {{ marcador.nome }}
                 </span>
-            </div>
-        </div>
-
-        <!-- Linha 2 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-red-600 font-bold text-lg">Despesa</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-yellow-200 text-yellow-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Moradia
-                </span>
-            </div>
-        </div>
-
-        <!-- Linha 3 (Botão "+") -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
-
-            <div class="text-right">
-                <button id="abrirPopup" class="btn rounded-full">+</button>
-            </div>
-        </div>
-
-        <!-- Linha 4 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Mercado
-                </span>
-            </div>
-        </div>
-
-        <!-- Linha 5 -->
-        <div class="grid grid-cols-3 px-4 py-3 items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-red-600 font-bold text-lg">Despesa</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    Farmacia
-                </span>
-            </div>
-        </div>
+            {% endfor %}
+        {% else %}
+            <button
+                data-transacao-id="{{ transacao.id }}"
+                class="abrirPopup btn rounded-full"
+            >
+                +
+            </button>
+        {% endif %}
 
     </div>
-</div>
-            
 
-
-
-
-
-
-
-
-
-              <div class="w-full max-w-md mx-auto mt-9">
-    <h2 class="text-3xl font-bold mb-2">Educação</h2>
-
-    <div class="bg-white rounded-3xl overflow-hidden shadow-md border">
-        
-        <!-- Cabeçalho -->
-        <div class="grid grid-cols-3 bg-gray-100 px-6 py-3 text-gray-600 font-semibold text-lg">
-            <div>Valor</div>
-            <div class="text-center">Tipo</div>
-            <div class="text-right">Tag</div>
-        </div>
-
-        <!-- Linha 1 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Mercado
-                </span>
-            </div>
-        </div>
-
-        <!-- Linha 2 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-red-600 font-bold text-lg">Despesa</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-yellow-200 text-yellow-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Moradia
-                </span>
-            </div>
-        </div>
-
-        <!-- Linha 3 (Botão "+") -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
-
-            <div class="text-right">
-                <button class="bg-green-200 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold leading-none">
-                    +
-                </button>
-            </div>
-        </div>
-
-        <!-- Linha 4 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Mercado
-                </span>
-            </div>
-        </div>
-
-        <!-- Linha 5 -->
-        <div class="grid grid-cols-3 px-4 py-3 items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-red-600 font-bold text-lg">Despesa</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    Farmacia
-                </span>
-            </div>
-        </div>
-
-    </div>
-</div>
-            
-
-
-
-
-
-
-
-
-
-              <div class="w-full max-w-md mx-auto mt-9">
-    <h2 class="text-3xl font-bold mb-2">Entretenimento</h2>
-
-    <div class="bg-white rounded-3xl overflow-hidden shadow-md border">
-        
-        <!-- Cabeçalho -->
-        <div class="grid grid-cols-3 bg-gray-100 px-6 py-3 text-gray-600 font-semibold text-lg">
-            <div>Valor</div>
-            <div class="text-center">Tipo</div>
-            <div class="text-right">Tag</div>
-        </div>
-
-        <!-- Linha 1 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Mercado
-                </span>
-            </div>
-        </div>
-
-        <!-- Linha 2 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-red-600 font-bold text-lg">Despesa</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-yellow-200 text-yellow-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Moradia
-                </span>
-            </div>
-        </div>
-
-        <!-- Linha 3 (Botão "+") -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
-
-            <div class="text-right">
-                <button class="bg-green-200 text-green-700 rounded-full w-8 h-8 flex items-center justify-center text-3xl font-bold leading-none">
-                    +
-                </button>
-            </div>
-        </div>
-
-        <!-- Linha 4 -->
-        <div class="grid grid-cols-3 px-4 py-3 border-b items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-green-600 font-bold text-lg">Receita</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-green-200 text-green-700 px-4 py-1 rounded-full text-sm font-semibold">
-                    Mercado
-                </span>
-            </div>
-        </div>
-
-        <!-- Linha 5 -->
-        <div class="grid grid-cols-3 px-4 py-3 items-center">
-            <div>
-                <span class="font-semibold text-lg">R$152,02</span><br>
-                <span class="text-gray-500 text-sm">Jan 17, 2024</span>
-            </div>
-
-            <div class="text-center">
-                <span class="text-red-600 font-bold text-lg">Despesa</span>
-            </div>
-
-            <div class="text-right">
-                <span class="bg-red-500 text-white px-4 py-1 rounded-full text-sm font-semibold">
-                    Farmacia
-                </span>
-            </div>
-        </div>
-
-    </div>
 </div>
 
-
-
-
-
-
-
-
-
-
+{% endfor %}
 
 
 
@@ -440,7 +140,7 @@
 
 <!-- Pop-up -->
 <div id="popup" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-    bg-white p-6 rounded-xl shadow-xl w-[420px] hidden z-50">
+    bg-neutral-200 p-6 rounded-xl shadow-xl w-[420px] hidden z-50">
 
     <div class="flex justify-between items-center mb-4">
         <h2 class="text-xl font-bold">Criar marcador:</h2>
@@ -448,12 +148,20 @@
     </div>
 
     <label class="font-semibold">Nome</label>
-    <input id="nome-marcador" type="text" class="input input-bordered w-full mb-4" placeholder="Adicione seu marcador aqui">
+    <input id="nome-marcador" type="text" class="input input-bordered w-full mb-4 bg-gray-300" placeholder="Adicione seu marcador aqui">
 
     <label class="font-semibold">Cor</label>
     <input id="cor-marcador" type="color" class="ml-2">
-
+    
     <button id="salvar-marcador" class="btn btn-primary mt-4 float-right">Salvar</button>
+    
+    <hr class="mt-9 my-4">
+    
+    <h3 class="text-xl font-bold mb-6">Seus marcadores:</h3>
+    
+    <div id="marcadores" class="space-y-2 max-h-48 overflow-y-auto">
+        <!-- Marcadores renderizados via JS -->
+    </div>
 </div>
 
 {% csrf_token %}
@@ -463,19 +171,19 @@
 
 
 <div id="popupVincular" class="modal hidden">
-  <div class="modal-box">
-    <h3 class="font-bold text-lg">Vincular Marcador</h3>
-
-    <label class="label">Escolha um marcador:</label>
-    <select id="selectMarcador" class="select select-bordered w-full mt-1">
-        <option>Carregando...</option>
-    </select>
-
-    <div class="modal-action">
-      <button id="btnVincular" class="btn btn-primary">Vincular</button>
-      <button id="fecharPopup" class="btn">Fechar</button>
+    <div class="modal-box bg-neutral-200">
+        <h3 class="font-bold text-lg">Vincular Marcador</h3>
+        
+        <label class="label">Escolha um marcador:</label>
+        <select id="selectMarcador" class="select select-bordered w-full mt-1 bg-gray-300">
+            <option>Carregando...</option>
+        </select>
+        
+        <div class="modal-action">
+            <button id="btnVincular" class="btn btn-primary">Vincular</button>
+            <button id="fecharPopup" class="btn">Fechar</button>
     </div>
-  </div>
+</div>
 </div>
 
 
@@ -486,33 +194,140 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-
-
-document.getElementById("abrirPopup").addEventListener("click", async () => {
-
-    const modal = document.getElementById("popupVincular");
-    modal.classList.remove("hidden");
-    modal.classList.add("modal-open");
-
-    // Buscar marcadores
-    const response = await fetch("{% url 'categoria:listar_marcadores' %}");
-    const marcadores = await response.json();
-
-    const select = document.getElementById("selectMarcador");
-    select.innerHTML = ""; // limpa
-
-    marcadores.forEach(m => {
-    const opt = document.createElement("option");
-    opt.value = m.id;
-    opt.textContent = m.nome;
-    opt.dataset.cor = m.cor;   // ← SALVA A COR AQUI
-    select.appendChild(opt);
+    let botaoAtivo = null;
+    
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        carregarListaMarcadores();
     });
+    
+    async function carregarListaMarcadores() {
+        const marcadores = await buscarMarcadores();
+        renderizarMarcadores(marcadores);
+    }
+    
+    
+    async function buscarMarcadores() {
+        const response = await fetch("{% url 'categoria:listar_marcadores' %}");
+        return await response.json();
+    }
+    
+    
+    async function carregarSelectMarcadores() {
+        const marcadores = await buscarMarcadores();
+        
+        const select = document.getElementById("selectMarcador");
+        select.innerHTML = "";
+        
+        marcadores.forEach(m => {
+            const opt = document.createElement("option");
+            opt.value = m.id;
+            opt.textContent = m.nome;
+            opt.dataset.cor = m.cor;
+            select.appendChild(opt);
+        });
+    }
+
+    
+    
+function getCSRFToken() {
+    return document.querySelector("[name=csrfmiddlewaretoken]").value;
+}
+
+
+document.getElementById("marcadores").addEventListener("click", async (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+    
+    const id = btn.dataset.id;
+    const action = btn.dataset.action;
+    const csrfToken = getCSRFToken();
+
+    if (action === "excluir") {
+        if (!confirm("Excluir marcador?")) return;
+        
+        await fetch(`/categoria/excluir-marcador/${id}/`, {
+            method: "DELETE",
+            headers: {
+                "X-CSRFToken": csrfToken
+            }
+        });
+
+        carregarListaMarcadores();
+    }
+    
+    if (action === "editar") {
+        const novoNome = prompt("Novo nome do marcador:");
+        if (!novoNome) return;
+        
+        await fetch(`/categoria/editar-marcador/${id}/`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({ nome: novoNome })
+        });
+        
+        carregarListaMarcadores();
+    }
 });
 
 
 
-document.getElementById("fecharPopup").addEventListener("click", () => {
+
+function renderizarMarcadores(marcadores) {
+    const container = document.getElementById("marcadores");
+    container.innerHTML = "";
+    
+    marcadores.forEach(m => {
+        const div = document.createElement("div");
+        div.className = `
+        flex items-center justify-between
+        w-full 
+        mb-4
+        rounded-box
+        px-4 py-3
+        bg-gray-300
+        `;
+        
+        div.innerHTML = `
+        <div class="flex items-center gap-3">
+                <span
+                class="w-3 h-3 rounded-full"
+                    style="background-color: ${m.cor};">
+                    </span>
+                    
+                    <span class="text-sm font-medium">
+                        ${m.nome}
+                        </span>
+                        </div>
+                        
+                        <div class="flex gap-4 text-sm">
+                            <button
+                            class="link link-primary"
+                            data-id="${m.id}"
+                            data-action="editar">
+                            Editar
+                            </button>
+                            
+                            <button
+                            class="link link-error"
+                            data-id="${m.id}"
+                            data-action="excluir">
+                            Excluir
+                            </button>
+                            </div>
+                            `;
+                            
+                            container.appendChild(div);
+                        });
+                    }
+                    
+                    
+                    
+                    
+                    document.getElementById("fecharPopup").addEventListener("click", () => {
     const modal = document.getElementById("popupVincular");
     modal.classList.add("hidden");
     modal.classList.remove("modal-open");
@@ -521,29 +336,29 @@ document.getElementById("fecharPopup").addEventListener("click", () => {
 
 
 
+
 document.getElementById("btnVincular").addEventListener("click", () => {
+
+    if (!botaoAtivo) return;
 
     const select = document.getElementById("selectMarcador");
 
-    // Dados do marcador selecionado
-    const marcadorNome = select.options[select.selectedIndex].textContent;
-    const marcadorCor = select.options[select.selectedIndex].dataset.cor;
+    const marcadorNome =
+        select.options[select.selectedIndex].textContent;
 
-    const btn = document.getElementById("abrirPopup");
+    const marcadorCor =
+        select.options[select.selectedIndex].dataset.cor;
 
-    // Aplicar nome
-    btn.textContent = marcadorNome;
+    // Aplicar nome e estilo NO BOTÃO CERTO
+    botaoAtivo.textContent = marcadorNome;
+    botaoAtivo.style.backgroundColor = marcadorCor;
+    botaoAtivo.style.color = "white";
 
-    // Aplicar cor
-    btn.style.backgroundColor = marcadorCor;
-    btn.style.color = "white";
-
-    // Estilizar como tag/pill
-    btn.classList.remove(
+    botaoAtivo.classList.remove(
         "w-8", "h-8", "text-3xl", "rounded-full"
-    ); // remove visual de "bolinha +"
+    );
 
-    btn.classList.add(
+    botaoAtivo.classList.add(
         "px-4", "py-1", "rounded-full", "font-semibold", "text-sm"
     );
 
@@ -551,6 +366,26 @@ document.getElementById("btnVincular").addEventListener("click", () => {
     const modal = document.getElementById("popupVincular");
     modal.classList.add("hidden");
     modal.classList.remove("modal-open");
+
+    botaoAtivo = null;
+});
+
+
+
+
+
+
+// Quando clicar no "+"
+document.querySelectorAll(".abrirPopup").forEach(btn => {
+    btn.addEventListener("click", async () => {
+        botaoAtivo = btn;
+
+        await carregarSelectMarcadores(); // 🔥 ISSO AQUI
+
+        const modal = document.getElementById("popupVincular");
+        modal.classList.remove("hidden");
+        modal.classList.add("modal-open");
+    });
 });
 
 
@@ -561,10 +396,12 @@ document.getElementById("btnVincular").addEventListener("click", () => {
 
 
 
-  const ctx = document.getElementById('grafico');
-  let tipoAtual = "pie";
 
-  let grafico = new Chart(ctx, {
+
+const ctx = document.getElementById('grafico');
+let tipoAtual = "pie";
+
+let grafico = new Chart(ctx, {
     type: tipoAtual,
     data: {
         labels: ["Alimentação", "Farmácia", "Moradia"],
@@ -578,10 +415,10 @@ document.getElementById("btnVincular").addEventListener("click", () => {
 document.getElementById("switch").addEventListener("click", () => {
     // alterna o tipo
     tipoAtual = tipoAtual === "pie" ? "bar" : "pie";
-
+    
     // destrói o gráfico atual
     grafico.destroy();
-
+    
     // cria o novo gráfico com o novo tipo
     grafico = new Chart(ctx, {
         type: tipoAtual,
@@ -598,11 +435,11 @@ document.getElementById("switch").addEventListener("click", () => {
 
 
 document.getElementById("salvar-marcador").addEventListener("click", async () => {
-
+    
     const nome = document.getElementById("nome-marcador").value;
     const cor = document.getElementById("cor-marcador").value;
     const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-
+    
     const response = await fetch("{% url 'categoria:criar_marcador' %}", {
         method: "POST",
         headers: {
@@ -614,9 +451,9 @@ document.getElementById("salvar-marcador").addEventListener("click", async () =>
             cor: cor
         })
     });
-
+    
     const data = await response.json();
-
+    
     if (response.ok) {
         console.log("Criado:", data);
         alert("Marcador criado!");
@@ -626,41 +463,41 @@ document.getElementById("salvar-marcador").addEventListener("click", async () =>
 });
 
 
-  const openBtn = document.getElementById("open-popup");
-  const closeBtn = document.getElementById("close-popup");
-  const popup = document.getElementById("popup");
-  const overlay = document.getElementById("popup-overlay");
+const openBtn = document.getElementById("open-popup");
+const closeBtn = document.getElementById("close-popup");
+const popup = document.getElementById("popup");
+const overlay = document.getElementById("popup-overlay");
 
-  // Abrir
-  openBtn.addEventListener("click", () => {
-      popup.classList.remove("hidden");
+// Abrir
+openBtn.addEventListener("click", () => {
+    popup.classList.remove("hidden");
       overlay.classList.remove("hidden");
-  });
-
-  // Fechar
-  closeBtn.addEventListener("click", () => {
-      popup.classList.add("hidden");
-      overlay.classList.add("hidden");
-  });
-
-  // Fechar clicando no fundo escuro
-  overlay.addEventListener("click", () => {
-      popup.classList.add("hidden");
-      overlay.classList.add("hidden");
-  });
-
-
-
-
-
-  const switchBtn = document.getElementById("switch");
+    });
+    
+    // Fechar
+    closeBtn.addEventListener("click", () => {
+        popup.classList.add("hidden");
+        overlay.classList.add("hidden");
+    });
+    
+    // Fechar clicando no fundo escuro
+    overlay.addEventListener("click", () => {
+        popup.classList.add("hidden");
+        overlay.classList.add("hidden");
+    });
+    
+    
+    
+    
+    
+    const switchBtn = document.getElementById("switch");
   const icon = switchBtn.querySelector("svg");
 
   switchBtn.addEventListener("click", () => {
       icon.classList.toggle("rotate-180");
-  });
-
-
+    });
+    
+    
 </script>
 
 
@@ -674,5 +511,5 @@ document.getElementById("salvar-marcador").addEventListener("click", async () =>
 
 
 
-            
+
 {% endblock %}
