@@ -212,7 +212,12 @@ class TransacaoService:
                     t for t in transacoes
                     if datetime.strptime(t['data_hora'], "%Y-%m-%d %H:%M:%S").date() <= data_fim
                 ]
-
+                
+            for t in transacoes:
+                t["data_hora"] = datetime.strptime(
+                    t["data_hora"],
+                    "%Y-%m-%d %H:%M:%S"
+                )
         return transacoes
         
     @staticmethod
