@@ -1,10 +1,14 @@
 from django.db import models
+from django.conf import settings
 
-
-# Create your models here.
 class Marcador(models.Model):
-    nome = models.CharField(max_length=70, verbose_name="Nome")
-    cor = models.CharField(max_length=7, verbose_name="Cor")
+    nome = models.CharField(max_length=70)
+    cor = models.CharField(max_length=7)
+    usuario = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="marcadores"
+    )
 
     def __str__(self):
         return self.nome + " - " + self.cor
