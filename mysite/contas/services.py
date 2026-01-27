@@ -82,6 +82,22 @@ class ContaService:
         
         conta.delete()
         return True
+    
+    @staticmethod
+    def aumentar_saldo(conta_id, valor_transacao):
+        conta = ContaService.obter_conta_por_id(conta_id)
+        novo_saldo = conta.saldo + valor_transacao
+        conta.saldo = novo_saldo
+        conta.save()
+        
+    @staticmethod
+    def diminuir_saldo(conta_id, valor_transacao):
+        conta = ContaService.obter_conta_por_id(conta_id)
+        novo_saldo = conta.saldo - valor_transacao
+        conta.saldo = novo_saldo
+        conta.save()
+        
+        
 
     @staticmethod
     def obter_contas_sessao(request):
