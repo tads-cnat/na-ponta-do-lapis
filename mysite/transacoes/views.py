@@ -142,12 +142,6 @@ class TransacaoFiltrar(View):
 
         filtro = ts.filtrar_transacao(request, usuario, filtro_busca, filtro_categoria, filtro_tipo, filtro_conta, filtro_data_inicio, filtro_data_fim)
 
-        for t in filtro:
-            t["data_hora"] = datetime.strptime(
-                t["data_hora"],
-                "%Y-%m-%d %H:%M:%S"
-            )
-
         context = {
             'categorias':ts.obter_categorias,
             'tipos':ts.obter_tipos,
