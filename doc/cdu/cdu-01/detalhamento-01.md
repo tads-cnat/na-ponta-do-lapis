@@ -32,7 +32,7 @@
 
 ## Diagrama de Interação (Sequência ou Comunicação)
 
-> Substituir pela imagem correspondente...
+![diagrama de casos de uso](./image.png)
 
 ## Diagrama de Classes de Projeto
 
