@@ -157,11 +157,18 @@ class TransacaoFiltrar(View):
     
 
 class TransacaoOrdenar(View):
+    
     def get(self, request):
         if request.user.is_authenticated:
             order = request.GET.get("order")
-            transacoes = ts.obter_minhas_transacoes(request.user, order)
+            direcao= request.GET.get("direcao")
+            transacoes = ts.obter_minhas_transacoes(request.user, order, direcao)
+            contas = ContaService.obter_contas_usuario(request.user)
+            marcadores = MarcadorService.listar_marcadores(request.user)
+
         else:
+            contas = None
+            marcadores = None
             transacoes = request.session.get("transacoes",[])
             for t in transacoes:
                 t["data_hora"] = datetime.strptime(
@@ -170,8 +177,13 @@ class TransacaoOrdenar(View):
                 )
 
         context = {
+            'categorias':ts.obter_categorias,
+            'tipos':ts.obter_tipos,
+            'contas': contas,
+            'marcadores':marcadores,
             'minhas_transacoes': transacoes
         }
+          
 
         return render(request, "tabela_parcial.html", context=context)
 

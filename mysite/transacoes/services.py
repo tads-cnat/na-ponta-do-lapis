@@ -195,9 +195,15 @@ class TransacaoService:
 
         
     @staticmethod
-    def obter_minhas_transacoes(usuario, order=None):
+    def obter_minhas_transacoes(usuario, order=None, direcao="asc"):
         contas = ContaService.obter_contas_usuario(usuario.id)
-        return Transacao.objects.filter(conta_financeira__in=contas).order_by(Lower(order))
+        transacoes = Transacao.objects.filter(conta_financeira__in=contas)
+        if order:
+            if direcao == "desc":
+                transacoes = transacoes.order_by(Lower(order).desc())
+            else:
+                transacoes = transacoes.order_by(Lower(order))
+        return transacoes
     
     @staticmethod
     def ordenar_transacoes(usuario, order=None):
