@@ -54,4 +54,3 @@ class Transacao(models.Model):
     class Meta:
         verbose_name = 'Transação'
         verbose_name_plural = 'Transações'
-        ordering = ['-data_hora']

@@ -12,7 +12,9 @@ class TransacaoIndex(View):
 
     def get(self, request):
         if request.user.is_authenticated:
-            transacoes = ts.obter_minhas_transacoes(request.user)
+
+            page = request.GET.get("page")
+            transacoes = ts.obter_minhas_transacoes(request.user, numero_pag=page)
             contas = ContaService.obter_contas_usuario(request.user)
             marcadores = MarcadorService.listar_marcadores(request.user)
         else:

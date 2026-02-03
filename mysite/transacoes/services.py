@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError
 from django.db.models.functions import Lower
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db import transaction
 from datetime import datetime
@@ -195,15 +196,20 @@ class TransacaoService:
 
         
     @staticmethod
-    def obter_minhas_transacoes(usuario, order=None, direcao="asc"):
+    def obter_minhas_transacoes(usuario, order=None, direcao="asc", numero_pag=1):
         contas = ContaService.obter_contas_usuario(usuario.id)
-        transacoes = Transacao.objects.filter(conta_financeira__in=contas)
+        transacoes = Transacao.objects.filter(conta_financeira__in=contas).order_by('-id')
+
         if order:
             if direcao == "desc":
                 transacoes = transacoes.order_by(Lower(order).desc())
             else:
                 transacoes = transacoes.order_by(Lower(order))
-        return transacoes
+
+        paginator = Paginator(transacoes, 8) 
+        pag_transacao = paginator.get_page(numero_pag)
+
+        return pag_transacao
     
    
     @staticmethod

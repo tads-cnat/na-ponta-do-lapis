@@ -307,5 +307,16 @@
             {% include 'tabela.html' %}
         </div>
     </div>
+    <div class="paginas flex justify-center mt-3">
+        <div class="join">
+            {% if minhas_transacoes.has_previous %}
+                <a href="?page={{ minhas_transacoes.previous_page_number }}"><button class="join-item btn btn-outline btn-primary">«</button></a>
+            {% endif %}
+            <button class="join-item btn btn-outline border-primary hover:cursor-default text-primary">Página {{minhas_transacoes.number}}</button>
+            {% if minhas_transacoes.has_next %}
+                <a href="?page={{ minhas_transacoes.next_page_number}}"><button class="join-item btn btn-outline btn-primary">»</button></a>
+            {% endif %}
+        </div>
+    </div>
 <script src="{% static 'transacoes/js/transacoes.js' %}"></script>
 {% endblock%}
