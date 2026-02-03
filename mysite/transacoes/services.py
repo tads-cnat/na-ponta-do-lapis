@@ -205,10 +205,6 @@ class TransacaoService:
                 transacoes = transacoes.order_by(Lower(order))
         return transacoes
     
-    @staticmethod
-    def ordenar_transacoes(usuario, order=None):
-        transacoes = TransacaoService.obter_minhas_transacoes(usuario)
-        return transacoes.values()
    
     @staticmethod
     def obter_transacoes_id(transacao_id):

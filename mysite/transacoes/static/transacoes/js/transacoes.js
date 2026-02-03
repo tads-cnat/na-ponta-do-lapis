@@ -1,3 +1,5 @@
+// Ordenação
+
 document.getElementById("btn_estado").addEventListener("click", () => ordenar("estado"));
 document.getElementById("btn_data_hora").addEventListener("click", () => ordenar("data_hora"));;
 document.getElementById("btn_valor").addEventListener("click", () => ordenar("valor"));;
@@ -11,7 +13,7 @@ let ultimaOrdem= null;
 let direcaoOrdem= "asc";
 
 async function ordenar (order) {
-    console.log("Apertado");
+
     if(ultimaOrdem == order){
         if(direcaoOrdem == "asc"){
             direcaoOrdem = "desc"
@@ -28,3 +30,31 @@ async function ordenar (order) {
 };
 
 
+// adicionar transacao 
+
+form = document.getElementById("form_add_transacao")
+form.addEventListener("submit", (event) => add_transacao(event))
+
+async function add_transacao(event) {
+    
+    btn = event.submitter
+    event.preventDefault();
+    
+    const formData = new FormData(form);
+    const response = await fetch("/transacoes/adicionar_transacao/", {
+        method: "POST",
+        body: formData
+    });
+
+    if (btn.id == "btn_add_again"){
+       
+        const reListar = await fetch(`/transacoes/api/listar?order=data_hora`);
+        const html = await reListar.text();
+        table.innerHTML =  html
+        form.reset()
+
+    }else{
+        window.location.href = "/transacoes/";
+    }
+
+}
