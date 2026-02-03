@@ -38,8 +38,8 @@
     
     
     <!-- Lado direito: scroll interno -->
-    <div class="w-1/3 ml-auto">
-        <h3 class="text-xl font-bold mb-4 ml-40">Marcadores
+    <div class="w-1/2 ml-auto">
+        <h3 class="text-4xl font-bold mb-4 ml-40">Marcadores
             <button id="open-popup" class="btn btn-primary btn-xs gap-2 rounded-xl">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -51,7 +51,7 @@
         
         
         
-        <div class="p-6 h-[50vh] overflow-y-auto mr-20">
+        <div class="p-6 h-[50vh] overflow-y-auto mr-20 ">
 
 
             
@@ -65,7 +65,7 @@
 
 
 
-              <div class="w-full max-w-md mx-auto">
+              <div class="w-full max-w-md mx-auto ">
                   
                   
 
@@ -77,31 +77,35 @@
 
     {% ifchanged transacao.categoria %}
         <h2 class="text-3xl font-bold mb-4 mt-6">
-            {{ transacao.categoria }}
+            {{ transacao.categoria|capfirst }}
         </h2>
     {% endifchanged %}
 
-    <div class="flex justify-between items-center border mb-2 rounded-2xl h-12 px-4">
+    <div class="flex justify-between items-center border mb-2 rounded-2xl h-16 px-4">
 
         <!-- descrição da transação -->
         <div >
-            {{ transacao.descricao }} - R$ {{ transacao.valor }}
+            {{ transacao.descricao|capfirst }} - R$ {{ transacao.valor }}
         </div>
 
         <!-- marcadores -->
-        <div class="text-right">
+        <div class="flex flex-wrap gap-1 justify-end">
 
             {% if transacao.marcadores.exists %}
                 {% for marcador in transacao.marcadores.all %}
-                    <span
-                        class="px-4 py-1 rounded-full text-sm font-semibold"
+                    <button
+                        type="button"
+                        data-transacao-id="{{ transacao.id }}"
+                        data-marcador-id="{{ marcador.id }}"
+                        class="abrirPopup btn rounded-full"
                         style="background-color: {{ marcador.cor }}; color: white;"
                     >
                         {{ marcador.nome }}
-                    </span>
+                    </button>
                 {% endfor %}
             {% else %}
                 <button
+                    type="button"
                     data-transacao-id="{{ transacao.id }}"
                     class="abrirPopup btn rounded-full"
                 >
@@ -144,30 +148,36 @@
 <!-- Fundo escurecido -->
 <div id="popup-overlay" class="fixed inset-0 bg-black/40 backdrop-blur-sm hidden z-40"></div>
 
+
+
+
+
+
 <!-- Pop-up -->
 <div id="popup" class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 
-    bg-neutral-200 p-6 rounded-xl shadow-xl w-[420px] hidden z-50">
+bg-neutral-200 p-6 rounded-xl shadow-xl w-[420px] hidden z-50">
 
-    <div class="flex justify-between items-center mb-4">
-        <h2 class="text-xl font-bold">Criar marcador:</h2>
-        <button id="close-popup" class="text-gray-500 hover:text-black text-xl">✕</button>
-    </div>
+<div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl font-bold">Criar marcador:</h2>
+    <button class="close-popup text-gray-500 hover:text-black text-xl">✕</button>
+</div>
 
-    <label class="font-semibold">Nome</label>
-    <input id="nome-marcador" type="text" class="input input-bordered w-full mb-4 bg-gray-300" placeholder="Adicione seu marcador aqui">
+<label class="font-semibold">Nome</label>
+<input id="nome-marcador" type="text" class="input input-bordered w-full mb-4 bg-gray-300" placeholder="Adicione seu marcador aqui">
 
-    <label class="font-semibold">Cor</label>
-    <input id="cor-marcador" type="color" class="ml-2">
-    
-    <button id="salvar-marcador" class="btn btn-primary mt-4 float-right">Salvar</button>
-    
-    <hr class="mt-9 my-4">
-    
-    <h3 class="text-xl font-bold mb-6">Seus marcadores:</h3>
-    
-    <div id="marcadores" class="space-y-2 max-h-48 overflow-y-auto">
-        <!-- Marcadores renderizados via JS -->
-    </div>
+<label class="font-semibold">Cor</label>
+<input id="cor-marcador" type="color" class="ml-2">
+
+<button id="salvar-marcador" class="btn btn-outline btn-success ml-4 float-right">Salvar</button>
+<div id="alerta-modal-marcador" class="hidden mb-4"></div>
+
+<hr class="mt-9 my-4">
+
+<h3 class="text-xl font-bold mb-6">Seus marcadores:</h3>
+
+<div id="marcadores" class="space-y-2 max-h-48 overflow-y-auto">
+    <!-- Marcadores renderizados via JS -->
+</div>
 </div>
 
 {% csrf_token %}
@@ -178,7 +188,10 @@
 
 <div id="popupVincular" class="modal hidden">
     <div class="modal-box bg-neutral-200">
-        <h3 class="font-bold text-lg">Vincular Marcador</h3>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg">Vincular Marcador</h3>
+            <button class="close-popup text-gray-500 hover:text-black text-xl">✕</button>
+        </div>
         
         <label class="label">Escolha um marcador:</label>
         <select id="selectMarcador" class="select select-bordered w-full mt-1 bg-gray-300">
@@ -186,8 +199,8 @@
         </select>
         
         <div class="modal-action">
+            <button class="close-popup btn btn-outline btn-error">Fechar</button>
             <button id="btnVincular" class="btn btn-primary">Vincular</button>
-            <button id="fecharPopup" class="btn">Fechar</button>
     </div>
 </div>
 </div>
@@ -235,6 +248,74 @@
     }
 
     
+
+
+
+
+document.getElementById("salvar-marcador").addEventListener("click", async () => {
+
+    const nomeMarcador = document.getElementById("nome-marcador").value;
+    const corMarcador = document.getElementById("cor-marcador").value;
+    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
+
+    const respostaServidor = await fetch("{% url 'categoria:criar_marcador' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-CSRFToken": csrfToken
+        },
+        body: JSON.stringify({
+            nome: nomeMarcador,
+            cor: corMarcador
+        })
+    });
+
+    const dadosResposta = await respostaServidor.json();
+
+    if (respostaServidor.ok) {
+        console.log("Criado:", dadosResposta);
+        exibirAlertaNoModal("Marcador criado com sucesso!", "success");
+    } else {
+        exibirAlertaNoModal(dadosResposta.erro || "Erro ao criar marcador", "error");
+}
+});
+
+
+function exibirAlertaNoModal(mensagem, tipoAlerta = "success") {
+
+    const containerAlertaModal = document.getElementById("alerta-modal-marcador");
+
+    if (!containerAlertaModal) {
+        console.error("Container de alerta do modal não encontrado");
+        return;
+    }
+
+    containerAlertaModal.className = `alert alert-${tipoAlerta} shadow mb-4 mt-6`;
+    containerAlertaModal.textContent = mensagem;
+    containerAlertaModal.classList.remove("hidden");
+    containerAlertaModal._timeoutId = setTimeout(() => {
+        containerAlertaModal.classList.add("hidden");
+    }, 2600);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     
 function getCSRFToken() {
     return document.querySelector("[name=csrfmiddlewaretoken]").value;
@@ -283,62 +364,72 @@ document.getElementById("marcadores").addEventListener("click", async (e) => {
 
 
 function renderizarMarcadores(marcadores) {
-    const container = document.getElementById("marcadores");
-    container.innerHTML = "";
-    
-    marcadores.forEach(m => {
-        const div = document.createElement("div");
-        div.className = `
-        flex items-center justify-between
-        w-full 
-        mb-4
-        rounded-box
-        px-4 py-3
-        bg-gray-300
-        `;
-        
-        div.innerHTML = `
-        <div class="flex items-center gap-3">
-                <span
-                class="w-3 h-3 rounded-full"
-                    style="background-color: ${m.cor};">
-                    </span>
-                    
-                    <span class="text-sm font-medium">
-                        ${m.nome}
-                        </span>
-                        </div>
-                        
-                        <div class="flex gap-4 text-sm">
-                            <button
-                            class="link link-primary"
-                            data-id="${m.id}"
-                            data-action="editar">
-                            Editar
-                            </button>
-                            
-                            <button
-                            class="link link-error"
-                            data-id="${m.id}"
-                            data-action="excluir">
-                            Excluir
-                            </button>
-                            </div>
-                            `;
-                            
-                            container.appendChild(div);
-                        });
-                    }
-                    
-                    
-                    
-                    
-                    document.getElementById("fecharPopup").addEventListener("click", () => {
-    const modal = document.getElementById("popupVincular");
-    modal.classList.add("hidden");
-    modal.classList.remove("modal-open");
-});
+    const containerMarcadores = document.getElementById("marcadores");
+    containerMarcadores.innerHTML = "";
 
+    marcadores.forEach(marcadorAtual => {
+        const divMarcador = document.createElement("div");
+
+        divMarcador.className = `
+            flex items-center justify-between
+            w-full mb-3
+            rounded-xl
+            px-4 py-3
+            bg-base-200
+            hover:bg-base-300
+            transition-colors
+        `;
+
+        divMarcador.innerHTML = `
+            <div class="flex items-center gap-3">
+                <span 
+                    class="w-3 h-3 rounded-full"
+                    style="background-color: ${marcadorAtual.cor};">
+                </span>
+
+                <span class="text-sm font-medium">
+                    ${marcadorAtual.nome}
+                </span>
+            </div>
+
+            <div class="flex gap-2">
+                
+            <!-- Botão Excluir -->
+            <button
+            class="btn btn-ghost btn-sm text-error flex items-center gap-1"
+            data-id="${marcadorAtual.id}"
+            data-action="excluir"
+            title="Excluir marcador"
+            >
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+            viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0H7m3-3h4a1 1 0 011 1v1H9V5a1 1 0 011-1z" />
+            </svg>
+            Excluir
+            </button>
+            <!-- Botão Editar -->
+            <button
+                class="btn btn-ghost btn-sm text-primary flex items-center gap-1"
+                data-id="${marcadorAtual.id}"
+                data-action="editar"
+                title="Editar marcador"
+            >
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
+                    viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5" />
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+                Editar
+            </button>
+            </div>
+        `;
+
+        containerMarcadores.appendChild(divMarcador);
+    });
+}
 
 
 
@@ -414,8 +505,16 @@ let grafico = new Chart(ctx, {
         datasets: [{
             data: {{ valores|safe }},
             backgroundColor: [
-                "#4caf50", "#2196f3", "#f06292", "#ff9800", "#9c27b0"
-            ]
+                    "#0000FF", // azul
+                    "#8A2BE2", // azul-arroxeado
+                    "#FF0000", // vermelho
+                    "#FF4500", // vermelho-alaranjado
+                    "#FFA500", // laranja
+                    "#FFFF00", // amarelo
+                    "#00FF00", // verde
+                    "#00FFFF", // ciano
+                    "#800080"  // roxo
+                ]
         }]
     }
 });
@@ -432,10 +531,20 @@ document.getElementById("switch").addEventListener("click", () => {
     grafico = new Chart(ctx, {
         type: tipoAtual,
         data: {
-            labels: ["Alimentação", "Farmácia", "Moradia"],
+            labels: {{ labels|safe }},
             datasets: [{
-                data: [80, 55, 30],
-                backgroundColor: ["#4caf50", "#2196f3", "#f06292"]
+                data: {{ valores|safe }},
+                backgroundColor: [
+                    "#0000FF", // azul
+                    "#8A2BE2", // azul-arroxeado
+                    "#FF0000", // vermelho
+                    "#FF4500", // vermelho-alaranjado
+                    "#FFA500", // laranja
+                    "#FFFF00", // amarelo
+                    "#00FF00", // verde
+                    "#00FFFF", // ciano
+                    "#800080"  // roxo
+                ]
             }]
         }
     });
@@ -443,33 +552,21 @@ document.getElementById("switch").addEventListener("click", () => {
 
 
 
-document.getElementById("salvar-marcador").addEventListener("click", async () => {
-    
-    const nome = document.getElementById("nome-marcador").value;
-    const cor = document.getElementById("cor-marcador").value;
-    const csrfToken = document.querySelector("[name=csrfmiddlewaretoken]").value;
-    
-    const response = await fetch("{% url 'categoria:criar_marcador' %}", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "X-CSRFToken": csrfToken
-        },
-        body: JSON.stringify({
-            nome: nome,
-            cor: cor
-        })
+document.querySelectorAll(".close-popup").forEach(botaoFechar => {
+    botaoFechar.addEventListener("click", () => {
+        fecharTodosOsPopups();
     });
-    
-    const data = await response.json();
-    
-    if (response.ok) {
-        console.log("Criado:", data);
-        alert("Marcador criado!");
-    } else {
-        alert(data.erro);
-    }
 });
+
+function fecharTodosOsPopups() {
+    document.getElementById("popup")?.classList.add("hidden");
+    document.getElementById("popupVincular")?.classList.add("hidden");
+    document.getElementById("popup-overlay")?.classList.add("hidden");
+
+    document.body.classList.remove("modal-open");
+    botaoAtivo = null;
+}
+
 
 
 const openBtn = document.getElementById("open-popup");
@@ -489,17 +586,16 @@ openBtn.addEventListener("click", () => {
         overlay.classList.add("hidden");
     });
     
-    // Fechar clicando no fundo escuro
-    overlay.addEventListener("click", () => {
-        popup.classList.add("hidden");
-        overlay.classList.add("hidden");
-    });
+
+    
+    
+
+
+
     
     
     
-    
-    
-    const switchBtn = document.getElementById("switch");
+const switchBtn = document.getElementById("switch");
   const icon = switchBtn.querySelector("svg");
 
   switchBtn.addEventListener("click", () => {

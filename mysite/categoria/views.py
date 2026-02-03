@@ -71,48 +71,31 @@ class EditarMarcadorView(View):
             })
         except ValueError as e:
             return JsonResponse({"erro": str(e)}, status=400)
-
-
-
-# class CategoriaIndex(View): # Ou o nome da sua View de marcadores
-#     def get(self, request):
-#         if request.user.is_authenticated:
-#             # Pegamos todas as transações do usuário
-#             from transacoes.services import TransacaoService as ts
-#             transacoes = ts.obter_minhas_transacoes(request.user).order_by('categoria')
-#             # Pegamos os marcadores
-#             marcadores = Marcador.objects.filter(usuario=request.user) # Ajuste conforme seu model
-#         else:
-#             transacoes = request.session.get("transacoes", [])
-#             marcadores = [] # Ou lógica de marcadores na sessão
-
-#         context = {
-#             'minhas_transacoes': transacoes,
-#             'marcadores': marcadores,
-#         }
-#         # Aqui você usa o seu template de marcadores/categorias
-#         return render(request, "categoria/categoria.html", context)
     
 
 
-class TransacaoIndexView(ListView):
-    model = Transacao
+class TransacaoIndexView(View):
     template_name = "categoria/categoria.html"
-    context_object_name = "transacoes"
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
+    def get(self, request, *args, **kwargs):
+        # Transações do usuário
+        transacoes = Transacao.objects.filter(
+            conta_financeira__usuario=request.user
+        ).order_by("categoria")
 
-        # Agrupar transações por categoria do usuário
+        # Dados do gráfico
         dados_grafico = (
             Transacao.objects
-            .filter(conta_financeira__usuario=self.request.user)
-            .values('categoria')
-            .annotate(total=Sum('valor'))
-            .order_by('categoria')
+            .filter(conta_financeira__usuario=request.user)
+            .values("categoria")
+            .annotate(total=Sum("valor"))
+            .order_by("categoria")
         )
 
-        context['labels'] = json.dumps([d['categoria'] for d in dados_grafico])
-        context['valores'] = json.dumps([float(d['total']) for d in dados_grafico])
+        context = {
+            "transacoes": transacoes,
+            "labels": json.dumps([d["categoria"] for d in dados_grafico]),
+            "valores": json.dumps([float(d["total"]) for d in dados_grafico]),
+        }
 
-        return context
+        return render(request, self.template_name, context)
