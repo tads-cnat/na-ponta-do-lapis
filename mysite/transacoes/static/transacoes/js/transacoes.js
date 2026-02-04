@@ -58,3 +58,13 @@ async function add_transacao(event) {
     }
 
 }
+
+// Fechar alert
+
+setTimeout(() => {
+    document.querySelectorAll('[data-alert]').forEach(alert => {
+      alert.classList.add('opacity-0')
+
+      setTimeout(() => alert.remove(), 500)
+    })
+  }, 2000)
