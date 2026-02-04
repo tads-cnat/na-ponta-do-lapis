@@ -259,31 +259,30 @@
                             </label>
                         </div>
                         <!-- Conteiner marcadores e conta -->
-                        <div class="flex">
-                            <div class="dropdown dropdown-right dropdown-center mt-4 mr-3 b">
-                                <div tabindex="0" role="button" class="select bg-white border border-gray-300">
-                                    <span class="text-gray-500">Marcadores</span>
-                                </div>
-                                <ul tabindex="-1" class="dropdown-content menu bg-white rounded-box z-1 w-52 p-2 shadow-sm">
-                                    {% for marcador in marcadores %}
-                                    <li>
-                                        <input class="btn" type="checkbox" value="{{marcador.id}}" name="marcadores" aria-label="{{ marcador.nome}}">
-                                    </li>
-                                    {% endfor %}
-                                    
-                                </ul>
-                            </div>
-                            <div class="form-control w-full mt-4">
+                         <div class="flex">
+                            <div class="form-control w-full mt-4 mr-1.5">
                                 <label class="select w-full bg-white border border-gray-300">
-                                    <span class="label">Conta Financeira</span>
-                                    <select name="conta_financeira">
-                                            <option disabled>Selecione uma Conta Financeira: </option>
+                                    <span class="label">Marcador</span>
+                                    <select name="marcadores">
+                                            <option disabled >Selecione uma Marcador: </option>
+                                            <option disabled selected hidden> </option>
+                                        {% for marcador in marcadores %}
+                                            <option value="{{ marcador.id }}">{{ marcador.nome }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </label>
+                            </div>
+
+                            <div class="form-control w-full mt-4 ml-1.5">
+                                <label class="select w-full bg-white border border-gray-300">
+                                    <span class="label">Conta Financeira*</span>
+                                    <select name="conta_financeira" required>
+                                            <option disabled >Selecione uma Conta Financeira: </option>
                                         {% for conta in contas %}
                                             <option value="{{ conta.id }}">{{ conta.nome }}</option>
                                         {% endfor %}
                                     </select>
                                 </label>
-                                
                             </div>
 
                         </div>
