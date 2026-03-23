@@ -112,14 +112,14 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 
 ## 9. Requisitos Não-funcionais
 
-| Código |             Nome              |                              Descrição                               |      Categoria       | Classificação |
-| :----: | :---------------------------: | :------------------------------------------------------------------: | :------------------: | :-----------: |
-|  NF01  | Ferramenta de desenvolvimento |       Utilização de Python e Django para desenvolver o projeto       | Restrição de projeto |  Obrigatório  |
-|  NF02  |        Banco de Dados         |                                SQLite                                | Restrição de projeto |  Obrigatório  |
-|  NF03  |         Criptografia          |          As senhas deve ser armazenadas usando criptografia          |      Segurança       |  Obrigatório  |
-|  NF04  |        Renponsividade         |                O sistema deve ter o design responsivo                |     Usabilidade      |   Desejável   |
-|  NF05  |        Acessibilidade         |    O sistema deverá ter algumas funcionalidades a acessibilidade     |     Usabilidade      |   Desejável   |
-|  NF06  |    Facilidade de Navegação    | Todas as funcionalidades devem poder ser acessadas com poucos clicks |     Usabilidade      |  Obrigatório  |
+| Código |          Nome           |                                    Descrição                                    |      Categoria       | Classificação |
+| :----: | :---------------------: | :-----------------------------------------------------------------------------: | :------------------: | :-----------: |
+|  NF01  |  Linguagens/Frameworks  | Utilização de Java, Spring Boot,Typescript e Angular para desenvolver o projeto | Restrição de projeto |   Desejável   |
+|  NF02  |     Banco de Dados      |                                   PostgreSQL                                    | Restrição de projeto |  Obrigatório  |
+|  NF03  |      Criptografia       |               As senhas deve ser armazenadas usando criptografia                |      Segurança       |  Obrigatório  |
+|  NF04  |     Renponsividade      |                    O sistema deve ter o interface responsiva                    |      Interface       |   Desejável   |
+|  NF05  |     Acessibilidade      |          O sistema deverá ter algumas funcionalidades a acessibilidade          |     Usabilidade      |   Desejável   |
+|  NF06  | Facilidade de Navegação |      Todas as funcionalidades devem poder ser acessadas com poucos clicks       |     Usabilidade      |  Obrigatório  |
 
 > **Categoria** Usabilidade, confiabilidade, performance, suportabilidade, restrição de projeto, implementação, interface e requisito físico - segundo classificação [FURP+](https://pt.wikipedia.org/wiki/FURPS).
 > **Classificação**: desejável ou obrigatório.
