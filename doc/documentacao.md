@@ -8,6 +8,5 @@ Clique em cada um dos links abaixo para acessar o artefato específico.
 1. [Classes de Projeto](projeto/projetos.md)
 1. [Modelo de casos de uso](cdu/cdu.md)
 1. [Modelo de dados](bd/bd.md)
+1. [Glossario de termos](glossario/doc-glossario.md)
 
-> [!TIP]
-> As aplicações Django devem ser organizadas em Modelos (*Models*), Visões (*Views*) (com seus Templates) e Serviços (*Services*), conforme orientações detalhadas acessíveis através do seguinte [LINK](./projeto/orientacao.md).
