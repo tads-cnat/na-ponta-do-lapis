@@ -5,8 +5,8 @@
 |    Data    | Versão |   Descrição    |               Autores                |
 | :--------: | :----: | :------------: | :----------------------------------: |
 | 24/09/2025 |  1.0   | Versão inicial | Bruno, Eduardo, Lucas, Pedro, Wagner |
-| 25/01/2026 | 2.0 | Segunda Versão | Bruno, Eduardo, Lucas, Pedro, Wagner |
-| 28/03/2026 | 3.0 | Terceira Versão | Bruno, Eduardo, Erick, Lucas, Pedro, Vinicius, Wagner |
+| 25/01/2026 |  2.0   | Segunda versão  | Bruno, Eduardo, Lucas, Pedro, Wagner |
+| 28/03/2026 |  3.0   | Terceira versão | Bruno, Eduardo, Eric, Lucas, Pedro, Vinicius, Wagner |
 
 ## 1. Visão Geral do Sistema Proposto
 
@@ -122,6 +122,27 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 |  NF04  |     Responsividade      |                    O sistema deve ter a interface responsiva                    |      Interface       |   Desejável   |
 |  NF05  |     Acessibilidade      |          O sistema deverá ter algumas funcionalidades de acessibilidade          |     Usabilidade      |   Desejável   |
 |  NF06  | Facilidade de Navegação |      Todas as funcionalidades devem poder ser acessadas com poucos clicks       |     Usabilidade      |  Obrigatório  |
+
+## 10. Riscos ⚠️
+Possíveis Riscos:
+
+- Má comunicação entre os membros do projeto durante o desenvolvimento e tomada de decisões.
+
+- Baixo conhecimento de desenvolvimento utilizando os frameworks Angular, Spring Boot e Deploy do sistema.
+
+- Interface ser confusa ou não resolver o problema do usuário final.
+
+- Baixa escalabilidade, sistema funcionar para 10 usuários, mas não suportar uma carga de 1.000 clientes simultâneos.
+
+- Vazamento de dados, autenticação frágil ou falta de conformidade com Lei LGPD
+
+- Incoerência em relação ao projeto proposto com o que foi desenvolvido.
+
+- Projeto demorar tanto que, quando for lançado já vai estar fora do prazo estipulado pelos Stakeholders.
+
+- Baixa confiabilidade e disponibilidade do sistema (abaixo de 99% ao ano), causando perda de reputação da marca.
+
+
 
 > **Categoria** Usabilidade, confiabilidade, performance, suportabilidade, restrição de projeto, implementação, interface e requisito físico - segundo classificação [FURP+](https://pt.wikipedia.org/wiki/FURPS).
 > **Classificação**: desejável ou obrigatório.
