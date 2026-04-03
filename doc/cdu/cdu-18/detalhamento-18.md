@@ -11,18 +11,18 @@
 
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
-| 1 - Usuário clica no botão "Transação" | |  
-| | 2 - Sistema exibe um formuário com os campos necessários para preencher para concluir o cadastro de transação(descrição, valor, tipo) |
-| 3 - o usuário preenche os campos de input e clica em salvar. | |
+| 1 - Usuário clica no botão "Transações" Ou no botão de acesso rápido | |  
+| | 2 - Sistema exibe um formuário com os campos(descricao, valor, categoria, tipo, foi paga/recebida, data, marcador, conta) necessários para preencher para concluir o cadastro de transação|
+| 3 - O usuário preenche os campos de input e clica em "Salvar". | |
 | |  4 - O sistema verifica se as informações estão de acordo com as validações |
-| |  5 - Persiste a transação e uma mensagem de confirmação é enviada. |
+| |  5 - Persiste a transação e uma mensagem de confirmação é enviada com a seguinte mensagem: "Transação salva com sucesso"). |
 
 ## Fluxo Alternativo I - Informações incoerentes
 
 | Ações do ator | Ações do sistema |
 | :-----------------: |:-----------------: |
 | |
-| | 4.1 - O sistema Identifica que alguns dos campos não foram preenchidos de maneira corre e mostra uma mensagem de erro, por exemplo: valor da transação deve ser positivo  |
+| | 4.1 - O sistema Identifica que alguns dos campos não foram preenchidos de maneira correta e mostra uma mensagem de erro, por exemplo: valor da transação deve ser positivo  |
 || Retorna ao passo 3 do fluxo principal|
 
 ## Fluxo Alternativo II - Editar transação
@@ -42,7 +42,14 @@
 | | 4.3. O Sistema remove a transação. |
 || 5.3. O Sistema atualiza automaticamente o gráfico e a tabela de transações, refletindo a exclusão. |
 
-> Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
+## Fluxo Alternativo IV - Adicionar transação por PDF
+
+| Ações do ator | Ações do sistema |
+| :-----------------: | :-----------------: |
+|-| -|
+|-| -|
+|-| -|
+
 
 ## Diagrama de Interação (Sequência ou Comunicação)
 
