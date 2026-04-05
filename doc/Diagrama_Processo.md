@@ -3,12 +3,18 @@ graph LR
 
     subgraph Cliente [Navegador do Usuário]
         Acesso[Acessar Sistema Web]
+        SysCookie[Armazenamento Local / Cookies]
     end
 
-    subgraph Unauth [Usuário Não Autenticado]
-        Login{Já tem conta?}
+    subgraph Unauth [Visitante / Não Autenticado]
+        TipoAcesso{Como Acessar?}
         NovoCadastro[Cadastro - RF01]
         FazerLogin[Login - RF01]
+        
+        PainelTemp[Painel Temporário]
+        AcoesTemp[Ações: Finanças e Metas]
+        TemaTemp[Preferência: Mudar Tema]
+        Restricao[Restrito: Sem Acesso à Família]
     end
 
     subgraph AuthUser [Usuário Autenticado]
@@ -32,16 +38,31 @@ graph LR
         SysAPI[Consultar API de Câmbio]
     end
 
-    Acesso --> Login
+    %% Decisão Inicial
+    Acesso --> TipoAcesso
     
-    Login -- Não --> NovoCadastro
+    %% Fluxo de Autenticação Padrão
+    TipoAcesso -- Criar Conta --> NovoCadastro
     NovoCadastro --> SysCadastro
-    SysCadastro --> Login
+    SysCadastro --> FazerLogin
     
-    Login -- Sim --> FazerLogin
+    TipoAcesso -- Já tem Conta --> FazerLogin
     FazerLogin --> SysLogin
     SysLogin -- Sucesso --> Painel
+
+    %% Fluxo da Sessão Temporária (Cookies)
+    TipoAcesso -- Testar sem Conta --> PainelTemp
+    PainelTemp --> AcoesTemp
+    PainelTemp --> TemaTemp
+    PainelTemp -.-> Restricao
     
+    AcoesTemp --> SysCookie
+    TemaTemp --> SysCookie
+    
+    %% Converter Visitante em Usuário
+    PainelTemp -- Decidiu se Cadastrar --> NovoCadastro
+    
+    %% Fluxo do Usuário Logado
     Painel -.-> DeterminaPapel{É Admin?}
     DeterminaPapel -- Sim --> PainelAdmin
     DeterminaPapel -- Não --> AcoesFin
@@ -56,10 +77,12 @@ graph LR
     AcoesExt --> SysBD
     Cotacao --> SysAPI
 
+    %% Fluxo do Administrador
     PainelAdmin --> AcoesAdmin
     AcoesAdmin --> SysBD
 
+    %% Saída
     Painel --> Logout
     PainelAdmin --> Logout
-    Logout --> Login
+    Logout --> TipoAcesso
 ```
