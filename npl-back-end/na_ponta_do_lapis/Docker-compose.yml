@@ -1,7 +1,7 @@
 services:      
 
   db: 
-    image: postgres:18
+    image: postgres:16
     container_name: db_na_ponta_do_lapis
     environment:
       POSTGRES_DB: db_npl
