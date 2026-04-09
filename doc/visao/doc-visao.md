@@ -92,8 +92,9 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 
 |  ID   |  Regra  |  Descrição   |
 | :---: | :-----: | :----------: |
-| RN01  | nome... | Descrição... |
-| RN02  |   ...   |     ...      |
+| RN01  | Exclusão no grupo familiar | Somente o fundador do grupo pode  excluir o grupo familiar. |
+| RN02  |   Adição no grupo familiar   |     Somente os administradores podem adicionar outra pessoa ao grupo da família.      |
+| RN03  |   Remoção de membros   |     Somente os administradores podem remover do grupo familiar.      |
 
 ## 8. Requisitos Funcionais
 
@@ -106,9 +107,8 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 |  RF05  |                    Gerenciamento de Contas.                    |    Permitir o cadastro, edição, exclusão e vizualização de contas bancárias vinculadas ao sistema, afim de vincular entradas e saidas    |   Média    |
 |  RF06  |                    Categorização dos Gastos                    |                   Permitir o cadastro, edição, exclusão , vizualização das categorias e vincular um gasto a categoria.                   |   Média    |
 |  RF07  |                   Sistema de Grupo Familiar                    |     Permitir que o usuário crie, edite e exclua grupos familiares, além de visualizar os gastos individuais e totais de cada membro.     |   Baixa    |
-|  RF08  |                     Seleção de tema visual                     |                                        Permitir o usuário alternar entre o tema claro e o escuro.                                        |   Baixa    |
-|  RF09  |                     Gerenciamento de Posts                     |                            Permitir o administrador crie, edite, exclua posts relacionado a área de finanças.                            |   Baixa    |
-|  RF10  |                       Vizualizar Cotação                       |                                              Permitir vizualizar a cotação de várias moedas                                              |   Baixa    |
+|  RF08  |                     Gerenciamento de Posts                     |                            Permitir o administrador crie, edite, exclua posts relacionado a área de finanças.                            |   Baixa    |
+|  RF9  |                       Vizualizar Cotação                       |                                              Permitir vizualizar a cotação de várias moedas                                              |   Baixa    |
 
 > **Prioridade**: alta, média ou baixa
 
@@ -122,6 +122,7 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 |  NF04  |     Responsividade      |                    O sistema deve ter a interface responsiva                    |      Interface       |   Desejável   |
 |  NF05  |     Acessibilidade      |          O sistema deverá ter algumas funcionalidades de acessibilidade          |     Usabilidade      |   Desejável   |
 |  NF06  | Facilidade de Navegação |      Todas as funcionalidades devem poder ser acessadas com poucos clicks       |     Usabilidade      |  Obrigatório  |
+|  RF07  |                     Seleção de tema visual                     |                                        Permitir o usuário alternar entre o tema claro e o escuro.                                        |   Baixa    |
 
 ## 10. Riscos ⚠️
 Possíveis Riscos:
