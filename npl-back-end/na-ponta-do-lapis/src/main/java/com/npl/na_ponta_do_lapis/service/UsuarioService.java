@@ -13,7 +13,7 @@ import java.util.List;
 @Service
 public class UsuarioService {
 
-    private UsuarioRepository usuarioRepository;
+    private final UsuarioRepository usuarioRepository;
 
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
@@ -23,32 +23,26 @@ public class UsuarioService {
 
     public void logout(){}
 
-    public List<UsuarioResponseDTO> listarUsuarios(){
-        return usuarioRepository.findAll()
-                .stream()
-                .map(usuario -> new UsuarioResponseDTO(usuario))
-                .toList();
+    public List<Usuario> listarUsuarios(){
+        return usuarioRepository.findAll();
     }
 
-    public UsuarioResponseDTO buscarUsuarioPorId(Long id) {
-        return usuarioRepository.findById(id)
-                .map(usuario -> new UsuarioResponseDTO(usuario)).orElseThrow(
+    public Usuario buscarUsuarioPorId(Long id) {
+        return usuarioRepository.findById(id).orElseThrow(
                         () -> new UsuarioIdNaoExisteException("Usuário de ID " + id + " não existe!")
                 );
     }
 
     @Transactional
-    public UsuarioResponseDTO cadastrarUsuario(UsuarioDTO usuarioDTO){
-        Usuario usuarioNovo = usuarioDTO.toEntity();
-//        usuarioNovo.setSenha(passwordEncoder.encode(usuarioNovo.getSenha()));
-        usuarioNovo.setSenha(usuarioDTO.senha());
-
-        usuarioRepository.save(usuarioNovo);
-        return new UsuarioResponseDTO(usuarioNovo);
+    public Usuario cadastrarUsuario(Usuario usuario){
+        return usuarioRepository.save(usuario);
     }
 
     @Transactional
     public void excluirUsuario(Long id){
+        if (!usuarioRepository.existsById(id)){
+            throw new UsuarioIdNaoExisteException("Usuário de ID " + id + " não existe!");
+        }
         usuarioRepository.deleteById(id);
     }
 
