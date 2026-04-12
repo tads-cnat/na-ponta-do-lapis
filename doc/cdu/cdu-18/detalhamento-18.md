@@ -1,54 +1,60 @@
-# CDU 18. Manter Transação(Persistente)
+# CDU 18. Manter Transação (Persistente)
 
-- **Ator principal**: Usuário
-
-- **Atores secundários**: ...
-- **Resumo**: O Sistema exibe os campos para criar, editar e excluir uma transação, como por exemplo campo, nome, valor, tipo e categoria. O Usuário preenche todos os campos obrigatórios e confirma o cadastro.
-- **Pré-condição**: O usuário deve estar autenticado no sistema para conseguir registrar uma transação.
-- **Pós-Condição**: O sistema persiste os dados e salva no banco.
+- **Ator principal**: Cliente
+- **Atores secundários**: Sistema de Banco de Dados
+- **Resumo**: O sistema exibe um formulário com os campos necessários (descrição, valor, categoria, tipo, status de pagamento/recebimento, data, marcador, conta) para criar, editar ou excluir uma transação. O Cliente preenche todos os campos obrigatórios e confirma a operação.
+- **Pré-condição**: O Cliente deve estar autenticado no sistema para registrar uma transação.
+- **Pós-condição**: O sistema persiste os dados da transação no banco de dados e exibe uma mensagem de confirmação.
 
 ## Fluxo Principal
 
 | Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: |
-| 1 - Usuário clica no botão "Transações" Ou no botão de acesso rápido | |  
-| | 2 - Sistema exibe um formuário com os campos(descricao, valor, categoria, tipo, foi paga/recebida, data, marcador, conta) necessários para preencher para concluir o cadastro de transação|
-| 3 - O usuário preenche os campos de input e clica em "Salvar". | |
-| |  4 - O sistema verifica se as informações estão de acordo com as validações |
-| |  5 - Persiste a transação e uma mensagem de confirmação é enviada com a seguinte mensagem: "Transação salva com sucesso"). |
+| :-: | :-: |
+| 1 - Cliente clica no botão "Transações" ou no botão de acesso rápido | |  
+| | 2 - Sistema exibe um formulário com os campos (descrição, valor, categoria, tipo, status de pagamento/recebimento, data, marcador, conta) necessários para completar o cadastro de transação |
+| 3 - Cliente preenche os campos obrigatórios e clica em "Salvar" | |
+| | 4 - Sistema valida os dados informados |
+| | 5 - Sistema persiste a transação no banco de dados e exibe mensagem de confirmação: "Transação salva com sucesso" |
 
-## Fluxo Alternativo I - Informações incoerentes
-
-| Ações do ator | Ações do sistema |
-| :-----------------: |:-----------------: |
-| |
-| | 4.1 - O sistema Identifica que alguns dos campos não foram preenchidos de maneira correta e mostra uma mensagem de erro, por exemplo: valor da transação deve ser positivo  |
-|| Retorna ao passo 3 do fluxo principal|
-
-## Fluxo Alternativo II - Editar transação
+## Fluxo Alternativo I - Validação de Dados com Erro
 
 | Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: |
-| 1.2 - Usuário seleciona uma transação já existente e aperta no icone de editar | |
-| | 2.2 - Usuário altera os dados da transação e clica em salvar |
+| :-: | :-: |
+| | 4.1 - Sistema identifica que um ou mais campos foram preenchidos de forma incorreta e exibe mensagem de erro (ex: "Campo obrigatório", "Valor deve ser positivo") |
+| | 4.2 - Sistema retorna ao passo 3 do fluxo principal para corrigir os dados |
 
-## Fluxo Alternativo III - Excluir transação
-
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: |
-| 1.3 - Usuário seleciona uma transação já existente e clica no icone de lixeira para excluir transação | |
-| | 2.3. O Sistema exibe um pop-up de confirmação com a mensagem: “Deseja realmente excluir esta transação?”. |
-| 3.3. O Usuário confirma a exclusão. | |
-| | 4.3. O Sistema remove a transação. |
-|| 5.3. O Sistema atualiza automaticamente o gráfico e a tabela de transações, refletindo a exclusão. |
-
-## Fluxo Alternativo IV - Adicionar transação por PDF
+## Fluxo Alternativo II - Editar Transação
 
 | Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: |
-|-| -|
-|-| -|
-|-| -|
+| :-: | :-: |
+| 1.2 - Cliente seleciona uma transação existente e clica no ícone de edição | |
+| | 2.2 - Sistema exibe o formulário pré-preenchido com os dados da transação |
+| 3.2 - Cliente altera os dados desejados e clica em "Salvar" | |
+| | 4.2 - Sistema valida os dados e persiste as alterações |
+| | 5.2 - Sistema exibe mensagem de confirmação: "Transação atualizada com sucesso" |
+
+## Fluxo Alternativo III - Excluir Transação
+
+| Ações do ator | Ações do sistema |
+| :-: | :-: |
+| 1.3 - Cliente seleciona uma transação existente e clica no ícone de lixeira para excluir | |
+| | 2.3 - Sistema exibe um pop-up de confirmação com a mensagem: "Deseja realmente excluir esta transação?" |
+| 3.3 - Cliente confirma a exclusão | |
+| | 4.3 - Sistema remove a transação do banco de dados |
+| | 5.3 - Sistema atualiza automaticamente o gráfico e a tabela de transações, refletindo a exclusão |
+| | 6.3 - Sistema exibe mensagem de confirmação: "Transação excluída com sucesso" |
+
+## Fluxo Alternativo IV - Importar Transação via PDF
+
+| Ações do ator | Ações do sistema |
+| :-: | :-: |
+| 1.4 - Cliente clica no botão "Importar PDF" no formulário de transações | |
+| | 2.4 - Sistema exibe um diálogo para seleção de arquivo |
+| 3.4 - Cliente seleciona um arquivo PDF e clica em "Abrir" | |
+| | 4.4 - Sistema lê e processa o arquivo PDF extraindo os dados da transação |
+| | 5.4 - Sistema pré-preenche o formulário com os dados extraídos |
+| 6.4 - Cliente revisa os dados e clica em "Salvar" | |
+| | 7.4 - Sistema valida e persiste a transação (segue para passo 5 do fluxo principal) |
 
 
 ## Diagrama de Interação (Sequência ou Comunicação)
