@@ -1,10 +1,12 @@
 package com.npl.na_ponta_do_lapis.web.Controller;
 
+import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.service.UsuarioService;
 import com.npl.na_ponta_do_lapis.web.Controller.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.Controller.dto.UsuarioResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,20 +26,32 @@ public class UsuarioController {
 
     @Operation(summary = "Listar Usuários")
     @GetMapping
-    private ResponseEntity<List<UsuarioResponseDTO>> listUsuarios(){
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.listarUsuarios());
+    public ResponseEntity<List<UsuarioResponseDTO>> listUsuarios(){
+        List<Usuario> usuario = usuarioService.listarUsuarios();
+        List<UsuarioResponseDTO> response = usuario.stream()
+                .map(u -> new UsuarioResponseDTO(u))
+                .toList();
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @Operation(summary = "Buscar por ID")
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id){
-        return ResponseEntity.status(HttpStatus.OK).body(usuarioService.buscarUsuarioPorId(id));
+        Usuario usuario = usuarioService.buscarUsuarioPorId(id);
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO(usuario);
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
     }
 
     @Operation(summary = "Cadastrar Usuário")
     @PostMapping()
-    public ResponseEntity<UsuarioResponseDTO> criarUsuario(@RequestBody UsuarioDTO usuarioDTO){
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body(usuarioService.cadastrarUsuario(usuarioDTO));
+    public ResponseEntity<UsuarioResponseDTO> criarUsuario(@RequestBody @Valid UsuarioDTO usuarioDTO){
+        Usuario usuarioNovo = usuarioDTO.toEntity();
+//      usuarioNovo.setSenha(passwordEncoder.encode(usuarioNovo.getSenha()));
+        usuarioNovo.setSenha(usuarioDTO.senha());
+        Usuario salvo = usuarioService.cadastrarUsuario(usuarioNovo);
+
+        UsuarioResponseDTO response = new UsuarioResponseDTO(salvo);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @Operation(summary = "Deletar Usuário")
