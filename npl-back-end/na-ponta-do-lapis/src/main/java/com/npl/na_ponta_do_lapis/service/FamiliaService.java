@@ -59,13 +59,13 @@ public class FamiliaService {
     public List<FamiliaResponseDTO> listarFamilias(){
         return familiaRepository.findAll()
                 .stream()
-                .map(familia -> new FamiliaResponseDTO((Familia) familia))
+                .map(familia -> new FamiliaResponseDTO(familia))
                 .toList();
     }
 
     public FamiliaResponseDTO buscarFamiliaPorID(long id){
         return familiaRepository.findById(id)
-                .map(familia -> new FamiliaResponseDTO((Familia) familia))
+                .map(familia -> new FamiliaResponseDTO(familia))
                 .orElseThrow(() -> new RuntimeException("Família de ID " + id + " não existe!"));
     }
 
