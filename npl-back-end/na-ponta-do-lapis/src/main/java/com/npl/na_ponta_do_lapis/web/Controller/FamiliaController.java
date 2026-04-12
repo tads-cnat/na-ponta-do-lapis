@@ -48,7 +48,9 @@ public class FamiliaController {
 
     @Operation(summary = "Editar Família")
     @PutMapping("/{id}")
-    private ResponseEntity<FamiliaResponseDTO> editarFamilia(@PathVariable Long id, String nome, String foto){
+    private ResponseEntity<FamiliaResponseDTO> editarFamilia(@PathVariable Long id,
+                                                             @RequestParam(required = false) String nome,
+                                                             @RequestParam(required = false) String foto){
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.editarFamilia(id, new FamiliaDTO(nome, foto)));
     }
 
