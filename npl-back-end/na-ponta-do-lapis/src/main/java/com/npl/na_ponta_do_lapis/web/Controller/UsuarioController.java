@@ -2,8 +2,8 @@ package com.npl.na_ponta_do_lapis.web.Controller;
 
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.service.UsuarioService;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.UsuarioDTO;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.UsuarioResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

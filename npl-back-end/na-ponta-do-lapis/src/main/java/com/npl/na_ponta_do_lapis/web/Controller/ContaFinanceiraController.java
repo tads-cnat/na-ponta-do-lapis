@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npl.na_ponta_do_lapis.service.ContaFinanceiraService;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.ContaFinanceiraDTO;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.ContaFinanceiraResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraDTO;
+import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

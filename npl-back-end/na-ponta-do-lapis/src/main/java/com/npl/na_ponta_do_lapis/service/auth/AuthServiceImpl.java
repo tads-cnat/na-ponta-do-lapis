@@ -1,6 +1,6 @@
 package com.npl.na_ponta_do_lapis.service.auth;
 
-import com.npl.na_ponta_do_lapis.web.Controller.dto.UsuarioDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 
 public class AuthServiceImpl implements AuthService{
     @Override

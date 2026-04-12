@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
-import com.npl.na_ponta_do_lapis.web.Controller.Exception.ContaIdNaoExisteException;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.ContaFinanceiraDTO;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.ContaFinanceiraResponseDTO;
+import com.npl.na_ponta_do_lapis.web.Exception.ContaIdNaoExisteException;
+import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraDTO;
+import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraResponseDTO;
 
 import jakarta.transaction.Transactional;
 
