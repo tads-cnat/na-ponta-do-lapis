@@ -4,9 +4,10 @@ import com.npl.na_ponta_do_lapis.entity.Familia;
 import com.npl.na_ponta_do_lapis.repository.FamiliaRepository;
 import com.npl.na_ponta_do_lapis.web.Controller.dto.FamiliaDTO;
 import com.npl.na_ponta_do_lapis.web.Controller.dto.FamiliaResponseDTO;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.UsuarioResponseDTO;
 import jakarta.transaction.Transactional;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -31,10 +32,10 @@ public class FamiliaService {
     @Transactional
     public FamiliaResponseDTO editarFamilia(long id, FamiliaDTO familiaDTO){
         Familia familia = familiaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Família de ID " + id + " não existe!"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família não foi encontrada."));
         if (familiaDTO.nome() != null){
             if (familiaDTO.nome().isBlank()) {
-                throw new RuntimeException("Nome da família não pode ser vazio.");
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Nome da família não pode ser vazio.");
             }
             familia.setNome(familiaDTO.nome());
         }
