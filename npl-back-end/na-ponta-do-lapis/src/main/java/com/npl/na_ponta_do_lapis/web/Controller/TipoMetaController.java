@@ -1,4 +1,4 @@
-package com.npl.na_ponta_do_lapis.controller;
+package com.npl.na_ponta_do_lapis.web.Controller;
 
 import com.npl.na_ponta_do_lapis.entity.TipoMeta;
 import com.npl.na_ponta_do_lapis.service.TipoMetaService;

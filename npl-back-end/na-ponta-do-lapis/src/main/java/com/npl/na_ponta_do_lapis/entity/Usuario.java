@@ -2,6 +2,10 @@ package com.npl.na_ponta_do_lapis.entity;
 
 import com.npl.na_ponta_do_lapis.entity.Enums.Papel;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 import java.util.Objects;
 
@@ -14,7 +18,16 @@ public class Usuario {
     private Long id;
 
     @Column(name = "nome", length = 100, nullable = false)
+    @NotBlank
+    @NotNull
+    @Size(min = 3)
     private String nome;
+
+    @Column(name = "email", length = 254, nullable = false)
+    @NotNull(message = "Nome não pode ser NULL")
+    @NotBlank(message = "O Campo não pode estár vazio")
+    @Email(message = "Cadastre um tipo email válido")
+    private String email;
 
     @Column(name =  "username", nullable = false, length = 100, unique = true)
     private String username;
@@ -34,6 +47,14 @@ public class Usuario {
         if (o == null || getClass() != o.getClass()) return false;
         Usuario usuario = (Usuario) o;
         return Objects.equals(id, usuario.id);
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     @Override
