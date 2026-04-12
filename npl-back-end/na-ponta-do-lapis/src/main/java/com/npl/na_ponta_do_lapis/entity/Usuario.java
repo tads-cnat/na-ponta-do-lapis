@@ -24,9 +24,9 @@ public class Usuario {
     private String nome;
 
     @Column(name = "email", length = 254, nullable = false)
-    @NotNull(message = "Nome não pode ser NULL")
-    @NotBlank(message = "O Campo não pode estár vazio")
-    @Email(message = "Cadastre um tipo email válido")
+    @NotNull(message = "Nome não pode ser nulo")
+    @NotBlank(message = "O Campo não pode estar vazio")
+    @Email(message = "Cadastre um tipo e-mail válido")
     private String email;
 
     @Column(name =  "username", nullable = false, length = 100, unique = true)
@@ -37,6 +37,10 @@ public class Usuario {
 
     @Column(name = "foto_perfil")
     private String fotoPerfil;
+
+    @ManyToOne
+    @JoinColumn(name = "familia_id")
+    private Familia familia;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "papel")
@@ -108,5 +112,13 @@ public class Usuario {
 
     public void setPapel(Papel papel) {
         this.papel = papel;
+    }
+
+    public Familia getFamilia() {
+        return familia;
+    }
+
+    public void setFamilia(Familia familia) {
+        this.familia = familia;
     }
 }
