@@ -1,5 +1,7 @@
 package com.npl.na_ponta_do_lapis.entity;
 
+import com.npl.na_ponta_do_lapis.entity.Enums.TipoCategoria;
+import com.npl.na_ponta_do_lapis.entity.Enums.TipoTransacao;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
@@ -24,8 +26,9 @@ public class Transacao {
     @Column(nullable = false, length = 50)
     private String estado = "Realizada";
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String tipo; // Receita ou Despesa
+    private TipoTransacao tipo; // RECEITA ou DESPESA
 
     @Column(name = "data_hora", nullable = false)
     private LocalDateTime dataHora;
@@ -34,9 +37,10 @@ public class Transacao {
     @JoinColumn(name = "id_conta_financeira", nullable = false)
     private ContaFinanceira contaFinanceira;
 
-    public Transacao() {}
+    public Transacao() {
+    }
 
-    // GETTERS E SETTERS
+    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
@@ -52,8 +56,8 @@ public class Transacao {
     public String getEstado() { return estado; }
     public void setEstado(String estado) { this.estado = estado; }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public TipoTransacao getTipo() { return tipo; }
+    public void setTipo(TipoTransacao tipo) { this.tipo = tipo; }
 
     public LocalDateTime getDataHora() { return dataHora; }
     public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
