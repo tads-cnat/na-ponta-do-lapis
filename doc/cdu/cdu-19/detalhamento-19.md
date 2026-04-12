@@ -1,11 +1,11 @@
-# CDU 19. Manter Conta Financeira (Persistente)
+# CDU 19. Manter Conta Financeira
 
 - **Ator principal**: Usuário
 
 - **Atores secundários**: não existe.
-- **Resumo**: O sistema exibe uma página contendo as contas criadas até então, e as ações que podem ser feitas, caso já haja outras contas. Uma das contas já estará selecionada e será mostrado seu nome, tipo e saldo, cada tipo terá uma imagem genérica para sua representação. O usuário clica no botão de “Adicionar Conta” para realizar a operação. Um formulário aparece e deve ser preenchido corretamente nos campos obrigatórios. Caso algum campo não tenha sido preenchido da forma certa, o sistema avisa que não pode criar a conta devido à falta de informações. Também as operações de atualizar e excluir podem ser feitas.
-- **Pré-condição**: O usuário deverá estar devidamente autenticado e acessar a aba “Contas Financeiras”
-- **Pós-Condição**: Uma nova conta aparecerá na página de “Contas Financeiras”, possibilitando as demais ações de uma conta.
+- **Resumo**: O sistema exibe uma página contendo as contas criadas até então, e as ações que podem ser feitas, caso já haja outras contas. No caso negativo, o sistema exibe uma mensagem de ausência de contas criadas e aconselha a criação de uma para poder realizar as demais ações. Posteriormente uma das contas já estará selecionada e serão mostrados seu nome, tipo e saldo. O usuário clica no botão de “Adicionar Conta” para realizar a operação. Um formulário aparece e deve ser preenchido corretamente nos campos obrigatórios. Caso algum campo não tenha sido preenchido da forma certa, o sistema avisa que não pode criar a conta devido à falta de informações. Também as operações de visualizar histórico de transações, atualizar e excluir conta podem ser feitas, alternativamente.
+- **Pré-condição**: O usuário deverá estar devidamente autenticado ou entrar no site como convidado e acessar a aba “Contas Financeiras”
+- **Pós-Condição**: Uma nova conta aparecerá na página de “Contas Financeiras”, possibilitando as demais ações da página.
 
 ## Fluxo Principal
 
@@ -37,28 +37,17 @@
 | 1.3 - O usuário seleciona uma conta através do carrossel de imagens das contas criadas e clica na opção de "Editar conta" | |  
 | | 2.3 - O sistema exibe um formulário equivalente ao de "Adicionar conta", mas preenchido |
 | 3.3 - Parecido com o passo 3 do fluxo principal, o usuário altera e salva os dados que desejar | |
-| | 4.3 - O sistema faz a validação, podendo repetir as etapas 4 do fluxo principal ou o 4.1 do fluxo alternativo I |
-|| 5.3 - O sistema mostra uma mensagem de êxito: "Conta alterada com sucesso" |
+| | 4.3 - O sistema faz a validação e, podendo repetir as etapas 4 do fluxo principal ou o 4.1 do fluxo alternativo I, mostra uma mensagem de êxito: "Conta alterada com sucesso" |
 
 ## Fluxo Alternativo IV - Exclusão de conta
 
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: |
 | 1.4 - O usuário seleciona uma conta através do carrossel de imagens das contas criadas e clica na opção de "Excluir conta" | |  
-| | 2.4 - O sistema solicita a confirmação do usuário |
+| | 2.4 - O sistema envidencia qual conta foi selecionada e solicita a confirmação do usuário |
 | 3.4 - O usuário confirma a solicitação de exclusão | |
 | | 4.4 - O sistema exclui a conta e apresenta uma mensagem de sucesso: "A Conta '(nome da conta)' foi excluída!" |
 
-> Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
-
 ## Diagrama de Interação (Sequência ou Comunicação)
 
-![Diagrama de Sequência - Parte 1](./CDU%2019%20-%20Diagrama%20de%20Sequência%20Parte%201.png)
-![Diagrama de Sequência - Parte 2](./CDU%2019%20-%20Diagrama%20de%20Sequência%20Parte%202.png)
-![Diagrama de Sequência - Parte 3](./CDU%2019%20-%20Diagrama%20de%20Sequência%20Parte%203.png)
-![Diagrama de Sequência - Parte 4](./CDU%2019%20-%20Diagrama%20de%20Sequência%20Parte%204.png)
-
 ## Diagrama de Classes de Projeto
-
-![Diagrama de Classes de Projeto - CDU 19](./Diagrama%20de%20Classes%20de%20Projeto%20-%20CDU%2019.png)
- 
