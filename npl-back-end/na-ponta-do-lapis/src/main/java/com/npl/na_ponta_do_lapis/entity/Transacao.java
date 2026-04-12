@@ -1,4 +1,63 @@
 package com.npl.na_ponta_do_lapis.entity;
 
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "Transação")
 public class Transacao {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, length = 254)
+    private String descricao;
+
+    @Column(nullable = false)
+    private Double valor;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 50)
+    private TipoCategoria categoria;
+
+    @Column(nullable = false, length = 50)
+    private String estado = "Realizada";
+
+    @Column(nullable = false, length = 50)
+    private String tipo; // Receita ou Despesa
+
+    @Column(name = "data_hora", nullable = false)
+    private LocalDateTime dataHora;
+
+    @ManyToOne
+    @JoinColumn(name = "id_conta_financeira", nullable = false)
+    private ContaFinanceira contaFinanceira;
+
+    public Transacao() {}
+
+    // GETTERS E SETTERS
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
+
+    public Double getValor() { return valor; }
+    public void setValor(Double valor) { this.valor = valor; }
+
+    public TipoCategoria getCategoria() { return categoria; }
+    public void setCategoria(TipoCategoria categoria) { this.categoria = categoria; }
+
+    public String getEstado() { return estado; }
+    public void setEstado(String estado) { this.estado = estado; }
+
+    public String getTipo() { return tipo; }
+    public void setTipo(String tipo) { this.tipo = tipo; }
+
+    public LocalDateTime getDataHora() { return dataHora; }
+    public void setDataHora(LocalDateTime dataHora) { this.dataHora = dataHora; }
+
+    public ContaFinanceira getContaFinanceira() { return contaFinanceira; }
+    public void setContaFinanceira(ContaFinanceira contaFinanceira) { this.contaFinanceira = contaFinanceira; }
 }
