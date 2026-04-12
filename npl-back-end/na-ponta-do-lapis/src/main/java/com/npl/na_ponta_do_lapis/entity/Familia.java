@@ -30,7 +30,7 @@ public class Familia {
         return Objects.hashCode(id);
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 

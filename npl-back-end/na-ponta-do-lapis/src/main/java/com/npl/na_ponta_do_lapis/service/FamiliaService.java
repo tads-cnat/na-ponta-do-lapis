@@ -25,12 +25,12 @@ public class FamiliaService {
     }
 
     @Transactional
-    public void excluirFamilia(long id){
+    public void excluirFamilia(Long id){
         familiaRepository.deleteById(id);
     }
 
     @Transactional
-    public FamiliaResponseDTO editarFamilia(long id, FamiliaDTO familiaDTO){
+    public FamiliaResponseDTO editarFamilia(Long id, FamiliaDTO familiaDTO){
         Familia familia = familiaRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família não foi encontrada."));
         if (familiaDTO.nome() != null){
@@ -64,7 +64,7 @@ public class FamiliaService {
                 .toList();
     }
 
-    public FamiliaResponseDTO buscarFamiliaPorID(long id){
+    public FamiliaResponseDTO buscarFamiliaPorID(Long id){
         return familiaRepository.findById(id)
                 .map(familia -> new FamiliaResponseDTO(familia))
                 .orElseThrow(() -> new RuntimeException("Família de ID " + id + " não existe!"));
