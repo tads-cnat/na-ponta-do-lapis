@@ -5,7 +5,7 @@
 - **Atores secundários**: Usuário convidado.
 - **Resumo**:  Na página “Grupo Familiar” o usuário aperta o botão “convidar” para convidar um novo membro à sua família, caso ainda não tenha membros a família será criada.
 - **Pré-condição**: Usuário deve estar cadastrado e autenticado no sistema.
-- **Pós-Condição**: Um membro é adicionado na sua família; uma família é criada e o usuário criador recebe o papel admin família.
+- **Pós-Condição**: Um convite é enviado ao usuário convidado; caso necessário, uma família é criada e o usuário criador recebe o papel admin família; o membro só é vinculado à família após aceitar o convite.
 
 ## Fluxo Principal
 
