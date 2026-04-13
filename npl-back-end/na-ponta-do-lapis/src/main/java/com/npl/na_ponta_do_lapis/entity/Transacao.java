@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "Transação")
+@Table(name = "transacao")
 public class Transacao {
 
     @Id
@@ -22,9 +22,10 @@ public class Transacao {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
     private TipoCategoria categoria;
-
+    
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private String estado = "Realizada";
+    private EstadoTransacao estado;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
