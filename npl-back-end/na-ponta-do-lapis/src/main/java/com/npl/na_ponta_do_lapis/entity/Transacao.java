@@ -1,6 +1,5 @@
 package com.npl.na_ponta_do_lapis.entity;
 
-import com.npl.na_ponta_do_lapis.entity.Enums.TipoCategoria;
 import com.npl.na_ponta_do_lapis.entity.Enums.TipoTransacao;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
@@ -19,13 +18,13 @@ public class Transacao {
     @Column(nullable = false)
     private Double valor;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 50)
-    private TipoCategoria categoria;
+    @ManyToOne // Relacionamento com a nova entidade Categoria
+    @JoinColumn(name = "id_categoria", nullable = false)
+    private Categoria categoria;
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private EstadoTransacao estado: EstadoTransacao.REALIZADA;
+    private EstadoTransacao estado = EstadoTransacao.REALIZADA;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
@@ -51,11 +50,11 @@ public class Transacao {
     public Double getValor() { return valor; }
     public void setValor(Double valor) { this.valor = valor; }
 
-    public TipoCategoria getCategoria() { return categoria; }
-    public void setCategoria(TipoCategoria categoria) { this.categoria = categoria; }
+    public Categoria getCategoria() { return categoria; }
+    public void setCategoria(Categoria categoria) { this.categoria = categoria; }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public EstadoTransacao getEstado() { return estado; }
+    public void setEstado(EstadoTransacao estado) { this.estado = estado; }
 
     public TipoTransacao getTipo() { return tipo; }
     public void setTipo(TipoTransacao tipo) { this.tipo = tipo; }
