@@ -27,25 +27,22 @@ public class ContaFinanceira {
     private Long id;
 
     @NotNull(message = "O nome é obrigatório")
-    @NotBlank
+    @NotBlank(message = "O nome não pode ser em branco")
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
     @NotNull(message = "O saldo é obrigatório")
-    @NotBlank
-    @Column(name = "saldo", precision = 19, scale = 2, nullable = false, columnDefinition = "DEFAULT 0.0")
+    @Column(name = "saldo", precision = 19, scale = 2, nullable = false)
     private BigDecimal saldo;
 
     @NotNull(message = "O tipo é obrigatório")
     @Enumerated(EnumType.STRING)
-    @NotBlank
     @Column(name = "tipo", nullable = false)
     private TipoConta tipo;
 
     @NotNull(message = "O usuário é obrigatório")
     @ManyToOne
-    @NotBlank
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @Override
@@ -96,8 +93,8 @@ public class ContaFinanceira {
         return this.usuario;
     }
 
-    public void setUsuario(Usuario usuario_id) {
-        this.usuario = usuario_id;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     @Override
