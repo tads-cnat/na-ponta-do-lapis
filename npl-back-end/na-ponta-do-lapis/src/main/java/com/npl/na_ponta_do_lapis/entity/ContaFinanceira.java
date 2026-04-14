@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -26,20 +27,24 @@ public class ContaFinanceira {
     private Long id;
 
     @NotNull(message = "O nome é obrigatório")
+    @NotBlank
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
     @NotNull(message = "O saldo é obrigatório")
+    @NotBlank
     @Column(name = "saldo", precision = 19, scale = 2, nullable = false, columnDefinition = "DEFAULT 0.0")
     private BigDecimal saldo;
 
     @NotNull(message = "O tipo é obrigatório")
     @Enumerated(EnumType.STRING)
+    @NotBlank
     @Column(name = "tipo", nullable = false)
     private TipoConta tipo;
 
     @NotNull(message = "O usuário é obrigatório")
     @ManyToOne
+    @NotBlank
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
