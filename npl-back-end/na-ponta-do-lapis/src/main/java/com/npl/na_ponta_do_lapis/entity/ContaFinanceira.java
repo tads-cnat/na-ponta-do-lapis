@@ -17,6 +17,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "conta_financeira")
@@ -29,6 +30,7 @@ public class ContaFinanceira {
     @NotNull(message = "O nome é obrigatório")
     @NotBlank(message = "O nome não pode ser em branco")
     @Column(name = "nome", length = 100, nullable = false)
+    @Size(min = 3)
     private String nome;
 
     @NotNull(message = "O saldo é obrigatório")
