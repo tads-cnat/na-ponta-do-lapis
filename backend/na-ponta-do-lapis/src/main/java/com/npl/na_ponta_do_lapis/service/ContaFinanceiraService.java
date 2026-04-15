@@ -8,6 +8,7 @@ import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.web.exception.ContaIdNaoExisteException;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraDTO;
+import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraPatchDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraResponseDTO;
 
 import jakarta.transaction.Transactional;
@@ -58,7 +59,24 @@ public class ContaFinanceiraService {
     }
 
     @Transactional
+    public ContaFinanceiraResponseDTO atualizarContaParcial(Long id, ContaFinanceiraPatchDTO contaPatchDTO){
+        ContaFinanceira conta = contaFinanceiraRepository.findById(id)
+            .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
+        
+        contaPatchDTO.nome().ifPresent(conta::setNome);
+        contaPatchDTO.saldo().ifPresent(conta::setSaldo);
+        contaPatchDTO.tipo().ifPresent(conta::setTipo);
+        contaPatchDTO.usuario().ifPresent(conta::setUsuario);
+        
+        contaFinanceiraRepository.save(conta);
+        return new ContaFinanceiraResponseDTO(conta);
+    }
+
+    @Transactional
     public void excluirConta(Long id){
+        if(!contaFinanceiraRepository.existsById(id)){
+            throw new ContaIdNaoExisteException("Conta de ID: " + id + " não existe");
+        }
         contaFinanceiraRepository.deleteById(id);
     }
 }

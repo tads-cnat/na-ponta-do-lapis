@@ -15,7 +15,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "conta_financeira")
@@ -26,11 +28,13 @@ public class ContaFinanceira {
     private Long id;
 
     @NotNull(message = "O nome é obrigatório")
+    @NotBlank(message = "O nome não pode ser em branco")
     @Column(name = "nome", length = 100, nullable = false)
+    @Size(min = 3)
     private String nome;
 
     @NotNull(message = "O saldo é obrigatório")
-    @Column(name = "saldo", precision = 19, scale = 2, nullable = false, columnDefinition = "DEFAULT 0.0")
+    @Column(name = "saldo", precision = 19, scale = 2, nullable = false)
     private BigDecimal saldo;
 
     @NotNull(message = "O tipo é obrigatório")
@@ -40,7 +44,7 @@ public class ContaFinanceira {
 
     @NotNull(message = "O usuário é obrigatório")
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     @Override
@@ -87,12 +91,12 @@ public class ContaFinanceira {
         this.tipo = tipo;
     }
 
-    public Usuario getUsuario() {
-        return this.usuario;
+    public Long getUsuarioId() {
+        return this.usuario.getId();
     }
 
-    public void setUsuario(Usuario usuario_id) {
-        this.usuario = usuario_id;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     @Override

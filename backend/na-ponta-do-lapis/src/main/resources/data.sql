@@ -14,3 +14,23 @@ VALUES ('Alimentação'),
        ('Lazer'),
        ('Saúde'),
        ('Educação');
+
+-- SQL Conta Financeira
+INSERT INTO conta_financeira (saldo, usuario_id, nome, tipo)
+VALUES  (100, 1, 'Banco Inter','DEBITO'),
+        (50000000.50, 2, 'Banco Master','CREDITO'),
+        (0, 3, 'Santander', 'CREDITO_DEBITO'),
+        (150, 4, 'Itaú', 'DEBITO'),
+        (3000, 3, 'Nubank', 'DEBITO'),
+        (10, 2, 'BB', 'CREDITO'),
+        (1, 1, 'PicPay', 'CREDITO');
+
+
+
+
+
+
+
+
+
+
