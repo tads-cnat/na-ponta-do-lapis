@@ -2,7 +2,7 @@ package com.npl.na_ponta_do_lapis.service;
 
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
-import com.npl.na_ponta_do_lapis.web.Exception.UsuarioIdNaoExisteException;
+import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

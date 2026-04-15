@@ -3,7 +3,7 @@ package com.npl.na_ponta_do_lapis.entity;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import com.npl.na_ponta_do_lapis.entity.Enums.TipoConta;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

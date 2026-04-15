@@ -1,9 +1,9 @@
-package com.npl.na_ponta_do_lapis.web.Controller;
+package com.npl.na_ponta_do_lapis.web.controller;
 
 
 import com.npl.na_ponta_do_lapis.service.FamiliaService;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.FamiliaDTO;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.FamiliaResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.FamiliaDTO;
+import com.npl.na_ponta_do_lapis.web.dto.FamiliaResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
