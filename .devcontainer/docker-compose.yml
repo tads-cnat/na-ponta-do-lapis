@@ -11,7 +11,11 @@ services:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in db container
         POSTGRES_PASSWORD: postgres
         POSTGRES_USER: postgres
+<<<<<<< HEAD
         POSTGRES_DB: db_npl
+=======
+        POSTGRES_DB: postgres
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
         POSTGRES_HOSTNAME: db
 
     volumes:
@@ -33,7 +37,11 @@ services:
 
   db:
     container_name: postgresdb
+<<<<<<< HEAD
     image: postgres:16
+=======
+    image: postgres:latest
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
     restart: unless-stopped
     networks:
       - app-network
@@ -44,12 +52,20 @@ services:
       retries: 5
       start_period: 30s
     volumes:
+<<<<<<< HEAD
       - postgres-data:/var/lib/postgresql/data
+=======
+      - postgres-data:/var/lib/postgresql
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
     environment:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
+<<<<<<< HEAD
       POSTGRES_DB: db_npl
+=======
+      POSTGRES_DB: postgres
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
