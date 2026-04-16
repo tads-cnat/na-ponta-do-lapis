@@ -1,6 +1,7 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD:backend/na-ponta-do-lapis/src/main/java/com/npl/na_ponta_do_lapis/web/controller/MetaController.java
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -26,6 +27,8 @@ import jakarta.validation.Valid;
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> 5ce2002 (feat: implementa dtos de meta e tipoMeta):npl-back-end/na-ponta-do-lapis/src/main/java/com/npl/na_ponta_do_lapis/web/Controller/MetaController.java
+=======
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 import com.npl.na_ponta_do_lapis.service.MetaService;
 import com.npl.na_ponta_do_lapis.web.dto.MetaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.MetaResponseDTO;
@@ -38,6 +41,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
@@ -67,7 +73,11 @@ public class MetaController {
     }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 }
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)

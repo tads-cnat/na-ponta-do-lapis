@@ -11,6 +11,7 @@ import com.npl.na_ponta_do_lapis.entity.Usuario;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
 =======
@@ -52,6 +53,8 @@ public record ContaFinanceiraDTO(
 =======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 >>>>>>> cb70e71 (chore: aplica regras do gitigore)
+=======
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 public record ContaFinanceiraDTO(String nome, BigDecimal saldo, TipoConta tipo, Usuario usuario) {
 
     public ContaFinanceira toEntity(){
@@ -59,6 +62,7 @@ public record ContaFinanceiraDTO(String nome, BigDecimal saldo, TipoConta tipo, 
         conta.setNome(nome);
         conta.setSaldo(saldo);
         conta.setTipo(tipo);
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -71,6 +75,8 @@ public record ContaFinanceiraDTO(String nome, BigDecimal saldo, TipoConta tipo, 
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> cb70e71 (chore: aplica regras do gitigore)
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
