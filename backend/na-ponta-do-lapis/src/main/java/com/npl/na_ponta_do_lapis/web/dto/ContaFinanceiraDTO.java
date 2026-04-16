@@ -8,6 +8,7 @@ import com.npl.na_ponta_do_lapis.entity.Usuario;
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -35,6 +36,8 @@ public record ContaFinanceiraDTO(
 =======
 =======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 public record ContaFinanceiraDTO(String nome, BigDecimal saldo, TipoConta tipo, Usuario usuario) {
 
     public ContaFinanceira toEntity(){
@@ -43,6 +46,9 @@ public record ContaFinanceiraDTO(String nome, BigDecimal saldo, TipoConta tipo, 
         conta.setSaldo(saldo);
         conta.setTipo(tipo);
 <<<<<<< HEAD
+<<<<<<< HEAD
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
