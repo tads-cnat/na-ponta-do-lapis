@@ -15,6 +15,7 @@ services:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         POSTGRES_DB: db_npl
 =======
         POSTGRES_DB: postgres
@@ -22,6 +23,9 @@ services:
 =======
         POSTGRES_DB: db_npl
 >>>>>>> 34a34a5 (chore: adiciona manuais e configura banco)
+=======
+        POSTGRES_DB: postgres
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 =======
         POSTGRES_DB: postgres
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
@@ -50,6 +54,7 @@ services:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     image: postgres:16
 =======
     image: postgres:latest
@@ -63,6 +68,9 @@ services:
 =======
     image: postgres:16
 >>>>>>> aa3a01c (chore: seta as versoes)
+=======
+    image: postgres:latest
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
     restart: unless-stopped
     networks:
       - app-network
@@ -77,6 +85,7 @@ services:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
       - postgres-data:/var/lib/postgresql/data
 =======
       - postgres-data:/var/lib/postgresql
@@ -90,10 +99,14 @@ services:
 =======
       - postgres-data:/var/lib/postgresql/data
 >>>>>>> aa3a01c (chore: seta as versoes)
+=======
+      - postgres-data:/var/lib/postgresql
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
     environment:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -423,12 +436,16 @@ services:
 =======
 >>>>>>> b924eb8 (fix: corrige o docker-compese duplicado)
       POSTGRES_DB: db_npl
+=======
+      POSTGRES_DB: postgres
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
 networks:
   app-network:
+<<<<<<< HEAD
 <<<<<<< HEAD
     driver: bridge
 
@@ -494,4 +511,6 @@ networks:
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 =======
 >>>>>>> b924eb8 (fix: corrige o docker-compese duplicado)
+=======
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
     driver: bridge

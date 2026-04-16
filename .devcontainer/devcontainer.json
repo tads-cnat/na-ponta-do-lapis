@@ -2,15 +2,19 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 {
 	"name": "Java, Angular & PostgreSQL",
 =======
+=======
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/java-postgres
 {
 	"name": "Java & PostgreSQL",
+<<<<<<< HEAD
 <<<<<<< HEAD
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 =======
@@ -23,10 +27,13 @@
 {
 	"name": "Java, Angular & PostgreSQL",
 >>>>>>> aa3a01c (chore: seta as versoes)
+=======
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -91,6 +98,8 @@
 =======
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
+=======
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 		"ghcr.io/roul/devcontainer-features/mise-node:1": {}
 	}
 
@@ -108,6 +117,7 @@
 	// "customizations": {},
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 =======
 	}
@@ -119,6 +129,8 @@
 	}
 
 >>>>>>> aa3a01c (chore: seta as versoes)
+=======
+>>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }
