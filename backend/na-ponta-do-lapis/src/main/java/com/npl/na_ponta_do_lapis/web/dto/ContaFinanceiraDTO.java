@@ -7,6 +7,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,6 +33,8 @@ public record ContaFinanceiraDTO(
         conta.setSaldo(this.saldo);
         conta.setTipo(this.tipo);
 =======
+=======
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 public record ContaFinanceiraDTO(String nome, BigDecimal saldo, TipoConta tipo, Usuario usuario) {
 
     public ContaFinanceira toEntity(){
@@ -39,6 +42,9 @@ public record ContaFinanceiraDTO(String nome, BigDecimal saldo, TipoConta tipo, 
         conta.setNome(nome);
         conta.setSaldo(saldo);
         conta.setTipo(tipo);
+<<<<<<< HEAD
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
         conta.setUsuario(usuario);
         return conta;

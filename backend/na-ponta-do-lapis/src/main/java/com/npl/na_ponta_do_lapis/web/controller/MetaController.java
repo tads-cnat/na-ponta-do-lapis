@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -20,6 +21,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 =======
+=======
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 import com.npl.na_ponta_do_lapis.service.MetaService;
 import com.npl.na_ponta_do_lapis.web.dto.MetaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.MetaResponseDTO;
@@ -31,6 +34,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+<<<<<<< HEAD
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 
 @RestController
@@ -57,7 +63,11 @@ public class MetaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(novaMeta);
     }
 <<<<<<< HEAD
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 }
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)

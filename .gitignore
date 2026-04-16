@@ -28,11 +28,15 @@ logs/
 # Maven 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 .mvn/
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> 34a34a5 (chore: adiciona manuais e configura banco)
+=======
+.mvn/
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 !/.mvn/wrapper/maven-wrapper.jar
 
 
@@ -83,6 +87,7 @@ yarn-debug.log*
 .project
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 .metadata/
 
 # Arquivos de rascunho do SQLTools
@@ -96,3 +101,6 @@ yarn-debug.log*
 # Arquivos de rascunho do SQLTools
 *.session.sql
 >>>>>>> 34a34a5 (chore: adiciona manuais e configura banco)
+=======
+.metadata/
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
