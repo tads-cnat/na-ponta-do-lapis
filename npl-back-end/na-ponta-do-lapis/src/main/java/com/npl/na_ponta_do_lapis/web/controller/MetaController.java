@@ -1,6 +1,6 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
-import com.npl.na_ponta_do_lapis.entity.Meta;
+
 import com.npl.na_ponta_do_lapis.service.MetaService;
 import com.npl.na_ponta_do_lapis.web.dto.MetaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.MetaResponseDTO;
