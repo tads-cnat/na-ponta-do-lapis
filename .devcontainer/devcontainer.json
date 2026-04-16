@@ -5,6 +5,9 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b28aa1f (chore: seta as versoes)
 {
 	"name": "Java, Angular & PostgreSQL",
 =======
@@ -29,6 +32,7 @@
 {
 	"name": "Java, Angular & PostgreSQL",
 >>>>>>> aa3a01c (chore: seta as versoes)
+<<<<<<< HEAD
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 =======
@@ -44,6 +48,8 @@
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 >>>>>>> 1e43610 (chore: adiciona devcontainer java, postgres e node)
+=======
+>>>>>>> b28aa1f (chore: seta as versoes)
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -55,6 +61,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> aa3a01c (chore: seta as versoes)
 =======
@@ -63,6 +70,10 @@
 >>>>>>> aa3a01c (chore: seta as versoes)
 =======
 >>>>>>> 1e43610 (chore: adiciona devcontainer java, postgres e node)
+=======
+=======
+>>>>>>> aa3a01c (chore: seta as versoes)
+>>>>>>> b28aa1f (chore: seta as versoes)
 		"ghcr.io/roul/devcontainer-features/mise-node:1": {
 			"version": "24"
 		}
@@ -86,6 +97,9 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b28aa1f (chore: seta as versoes)
 				"vmware.vscode-boot-dev-pack",
 				
 =======
@@ -93,6 +107,7 @@
 				"vscjava.vscode-spring-initializr",
 
 >>>>>>> aa3a01c (chore: seta as versoes)
+<<<<<<< HEAD
 =======
 				"vmware.vscode-boot-dev-pack",
 				
@@ -115,6 +130,8 @@
 				"vmware.vscode-boot-dev-pack",
 				
 >>>>>>> 8bd49b1 (build: altera nome do banco)
+=======
+>>>>>>> b28aa1f (chore: seta as versoes)
 				// Extensões de Angular
 				"Angular.ng-template",
 
@@ -126,6 +143,9 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b28aa1f (chore: seta as versoes)
 	}
 
 =======
@@ -160,6 +180,7 @@
 	}
 
 >>>>>>> aa3a01c (chore: seta as versoes)
+<<<<<<< HEAD
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 =======
@@ -175,6 +196,8 @@
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
 >>>>>>> 1e43610 (chore: adiciona devcontainer java, postgres e node)
+=======
+>>>>>>> b28aa1f (chore: seta as versoes)
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }
