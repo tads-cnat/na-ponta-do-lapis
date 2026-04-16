@@ -10,12 +10,15 @@ import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
 =======
 >>>>>>> cb70e71 (chore: aplica regras do gitigore)
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
+=======
+>>>>>>> cb70e71 (chore: aplica regras do gitigore)
 <<<<<<< HEAD:backend/na-ponta-do-lapis/src/main/java/com/npl/na_ponta_do_lapis/web/dto/ContaFinanceiraResponseDTO.java
 <<<<<<< HEAD:backend/na-ponta-do-lapis/src/main/java/com/npl/na_ponta_do_lapis/web/dto/ContaFinanceiraResponseDTO.java
 =======
@@ -32,6 +35,7 @@ public record ContaFinanceiraResponseDTO(Long id, String nome, BigDecimal saldo,
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
@@ -44,6 +48,10 @@ public record ContaFinanceiraResponseDTO(Long id, String nome, BigDecimal saldo,
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
+=======
+=======
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+>>>>>>> cb70e71 (chore: aplica regras do gitigore)
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 
 public record ContaFinanceiraResponseDTO(Long id, String nome, BigDecimal saldo, TipoConta tipo, Usuario usuario) {
@@ -55,6 +63,7 @@ public record ContaFinanceiraResponseDTO(Long id, String nome, BigDecimal saldo,
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 =======
@@ -67,6 +76,10 @@ public record ContaFinanceiraResponseDTO(Long id, String nome, BigDecimal saldo,
 =======
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
+=======
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
+>>>>>>> cb70e71 (chore: aplica regras do gitigore)
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
     }
 }
