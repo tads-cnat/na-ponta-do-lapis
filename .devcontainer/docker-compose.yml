@@ -38,10 +38,14 @@ services:
   db:
     container_name: postgresdb
 <<<<<<< HEAD
+<<<<<<< HEAD
     image: postgres:16
 =======
     image: postgres:latest
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
+=======
+    image: postgres:16
+>>>>>>> aa3a01c (chore: seta as versoes)
     restart: unless-stopped
     networks:
       - app-network
@@ -53,10 +57,14 @@ services:
       start_period: 30s
     volumes:
 <<<<<<< HEAD
+<<<<<<< HEAD
       - postgres-data:/var/lib/postgresql/data
 =======
       - postgres-data:/var/lib/postgresql
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
+=======
+      - postgres-data:/var/lib/postgresql/data
+>>>>>>> aa3a01c (chore: seta as versoes)
     environment:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
       POSTGRES_PASSWORD: postgres
