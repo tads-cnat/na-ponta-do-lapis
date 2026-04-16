@@ -3,6 +3,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 {
 	"name": "Java, Angular & PostgreSQL",
 =======
@@ -29,6 +30,10 @@
 >>>>>>> aa3a01c (chore: seta as versoes)
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
+=======
+{
+	"name": "Java, Angular & PostgreSQL",
+>>>>>>> aa3a01c (chore: seta as versoes)
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -38,6 +43,9 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> aa3a01c (chore: seta as versoes)
 =======
 >>>>>>> aa3a01c (chore: seta as versoes)
 =======
@@ -63,6 +71,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 				"vmware.vscode-boot-dev-pack",
 				
 =======
@@ -83,6 +92,11 @@
 				"vmware.vscode-boot-dev-pack",
 				
 >>>>>>> 8bd49b1 (build: altera nome do banco)
+=======
+				"vmware.vscode-spring-boot",
+				"vscjava.vscode-spring-initializr",
+
+>>>>>>> aa3a01c (chore: seta as versoes)
 				// Extensões de Angular
 				"Angular.ng-template",
 
@@ -91,6 +105,7 @@
 				"mtxr.sqltools-driver-pg"
 			]
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 	}
@@ -131,6 +146,10 @@
 >>>>>>> aa3a01c (chore: seta as versoes)
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
+=======
+	}
+
+>>>>>>> aa3a01c (chore: seta as versoes)
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }
