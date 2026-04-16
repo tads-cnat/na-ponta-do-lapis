@@ -26,6 +26,10 @@ classes/
 logs/
 
 # Maven 
+<<<<<<< HEAD
+=======
+.mvn/
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 !/.mvn/wrapper/maven-wrapper.jar
 
 
@@ -74,7 +78,11 @@ yarn-debug.log*
 .settings/
 .classpath
 .project
+<<<<<<< HEAD
 .metadata/
 
 # Arquivos de rascunho do SQLTools
 *.session.sql
+=======
+.metadata/
+>>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
