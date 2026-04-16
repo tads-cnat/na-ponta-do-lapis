@@ -1,26 +1,38 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/java-postgres
 {
-	"name": "Java & PostgreSQL",
+	"name": "Java, Angular & PostgreSQL",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
-		"ghcr.io/roul/devcontainer-features/mise-node:1": {}
+		"ghcr.io/roul/devcontainer-features/mise-node:1": {
+			"version": "24"
+		}
+	},
+
+	"forwardPorts": [8080, 4200, 5432],
+
+	"postCreateCommand": "npm install -g @angular/cli@21",
+
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"java.configuration.updateBuildConfiguration": "automatic"
+			},
+			"extensions": [
+				// Extensões de Java e Spring
+				"vscjava.vscode-java-pack",
+				"vmware.vscode-spring-boot",
+				"vscjava.vscode-spring-initializr",
+
+				// Extensões de Angular
+				"Angular.ng-template",
+
+				// Cliente de Banco de Dados
+				"mtxr.sqltools",
+				"mtxr.sqltools-driver-pg"
+			]
+		}
 	}
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {}
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// This can be used to network with other containers or with the host.
-	// "forwardPorts": [5432],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "java -version",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
 
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
