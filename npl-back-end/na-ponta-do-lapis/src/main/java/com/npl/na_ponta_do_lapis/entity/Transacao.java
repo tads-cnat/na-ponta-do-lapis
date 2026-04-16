@@ -1,8 +1,7 @@
 package com.npl.na_ponta_do_lapis.entity;
 
-import com.npl.na_ponta_do_lapis.entity.Enums.EstadoTransacao;
-import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
-import com.npl.na_ponta_do_lapis.entity.Enums.TipoTransacao;
+import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 

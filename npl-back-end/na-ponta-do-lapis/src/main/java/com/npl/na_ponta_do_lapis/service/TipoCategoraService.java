@@ -2,7 +2,7 @@ package com.npl.na_ponta_do_lapis.service;
 
 import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
 import com.npl.na_ponta_do_lapis.repository.TipoCategoriaRepository;
-import com.npl.na_ponta_do_lapis.web.Exception.TipoCategoriaIdNaoExisteException;
+import com.npl.na_ponta_do_lapis.web.exception.TipoCategoriaIdNaoExisteException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 

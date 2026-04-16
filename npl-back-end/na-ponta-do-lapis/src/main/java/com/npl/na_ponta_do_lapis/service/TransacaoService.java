@@ -2,7 +2,7 @@ package com.npl.na_ponta_do_lapis.service;
 
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
-import com.npl.na_ponta_do_lapis.web.Controller.Exception.TransacaoNaoExisteException;
+import com.npl.na_ponta_do_lapis.web.exception.TransacaoNaoExisteException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

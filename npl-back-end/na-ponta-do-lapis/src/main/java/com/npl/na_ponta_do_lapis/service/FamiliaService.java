@@ -2,8 +2,9 @@ package com.npl.na_ponta_do_lapis.service;
 
 import com.npl.na_ponta_do_lapis.entity.Familia;
 import com.npl.na_ponta_do_lapis.repository.FamiliaRepository;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.FamiliaDTO;
-import com.npl.na_ponta_do_lapis.web.Controller.dto.FamiliaResponseDTO;
+
+import com.npl.na_ponta_do_lapis.web.dto.FamiliaDTO;
+import com.npl.na_ponta_do_lapis.web.dto.FamiliaResponseDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;

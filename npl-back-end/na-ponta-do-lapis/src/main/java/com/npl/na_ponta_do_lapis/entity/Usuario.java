@@ -1,6 +1,6 @@
 package com.npl.na_ponta_do_lapis.entity;
 
-import com.npl.na_ponta_do_lapis.entity.Enums.Papel;
+import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
