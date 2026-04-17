@@ -98,8 +98,11 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> b28aa1f (chore: seta as versoes)
+=======
+>>>>>>> a2b64cf (build: altera nome do banco)
 				"vmware.vscode-boot-dev-pack",
 				
 =======
@@ -108,10 +111,14 @@
 
 >>>>>>> aa3a01c (chore: seta as versoes)
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> a2b64cf (build: altera nome do banco)
 =======
 				"vmware.vscode-boot-dev-pack",
 				
 >>>>>>> 8bd49b1 (build: altera nome do banco)
+<<<<<<< HEAD
 =======
 				"vmware.vscode-spring-boot",
 				"vscjava.vscode-spring-initializr",
@@ -132,6 +139,8 @@
 >>>>>>> 8bd49b1 (build: altera nome do banco)
 =======
 >>>>>>> b28aa1f (chore: seta as versoes)
+=======
+>>>>>>> a2b64cf (build: altera nome do banco)
 				// Extensões de Angular
 				"Angular.ng-template",
 
