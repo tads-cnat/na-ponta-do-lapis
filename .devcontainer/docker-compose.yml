@@ -156,6 +156,7 @@ services:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
+<<<<<<< HEAD
       POSTGRES_DB: volumes:
   postgres-data:
 
@@ -419,6 +420,8 @@ services:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
+=======
+>>>>>>> b924eb8 (fix: corrige o docker-compese duplicado)
       POSTGRES_DB: db_npl
 
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
@@ -426,6 +429,7 @@ services:
 
 networks:
   app-network:
+<<<<<<< HEAD
     driver: bridge
 
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
@@ -488,4 +492,6 @@ networks:
 >>>>>>> b924eb8 (fix: corrige o docker-compese duplicado)
 =======
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
+=======
+>>>>>>> b924eb8 (fix: corrige o docker-compese duplicado)
     driver: bridge
