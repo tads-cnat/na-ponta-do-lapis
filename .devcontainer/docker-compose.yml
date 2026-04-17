@@ -12,10 +12,14 @@ services:
         POSTGRES_PASSWORD: postgres
         POSTGRES_USER: postgres
 <<<<<<< HEAD
+<<<<<<< HEAD
         POSTGRES_DB: db_npl
 =======
         POSTGRES_DB: postgres
 >>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
+=======
+        POSTGRES_DB: db_npl
+>>>>>>> 34a34a5 (chore: adiciona manuais e configura banco)
         POSTGRES_HOSTNAME: db
 
     volumes:
