@@ -16,6 +16,7 @@ services:
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
         POSTGRES_DB: db_npl
 =======
         POSTGRES_DB: postgres
@@ -137,6 +138,8 @@ services:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in db container
         POSTGRES_PASSWORD: postgres
         POSTGRES_USER: postgres
+=======
+>>>>>>> 34a34a5 (chore: adiciona manuais e configura banco)
 =======
 >>>>>>> 34a34a5 (chore: adiciona manuais e configura banco)
         POSTGRES_DB: db_npl
