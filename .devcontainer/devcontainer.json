@@ -21,9 +21,8 @@
 			"extensions": [
 				// Extensões de Java e Spring
 				"vscjava.vscode-java-pack",
-				"vmware.vscode-spring-boot",
-				"vscjava.vscode-spring-initializr",
-
+				"vmware.vscode-boot-dev-pack",
+				
 				// Extensões de Angular
 				"Angular.ng-template",
 
