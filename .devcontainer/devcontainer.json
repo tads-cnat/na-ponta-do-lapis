@@ -38,6 +38,7 @@
 				// Extensões de Java e Spring
 				"vscjava.vscode-java-pack",
 <<<<<<< HEAD
+<<<<<<< HEAD
 				"vmware.vscode-boot-dev-pack",
 				
 =======
@@ -45,6 +46,10 @@
 				"vscjava.vscode-spring-initializr",
 
 >>>>>>> aa3a01c (chore: seta as versoes)
+=======
+				"vmware.vscode-boot-dev-pack",
+				
+>>>>>>> 8bd49b1 (build: altera nome do banco)
 				// Extensões de Angular
 				"Angular.ng-template",
 
