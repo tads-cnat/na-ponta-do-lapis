@@ -26,7 +26,6 @@ classes/
 logs/
 
 # Maven 
-.mvn/
 !/.mvn/wrapper/maven-wrapper.jar
 
 
@@ -76,3 +75,6 @@ yarn-debug.log*
 .classpath
 .project
 .metadata/
+
+# Arquivos de rascunho do SQLTools
+*.session.sql
