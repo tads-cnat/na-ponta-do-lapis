@@ -1,25 +1,9 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 {
 	"name": "Java, Angular & PostgreSQL",
-=======
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/java-postgres
-{
-	"name": "Java & PostgreSQL",
->>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
-=======
-{
-	"name": "Java, Angular & PostgreSQL",
->>>>>>> aa3a01c (chore: seta as versoes)
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
 	"features": {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> aa3a01c (chore: seta as versoes)
 		"ghcr.io/roul/devcontainer-features/mise-node:1": {
 			"version": "24"
 		}
@@ -37,19 +21,8 @@
 			"extensions": [
 				// Extensões de Java e Spring
 				"vscjava.vscode-java-pack",
-<<<<<<< HEAD
-<<<<<<< HEAD
 				"vmware.vscode-boot-dev-pack",
 				
-=======
-				"vmware.vscode-spring-boot",
-				"vscjava.vscode-spring-initializr",
-
->>>>>>> aa3a01c (chore: seta as versoes)
-=======
-				"vmware.vscode-boot-dev-pack",
-				
->>>>>>> 8bd49b1 (build: altera nome do banco)
 				// Extensões de Angular
 				"Angular.ng-template",
 
@@ -58,31 +31,8 @@
 				"mtxr.sqltools-driver-pg"
 			]
 		}
-<<<<<<< HEAD
 	}
 
-=======
-		"ghcr.io/roul/devcontainer-features/mise-node:1": {}
-	}
-
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {}
-
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// This can be used to network with other containers or with the host.
-	// "forwardPorts": [5432],
-
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "java -version",
-
-	// Configure tool-specific properties.
-	// "customizations": {},
-
->>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
-=======
-	}
-
->>>>>>> aa3a01c (chore: seta as versoes)
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	// "remoteUser": "root"
 }

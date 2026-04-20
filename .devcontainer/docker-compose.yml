@@ -11,15 +11,7 @@ services:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in db container
         POSTGRES_PASSWORD: postgres
         POSTGRES_USER: postgres
-<<<<<<< HEAD
-<<<<<<< HEAD
-        POSTGRES_DB: db_npl
-=======
         POSTGRES_DB: postgres
->>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
-=======
-        POSTGRES_DB: db_npl
->>>>>>> 34a34a5 (chore: adiciona manuais e configura banco)
         POSTGRES_HOSTNAME: db
 
     volumes:
@@ -41,15 +33,7 @@ services:
 
   db:
     container_name: postgresdb
-<<<<<<< HEAD
-<<<<<<< HEAD
     image: postgres:16
-=======
-    image: postgres:latest
->>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
-=======
-    image: postgres:16
->>>>>>> aa3a01c (chore: seta as versoes)
     restart: unless-stopped
     networks:
       - app-network
@@ -60,269 +44,16 @@ services:
       retries: 5
       start_period: 30s
     volumes:
-<<<<<<< HEAD
-<<<<<<< HEAD
       - postgres-data:/var/lib/postgresql/data
-=======
-      - postgres-data:/var/lib/postgresql
->>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
-=======
-      - postgres-data:/var/lib/postgresql/data
->>>>>>> aa3a01c (chore: seta as versoes)
     environment:
       # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-      POSTGRES_DB: db_npl
-=======
       POSTGRES_DB: postgres
->>>>>>> 7055ab5 (chore: adiciona devcontainer java, postgres e node)
-=======
-      POSTGRES_DB: volumes:
-  postgres-data:
-
-services:
-  app:
-    container_name: javadev
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in db container
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: db_npl
-        POSTGRES_HOSTNAME: db
-
-    volumes:
-      - ../..:/workspaces:cached
-      
-    # Overrides default command so things don't shut down after the process ends.
-    command: sleep infinity
-
-    # Use proper Docker networking instead of network_mode: service:db
-    # to ensure reliable DNS resolution in all environments
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - app-network
-
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-  db:
-    container_name: postgresdb
-    image: postgres:16
-    restart: unless-stopped
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    environment:
-      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: volumes:
-  postgres-data:
-
-services:
-  app:
-    container_name: javadev
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in db container
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: db_npl
-        POSTGRES_HOSTNAME: db
-
-    volumes:
-      - ../..:/workspaces:cached
-      
-    # Overrides default command so things don't shut down after the process ends.
-    command: sleep infinity
-
-    # Use proper Docker networking instead of network_mode: service:db
-    # to ensure reliable DNS resolution in all environments
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - app-network
-
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-  db:
-    container_name: postgresdb
-    image: postgres:16
-    restart: unless-stopped
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    environment:
-      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: volumes:
-  postgres-data:
-
-services:
-  app:
-    container_name: javadev
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in db container
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: db_npl
-        POSTGRES_HOSTNAME: db
-
-    volumes:
-      - ../..:/workspaces:cached
-      
-    # Overrides default command so things don't shut down after the process ends.
-    command: sleep infinity
-
-    # Use proper Docker networking instead of network_mode: service:db
-    # to ensure reliable DNS resolution in all environments
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - app-network
-
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-  db:
-    container_name: postgresdb
-    image: postgres:16
-    restart: unless-stopped
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    environment:
-      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: volumes:
-  postgres-data:
-
-services:
-  app:
-    container_name: javadev
-    build: 
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in db container
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_USER: postgres
-        POSTGRES_DB: db_npl
-        POSTGRES_HOSTNAME: db
-
-    volumes:
-      - ../..:/workspaces:cached
-      
-    # Overrides default command so things don't shut down after the process ends.
-    command: sleep infinity
-
-    # Use proper Docker networking instead of network_mode: service:db
-    # to ensure reliable DNS resolution in all environments
-    depends_on:
-      db:
-        condition: service_healthy
-    networks:
-      - app-network
-
-    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-  db:
-    container_name: postgresdb
-    image: postgres:16
-    restart: unless-stopped
-    networks:
-      - app-network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 30s
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    environment:
-      # NOTE: POSTGRES_DB/USER/PASSWORD should match values in app container
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-=======
->>>>>>> b924eb8 (fix: corrige o docker-compese duplicado)
-      POSTGRES_DB: db_npl
 
     # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
     # (Adding the "ports" property to this file will not forward from a Codespace.)
 
 networks:
   app-network:
-<<<<<<< HEAD
-    driver: bridge
-
-    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-networks:
-  app-network:
-    driver: bridge
-
-    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-networks:
-  app-network:
-    driver: bridge
-    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-networks:
-  app-network:
-    driver: bridge
->>>>>>> 8bd49b1 (build: altera nome do banco)
-
-    # Add "forwardPorts": ["5432"] to **devcontainer.json** to forward PostgreSQL locally.
-    # (Adding the "ports" property to this file will not forward from a Codespace.)
-
-networks:
-  app-network:
-=======
->>>>>>> b924eb8 (fix: corrige o docker-compese duplicado)
     driver: bridge
