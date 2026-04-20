@@ -11,6 +11,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
 =======
@@ -26,11 +27,15 @@ import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 >>>>>>> 0e87127 (corrigindo imports e pacotes):npl-back-end/na-ponta-do-lapis/src/main/java/com/npl/na_ponta_do_lapis/web/dto/ContaFinanceiraResponseDTO.java
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 >>>>>>> 0e87127 (corrigindo imports e pacotes):npl-back-end/na-ponta-do-lapis/src/main/java/com/npl/na_ponta_do_lapis/web/dto/ContaFinanceiraResponseDTO.java
+=======
+
+>>>>>>> 9b4c446 (fix: corrigindo principais bugs de merge)
 
 public record ContaFinanceiraResponseDTO(Long id, String nome, BigDecimal saldo, TipoConta tipo, Long usuarioId) {
 
     public ContaFinanceiraResponseDTO(ContaFinanceira contaFinanceira){
         this(contaFinanceira.getId(), contaFinanceira.getNome(), contaFinanceira.getSaldo(), contaFinanceira.getTipo(), contaFinanceira.getUsuarioId());
+<<<<<<< HEAD
 =======
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -81,5 +86,7 @@ public record ContaFinanceiraResponseDTO(Long id, String nome, BigDecimal saldo,
 =======
 >>>>>>> cb70e71 (chore: aplica regras do gitigore)
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
+>>>>>>> 9b4c446 (fix: corrigindo principais bugs de merge)
     }
 }

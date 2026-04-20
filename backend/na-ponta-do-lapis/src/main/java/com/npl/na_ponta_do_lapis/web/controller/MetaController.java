@@ -1,5 +1,6 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
+<<<<<<< HEAD
 
 <<<<<<< HEAD
 <<<<<<< HEAD
@@ -8,6 +9,8 @@ package com.npl.na_ponta_do_lapis.web.controller;
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
 <<<<<<< HEAD
+=======
+>>>>>>> 9b4c446 (fix: corrigindo principais bugs de merge)
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -25,6 +28,7 @@ import com.npl.na_ponta_do_lapis.web.dto.MetaResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
@@ -56,6 +60,8 @@ import java.util.List;
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
+=======
+>>>>>>> 9b4c446 (fix: corrigindo principais bugs de merge)
 
 @RestController
 @RequestMapping("/metas")
@@ -84,6 +90,7 @@ public class MetaController {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
 }
@@ -99,3 +106,6 @@ public class MetaController {
 >>>>>>> ccf3bb4 (chore: aplica regras do gitigore)
 =======
 >>>>>>> 76e0bd3 (corrigindo imports e pacotes)
+=======
+}
+>>>>>>> 9b4c446 (fix: corrigindo principais bugs de merge)
