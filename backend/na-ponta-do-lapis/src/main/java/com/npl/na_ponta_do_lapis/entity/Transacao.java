@@ -3,6 +3,8 @@ package com.npl.na_ponta_do_lapis.entity;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 
@@ -17,8 +19,8 @@ public class Transacao {
     @Column(nullable = false, length = 254)
     private String descricao;
 
-    @Column(nullable = false)
-    private Double valor;
+    @Column(nullable = false, precision = 19, scale = 2)
+    private BigDecimal valor;
 
     @ManyToOne // Relacionamento com a nova entidade TipoCategoria
     @JoinColumn(name = "id_categoria", nullable = false)
@@ -49,8 +51,8 @@ public class Transacao {
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public Double getValor() { return valor; }
-    public void setValor(Double valor) { this.valor = valor; }
+    public BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
 
     public TipoCategoria getCategoria() { return categoria; }
     public void setCategoria(TipoCategoria categoria) { this.categoria = categoria; }

@@ -2,6 +2,10 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.service.TransacaoService;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TransacoesResponseDTO;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,9 +22,10 @@ public class TransacaoController {
     }
 
     @PostMapping
-    public ResponseEntity<Transacao> criarTransacao(@RequestBody Transacao transacao) {
+    public ResponseEntity<TransacoesResponseDTO> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) {
         Transacao novaTransacao = transacaoService.criarTransacao(transacao);
-        return ResponseEntity.status(201).body(novaTransacao);
+        TransacoesResponseDTO responseDTO = transacao.toTransacoesResponseDTO();
+        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
 
     @GetMapping

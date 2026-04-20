@@ -30,7 +30,7 @@ public class ContaFinanceira {
     private String nome;
 
     @NotNull(message = "O saldo é obrigatório")
-    @Column(name = "saldo", precision = 19, scale = 2, nullable = false, columnDefinition = "DEFAULT 0.0")
+    @Column(name = "saldo", precision = 19, scale = 2, nullable = false)
     private BigDecimal saldo;
 
     @NotNull(message = "O tipo é obrigatório")
