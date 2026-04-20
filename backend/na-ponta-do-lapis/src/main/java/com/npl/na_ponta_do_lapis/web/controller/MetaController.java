@@ -1,24 +1,23 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
-<<<<<<< HEAD
+
+import java.util.List;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.npl.na_ponta_do_lapis.service.MetaService;
 import com.npl.na_ponta_do_lapis.web.dto.MetaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.MetaResponseDTO;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-=======
-import com.npl.na_ponta_do_lapis.entity.Meta;
-import com.npl.na_ponta_do_lapis.service.MetaService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
->>>>>>> 0e87127 (corrigindo imports e pacotes)
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/metas")
@@ -31,7 +30,6 @@ public class MetaController {
     }
 
     @Operation(summary = "Listar metas")
-<<<<<<< HEAD
     @GetMapping
     public ResponseEntity<List<MetaResponseDTO>> listar(){
         List<MetaResponseDTO> response = service.listarMetas();
@@ -43,16 +41,5 @@ public class MetaController {
     public ResponseEntity<MetaResponseDTO> criar(@RequestBody @Valid MetaDTO metaDTO){
         MetaResponseDTO novaMeta = service.criarMeta(metaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(novaMeta);
-=======
-    @PostMapping
-    public Meta criar(@RequestBody Meta meta){
-        return service.criarMeta(meta);
-    }
-
-    @Operation(summary = "Criar metas")
-    @GetMapping
-    public List<Meta> listar(){
-        return service.listarMetas();
->>>>>>> 0e87127 (corrigindo imports e pacotes)
     }
 }
