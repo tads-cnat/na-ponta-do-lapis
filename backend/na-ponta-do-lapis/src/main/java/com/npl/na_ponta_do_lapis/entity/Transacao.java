@@ -28,7 +28,7 @@ public class Transacao {
     
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)
-    private EstadoTransacao estado = EstadoTransacao.REALIZADA;
+    private EstadoTransacao estado;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 50)

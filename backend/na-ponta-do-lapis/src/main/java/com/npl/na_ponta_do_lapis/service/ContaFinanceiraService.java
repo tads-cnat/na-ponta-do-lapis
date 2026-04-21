@@ -45,7 +45,7 @@ public class ContaFinanceiraService {
     }
 
     // Método para o Service transacao utilizar pois o outro retorna "ContaFinanceiraResponseDTO" (Não deve ser exposto ao controller)
-    public ContaFinanceira buscarEntidadePorId(Long id) {
+    public ContaFinanceira buscarContaPorIdObject(Long id) {
         return contaFinanceiraRepository.findById(id)
                 .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
     }
