@@ -18,13 +18,11 @@ VALUES
 ON CONFLICT (id) DO NOTHING;
 
 -- SQL Conta Financeira
-INSERT INTO conta_financeira (id, nome, saldo, tipo, usuario_id)
-VALUES  
-    (1, 'Banco Inter', 100, 'DEBITO', 1),
-    (2, 'Banco Master', 50000000.50, 'CREDITO', 2),
-    (3, 'Santander', 0, 'CREDITO_DEBITO', 3),
-    (4, 'Itaú', 150, 'DEBITO', 4),
-    (5, 'Nubank', 3000, 'DEBITO', 3),
-    (6, 'BB', 10, 'CREDITO', 2),
-    (7, 'PicPay', 1, 'CREDITO', 1)
-ON CONFLICT (id) DO NOTHING;
+INSERT INTO conta_financeira (saldo, usuario_id, nome, tipo)
+VALUES  (100, 1, 'Banco Inter','DEBITO'),
+        (50000000.50, 2, 'Banco Master','CREDITO'),
+        (0, 3, 'Santander', 'CREDITO_DEBITO'),
+        (150, 4, 'Itaú', 'DEBITO'),
+        (3000, 3, 'Nubank', 'DEBITO'),
+        (10, 2, 'BB', 'CREDITO'),
+        (1, 1, 'PicPay', 'CREDITO');
