@@ -54,4 +54,22 @@ public class FamiliaController {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.editarFamilia(id, new FamiliaDTO(nome, foto)));
     }
 
+    @Operaion(summary = "Adicionar usuário na família")
+    @PostMapping("/{id}/adicionar-usuario")
+    private ResponseEntity<FamiliaResponseDTO> adicionarUsuarioNaFamilia(@PathVariable Long id, @RequestParam String username){
+        return ResponseEntity.status(HttpStatus.OK).body(familiaService.adicionarUsuarioNaFamilia(username, id));
+    }
+
+    @Operation(summary = "Remover usuário da família")
+    @PostMapping("/{id}/remover-usuario")
+    private ResponseEntity<FamiliaResponseDTO> removerUsuarioDaFamilia(@PathVariable Long id, @RequestParam String username){
+        return ResponseEntity.status(HttpStatus.OK).body(familiaService.removerUsuarioNaFamilia(username, id));
+    }
+
+    @Operation(summary= "Promover membro a administrador da família")
+    @PostMapping("/{id}/promover-administrador-familia")
+    private ResponseEntity<FamiliaResponseDTO> promoverAdministrador(@PathVariable Long id, @RequestParam String username){
+        return ResponseEntity.status(HttpStatus.OK).body(familiaService.promoverAdministrador(username, id));
+    }
+
 }
