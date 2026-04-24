@@ -9,6 +9,4 @@ import java.util.List;
 
 public interface ConviteRepository extends JpaRepository<Convite,Long> {
     List<Convite> findByDestinatarioAndStatus(Usuario user, StatusConvite status);
-
-    boolean existsByDestinatarioAndStatus(Usuario user, StatusConvite status);
 }

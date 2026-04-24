@@ -21,11 +21,14 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class FamiliaService {
     private final FamiliaRepository familiaRepository;
     private final UsuarioRepository usuarioRepository;
-    private final ConviteRepository conviteRepository;
+
+    public FamiliaService(FamiliaRepository familiaRepository, UsuarioRepository usuarioRepository) {
+        this.familiaRepository = familiaRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
 
     @Transactional
     public FamiliaResponseDTO criarFamilia(FamiliaDTO familiaDTO) {

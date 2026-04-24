@@ -6,22 +6,33 @@ import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.entity.enums.StatusConvite;
 import com.npl.na_ponta_do_lapis.repository.ConviteRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
+import com.npl.na_ponta_do_lapis.web.dto.ConviteDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ConviteResponseDTO;
 import jakarta.transaction.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
-@RequiredArgsConstructor
 public class ConviteService {
 
     private final ConviteRepository conviteRepository;
     private final UsuarioRepository usuarioRepository;
 
+    public ConviteService(ConviteRepository conviteRepository, UsuarioRepository usuarioRepository) {
+        this.conviteRepository = conviteRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
     @Transactional
     public ConviteResponseDTO enviarConvite(String username, Usuario solicitante) {
+        Long familiaId = solicitante.getFamilia() != null ? solicitante.getFamilia().getId() : null;
+        return enviarConvite(new ConviteDTO(username, familiaId), solicitante);
+    }
+
+    @Transactional
+    public ConviteResponseDTO enviarConvite(ConviteDTO conviteDTO, Usuario solicitante) {
         if (solicitante.getPapel() != Papel.ADMIN_FAMILIA) {
             throw new RuntimeException("Apenas admins podem enviar convite");
         }
@@ -30,7 +41,15 @@ public class ConviteService {
             throw new RuntimeException("Admin sem família?");
         }
 
-        Usuario destinatario = usuarioRepository.findByUsername(username)
+        if (conviteDTO == null || conviteDTO.destinatarioUsername() == null || conviteDTO.destinatarioUsername().isBlank()) {
+            throw new RuntimeException("Username do destinatário é obrigatório");
+        }
+
+        if (conviteDTO.familiaId() != null && !Objects.equals(conviteDTO.familiaId(), solicitante.getFamilia().getId())) {
+            throw new RuntimeException("Família do convite não corresponde à família do solicitante");
+        }
+
+        Usuario destinatario = usuarioRepository.findByUsername(conviteDTO.destinatarioUsername())
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
 
         if (destinatario.equals(solicitante)) {
@@ -63,6 +82,9 @@ public class ConviteService {
             throw new RuntimeException("Já está em uma família");
         }
 
+        if (convite.getStatus() != StatusConvite.PENDENTE) {
+            throw new RuntimeException("Convite não está mais pendente");
+        }
         usuario.setFamilia(convite.getFamilia());
 
         convite.setStatus(StatusConvite.ACEITO);
@@ -74,8 +96,15 @@ public class ConviteService {
 
     @Transactional
     public ConviteResponseDTO recusarConvite(Long conviteId, Usuario usuario) {
+        if (usuario.getFamilia() != null) {
+            throw new RuntimeException("Já está em uma família");
+        }
         Convite convite = conviteRepository.findById(conviteId)
-                .orElseThrow( );
+                .orElseThrow(() -> new RuntimeException("Convite não encontrado"));
+
+        if (!usuario.equals(convite.getDestinatario())) {
+            throw new RuntimeException("Não autorizado");
+        }
         convite.setStatus(StatusConvite.RECUSADO);
         conviteRepository.save(convite);
         return new ConviteResponseDTO(convite);
