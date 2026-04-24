@@ -11,13 +11,15 @@ import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 >>>>>>> f2c067a (refactor(Transacoes ): corrigindo endpoint transacao, add regra de negocio no atualizar Transacao e melhorando resposta dos endpoits transacoes)
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import java.util.List;
+=======
+>>>>>>> 23bb351 (fix: retirando imports desnecesários)
 
 public record TransacoesResponseDTO(
         Long id,
