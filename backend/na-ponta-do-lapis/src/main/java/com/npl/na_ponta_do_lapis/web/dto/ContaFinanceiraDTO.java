@@ -11,7 +11,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 public record ContaFinanceiraDTO(
-    
+
     @NotBlank(message = "O nome da conta não pode ser em branco")
     String nome,
     
@@ -23,9 +23,9 @@ public record ContaFinanceiraDTO(
     TipoConta tipo,
     
     @NotNull(message = "O usuário é obrigatório")
-    Usuario usuario) {
+    Long usuarioId) {
 
-    public ContaFinanceira toEntity(){
+    public ContaFinanceira toEntity(Usuario usuario){
         ContaFinanceira conta = new ContaFinanceira();
         conta.setNome(nome);
         conta.setSaldo(saldo);

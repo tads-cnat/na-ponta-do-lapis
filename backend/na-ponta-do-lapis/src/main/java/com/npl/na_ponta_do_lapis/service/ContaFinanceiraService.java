@@ -5,11 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
+import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
-import com.npl.na_ponta_do_lapis.web.exception.ContaIdNaoExisteException;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraPatchDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraResponseDTO;
+import com.npl.na_ponta_do_lapis.web.exception.ContaIdNaoExisteException;
 
 import jakarta.transaction.Transactional;
 
@@ -18,14 +19,17 @@ import jakarta.transaction.Transactional;
 public class ContaFinanceiraService {
 
     private final ContaFinanceiraRepository contaFinanceiraRepository;
+    private final UsuarioService usuarioService;
 
-    public ContaFinanceiraService(ContaFinanceiraRepository contaFinanceiraRepository) {
+    public ContaFinanceiraService(ContaFinanceiraRepository contaFinanceiraRepository, UsuarioService usuarioService) {
         this.contaFinanceiraRepository = contaFinanceiraRepository;
+        this.usuarioService = usuarioService;
     }
 
     @Transactional
     public ContaFinanceiraResponseDTO criarConta(ContaFinanceiraDTO contaDTO) {
-        ContaFinanceira novaConta = contaDTO.toEntity();
+        Usuario usuario = usuarioService.buscarUsuarioPorId(contaDTO.usuarioId());
+        ContaFinanceira novaConta = contaDTO.toEntity(usuario);
         contaFinanceiraRepository.save(novaConta);
         return new ContaFinanceiraResponseDTO(novaConta);
     }
@@ -55,10 +59,12 @@ public class ContaFinanceiraService {
         ContaFinanceira conta = contaFinanceiraRepository.findById(id)
             .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
         
+        Usuario usuario = usuarioService.buscarUsuarioPorId(contaDTO.usuarioId());
+        
         conta.setNome(contaDTO.nome());
         conta.setSaldo(contaDTO.saldo());
         conta.setTipo(contaDTO.tipo());
-        conta.setUsuario(contaDTO.usuario());
+        conta.setUsuario(usuario);
         
         contaFinanceiraRepository.save(conta);
         return new ContaFinanceiraResponseDTO(conta);
@@ -72,7 +78,11 @@ public class ContaFinanceiraService {
         contaPatchDTO.nome().ifPresent(conta::setNome);
         contaPatchDTO.saldo().ifPresent(conta::setSaldo);
         contaPatchDTO.tipo().ifPresent(conta::setTipo);
-        contaPatchDTO.usuario().ifPresent(conta::setUsuario);
+        
+        contaPatchDTO.usuarioId().ifPresent(usuarioId -> {
+            Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
+            conta.setUsuario(usuario);
+        });
         
         contaFinanceiraRepository.save(conta);
         return new ContaFinanceiraResponseDTO(conta);
