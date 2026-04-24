@@ -91,8 +91,8 @@ public class ContaFinanceira {
         this.tipo = tipo;
     }
 
-    public Long getUsuarioId() {
-        return this.usuario.getId();
+    public Usuario getUsuario() {
+        return this.usuario;
     }
 
     public void setUsuario(Usuario usuario) {

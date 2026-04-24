@@ -22,6 +22,16 @@ public class ContaFinanceiraPatchValidator {
             return;
         }
 
+        // Validar que pelo menos um campo foi fornecido
+        boolean temAlgumCampo = contaPatchDTO.nome().isPresent() || 
+                               contaPatchDTO.saldo().isPresent() || 
+                               contaPatchDTO.tipo().isPresent() || 
+                               contaPatchDTO.usuarioId().isPresent();
+        
+        if (!temAlgumCampo) {
+            throw new IllegalArgumentException("Pelo menos um campo deve ser fornecido para atualização parcial");
+        }
+
         if (contaPatchDTO.nome().isPresent()) {
             String nome = contaPatchDTO.nome().get();
             if (nome == null || nome.trim().isEmpty()) {
@@ -42,9 +52,9 @@ public class ContaFinanceiraPatchValidator {
             }
         }
 
-        // Campos tipo e usuario são opcionais e não requerem validação adicional aqui
+        // Campos tipo e usuarioId são opcionais e não requerem validação adicional aqui
         // - tipo: validação de enum é feita automaticamente pela serialização JSON
-        // - usuario: validação de existência deve ser feita no service/repository
+        // - usuarioId: validação de existência deve ser feita no service/repository
         // para evitar consultas extras no validator
     }
 }
