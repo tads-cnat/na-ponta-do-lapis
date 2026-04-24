@@ -22,9 +22,8 @@ public class Familia {
     @Column(name = "fotoFamilia", columnDefinition = "TEXT", nullable = true)
     private String fotoFamilia;
 
-//    public List<Usuario> getMembros() {
-//        return membros;
-//    }
+    @OneToMany(mappedBy = "familia")
+    private List<Usuario> membros;
 //
 //    public void setMembros(List<Usuario> membros) {
 //        this.membros = membros;
