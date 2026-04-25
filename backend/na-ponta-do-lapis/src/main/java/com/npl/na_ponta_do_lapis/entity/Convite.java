@@ -3,7 +3,7 @@ package com.npl.na_ponta_do_lapis.entity;
 import com.fasterxml.jackson.databind.ser.std.StdKeySerializers;
 import com.npl.na_ponta_do_lapis.entity.enums.StatusConvite;
 import jakarta.persistence.*;
-import lombok.Builder;
+
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
