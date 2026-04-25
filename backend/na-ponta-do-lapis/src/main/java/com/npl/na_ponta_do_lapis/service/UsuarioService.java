@@ -3,6 +3,8 @@ package com.npl.na_ponta_do_lapis.service;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
 import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -43,6 +45,18 @@ public class UsuarioService {
             throw new UsuarioIdNaoExisteException("Usuário de ID " + id + " não existe!");
         }
         usuarioRepository.deleteById(id);
+    }
+
+    @Transactional
+    public Usuario AtualizarUsuario(Long id , UsuarioUpdateDTO usuario){
+        Usuario existente = buscarUsuarioPorId(id);
+
+        if (usuario.nome() != null) existente.setNome(usuario.nome());
+        if (usuario.email() != null) existente.setEmail(usuario.email());
+        if (usuario.senha() != null) existente.setSenha(usuario.senha());
+
+
+        return usuarioRepository.save(existente);
     }
 
     @Transactional
