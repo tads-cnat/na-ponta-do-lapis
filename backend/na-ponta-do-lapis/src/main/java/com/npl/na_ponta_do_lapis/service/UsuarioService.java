@@ -1,6 +1,7 @@
 package com.npl.na_ponta_do_lapis.service;
 
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
@@ -45,8 +46,8 @@ public class UsuarioService {
     }
 
     @Transactional
-    public void tornarUsuarioAdminSite(Long id){}
-
-    @Transactional
-    public void tornarAdminFamilia(Long id){}
+    public void tornarUsuarioAdminSite(Long id){
+        Usuario usuario = buscarUsuarioPorId(id);
+        usuario.setPapel(Papel.ADMIN_SITE);
+    }
 }

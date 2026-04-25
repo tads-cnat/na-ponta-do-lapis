@@ -8,7 +8,11 @@ import com.npl.na_ponta_do_lapis.repository.FamiliaRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
+import com.npl.na_ponta_do_lapis.web.exception.NaoEAdminFamiliaException;
+import com.npl.na_ponta_do_lapis.web.exception.NaoEdaMesmaFamiliaException;
+import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
 
 import org.springframework.http.HttpStatus;
@@ -85,22 +89,24 @@ public class FamiliaService {
 //    }
 
     @Transactional
-    public UsuarioResponseDTO promoverParaAdmin(Long userId, Usuario solicitante) {
+    public UsuarioResponseDTO promoverParaAdminFamilia(Long userId, Long solicitanteId) {
+        Usuario novoAdmin = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new UsuarioIdNaoExisteException("Usuário não encontrado"));
 
-        if (solicitante.getPapel() != Papel.ADMIN_FAMILIA) {
-            throw new RuntimeException("Apenas admins podem promover");
+        Usuario solicitante = usuarioRepository.findById(solicitanteId)
+                .orElseThrow(() -> new UsuarioIdNaoExisteException("Solicitante não encontrado"));
+
+        if (solicitante.getPapel() != Papel.ADMIN_FAMILIA){
+            throw new NaoEAdminFamiliaException("Apenas administradores da família podem promover outros membros.");
         }
 
-        Usuario novo_admin = usuarioRepository.findById(userId).orElseThrow();
-
-        if (novo_admin.getFamilia() == null ||
-                !novo_admin.getFamilia().equals(solicitante.getFamilia())) {
-            throw new RuntimeException("Não pertence à mesma família");
+        if (novoAdmin.getFamilia() == null || !novoAdmin.getFamilia().equals(solicitante.getFamilia())){
+            throw new NaoEdaMesmaFamiliaException("Você só pode promover membros da sua própria família.");
         }
 
-        novo_admin.setPapel(Papel.ADMIN_FAMILIA);
-        usuarioRepository.save(novo_admin);
-        return new UsuarioResponseDTO(novo_admin);
+        novoAdmin.setPapel(Papel.ADMIN_FAMILIA);
+        usuarioRepository.save(novoAdmin);
+        return new UsuarioResponseDTO(novoAdmin);
     }
 
     public List<FamiliaResponseDTO> listarFamilias(){
