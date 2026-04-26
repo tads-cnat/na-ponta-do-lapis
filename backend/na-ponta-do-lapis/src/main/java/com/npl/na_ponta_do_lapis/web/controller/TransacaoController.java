@@ -6,9 +6,6 @@ import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacoesResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,8 +28,6 @@ public class TransacaoController {
     @PostMapping
     public ResponseEntity<TransacoesResponseDTO> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) {
         Transacao novaTransacao = transacaoService.criarTransacao(transacao);
-        TransacoesResponseDTO responseDTO = new TransacoesResponseDTO(novaTransacao);
-        TransacoesResponseDTO responseDTO = transacao.toTransacoesResponseDTO();
         TransacoesResponseDTO responseDTO = new TransacoesResponseDTO(novaTransacao);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }

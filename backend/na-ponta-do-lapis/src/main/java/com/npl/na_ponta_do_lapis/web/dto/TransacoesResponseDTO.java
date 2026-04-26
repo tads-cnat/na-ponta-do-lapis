@@ -2,13 +2,10 @@ package com.npl.na_ponta_do_lapis.web.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
-import com.npl.na_ponta_do_lapis.entity.Transacao;
-import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record TransacoesResponseDTO(
         Long id,
@@ -40,3 +37,4 @@ public record TransacoesResponseDTO(
                );
        };
 }
+
