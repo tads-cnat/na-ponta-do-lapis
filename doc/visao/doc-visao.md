@@ -125,19 +125,3 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 
 > **Categoria** Usabilidade, confiabilidade, performance, suportabilidade, restrição de projeto, implementação, interface e requisito físico - segundo classificação [FURP+](https://pt.wikipedia.org/wiki/FURPS).
 > **Classificação**: desejável ou obrigatório.
-
-## 10. Riscos ⚠️
-
-**Possíveis Riscos**:
-
-- Má comunicação entre os membros do projeto durante o desenvolvimento e tomada de decisões.
-
-- Baixo conhecimento de desenvolvimento utilizando os frameworks Angular, Spring Boot e Deploy do sistema.
-- Interface ser confusa ou não resolver o problema do usuário final. 
-- Baixa escalabilidade, sistema funcionar para 10 usuários, mas não suportar uma carga de 1.000 clientes simultâneos.
-- Vazamento de dados, autenticação frágil ou falta de conformidade com Lei LGPD
-- Incoerência em relação ao projeto proposto com o que foi desenvolvido.
-- Projeto demorar tanto que, quando for lançado já vai estar fora do prazo estipulado pelos Stakeholders.
-- Baixa confiabilidade e disponibilidade do sistema (abaixo de 99% ao ano), causando perda de reputação da marca. 
-
-
