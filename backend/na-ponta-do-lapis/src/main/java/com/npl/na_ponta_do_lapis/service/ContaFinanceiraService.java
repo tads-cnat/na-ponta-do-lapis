@@ -63,7 +63,6 @@ public class ContaFinanceiraService {
         
         conta.setNome(contaDTO.nome());
         conta.setSaldo(contaDTO.saldo());
-        conta.setTipo(contaDTO.tipo());
         conta.setUsuario(usuario);
         
         contaFinanceiraRepository.save(conta);
@@ -77,7 +76,6 @@ public class ContaFinanceiraService {
         
         contaPatchDTO.nome().ifPresent(conta::setNome);
         contaPatchDTO.saldo().ifPresent(conta::setSaldo);
-        contaPatchDTO.tipo().ifPresent(conta::setTipo);
         
         contaPatchDTO.usuarioId().ifPresent(usuarioId -> {
             Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);

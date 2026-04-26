@@ -24,8 +24,7 @@ public class ContaFinanceiraPatchValidator {
 
         // Validar que pelo menos um campo foi fornecido
         boolean temAlgumCampo = contaPatchDTO.nome().isPresent() || 
-                               contaPatchDTO.saldo().isPresent() || 
-                               contaPatchDTO.tipo().isPresent() || 
+                               contaPatchDTO.saldo().isPresent() ||
                                contaPatchDTO.usuarioId().isPresent();
         
         if (!temAlgumCampo) {
