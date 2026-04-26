@@ -2,11 +2,11 @@
 
 ## Histórico de Revisões
 
-|    Data    | Versão |   Descrição    |               Autores                |
-| :--------: | :----: | :------------: | :----------------------------------: |
-| 24/09/2025 |  1.0   | Versão inicial | Bruno, Eduardo, Lucas, Pedro, Wagner |
-| 25/01/2026 | 2.0 | Segunda Versão | Bruno, Eduardo, Lucas, Pedro, Wagner |
-| 28/03/2026 | 3.0 | Terceira Versão | Bruno, Eduardo, Erick, Lucas, Pedro, Vinicius, Wagner |
+|    Data    | Versão |    Descrição    |                       Autores                         |
+| :--------: | :----: | :-------------: | :---------------------------------------------------: |
+| 24/09/2025 |  1.0   | Versão inicial  |         Bruno, Eduardo, Lucas, Pedro, Wagner          |
+| 25/01/2026 |  2.0   | Segunda Versão  |         Bruno, Eduardo, Lucas, Pedro, Wagner          |
+| 28/03/2026 |  3.0   | Terceira Versão | Bruno, Eduardo, Erick, Lucas, Pedro, Vinicius, Wagner |
 
 ## 1. Visão Geral do Sistema Proposto
 
@@ -17,9 +17,9 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 |              |                                                             |
 | :----------: | :---------------------------------------------------------: |
 | **Problema** |         Dificuldade em organizar os gastos pessoais         |
-|  **Afeta**   | Todos que almejam ter uma boa gestão financeira |
+|  **Afeta**   |       Todos que almejam ter uma boa gestão financeira       |
 | **Impacta**  |                    Liberdade financeira                     |
-| **Solução**  |        Criar uma ferramenta que auxilia a organização das finanças         |
+| **Solução**  | Criar uma ferramenta que auxilia a organização das finanças |
 
 ## 3. Descrição dos Usuários
 
@@ -27,7 +27,7 @@ Criar um ambiente acolhedor para jovens iniciando a vida adulta, onde os mesmos 
 | :-----------: | :-----------------------------------------------: | :---------------------------------------: |
 |  Estudantes   |           Jovens no início da carreira            | Planejar e controlar seus gastos pessoais |
 | Trabalhadores |              Trabalhadores no geral               | Planejar finanças pessoais ou familiares  |
-| Administrador | Usuário que irá gerenciar partes estatica do site | Criar posts para o site |
+| Administrador | Usuário que irá gerenciar partes estatica do site |          Criar posts para o site          |
 
 ## 4. Descrição do Ambiente dos Usuários
 
@@ -44,14 +44,14 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 - Entender conceitos básicos de finanças pessoais (entrada, saída, economia).
 - Criar hábitos financeiros saudáveis desde cedo.
 
-2. **Trabalhadores no Geral**
+1. **Trabalhadores no Geral**
 
 - Controlar despesas mensais com aluguel, transporte, alimentação, etc.
 
 - Estabelecer metas de economia ou investimentos.
 - Integrar finanças pessoais e familiares.
 
-3. **Administrador**
+1. **Administrador**
 
 - Realizar a inclusão de posts sobre educação financeira de forma prática.
 
@@ -66,7 +66,7 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 - Paleta de cores harmônica, alinhada com o conteúdo apresentado;
 - Gráficos para saldo, entrada, despesa e etc.
 
-2. **Excel**
+1. **Excel**
 
 - Quantidade de recurso;
 
@@ -74,13 +74,13 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 - Ícones para funcionalidades;
 - Personalização de planilha.
 
-3. **Minhas Economias**
+1. **Minhas Economias**
 
 - Curso em vídeo ensinando sobre o dinheiro, com dicas e exemplos práticos;
 
 - Integração com vários bancos;
 
-4. **Mobills**
+1. **Mobills**
 
 - Dashboard personalizável;
 
@@ -90,10 +90,10 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 
 ## 7. Regras de Negócio
 
-|  ID   |  Regra  |  Descrição   |
-| :---: | :-----: | :----------: |
-| RN01  | nome... | Descrição... |
-| RN02  |   ...   |     ...      |
+|  ID   |              Regra             |                                            Descrição                                                |
+| :---: | :----------------------------: | :-------------------------------------------------------------------------------------------------: |
+| RN01  | Nome da conta financeira único | Nenhuma das contas que o usuário criar deve ter o mesmo nome, portanto, cada uma terá um nome único |
+| RN02  |              ...               |                                              ...                                                    |
 
 ## 8. Requisitos Funcionais
 
@@ -120,7 +120,7 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 |  NF02  |     Banco de Dados      |                                   PostgreSQL                                    | Restrição de projeto |  Obrigatório  |
 |  NF03  |      Criptografia       |               As senhas deve ser armazenadas usando criptografia                |      Segurança       |  Obrigatório  |
 |  NF04  |     Responsividade      |                    O sistema deve ter a interface responsiva                    |      Interface       |   Desejável   |
-|  NF05  |     Acessibilidade      |          O sistema deverá ter algumas funcionalidades de acessibilidade          |     Usabilidade      |   Desejável   |
+|  NF05  |     Acessibilidade      |          O sistema deverá ter algumas funcionalidades de acessibilidade         |     Usabilidade      |   Desejável   |
 |  NF06  | Facilidade de Navegação |      Todas as funcionalidades devem poder ser acessadas com poucos clicks       |     Usabilidade      |  Obrigatório  |
 
 > **Categoria** Usabilidade, confiabilidade, performance, suportabilidade, restrição de projeto, implementação, interface e requisito físico - segundo classificação [FURP+](https://pt.wikipedia.org/wiki/FURPS).
@@ -133,11 +133,9 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 - Má comunicação entre os membros do projeto durante o desenvolvimento e tomada de decisões.
 
 - Baixo conhecimento de desenvolvimento utilizando os frameworks Angular, Spring Boot e Deploy do sistema.
-- Interface ser confusa ou não resolver o problema do usuário final. 
+- Interface ser confusa ou não resolver o problema do usuário final.
 - Baixa escalabilidade, sistema funcionar para 10 usuários, mas não suportar uma carga de 1.000 clientes simultâneos.
 - Vazamento de dados, autenticação frágil ou falta de conformidade com Lei LGPD
 - Incoerência em relação ao projeto proposto com o que foi desenvolvido.
 - Projeto demorar tanto que, quando for lançado já vai estar fora do prazo estipulado pelos Stakeholders.
-- Baixa confiabilidade e disponibilidade do sistema (abaixo de 99% ao ano), causando perda de reputação da marca. 
-
-
+- Baixa confiabilidade e disponibilidade do sistema (abaixo de 99% ao ano), causando perda de reputação da marca.
