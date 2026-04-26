@@ -64,10 +64,10 @@ public class FamiliaService {
     public FamiliaResponseDTO adicionarUsuarioNaFamilia(String username, Long id_familia){
         Familia familia = familiaRepository.findById(id_familia)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família não foi encontrada."));
-        if (usuarioRepository.findByUsername(username) == null){
+        Usuario usuario = usuarioRepository.findByUsername(username);
+        if (usuario == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não foi encontrado.");
         }
-        Usuario usuario = usuarioRepository.findByUsername(username);
         if (usuario.getFamilia() != null){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário já pertence a uma família.");
         }
@@ -80,10 +80,10 @@ public class FamiliaService {
     public FamiliaResponseDTO removerUsuarioNaFamilia(String username, Long id_familia){
         Familia familia = familiaRepository.findById(id_familia)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família não foi encontrada."));
-        if (usuarioRepository.findByUsername(username) == null){
+        Usuario usuario = usuarioRepository.findByUsername(username);
+        if (usuario == null){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não foi encontrado.");
         }
-        Usuario usuario = usuarioRepository.findByUsername(username);
         if (usuario.getFamilia() == null || !usuario.getFamilia().equals(familia)){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não pertence a essa família.");
         }
@@ -128,8 +128,13 @@ public class FamiliaService {
 
     public List<UsuarioResponseDTO> listarMembrosDaFamilia(Long familiaId) {
         Familia familia = familiaRepository.findById(familiaId)
-                .orElseThrow();
-        return familia.getMembros()                .stream()
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família não foi encontrada."));
+
+        if (familia.getMembros() == null) {
+            return List.of();
+        }
+
+        return familia.getMembros().stream()
                 .map(UsuarioResponseDTO::new)
                 .toList();
     }
