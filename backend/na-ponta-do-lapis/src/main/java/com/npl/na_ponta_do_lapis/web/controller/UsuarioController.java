@@ -60,7 +60,7 @@ public class UsuarioController {
     //@PreAuthorize("hasRole('ADMIN_SITE') or #id == authentication.principal.id")
     @PatchMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@PathVariable Long id, @RequestBody @Valid UsuarioUpdateDTO usuarioDTO){
-        Usuario usuarioAtualizado = usuarioService.AtualizarUsuario(id,usuarioDTO);
+        Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id,usuarioDTO);
         return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponseDTO(usuarioAtualizado));
     }
 
