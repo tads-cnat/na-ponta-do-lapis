@@ -48,7 +48,7 @@ public class UsuarioService {
     }
 
     @Transactional
-    public Usuario AtualizarUsuario(Long id , UsuarioUpdateDTO usuario){
+    public Usuario atualizarUsuario(Long id , UsuarioUpdateDTO usuario){
         Usuario existente = buscarUsuarioPorId(id);
 
         if (usuario.nome() != null) existente.setNome(usuario.nome());
