@@ -2,14 +2,10 @@ package com.npl.na_ponta_do_lapis.service;
 
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
-import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -53,14 +49,4 @@ public class UsuarioService {
 
     @Transactional
     public void tornarAdminFamilia(Long id){}
-
-    public Usuario buscarUsuarioAutenticado(Principal principal) {
-        if (principal == null || principal.getName() == null || principal.getName().isBlank()) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário não autenticado");
-        }
-        if (usuarioRepository.findByUsername(principal.getName()) == null) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Usuário autenticado não encontrado");
-        }
-        return usuarioRepository.findByUsername(principal.getName());
-    }
 }
