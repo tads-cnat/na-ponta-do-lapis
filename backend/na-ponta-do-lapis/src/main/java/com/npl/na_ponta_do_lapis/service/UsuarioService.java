@@ -6,6 +6,7 @@ import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 
 @Service
@@ -49,4 +50,11 @@ public class UsuarioService {
 
     @Transactional
     public void tornarAdminFamilia(Long id){}
+
+    public Usuario buscarUsuarioAutenticado(Principal principal) {
+        if (principal == null || principal.getName() == null) {
+            throw new RuntimeException("Usuário não autenticado");
+        }
+        return usuarioRepository.findByUsername(principal.getName());
+    }
 }
