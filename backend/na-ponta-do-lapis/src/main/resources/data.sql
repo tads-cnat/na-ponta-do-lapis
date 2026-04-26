@@ -1,4 +1,4 @@
--- SQL Familia
+--SQL Familia
 INSERT INTO familia (id, nome)
 VALUES
     (1, 'Família Silva'),
@@ -6,12 +6,12 @@ VALUES
     (3, 'Família Souza');
 
 -- SQL Usuario
-INSERT INTO usuario (id, nome, email, username, senha, foto_perfil, familia_id, papel)
+INSERT INTO usuario (id, nome, email, username, senha, foto_perfil, papel)
 VALUES 
-    (1, 'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '123456', 'http://foto.com', null, 'ADMIN_SITE'),
-    (2, 'Bruno', 'bruno@gmail.com', 'Brunozz', '123456', 'http://foto.com', 1, 'ADMIN_FAMILIA'),
-    (3, 'Eduardo', 'dudu@gmail.com', 'Dudurant', '123456', 'http://foto.com', null, 'ADMIN_SITE'),
-    (4, 'Pedro', 'pedro@gmail.com', 'Predo', '123456', 'http://foto.com', 1, 'USUARIO');
+    (1, 'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '123456', 'http://foto.com', 'ADMIN_SITE'),
+    (2, 'Bruno', 'bruno@gmail.com', 'Brunozz', '123456', 'http://foto.com', 'ADMIN_FAMILIA'),
+    (3, 'Eduardo', 'dudu@gmail.com', 'Dudurant', '123456', 'http://foto.com', 'ADMIN_SITE'),
+    (4, 'Pedro', 'pedro@gmail.com', 'Predo', '123456', 'http://foto.com', 'USUARIO');
 
 -- SQL Categoria
 INSERT INTO tipo_categoria (id, nome)
@@ -32,5 +32,3 @@ VALUES
     (5, 'Nubank', 3000, 'DEBITO', 3),
     (6, 'BB', 10, 'CREDITO', 2),
     (7, 'PicPay', 1, 'CREDITO', 1);
-
-

@@ -9,14 +9,12 @@ public record ContaFinanceiraPatchDTO(
 
     Optional<String> nome,
     Optional<BigDecimal> saldo,
-    Optional<TipoConta> tipo,
     Optional<Long> usuarioId) {
 
     public ContaFinanceiraPatchDTO(String nome, BigDecimal saldo, TipoConta tipo, Long usuarioId) {
         this(
             Optional.ofNullable(nome),
             Optional.ofNullable(saldo),
-            Optional.ofNullable(tipo),
             Optional.ofNullable(usuarioId)
         );
     }

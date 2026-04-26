@@ -37,10 +37,6 @@ public class ContaFinanceira {
     @Column(name = "saldo", precision = 19, scale = 2, nullable = false)
     private BigDecimal saldo;
 
-    @NotNull(message = "O tipo é obrigatório")
-    @Enumerated(EnumType.STRING)
-    @Column(name = "tipo", nullable = false)
-    private TipoConta tipo;
 
     @NotNull(message = "O usuário é obrigatório")
     @ManyToOne
@@ -83,14 +79,6 @@ public class ContaFinanceira {
         this.saldo = saldo;
     }
 
-    public TipoConta getTipo() {
-        return this.tipo;
-    }
-
-    public void setTipo(TipoConta tipo) {
-        this.tipo = tipo;
-    }
-
     public Usuario getUsuario() {
         return this.usuario;
     }
@@ -104,7 +92,6 @@ public class ContaFinanceira {
         return "ContaFinanceira{" +
                 "nome='" + this.nome + '\n' +
                 ", saldo='" + this.saldo + '\n' +
-                ", tipo='" + this.tipo + '\n' +
                 ", usuario=" + this.usuario + '\n' +
                 "}";
     }
