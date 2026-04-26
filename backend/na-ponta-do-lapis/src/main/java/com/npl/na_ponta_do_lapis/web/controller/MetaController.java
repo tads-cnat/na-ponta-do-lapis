@@ -18,6 +18,8 @@ import com.npl.na_ponta_do_lapis.web.dto.MetaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.MetaResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
@@ -38,24 +40,41 @@ public class MetaController {
     }
 
     @Operation(summary = "Buscar por ID")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Meta encontrada"),
+        @ApiResponse(responseCode = "404", description = "Meta não encontrada"),
+    })
     @GetMapping("/{id}")
-    public ResponseEntity<MetaResponseDTO> listarId(@PathVariable Long id){
-        return ResponseEntity.ok(metaService.listarID(id));
+    public ResponseEntity<MetaResponseDTO> buscarPorId(@PathVariable Long id){
+        return ResponseEntity.ok(metaService.buscarPorId(id));
     }
 
     @Operation(summary = "Criar meta")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Meta criada com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Erro de validação")
+    })    
     @PostMapping
     public ResponseEntity<MetaResponseDTO> criar(@RequestBody @Valid MetaDTO dto){
         return ResponseEntity.status(HttpStatus.CREATED).body(metaService.criar(dto));
     }
     
     @Operation(summary = "Atualizar meta")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Meta atualizada com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Erro de validação"),
+        @ApiResponse(responseCode = "404", description = "Meta não encontrada")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<MetaResponseDTO> atualizar(@PathVariable Long id, @RequestBody @Valid MetaDTO dto){
         return ResponseEntity.ok(metaService.atualizar(id, dto));
     }
 
     @Operation(summary = "Deletar meta")
+    @ApiResponses({
+        @ApiResponse(responseCode = "204", description = "Meta deletada com sucesso"),
+        @ApiResponse(responseCode = "404", description = "Meta não encontrada"),
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(@PathVariable Long id){
         metaService.deletar(id);

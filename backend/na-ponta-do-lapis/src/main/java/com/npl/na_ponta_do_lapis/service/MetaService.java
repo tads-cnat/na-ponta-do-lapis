@@ -1,15 +1,17 @@
 package com.npl.na_ponta_do_lapis.service;
 
+import java.util.List;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.npl.na_ponta_do_lapis.entity.Meta;
 import com.npl.na_ponta_do_lapis.entity.TipoMeta;
 import com.npl.na_ponta_do_lapis.repository.MetaRepository;
 import com.npl.na_ponta_do_lapis.repository.TipoMetaRepository;
 import com.npl.na_ponta_do_lapis.web.dto.MetaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.MetaResponseDTO;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
+import com.npl.na_ponta_do_lapis.web.exception.MetaNaoEncontradaException;
 
 @Service
 public class MetaService {
@@ -30,8 +32,8 @@ public class MetaService {
     }
 
     @Transactional
-    public MetaResponseDTO listarID(Long id){
-        Meta meta = metaRepository.findById(id).orElseThrow();
+    public MetaResponseDTO buscarPorId(Long id){
+        Meta meta = metaRepository.findById(id).orElseThrow(MetaNaoEncontradaException::new);
         return new MetaResponseDTO(meta);
     }
 
@@ -48,7 +50,7 @@ public class MetaService {
 
     @Transactional
     public MetaResponseDTO atualizar(Long id, MetaDTO dto){
-        Meta meta = metaRepository.findById(id).orElseThrow(() -> new RuntimeException("Meta não encontrada"));
+        Meta meta = metaRepository.findById(id).orElseThrow(MetaNaoEncontradaException::new);
         TipoMeta tipo = tipoMetaRepository.findById(dto.tipoMetaId()).orElseThrow(() -> new RuntimeException(" Tipo Meta não encontrada"));
 
         meta.setNome(dto.nome());
@@ -66,7 +68,7 @@ public class MetaService {
 
     @Transactional
     public void  deletar(Long id){
-        Meta meta = metaRepository.findById(id).orElseThrow(() -> new RuntimeException("Meta não encontrada"));   
+        Meta meta = metaRepository.findById(id).orElseThrow(MetaNaoEncontradaException::new);   
         metaRepository.delete(meta);
     }
 }
