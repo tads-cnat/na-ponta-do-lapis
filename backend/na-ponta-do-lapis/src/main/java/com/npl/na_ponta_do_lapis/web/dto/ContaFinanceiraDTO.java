@@ -18,9 +18,7 @@ public record ContaFinanceiraDTO(
     @NotNull(message = "O saldo é obrigatório")
     @DecimalMin(value = "0.0", inclusive = true, message = "O saldo não pode ser negativo")
     BigDecimal saldo,
-    
-    @NotNull(message = "O tipo de conta é obrigatório")
-    TipoConta tipo,
+
     
     @NotNull(message = "O usuário é obrigatório")
     Long usuarioId) {
@@ -29,7 +27,6 @@ public record ContaFinanceiraDTO(
         ContaFinanceira conta = new ContaFinanceira();
         conta.setNome(nome);
         conta.setSaldo(saldo);
-        conta.setTipo(tipo);
         conta.setUsuario(usuario);
         return conta;
     }

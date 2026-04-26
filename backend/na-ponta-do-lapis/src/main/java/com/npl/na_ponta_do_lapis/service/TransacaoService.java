@@ -178,15 +178,7 @@ public class TransacaoService {
         novaTrasacao.setContaFinanceira(conta);
         // VERIFICAÇÃO DE TIPO: O sistema precisa saber se tira ou coloca dinheiro
         if (novaTrasacao.getTipo() == TipoTransacao.DESPESA) {
-            // Compara o saldo da conta com o valor da transação.
-            // Se o saldo < valor, o compareTo retorna -1.
-            if (conta.getSaldo().compareTo(novaTrasacao.getValor()) < 0) {
-                // Se não tem dinheiro, para tudo aqui e lança a exceção!
-                throw new SaldoInsuficienteException("Saldo insuficiente na conta: " + conta.getNome());
-            }
-            // Se passou na validação, subtrai o valor do saldo da conta.
             conta.setSaldo(conta.getSaldo().subtract(novaTrasacao.getValor()));
-
         } else {
             // Se for uma RECEITA, apenas soma o valor ao saldo atual da conta.
             conta.setSaldo(conta.getSaldo().add(novaTrasacao.getValor()));
@@ -227,7 +219,7 @@ public class TransacaoService {
         transacaoExistente.setTipo(dto.tipo());
         transacaoExistente.setDataHora(dto.dataHora());
 
-        // Busca a nova Categoria e a nova Conta Financeira (caso o usuário tenha trocado a conta da transação).
+        // Busca a nova Categoria e a nova Conta Financeira (caso o usuario tenha trocado a conta da transação).
         transacaoExistente.setCategoria(tipoCategoriaService.buscarPorId(dto.idCategoria()));
         ContaFinanceira novaContaFinanceira = contaFinanceiraService.buscarContaPorIdObject(dto.idContaFinanceira());
 
@@ -236,10 +228,6 @@ public class TransacaoService {
         transacaoExistente.setContaFinanceira(novaContaFinanceira);
         // VERIFICAÇÃO DE TIPO: O sistema precisa saber se tira ou coloca dinheiro
         if (transacaoExistente.getTipo() == TipoTransacao.DESPESA) {
-            // Valida se a conta (nova ou antiga) tem saldo para o novo valor
-            if (novaContaFinanceira.getSaldo().compareTo(transacaoExistente.getValor()) < 0) {
-                throw new SaldoInsuficienteException("Saldo insuficiente para atualizar esta transação.");
-            }
             novaContaFinanceira.setSaldo(novaContaFinanceira.getSaldo().subtract(transacaoExistente.getValor()));
         } else {
             novaContaFinanceira.setSaldo(novaContaFinanceira.getSaldo().add(transacaoExistente.getValor()));
@@ -250,6 +238,14 @@ public class TransacaoService {
 
     public void removerTransacao(Long id) {
         Transacao transacao = buscarPorId(id);
+        ContaFinanceira conta = contaFinanceiraService.buscarContaPorIdObject(id);
+
+        if (transacao.getTipo() == TipoTransacao.DESPESA){
+            conta.setSaldo(conta.getSaldo().add(transacao.getValor()));
+        } else {
+            conta.setSaldo(conta.getSaldo().subtract(transacao.getValor()));
+        }
+
         transacaoRepository.delete(transacao);
     }
 
