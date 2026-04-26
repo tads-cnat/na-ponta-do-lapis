@@ -1,6 +1,5 @@
 package com.npl.na_ponta_do_lapis.entity;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
