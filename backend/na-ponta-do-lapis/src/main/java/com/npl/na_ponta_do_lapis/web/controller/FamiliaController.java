@@ -63,7 +63,7 @@ public class FamiliaController {
     }
 
     @Operation(summary = "Editar tudo da Família")
-    @PutMapping()
+    @PutMapping("/{familiaId}")
     private ResponseEntity<FamiliaResponseDTO> editarTudoFamilia(@PathVariable Long familiaId, @RequestBody FamiliaDTO familiaDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.editarFamilia(familiaId, familiaDTO));
     }
