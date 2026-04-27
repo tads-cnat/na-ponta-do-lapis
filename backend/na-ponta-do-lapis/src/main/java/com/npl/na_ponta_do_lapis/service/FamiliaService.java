@@ -40,6 +40,12 @@ public class FamiliaService {
 
     @Transactional
     public void excluirFamilia(Long id){
+        Familia familia = familiaRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família não foi encontrada."));
+        for (Usuario membro : familia.getMembros()) {
+            membro.setFamilia(null);
+            usuarioRepository.save(membro);
+        }
         familiaRepository.deleteById(id);
     }
 

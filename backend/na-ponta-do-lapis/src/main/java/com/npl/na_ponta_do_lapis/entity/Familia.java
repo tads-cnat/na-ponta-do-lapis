@@ -17,7 +17,7 @@ public class Familia {
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-    @OneToMany(mappedBy = "familia", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
+    @OneToMany(mappedBy = "familia")
     private List<Usuario> membros;
 
     @Column(name = "fotoFamilia", columnDefinition = "TEXT", nullable = true)

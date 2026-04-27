@@ -6,12 +6,12 @@ VALUES
     (3, 'Família Souza');
 
 -- SQL Usuario
-INSERT INTO usuario (id, nome, email, username, senha, foto_perfil, papel)
+INSERT INTO usuario (id, nome, email, username, senha, foto_perfil, familia_id, papel)
 VALUES 
-    (1, 'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '123456', 'http://foto.com', 'ADMIN_SITE'),
-    (2, 'Bruno', 'bruno@gmail.com', 'Brunozz', '123456', 'http://foto.com', 'ADMIN_FAMILIA'),
-    (3, 'Eduardo', 'dudu@gmail.com', 'Dudurant', '123456', 'http://foto.com', 'ADMIN_SITE'),
-    (4, 'Pedro', 'pedro@gmail.com', 'Predo', '123456', 'http://foto.com', 'USUARIO');
+    (1, 'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '123456', 'http://foto.com', 1, 'ADMIN_SITE'),
+    (2, 'Bruno', 'bruno@gmail.com', 'Brunozz', '123456', 'http://foto.com', 1,'ADMIN_FAMILIA'),
+    (3, 'Eduardo', 'dudu@gmail.com', 'Dudurant', '123456', 'http://foto.com', 2, 'ADMIN_SITE'),
+    (4, 'Pedro', 'pedro@gmail.com', 'Predo', '123456', 'http://foto.com', 3, 'USUARIO');
 
 -- SQL Categoria
 INSERT INTO tipo_categoria (id, nome)
