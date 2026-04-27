@@ -1,14 +1,21 @@
+--SQL Familia
+INSERT INTO familia (id, nome)
+VALUES
+    (1, 'Família Silva'),
+    (2, 'Família Oliveira'),
+    (3, 'Família Souza');
+
 -- SQL Usuario
-INSERT INTO usuario (id, nome, email, username, senha, foto_perfil, papel)
+INSERT INTO usuario (id, nome, email, username, senha, foto_perfil, familia_id, papel)
 VALUES 
-    (1, 'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '123456', 'http://foto.com', 'ADMIN_SITE'),
-    (2, 'Bruno', 'bruno@gmail.com', 'Brunozz', '123456', 'http://foto.com', 'ADMIN_FAMILIA'),
-    (3, 'Eduardo', 'dudu@gmail.com', 'Dudurant', '123456', 'http://foto.com', 'ADMIN_SITE'),
-    (4, 'Pedro', 'pedro@gmail.com', 'Predo', '123456', 'http://foto.com', 'USUARIO');
+    (1, 'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '123456', 'http://foto.com', 1, 'ADMIN_SITE'),
+    (2, 'Bruno', 'bruno@gmail.com', 'Brunozz', '123456', 'http://foto.com', 1,'ADMIN_FAMILIA'),
+    (3, 'Eduardo', 'dudu@gmail.com', 'Dudurant', '123456', 'http://foto.com', 2, 'ADMIN_SITE'),
+    (4, 'Pedro', 'pedro@gmail.com', 'Predo', '123456', 'http://foto.com', 3, 'USUARIO');
 
 -- SQL Categoria
 INSERT INTO tipo_categoria (id, nome)
-VALUES 
+VALUES
     (1, 'Alimentação'),
     (2, 'Transporte'),
     (3, 'Lazer'),
@@ -17,7 +24,7 @@ VALUES
 
 -- SQL Conta Financeira
 INSERT INTO conta_financeira (id, nome, saldo, usuario_id)
-VALUES  
+VALUES
     (1, 'Banco Inter', 100, 1),
     (2, 'Banco Master', 50000000.50, 2),
     (3, 'Santander', 0, 3),
@@ -28,13 +35,13 @@ VALUES
 
 --- SQL Meta
 INSERT INTO tipo_meta(id, nome)
-VALUES 
+VALUES
     (1, 'ECONOMIA'),
     (2, 'LIMITE_GASTO'),
     (3, 'INVESTIMENTO'),
     (4, 'DIVIDA');
 INSERT INTO meta(id, nome, descricao, valor, foto_url, data_inicio, tipo_meta_id)
-VALUES 
+VALUES
     (1, 'Reserva de Emergência', 'Guardar dinheiro para imprevistos', 5000.00, 'https://link-da-foto.com/reserva.png', '2026-12-31', 1),
     (2, 'Viagem de Férias', 'Juntar dinheiro para viajar no final do ano', 3000.00, 'https://link-da-foto.com/viagem.png', '2026-11-30', 1),
     (3, 'Limite Alimentação', 'Controlar gastos com comida', 800.00, 'https://link-da-foto.com/comida.png', '2026-06-30', 2),

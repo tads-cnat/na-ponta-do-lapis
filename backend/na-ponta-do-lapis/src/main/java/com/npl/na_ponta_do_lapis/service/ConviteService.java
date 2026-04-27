@@ -8,11 +8,13 @@ import com.npl.na_ponta_do_lapis.repository.ConviteRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.web.dto.ConviteDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ConviteResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class ConviteService {
@@ -23,12 +25,6 @@ public class ConviteService {
     public ConviteService(ConviteRepository conviteRepository, UsuarioRepository usuarioRepository) {
         this.conviteRepository = conviteRepository;
         this.usuarioRepository = usuarioRepository;
-    }
-
-    @Transactional
-    public ConviteResponseDTO enviarConvite(String username, Usuario solicitante) {
-        Long familiaId = solicitante.getFamilia() != null ? solicitante.getFamilia().getId() : null;
-        return enviarConvite(new ConviteDTO(username, familiaId), solicitante);
     }
 
     @Transactional

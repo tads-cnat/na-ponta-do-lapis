@@ -56,13 +56,13 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Operation(summary = "Atualizar Usuário (Passe apenas os campos que for atualizar)")
-    //@PreAuthorize("hasRole('ADMIN_SITE') or #id == authentication.principal.id")
-    @PatchMapping("/{id}")
-    public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@PathVariable Long id, @RequestBody @Valid UsuarioUpdateDTO usuarioDTO){
-        Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id,usuarioDTO);
-        return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponseDTO(usuarioAtualizado));
-    }
+//    @Operation(summary = "Atualizar Usuário (Passe apenas os campos que for atualizar)")
+//    @PreAuthorize("hasRole('ADMIN_SITE') or #id == authentication.principal.id")
+//    @PatchMapping("/{id}")
+//    public ResponseEntity<UsuarioResponseDTO> atualizarUsuario(@PathVariable Long id, @RequestBody @Valid UsuarioUpdateDTO usuarioDTO){
+//        Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id,usuarioDTO);
+//        return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponseDTO(usuarioAtualizado));
+//    }
 
     @Operation(summary = "Deletar Usuário")
     //   @PreAuthorize("hasRole('ADMIN_SITE') or #id == authentication.principal.id")

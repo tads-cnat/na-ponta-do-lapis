@@ -1,5 +1,6 @@
 package com.npl.na_ponta_do_lapis.entity;
 
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,18 +17,18 @@ public class Familia {
     @Column(name = "nome", length = 100, nullable = false)
     private String nome;
 
-//    @OneToMany(mappedBy = "familia", cascade = CascadeType.ALL)
-//    private List<Usuario> membros;
+    @OneToMany(mappedBy = "familia")
+    private List<Usuario> membros;
 
     @Column(name = "fotoFamilia", columnDefinition = "TEXT", nullable = true)
     private String fotoFamilia;
 
-    @OneToMany(mappedBy = "familia")
-    private List<Usuario> membros;
-//
-//    public void setMembros(List<Usuario> membros) {
-//        this.membros = membros;
-//    }
+    public List<Usuario> getMembros() {
+        return membros;
+    }
+    public void setMembros(List<Usuario> membros) {
+        this.membros = membros;
+    }
 
     @Override
     public boolean equals(Object o) {
