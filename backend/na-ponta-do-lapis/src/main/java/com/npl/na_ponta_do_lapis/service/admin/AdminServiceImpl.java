@@ -41,6 +41,6 @@ public class AdminServiceImpl implements AdminService {
 
     @Override
     public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findByPapelIn(List.of(Papel.ADMIN_SITE, Papel.USUARIO));
+        return usuarioRepository.findByPapelIn(List.of(Papel.ADMIN_SITE));
     }
 }
