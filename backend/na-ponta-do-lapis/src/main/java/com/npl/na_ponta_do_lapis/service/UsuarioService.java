@@ -18,10 +18,6 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
-    public void login(){}
-
-    public void logout(){}
-
     public List<Usuario> listarUsuarios(){
         return usuarioRepository.findAll();
     }

@@ -5,13 +5,13 @@ VALUES
     (2, 'Família Oliveira'),
     (3, 'Família Souza');
 
--- SQL Usuario
-INSERT INTO usuario (id, nome, email, username, senha, foto_perfil, familia_id, papel)
+-- SQL Usuario as senhas são 123456
+INSERT INTO usuario (nome, email, username, senha, foto_perfil, familia_id, papel)
 VALUES 
-    (1, 'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '123456', 'http://foto.com', 1, 'ADMIN_SITE'),
-    (2, 'Bruno', 'bruno@gmail.com', 'Brunozz', '123456', 'http://foto.com', 1,'ADMIN_FAMILIA'),
-    (3, 'Eduardo', 'dudu@gmail.com', 'Dudurant', '123456', 'http://foto.com', 2, 'ADMIN_SITE'),
-    (4, 'Pedro', 'pedro@gmail.com', 'Predo', '123456', 'http://foto.com', 3, 'USUARIO');
+    ('Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 1, 'ADMIN_SITE'),
+    ('Bruno', 'bruno@gmail.com', 'Brunozz', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 1,'ADMIN_FAMILIA'),
+    ('Eduardo', 'dudu@gmail.com', 'Dudurant', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 2, 'ADMIN_SITE'),
+    ( 'Pedro', 'pedro@gmail.com', 'Predo', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 3, 'USUARIO');
 
 -- SQL Categoria
 INSERT INTO tipo_categoria (id, nome)

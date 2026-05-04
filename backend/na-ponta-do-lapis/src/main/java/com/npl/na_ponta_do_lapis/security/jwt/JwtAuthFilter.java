@@ -11,10 +11,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private UsuarioRepository usuarioRepository;
@@ -34,9 +36,22 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        // O uso de contains ou startsWith no URI é mais seguro para o Swagger
+        return path.contains("/swagger-ui")
+                || path.contains("/v3/api-docs")
+                || path.contains("/auth")
+                || path.contains("/favicon.ico")
+                || path.contains("/docs")
+                || path.contains("/api-docs"); // O Swagger costuma pedir o ícone também
+    }
+
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
 
         String authorizationHeader = request.getHeader(JwtUtil.JWT_AUTHORIZATION);
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {

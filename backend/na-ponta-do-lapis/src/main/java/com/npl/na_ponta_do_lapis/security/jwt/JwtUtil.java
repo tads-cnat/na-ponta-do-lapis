@@ -7,6 +7,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.security.Key;
@@ -15,6 +16,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
+@Component
 public class JwtUtil {
 
     UsuarioRepository usuarioRepository;
@@ -26,7 +28,7 @@ public class JwtUtil {
     private static final String SECRET =
             "c2d6bbaa4431dba6cd171db5c588f16612dd561811f0cb5aaba60809b1f2f5529dc5f335792bbd16891af5e5d32e540448eb39af3b613675c09656d7d76c0491";
     public static final long EXPIRE_DAYS = 0;
-    public static final long EXPIRE_HOURS = 0;
+    public static final long EXPIRE_HOURS = 1;
     public static final long EXPIRE_MINUTES = 5;
     public static final long EXPIRERATION_REFRESH_TOKEN_DAYS = 7;
     public static final String JWT_AUTHORIZATION = "Authorization";
@@ -83,5 +85,5 @@ public class JwtUtil {
         LocalDateTime end = dateTime.plusDays(EXPIRERATION_REFRESH_TOKEN_DAYS);
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
     }
-    
+
 }
