@@ -1,0 +1,17 @@
+
+services:
+  db:
+    image: postgres:16
+    container_name: npl_container
+    environment:
+      POSTGRES_DB: npl_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+
+volumes:
+  pgdata:  # Volume para guardar os dados do banco de forma permanente

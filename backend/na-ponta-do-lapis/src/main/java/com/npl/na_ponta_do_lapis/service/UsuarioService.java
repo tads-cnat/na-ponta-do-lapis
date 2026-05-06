@@ -41,6 +41,12 @@ public class UsuarioService {
         usuarioRepository.deleteById(id);
     }
 
+    public Usuario buscarUsuarioPorEmail(String email){
+        return usuarioRepository.findByEmail(email).orElseThrow(
+                () -> new RuntimeException("Usuário de email " + email + " não encontrado!")
+        );
+    }
+
     @Transactional
     public void tornarUsuarioAdminSite(Long id){}
 

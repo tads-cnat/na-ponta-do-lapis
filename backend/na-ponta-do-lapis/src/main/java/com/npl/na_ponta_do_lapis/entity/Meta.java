@@ -17,7 +17,7 @@ public class Meta {
     @Column(length = 100, nullable = false)
     private String nome;
 
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String descricao;
 
     @Column(nullable = false, precision = 10, scale = 2)

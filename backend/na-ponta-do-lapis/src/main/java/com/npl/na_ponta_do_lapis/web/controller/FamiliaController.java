@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -31,24 +32,28 @@ public class FamiliaController {
     }
 
     @Operation(summary = "Listar Famílias")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping
     private ResponseEntity<List<FamiliaResponseDTO>> listarFamilias() {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.listarFamilias());
     }
 
     @Operation(summary = "Buscar por Id")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping("/{familiaId}")
     private ResponseEntity<FamiliaResponseDTO> buscarPorId(@PathVariable Long familiaId) {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.buscarFamiliaPorID(familiaId));
     }
 
     @Operation(summary = "Cadastrar Família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @PostMapping
     private ResponseEntity<FamiliaResponseDTO> cadastrarFamilia(@RequestBody FamiliaDTO familiaDTO) {
         return ResponseEntity.status(HttpStatus.CREATED).body(familiaService.criarFamilia(familiaDTO));
     }
 
     @Operation(summary = "Excluir Família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @DeleteMapping("/{familiaId}")
     private ResponseEntity<Void> excluirFamilia(@PathVariable Long familiaId) {
         familiaService.excluirFamilia(familiaId);
@@ -56,6 +61,7 @@ public class FamiliaController {
     }
 
     @Operation(summary = "Editar parte da Família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PatchMapping("/{familiaId}")
     private ResponseEntity<FamiliaResponseDTO> editarParteFamilia(@PathVariable Long familiaId,
                                                              @RequestParam(required = false) String nome,
@@ -64,30 +70,35 @@ public class FamiliaController {
     }
 
     @Operation(summary = "Editar tudo da Família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PutMapping("/{familiaId}")
     private ResponseEntity<FamiliaResponseDTO> editarTudoFamilia(@PathVariable Long familiaId, @RequestBody FamiliaDTO familiaDTO) {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.editarFamilia(familiaId, familiaDTO));
     }
 
     @Operation(summary = "Listar membros da família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping("/{familiaId}/membros")
     private ResponseEntity<List<UsuarioResponseDTO>> listarMembrosDaFamilia(@PathVariable Long familiaId) {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.listarMembrosDaFamilia(familiaId));
     }
 
     @Operation(summary = "Adicionar usuário na família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @PostMapping("/{familiaId}/membros")
     private ResponseEntity<FamiliaResponseDTO> adicionarUsuarioNaFamilia(@PathVariable Long familiaId, @RequestParam String username) {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.adicionarUsuarioNaFamilia(username, familiaId));
     }
 
     @Operation(summary = "Remover usuário da família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @DeleteMapping("/{familiaId}/membros")
     private ResponseEntity<FamiliaResponseDTO> removerUsuarioDaFamilia(@PathVariable Long familiaId, @RequestParam String username) {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.removerUsuarioNaFamilia(username, familiaId));
     }
 
     @Operation(summary = "Promover membro a administrador da família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @PatchMapping("/{familiaId}/membros/{userId}")
     private ResponseEntity<UsuarioResponseDTO> promoverAdministrador(
             @PathVariable Long familiaId,

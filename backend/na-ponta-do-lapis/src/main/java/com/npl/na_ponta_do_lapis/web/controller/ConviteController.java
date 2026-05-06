@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +40,7 @@ public class ConviteController {
     }
 
     @Operation(summary = "Listar convites pendentes para o usuário autenticado")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping("/me")
     public ResponseEntity<List<ConviteResponseDTO>> listarPendentes(
             Principal principal,
@@ -49,6 +51,7 @@ public class ConviteController {
     }
 
     @Operation(summary = "Enviar convite para usuário")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping
     public ResponseEntity<ConviteResponseDTO> enviarConvite(
             @RequestBody ConviteDTO conviteDTO,
@@ -60,6 +63,7 @@ public class ConviteController {
     }
 
     @Operation(summary = "Atualizar status do convite")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PatchMapping("/{conviteId}")
     public ResponseEntity<ConviteResponseDTO> atualizarStatusConvite(
             @PathVariable Long conviteId,

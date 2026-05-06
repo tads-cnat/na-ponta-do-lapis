@@ -7,12 +7,13 @@ import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
-import com.npl.na_ponta_do_lapis.web.exception.SaldoInsuficienteException;
 import com.npl.na_ponta_do_lapis.web.exception.TransacaoNaoExisteException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+
+import static com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter.getEmailUsuarioLogado;
 
 @Service
 public class TransacaoService {
@@ -54,7 +55,12 @@ public class TransacaoService {
 
     }
 
-    public List<Transacao> listarTransacoes(){
+    public List<Transacao> listarTransacoesUsuarioNaSessao() {
+        System.out.println(getEmailUsuarioLogado());
+        return transacaoRepository.buscarTransacoesUsuarioLogado(getEmailUsuarioLogado());
+    }
+
+    public List<Transacao> listarTransacoes() {
         return transacaoRepository.findAll();
     }
 
@@ -105,7 +111,7 @@ public class TransacaoService {
 
     public void removerTransacao(Long id) {
         Transacao transacao = buscarPorId(id);
-        ContaFinanceira conta = contaFinanceiraService.buscarContaPorIdObject(id);
+        ContaFinanceira conta = transacao.getContaFinanceira();
 
         if (transacao.getTipo() == TipoTransacao.DESPESA){
             conta.setSaldo(conta.getSaldo().add(transacao.getValor()));

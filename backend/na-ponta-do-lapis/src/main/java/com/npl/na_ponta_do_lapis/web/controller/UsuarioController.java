@@ -38,7 +38,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @PreAuthorize("hasRole('USUARIO')")
+    @PreAuthorize("hasRole('ADMIN_SITE') or (hasRole('USUARIO') and #id == authentication.principal.id)")
     @Operation(summary = "Buscar por ID")
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id){
@@ -47,6 +47,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
     }
 
+    @PreAuthorize("hasRole('ADMIN_SITE')")
     @Operation(summary = "Cadastrar Usuário")
     @PostMapping()
     public ResponseEntity<UsuarioResponseDTO> criarUsuario(@RequestBody @Valid UsuarioDTO usuarioDTO){
@@ -66,17 +67,16 @@ public class UsuarioController {
 //        Usuario usuarioAtualizado = usuarioService.atualizarUsuario(id,usuarioDTO);
 //        return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponseDTO(usuarioAtualizado));
 //    }
-
+    @PreAuthorize("hasRole('ADMIN_SITE')")
     @Operation(summary = "Deletar Usuário")
-    //   @PreAuthorize("hasRole('ADMIN_SITE') or #id == authentication.principal.id")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirUsuario(@PathVariable Long id){
         usuarioService.excluirUsuario(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @PreAuthorize("hasRole('ADMIN_SITE')")
     @Operation(summary = "Tornar Usuário Admin do Site")
-//    @PreAuthorize("hasRole('ADMIN_SITE'))
     @PatchMapping("/{id}/admin")
     public ResponseEntity<Void> tornarAdminSite(@PathVariable Long id){
         usuarioService.tornarUsuarioAdminSite(id);

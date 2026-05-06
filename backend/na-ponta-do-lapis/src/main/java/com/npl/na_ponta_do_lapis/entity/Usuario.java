@@ -97,7 +97,7 @@ public class Usuario implements UserDetails {
     }
 
     public String getUsername() {
-        return this.email;
+        return this.username;
     }
 
     @Override

@@ -1,11 +1,14 @@
 package com.npl.na_ponta_do_lapis.security.jwt;
 
+import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
+import com.npl.na_ponta_do_lapis.security.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,11 +23,21 @@ import java.io.IOException;
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private UsuarioRepository usuarioRepository;
-    private UserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
-    public JwtAuthFilter(UsuarioRepository usuarioRepository, UserDetailsService userDetailsService) {
+    public JwtAuthFilter(UsuarioRepository usuarioRepository, UserDetailsServiceImpl userDetailsService) {
         this.usuarioRepository = usuarioRepository;
         this.userDetailsService = userDetailsService;
+    }
+
+    public static String getEmailUsuarioLogado(){
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserDetails) {
+            return ((Usuario) principal).getEmail();
+        } else {
+            return principal.toString();
+        }
     }
 
     private void toAuthentication(HttpServletRequest req, String email) throws ServletException, IOException {
@@ -36,18 +49,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
     }
-    @Override
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String path = request.getRequestURI();
-        // O uso de contains ou startsWith no URI é mais seguro para o Swagger
-        return path.contains("/swagger-ui")
-                || path.contains("/v3/api-docs")
-                || path.contains("/auth")
-                || path.contains("/favicon.ico")
-                || path.contains("/docs")
-                || path.contains("/api-docs"); // O Swagger costuma pedir o ícone também
-    }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

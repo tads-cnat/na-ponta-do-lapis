@@ -27,7 +27,7 @@ public class JwtUtil {
 
     private static final String SECRET =
             "c2d6bbaa4431dba6cd171db5c588f16612dd561811f0cb5aaba60809b1f2f5529dc5f335792bbd16891af5e5d32e540448eb39af3b613675c09656d7d76c0491";
-    public static final long EXPIRE_DAYS = 0;
+    public static final long EXPIRE_DAYS = 1;
     public static final long EXPIRE_HOURS = 1;
     public static final long EXPIRE_MINUTES = 5;
     public static final long EXPIRERATION_REFRESH_TOKEN_DAYS = 7;
