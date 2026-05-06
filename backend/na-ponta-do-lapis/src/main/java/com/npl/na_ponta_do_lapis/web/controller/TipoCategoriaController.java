@@ -37,7 +37,7 @@ public class TipoCategoriaController {
     public ResponseEntity<TipoCategoria> buscarPorId(@PathVariable Long id){
         boolean categoriaPertenceAoUsuarioLogado = tipoCategoriaService.listarCategorias()
                 .stream()
-                .anyMatch(categoria -> id.equals(categoria.getId()));
+                .anyMatch(categoria -> id.equals(categoria.id()));
 
         if (!categoriaPertenceAoUsuarioLogado) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
