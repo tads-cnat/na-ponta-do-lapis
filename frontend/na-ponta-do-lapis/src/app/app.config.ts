@@ -5,6 +5,7 @@ import { routes } from './app.routes';
 import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeuix/themes';
+import { provideHttpClient } from '@angular/common/http';
 
 const naPontaDoLapisTema = definePreset(Aura, {
     semantic: {
@@ -39,6 +40,7 @@ export const appConfig: ApplicationConfig = {
           }
         }
       }
-    })
+    }),
+    provideHttpClient()
   ]
 };
