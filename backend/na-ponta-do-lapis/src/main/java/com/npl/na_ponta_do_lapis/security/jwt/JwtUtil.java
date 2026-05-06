@@ -79,7 +79,6 @@ public class JwtUtil {
         LocalDateTime end = dateTime.plusDays(EXPIRE_DAYS).plusHours(EXPIRE_HOURS).plusMinutes(EXPIRE_MINUTES);
         return Date.from(end.atZone(ZoneId.systemDefault()).toInstant());
     };
-
     public Date EXPIRATION_REFRESH_TOKEN(Date start){
         LocalDateTime dateTime = start.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
         LocalDateTime end = dateTime.plusDays(EXPIRERATION_REFRESH_TOKEN_DAYS);
