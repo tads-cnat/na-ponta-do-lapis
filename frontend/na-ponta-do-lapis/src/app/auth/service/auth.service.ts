@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginRequest } from '../../model/LoginRequest';
-import { Token } from '../../model/Token';
+import { LoginRequest } from '../../model/ILoginRequest';
+import { Token } from '../../model/IToken';
 
 
 const BASE_URL = "http://localhost:8080/auth"

@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { StorageService } from '../../service/storage.service';
-import { Token } from '../../../model/Token';
+import { Token } from '../../../model/IToken';
 
 @Component({
   selector: 'app-login',

@@ -1,7 +1,7 @@
 import da from '@angular/common/locales/da';
 import to from '@angular/common/locales/to';
 import { Injectable } from '@angular/core';
-import { TokenPayload } from '../../model/TokenPayload';
+import { TokenPayload } from '../../model/ITokenPayload';
 import tok from '@angular/common/locales/tok';
 import tr from '@angular/common/locales/tr';
 import { jwtDecode } from 'jwt-decode';
