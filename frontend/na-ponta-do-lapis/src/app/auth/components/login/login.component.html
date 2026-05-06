@@ -1,1 +1,34 @@
-<p>login works!</p>
+<div class="flex h-screen w-full">
+    <!-- Lado Esquerdo (Formulário) -->
+    <div class="flex flex-1 flex-col justify-center items-center p-10">
+        <div class="flex flex-col gap-3 w-full max-w-md">
+            <h1 class="text-5xl font-bold">Entrar</h1>
+            <p class="text-lg">
+                Ainda não tem uma conta? 
+                <a href="" class="text-[#FBBC05] font-bold">Cadastre-se</a>
+            </p>
+
+            <div class="flex flex-col gap-2 mt-4">
+                <label for="email" class="font-medium">Email</label>
+                <input id="email" pInputText placeholder="nome@gmail.com" class="w-full">
+            </div>
+
+            <div class="flex flex-col gap-2">
+                <label for="senha" class="font-medium">Senha</label>
+                <input id="senha" type="password" pInputText placeholder="Digite sua senha aqui" class="w-full">
+            </div>
+
+            <div class="flex flex-col gap-2 mt-2">
+                <p-button 
+                    label="Entrar"
+                    styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!">
+                </p-button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lado Direito (Fundo Roxo Ocupando Tudo) -->
+    <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center">
+        <img src="/logo.svg" alt="Logo" class="w-1/2 max-w-sm">
+    </div>
+</div>
