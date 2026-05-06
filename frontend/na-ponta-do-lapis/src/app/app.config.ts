@@ -5,7 +5,8 @@ import { routes } from './app.routes';
 import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeuix/themes';
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { authInterceptor } from './core/interceptor/auth.interceptor';
 
 const naPontaDoLapisTema = definePreset(Aura, {
     semantic: {
@@ -41,6 +42,8 @@ export const appConfig: ApplicationConfig = {
         }
       }
     }),
-    provideHttpClient()
+    provideHttpClient(
+      withInterceptors([authInterceptor])
+    )
   ]
 };

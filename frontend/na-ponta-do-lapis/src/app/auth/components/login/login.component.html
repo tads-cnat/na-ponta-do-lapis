@@ -1,6 +1,6 @@
 <div class="flex h-screen w-full">
-    <!-- Lado Esquerdo (Formulário) -->
-    <div class="flex flex-1 flex-col justify-center items-center p-10">
+    <form [formGroup]="loginForm" class="flex flex-1 flex-col justify-center items-center p-10">
+        <!-- Lado Esquerdo (Formulário) -->
         <div class="flex flex-col gap-3 w-full max-w-md">
             <h1 class="text-5xl font-bold">Entrar</h1>
             <p class="text-lg">
@@ -10,22 +10,21 @@
 
             <div class="flex flex-col gap-2 mt-4">
                 <label for="email" class="font-medium">Email</label>
-                <input id="email" pInputText placeholder="nome@gmail.com" class="w-full">
+                <input id="email" pInputText placeholder="nome@gmail.com" class="w-full" formControlName="email" required="true">
             </div>
 
             <div class="flex flex-col gap-2">
-                <label for="senha" class="font-medium">Senha</label>
-                <p-password id="senha" type="password" [toggleMask]="true" [feedback]="false"
+                <label for="password" class="font-medium">Senha</label>
+                <p-password id="password" type="password" [toggleMask]="true" [feedback]="false"
                     placeholder="Digite sua senha aqui" fluid="true" inputStyleClass="w-full"
-                    inputStyleClass="w-full" />
+                    inputStyleClass="w-full" formControlName="password" required="true"/>
             </div>
 
             <div class="flex flex-col gap-2 mt-2">
-                <p-button label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!">
-                </p-button>
+                <p-button label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!" [disabled]="loginForm.invalid" (click)="login()"/>
             </div>
         </div>
-    </div>
+    </form>
 
     <!-- Lado Direito (Fundo Roxo Ocupando Tudo) -->
     <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center">

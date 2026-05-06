@@ -1,6 +1,10 @@
 import da from '@angular/common/locales/da';
 import to from '@angular/common/locales/to';
 import { Injectable } from '@angular/core';
+import { TokenPayload } from '../../model/TokenPayload';
+import tok from '@angular/common/locales/tok';
+import tr from '@angular/common/locales/tr';
+import { jwtDecode } from 'jwt-decode';
 
 
 const TOKEN = "token"
@@ -30,24 +34,28 @@ export class StorageService {
     return localStorage.getItem(TOKEN)
   }
 
-  static getUsuario(): any | null {
-    const dados = localStorage.getItem(USUARIO)
-    if (dados == null){
-      return null
-    } 
-    return JSON.parse(dados);
+  static getUsuarioDecodificado(): TokenPayload | null {
+    const token = this.getToken()
+    if (token){
+      try {
+        return jwtDecode<TokenPayload>(token)
+      } catch(Error) {
+        return null;
+      }
+    }
+    return null;
   }
 
   static getPapel(): string {
-    const usuario = this.getUsuario();
-    if (usuario == null){
+    const usuario = this.getUsuarioDecodificado();
+    if (usuario == null || usuario.papeis.length == 0){
       return "";
     }
     return usuario.papeis[0];
   }
 
   static eAdminSiteLogado(): boolean {
-    if (this.getUsuario() == null){
+    if (this.getUsuarioDecodificado() == null){
       return false
     }
     const papel:string = this.getPapel()
@@ -55,7 +63,7 @@ export class StorageService {
   }
 
   static eUsuarioLogado(): boolean {
-    if (this.getUsuario() == null){
+    if (this.getUsuarioDecodificado() == null){
       return false;
     }
     const papel:string = this.getPapel()
