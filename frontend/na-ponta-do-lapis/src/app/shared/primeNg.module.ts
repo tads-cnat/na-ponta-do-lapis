@@ -5,6 +5,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { TableModule } from 'primeng/table';
 import { CardModule } from 'primeng/card';
 import { ToastModule } from 'primeng/toast';
+import { PasswordModule } from 'primeng/password';
 
 
 
@@ -14,7 +15,8 @@ import { ToastModule } from 'primeng/toast';
       InputTextModule,
       TableModule,
       CardModule,
-      ToastModule
+      ToastModule,
+      PasswordModule
   ],
   declarations: [],
   imports: [CommonModule],

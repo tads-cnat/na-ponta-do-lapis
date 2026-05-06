@@ -4,7 +4,7 @@
         <div class="flex flex-col gap-3 w-full max-w-md">
             <h1 class="text-5xl font-bold">Entrar</h1>
             <p class="text-lg">
-                Ainda não tem uma conta? 
+                Ainda não tem uma conta?
                 <a href="" class="text-[#FBBC05] font-bold">Cadastre-se</a>
             </p>
 
@@ -15,13 +15,13 @@
 
             <div class="flex flex-col gap-2">
                 <label for="senha" class="font-medium">Senha</label>
-                <input id="senha" type="password" pInputText placeholder="Digite sua senha aqui" class="w-full">
+                <p-password id="senha" type="password" [toggleMask]="true" [feedback]="false"
+                    placeholder="Digite sua senha aqui" fluid="true" inputStyleClass="w-full"
+                    inputStyleClass="w-full" />
             </div>
 
             <div class="flex flex-col gap-2 mt-2">
-                <p-button 
-                    label="Entrar"
-                    styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!">
+                <p-button label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!">
                 </p-button>
             </div>
         </div>
