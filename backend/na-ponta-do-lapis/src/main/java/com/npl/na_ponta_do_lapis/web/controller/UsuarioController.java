@@ -75,12 +75,5 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PreAuthorize("hasRole('ADMIN_SITE')")
-    @Operation(summary = "Tornar Usuário Admin do Site")
-    @PatchMapping("/{id}/admin")
-    public ResponseEntity<Void> tornarAdminSite(@PathVariable Long id){
-        usuarioService.tornarUsuarioAdminSite(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-    }
 
 }

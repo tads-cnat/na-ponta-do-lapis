@@ -8,7 +8,6 @@ import com.npl.na_ponta_do_lapis.repository.FamiliaRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaResponseDTO;
-import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
 import com.npl.na_ponta_do_lapis.web.exception.NaoEAdminFamiliaException;
 import com.npl.na_ponta_do_lapis.web.exception.NaoEdaMesmaFamiliaException;

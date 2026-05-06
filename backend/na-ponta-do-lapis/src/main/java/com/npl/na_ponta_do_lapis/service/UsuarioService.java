@@ -47,8 +47,6 @@ public class UsuarioService {
         );
     }
 
-    @Transactional
-    public void tornarUsuarioAdminSite(Long id){}
 
     @Transactional
     public void tornarAdminFamilia(Long id){}
