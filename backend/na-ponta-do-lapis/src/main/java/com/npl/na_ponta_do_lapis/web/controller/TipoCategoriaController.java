@@ -35,6 +35,14 @@ public class TipoCategoriaController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<TipoCategoria> buscarPorId(@PathVariable Long id){
+        boolean categoriaPertenceAoUsuarioLogado = tipoCategoriaService.listarCategorias()
+                .stream()
+                .anyMatch(categoria -> id.equals(categoria.getId()));
+
+        if (!categoriaPertenceAoUsuarioLogado) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(tipoCategoriaService.buscarPorId(id));
     }
 
