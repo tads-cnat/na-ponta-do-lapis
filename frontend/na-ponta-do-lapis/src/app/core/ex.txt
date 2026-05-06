@@ -1,0 +1,4 @@
+# Tudo que é essencial e usado globalmente
+# Guards de rotas
+# Interceptadores HTTP
+# Serviços de autenticação, API, etc.
