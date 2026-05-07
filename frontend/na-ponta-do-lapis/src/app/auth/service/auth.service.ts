@@ -5,17 +5,18 @@ import { LoginRequest } from '../../model/ILoginRequest';
 import { Token } from '../../model/IToken';
 
 
-const BASE_URL = "http://localhost:8080/auth"
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
 
+  private BASE_URL:string = "http://localhost:8080/auth"
+
   constructor(private http:HttpClient){}
 
   public login(loginRequest:LoginRequest): Observable<Token>{
-    return this.http.post<Token>(`${BASE_URL}/login`, loginRequest)
+    return this.http.post<Token>(`${this.BASE_URL}/login`, loginRequest)
   }
 
 }

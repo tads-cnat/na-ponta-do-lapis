@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { Conta, EstadoTransacao, ITransacoes } from '../../model/ITransacoes';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { TransacoesService } from './service/transacoes.service';
 
 @Component({
   selector: 'app-transacoes',
@@ -12,36 +13,56 @@ import { FormsModule } from '@angular/forms';
 })
 export class TransacoesComponent {
    exibirDialog: boolean = false;
+    transacoesDados: any[] = [];
+   constructor(private transacoesService:TransacoesService, private cdr: ChangeDetectorRef){
+    
+   }
+
+   ngOnInit():void {
+    this.listarTransacoes()
+   }
+
+   public listarTransacoes():any {
+    this.transacoesService.listarTransacoes().subscribe({
+      next: (res:any) => {
+        this.transacoesDados = res
+        //serve para atualizar a pagina após receber a lista de transacoes
+        this.cdr.detectChanges()
+      },
+      error: (erro:Error) => {
+        console.log(erro)
+      }
+    })
+   }
+
+   excluir(id: number):void {
+    this.transacoesService.deletarTransacaoPorId(id).subscribe({
+      next: (res:any) => {
+        console.log(res)
+        this.listarTransacoes()
+      },
+      error: (res:Error) => {
+        console.error("Erro ao deletar Transação", res)
+      }
+    })
+  }
+   
   
  
   novaTransacao: ITransacoes = this.resetForm();
 
   
   opcoesConta: { label: string, value: Conta }[] = [
-    { label: 'Nubank', value: 'Nubank' },
-    { label: 'Santander', value: 'Santander' },
-    { label: 'Itaú', value: 'Itau' },
-    { label: 'Caixa', value: 'Caixa' }
   ];
 
   opcoesEstado: { label: string, value: EstadoTransacao }[] = [
-    { label: 'Pendente', value: 'PENDENTE' },
-    { label: 'Concluído', value: 'CONCLUIDO' },
-    { label: 'Cancelado', value: 'CANCELADO' }
   ];
 
   tiposTransacao = [
-    { label: 'Receita', value: 'RECEITA' },
-    { label: 'Despesa', value: 'DESPESA' }
   ];
 
-  transacoes: ITransacoes[] = [
-    { id: 3, descricao: 'Supermercado Extra', categoria: 'Alimentação', estado: 'CONCLUIDO', tipoTransacao: 'DESPESA', dataHora: new Date(), conta: 'Santander', valor: 450.50 },
-    { id: 4, descricao: 'Venda de Teclado', categoria: 'Vendas', estado: 'CONCLUIDO', tipoTransacao: 'RECEITA', dataHora: new Date(), conta: 'Santander', valor: 200.00 },
-    { id: 5, descricao: 'Assinatura Netflix', categoria: 'Lazer', estado: 'PENDENTE', tipoTransacao: 'DESPESA', dataHora: new Date(), conta: 'Santander', valor: 55.90 },
-    { id: 6, descricao: 'Bônus Mensal', categoria: 'Trabalho', estado: 'CONCLUIDO', tipoTransacao: 'RECEITA', dataHora: new Date(), conta: 'Santander', valor: 1200.00 },
-    { id: 7, descricao: 'Academia Mensal', categoria: 'Saúde', estado: 'PENDENTE', tipoTransacao: 'DESPESA', dataHora: new Date(), conta: 'Santander', valor: 110.00 }
-  ];
+
+
 
   resetForm(): ITransacoes {
     return {
@@ -62,16 +83,9 @@ export class TransacoesComponent {
   }
 
   salvar() {
-    const novoId = this.transacoes.length > 0 ? Math.max(...this.transacoes.map(t => t.id)) + 1 : 1;
-    const transacaoParaAdicionar = { ...this.novaTransacao, id: novoId };
-    
-    this.transacoes = [...this.transacoes, transacaoParaAdicionar];
-    this.exibirDialog = false;
   }
 
-  excluir(id: number) {
-    this.transacoes = this.transacoes.filter(t => t.id !== id);
-  }
+  
 
   getSeverity(status: string) {
     return status === 'RECEITA' ? 'success' : 'danger';

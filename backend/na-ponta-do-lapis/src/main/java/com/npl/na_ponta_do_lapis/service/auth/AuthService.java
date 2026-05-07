@@ -8,7 +8,6 @@ import jakarta.servlet.http.HttpServletResponse;
 
 public interface AuthService {
 
-    void criarContaAdmin();
 
     boolean hasUserWithEmail(String email);
 

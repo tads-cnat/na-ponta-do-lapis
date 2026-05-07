@@ -22,24 +22,24 @@ public class AdminServiceImpl implements AdminService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    @PostConstruct
-    public void criarContaAdmin(){
-        Optional<Usuario> admin = usuarioRepository.findByEmail("admin@test.com");
-        if (admin.isEmpty()){
-            Usuario usuario = new Usuario();
-            usuario.setNome("Admin_Site");
-            usuario.setPapel(Papel.ADMIN_SITE);
-            usuario.setUsername("admin");
-            usuario.setEmail("admin@test.com");
-            usuario.setFotoPerfil(null);
-            usuario.setFamilia(null);
-            usuario.setSenha(passwordEncoder.encode("admin123"));
-            usuarioRepository.save(usuario);
-            System.out.println("Conta de Admin criada com sucesso!");
-        } else {
-            System.out.println("Já existe um Admin!");
-        }
-    }
+//    @PostConstruct
+//    public void criarContaAdmin(){
+//        Optional<Usuario> admin = usuarioRepository.findByEmail("admin@test.com");
+//        if (admin.isEmpty()){
+//            Usuario usuario = new Usuario();
+//            usuario.setNome("Admin_Site");
+//            usuario.setPapel(Papel.ADMIN_SITE);
+//            usuario.setUsername("admin");
+//            usuario.setEmail("admin@test.com");
+//            usuario.setFotoPerfil(null);
+//            usuario.setFamilia(null);
+//            usuario.setSenha(passwordEncoder.encode("admin123"));
+//            usuarioRepository.save(usuario);
+//            System.out.println("Conta de Admin criada com sucesso!");
+//        } else {
+//            System.out.println("Já existe um Admin!");
+//        }
+//    }
 
 
     @Override

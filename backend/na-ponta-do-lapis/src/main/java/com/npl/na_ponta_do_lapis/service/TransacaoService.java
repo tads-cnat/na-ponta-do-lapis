@@ -3,6 +3,7 @@ package com.npl.na_ponta_do_lapis.service;
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
 import com.npl.na_ponta_do_lapis.entity.Transacao;
+import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
@@ -11,6 +12,7 @@ import com.npl.na_ponta_do_lapis.web.exception.TransacaoNaoExisteException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import static com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter.getEmailUsuarioLogado;
@@ -18,19 +20,29 @@ import static com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter.getEmailUsuar
 @Service
 public class TransacaoService {
     private final TransacaoRepository transacaoRepository;
+    private final UsuarioService usuarioService;
 
     private TipoCategoraService tipoCategoriaService;
 
     private ContaFinanceiraService contaFinanceiraService;
 
-    public TransacaoService(TransacaoRepository transacaoRepository, TipoCategoraService tipoCategoriaService, ContaFinanceiraService contaFinanceiraService) {
+    public TransacaoService(TransacaoRepository transacaoRepository, TipoCategoraService tipoCategoriaService, ContaFinanceiraService contaFinanceiraService, UsuarioService usuarioService) {
         this.transacaoRepository = transacaoRepository;
         this.contaFinanceiraService = contaFinanceiraService;
         this.tipoCategoriaService = tipoCategoriaService;
+        this.usuarioService = usuarioService;
     }
 
     @Transactional
-    public Transacao criarTransacao(TransacaoRequestDTO transacao) {
+    public Transacao criarTransacao(TransacaoRequestDTO transacao) throws AccessDeniedException {
+         ContaFinanceira conta = contaFinanceiraService.buscarContaPorIdObject(transacao.idContaFinanceira());
+         String email = getEmailUsuarioLogado();
+
+        if (!conta.getUsuario().getEmail().equals(email)){
+            throw  new AccessDeniedException("Você não tem permissão para criar uma transação nessa conta financeira.");
+        }
+
+
         Transacao novaTrasacao = new Transacao();
         novaTrasacao.setDescricao(transacao.descricao());
         novaTrasacao.setValor(transacao.valor());
@@ -39,7 +51,6 @@ public class TransacaoService {
         novaTrasacao.setEstado(EstadoTransacao.PENDENTE);
 
         TipoCategoria categoria = tipoCategoriaService.buscarPorId(transacao.idCategoria());
-        ContaFinanceira conta = contaFinanceiraService.buscarContaPorIdObject(transacao.idContaFinanceira());
 
         novaTrasacao.setCategoria(categoria);
         // Associa a transação à conta financeira específica
@@ -56,7 +67,7 @@ public class TransacaoService {
     }
 
     public List<Transacao> listarTransacoesUsuarioNaSessao() {
-        System.out.println(getEmailUsuarioLogado());
+        System.out.println("Usuário na sessão"+getEmailUsuarioLogado());
         return transacaoRepository.buscarTransacoesUsuarioLogado(getEmailUsuarioLogado());
     }
 

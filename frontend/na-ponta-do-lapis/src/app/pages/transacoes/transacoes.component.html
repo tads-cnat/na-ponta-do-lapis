@@ -21,7 +21,7 @@
                     </div>
                 </div>
 
-                <p-table [value]="transacoes" [paginator]="true" [rows]="5" class="w-400">
+                <p-table [value]="transacoesDados" [paginator]="true" [rows]="5" class="w-400">
                     <ng-template pTemplate="header">
                         <tr>
                             <th class="bg-[#F8F8FC]! text-slate-700!">Descrição</th>
@@ -36,12 +36,12 @@
                     </ng-template>
                     <ng-template pTemplate="body" let-t>
                         <tr>
-                            <td>{{ t.descricao | json }}</td>
-                            <td>{{ t.categoria }}</td>
-                            <td>{{ t.conta }}</td>
+                            <td>{{ t.descricao }}</td>
+                            <td>{{ t.categoria.nome }}</td>
+                            <td>{{ t.conta.nome }}</td>
                             <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
                             <td>
-                                <p-tag [value]="t.tipoTransacao" [severity]="getSeverity(t.tipoTransacao)"></p-tag>
+                                <p-tag [value]="t.tipo" [severity]="getSeverity(t.tipo)"></p-tag>
                             </td>
                             <td>{{ t.estado }}</td>
                             <td>{{ t.valor | currency: 'BRL'}}</td>
@@ -58,7 +58,7 @@
 
     </div>
 
-<p-dialog 
+<!-- <p-dialog 
     header="Nova Movimentação" 
     [(visible)]="exibirDialog" 
     [modal]="true" 
@@ -107,4 +107,4 @@
         <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary" (onClick)="exibirDialog = false"></p-button>
         <p-button label="Salvar" icon="pi pi-check" severity="success" (onClick)="salvar()"></p-button>
     </ng-template>
-</p-dialog>
+</p-dialog> -->

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class TransacaoController {
     @Operation(summary = "Criar Transacao")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @PostMapping
-    public ResponseEntity<TransacoesResponseDTO> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) {
+    public ResponseEntity<TransacoesResponseDTO> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) throws AccessDeniedException {
         Transacao novaTransacao = transacaoService.criarTransacao(transacao);
         TransacoesResponseDTO responseDTO = new TransacoesResponseDTO(novaTransacao);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);

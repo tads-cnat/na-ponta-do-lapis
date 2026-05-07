@@ -44,10 +44,7 @@ public class AuthServiceImpl implements AuthService{
 
 
 
-    @Override
-    public void criarContaAdmin() {
 
-    }
 
     @Override
     public boolean hasUserWithEmail(String email) {
