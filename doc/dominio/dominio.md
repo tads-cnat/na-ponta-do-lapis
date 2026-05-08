@@ -13,4 +13,4 @@
 
 ## 1. Diagrama das Classes Conceituais do Domínio
 
-![Diagrama Modelo de Domínio](../dominio/img/Diagrama%20de%20Domínio%20NPL.png)
+![Diagrama Modelo de Domínio](../dominio/img/diagrama_dominio.png)

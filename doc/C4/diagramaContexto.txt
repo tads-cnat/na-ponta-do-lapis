@@ -1,0 +1,23 @@
+@startuml
+!theme mimeograph
+
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_LANDSCAPE()
+
+title Diagrama de Contexto - Na Ponta do Lápis - Eduardo Medeiros, Pedro Ricardo e Lucas Henrique
+
+Person(cliente, "Cliente", "Pessoa que utiliza o sistema")
+Person(adminSite, "Administrador do site", "Pessoa que administra o sistema")
+Person(adminFamilia, "Admnistrador da família", "Mesmas atribuições do cliente podendo visualizar ações da família")
+
+
+System(system, "Na Ponta do Lápis", "Permite que os clientes gerenciem contas e transações bancárias, administrem e participem de uma família, criem metas e organizem posts sobre dicas financeiras") 
+
+System_Ext(api_awesome, "AwesomeAPI", "API externa para retornar cotações de diversas moedas")
+
+Rel(cliente, system, "Gerencia contas e transações bancárias e estabelece metas financeiras")
+Rel(adminSite, system, "Gerencia ações restritas do sistema")
+Rel(adminFamilia, system, "Além das funções comuns ao cliente, também administra uma família em conjunto com outros clientes")
+Rel(system, api_awesome, "Integração com a API externa da Awesome")
+@enduml

@@ -1,0 +1,38 @@
+{
+	"name": "Java, Angular & PostgreSQL",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"features": {
+		"ghcr.io/roul/devcontainer-features/mise-node:1": {
+			"version": "24"
+		}
+	},
+
+	"forwardPorts": [8080, 4200, 5432],
+
+	"postCreateCommand": "npm install -g @angular/cli@21",
+
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"java.configuration.updateBuildConfiguration": "automatic"
+			},
+			"extensions": [
+				// Extensões de Java e Spring
+				"vscjava.vscode-java-pack",
+				"vmware.vscode-boot-dev-pack",
+				
+				// Extensões de Angular
+				"Angular.ng-template",
+
+				// Cliente de Banco de Dados
+				"mtxr.sqltools",
+				"mtxr.sqltools-driver-pg"
+			]
+		}
+	}
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}

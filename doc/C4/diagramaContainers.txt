@@ -1,0 +1,28 @@
+@startuml
+!theme mimeograph
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+LAYOUT_LANDSCAPE()
+
+title Diagrama de Containers Lucas Henrique, Pedro Ricardo, Eduardo Medeiros
+
+Person(user, "Cliente", "Cliente do sistema que interage via browser")
+Person(admin_site, "Admin Site", "Administrador que gerencia o sistema quando nescessario por ex: publica posts")
+Person(Admin_familia, "Admin Familia", "Administrador da familia que visualiza as transações dos membros da familia")
+
+
+System_Boundary(system, "Sistema de Gerenciamento Financeiro") {
+  Container(frontend, "Aplicação Frontend", "Angular 21; Nginx 1.28", "interface do usuário para realizar operações ex:cadastro de transação")
+  Container(backend, "Aplicação Backend", "Spring boot 3.5; Apache tomcat 11; Java 21", "API que fornece os serviços para autenticação de Usuário, cadastro de transação, criação de contas, metas, familia etc.")
+  ContainerDb(database, "Banco de Dados", "PostgreSQL 17", "Armazena dados dos usuários")
+}
+System_Ext(api_externa, "AwesomeAPI ", "Api para visualizar cotação de moedas em tempo real")
+
+
+Rel(user, frontend, "Acessa o sistema de gestão financeira")
+Rel(admin_site, frontend, "Acessa o sistema de gestão financeira")
+Rel(Admin_familia, frontend, "Acessa o sistema de gestão financeira")
+Rel(frontend, backend, "Chamada para a API (JSON/HTTP)")
+Rel(backend, database, "Acessa e escreve informações no banco")
+Rel(backend, api_externa, "Acessa cotações de moedas")
+@enduml

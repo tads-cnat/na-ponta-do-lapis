@@ -11,6 +11,8 @@ Nosso sistema web cria um ambiente digital acolhedor e interativo voltado para j
 3. Lucas Medeiros
 4. Pedro Gomes
 5. Wagner Souza
+6. Erick Carlos
+7. Vinicius Vasconcelos
 
 # Horário de Reuniões
 
@@ -22,6 +24,6 @@ Nosso sistema web cria um ambiente digital acolhedor e interativo voltado para j
 
 [Link para os documentos do projeto](doc/documentacao.md)
 
-# Manual da Desenvolvedor
+# Manual do Desenvolvedor
 
 [Orientações para os desenvolvedores do projeto](doc/guia-ds/guia.md)

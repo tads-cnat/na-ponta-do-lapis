@@ -1,0 +1,136 @@
+package com.npl.na_ponta_do_lapis.service;
+
+import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
+import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
+import com.npl.na_ponta_do_lapis.entity.Transacao;
+import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
+import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
+import com.npl.na_ponta_do_lapis.web.exception.TransacaoNaoExisteException;
+import jakarta.transaction.Transactional;
+import org.springframework.stereotype.Service;
+
+import java.nio.file.AccessDeniedException;
+import java.util.List;
+
+import static com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter.getEmailUsuarioLogado;
+
+@Service
+public class TransacaoService {
+    private final TransacaoRepository transacaoRepository;
+    private final UsuarioService usuarioService;
+
+    private TipoCategoraService tipoCategoriaService;
+
+    private ContaFinanceiraService contaFinanceiraService;
+
+    public TransacaoService(TransacaoRepository transacaoRepository, TipoCategoraService tipoCategoriaService, ContaFinanceiraService contaFinanceiraService, UsuarioService usuarioService) {
+        this.transacaoRepository = transacaoRepository;
+        this.contaFinanceiraService = contaFinanceiraService;
+        this.tipoCategoriaService = tipoCategoriaService;
+        this.usuarioService = usuarioService;
+    }
+
+    @Transactional
+    public Transacao criarTransacao(TransacaoRequestDTO transacao) throws AccessDeniedException {
+         ContaFinanceira conta = contaFinanceiraService.buscarContaPorIdObject(transacao.idContaFinanceira());
+         String email = getEmailUsuarioLogado();
+
+        if (!conta.getUsuario().getEmail().equals(email)){
+            throw  new AccessDeniedException("Você não tem permissão para criar uma transação nessa conta financeira.");
+        }
+
+
+        Transacao novaTrasacao = new Transacao();
+        novaTrasacao.setDescricao(transacao.descricao());
+        novaTrasacao.setValor(transacao.valor());
+        novaTrasacao.setTipo(transacao.tipo());
+        novaTrasacao.setDataHora(transacao.dataHora());
+        novaTrasacao.setEstado(EstadoTransacao.PENDENTE);
+
+        TipoCategoria categoria = tipoCategoriaService.buscarPorId(transacao.idCategoria());
+
+        novaTrasacao.setCategoria(categoria);
+        // Associa a transação à conta financeira específica
+        novaTrasacao.setContaFinanceira(conta);
+        // VERIFICAÇÃO DE TIPO: O sistema precisa saber se tira ou coloca dinheiro
+        if (novaTrasacao.getTipo() == TipoTransacao.DESPESA) {
+            conta.setSaldo(conta.getSaldo().subtract(novaTrasacao.getValor()));
+        } else {
+            // Se for uma RECEITA, apenas soma o valor ao saldo atual da conta.
+            conta.setSaldo(conta.getSaldo().add(novaTrasacao.getValor()));
+        }
+        return transacaoRepository.save(novaTrasacao);
+
+    }
+
+    public List<Transacao> listarTransacoesUsuarioNaSessao() {
+        System.out.println("Usuário na sessão"+getEmailUsuarioLogado());
+        return transacaoRepository.buscarTransacoesUsuarioLogado(getEmailUsuarioLogado());
+    }
+
+    public List<Transacao> listarTransacoes() {
+        return transacaoRepository.findAll();
+    }
+
+    public Transacao buscarPorId(Long id) {
+        return transacaoRepository.findById(id)
+                .orElseThrow(() -> new TransacaoNaoExisteException("Transação com ID:"+ id + " não encontrada"));
+    }
+
+    @Transactional
+    public Transacao atualizarTransacao(Long id, TransacaoRequestDTO dto) {
+        // Busca a transação original no banco antes de qualquer mudança.
+        Transacao transacaoExistente = buscarPorId(id);
+        // Identifica a conta onde a transação ocorreu originalmente para realizar o estorno.
+        ContaFinanceira contaFinanceiraAntiga = transacaoExistente.getContaFinanceira();
+
+        // Antes de editar, precisa "anular" o impacto que essa transação teve no saldo.
+        // Se era uma saída (DESPESA), devolvemos o valor ao saldo.
+        // Se era uma entrada (RECEITA), retiramos o valor do saldo.
+        if (transacaoExistente.getTipo() == TipoTransacao.DESPESA){
+            contaFinanceiraAntiga.setSaldo(contaFinanceiraAntiga.getSaldo().add(transacaoExistente.getValor()));
+        } else {
+            contaFinanceiraAntiga.setSaldo(contaFinanceiraAntiga.getSaldo().subtract(transacaoExistente.getValor()));
+        }
+
+        // Seta os novos dados do DTO na entidade
+        transacaoExistente.setDescricao(dto.descricao());
+        transacaoExistente.setValor(dto.valor());
+        transacaoExistente.setEstado(dto.estado());
+        transacaoExistente.setTipo(dto.tipo());
+        transacaoExistente.setDataHora(dto.dataHora());
+
+        // Busca a nova Categoria e a nova Conta Financeira (caso o usuario tenha trocado a conta da transação).
+        transacaoExistente.setCategoria(tipoCategoriaService.buscarPorId(dto.idCategoria()));
+        ContaFinanceira novaContaFinanceira = contaFinanceiraService.buscarContaPorIdObject(dto.idContaFinanceira());
+
+
+        // Associa a transação à conta financeira específica
+        transacaoExistente.setContaFinanceira(novaContaFinanceira);
+        // VERIFICAÇÃO DE TIPO: O sistema precisa saber se tira ou coloca dinheiro
+        if (transacaoExistente.getTipo() == TipoTransacao.DESPESA) {
+            novaContaFinanceira.setSaldo(novaContaFinanceira.getSaldo().subtract(transacaoExistente.getValor()));
+        } else {
+            novaContaFinanceira.setSaldo(novaContaFinanceira.getSaldo().add(transacaoExistente.getValor()));
+        }
+
+        return transacaoRepository.save(transacaoExistente);
+    }
+
+    public void removerTransacao(Long id) {
+        Transacao transacao = buscarPorId(id);
+        ContaFinanceira conta = transacao.getContaFinanceira();
+
+        if (transacao.getTipo() == TipoTransacao.DESPESA){
+            conta.setSaldo(conta.getSaldo().add(transacao.getValor()));
+        } else {
+            conta.setSaldo(conta.getSaldo().subtract(transacao.getValor()));
+        }
+
+        transacaoRepository.delete(transacao);
+    }
+
+}
