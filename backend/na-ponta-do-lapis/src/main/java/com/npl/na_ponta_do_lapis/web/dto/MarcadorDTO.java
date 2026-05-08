@@ -10,6 +10,7 @@ public record MarcadorDTO(
 
         @NotBlank(message = "A cor é obrigatória.")
         @Pattern(regexp = "^#[0-9-A-Fa-f]{6}$", message = "A cor deve ser um HEX válido ex: #FF0000.")
+        @Size(max = 7)
         String cor
 ) {
 
