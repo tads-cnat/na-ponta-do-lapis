@@ -13,9 +13,13 @@ public class Marcador {
     private Long id;
 
     @Column(name = "nome", nullable = false, length = 70)
+    @NotNull(message = "Nome não pode ser nulo")
+    @NotBlank(message = "O campo não pode estar vazio")
     private String nome;
 
     @Column(name = "cor", nullable = false, length = 7)
+    @NotNull(message = "Cor não pode ser nulo")
+    @NotBlank(message = "O campo não pode estar vazio")
     private String cor;
 
     @ManyToOne(fetch = FetchType.LAZY)

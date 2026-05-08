@@ -36,21 +36,25 @@ public class MarcadorService {
     }
 
     @Transactional
-    public MarcadorResponseDTO editarMarcador(Long id, MarcadorDTO dto) {
+    public MarcadorResponseDTO editarMarcador(Long id, MarcadorDTO dto, Usuario usuario) {
         Marcador marcador = marcadorRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Marcador não encontrado."
                 ));
 
-        if (dto.nome() != null) {
-            if (dto.nome().isBlank())
-                throw new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "Nome não pode ser vazio."
-                );
-            marcador.setNome(dto.nome());
+        // Fix IDOR — verifica se o marcador pertence ao usuário
+        if (!marcador.getUsuario().getId().equals(usuario.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão.");
         }
 
+        if (dto.nome() != null) {
+            if (dto.nome().isBlank())
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nome não pode ser vazio.");
+            marcador.setNome(dto.nome());
+        }
         if (dto.cor() != null) {
+            if (dto.cor().isBlank())
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cor não pode ser vazia.")
             marcador.setCor(dto.cor());
         }
 
@@ -59,11 +63,17 @@ public class MarcadorService {
     }
 
     @Transactional
-    public void excluirMarcador(Long id) {
+    public void excluirMarcador(Long id, Usuario usuario) {
         Marcador marcador = marcadorRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Marcador não encontrado."
                 ));
+
+        // Fix IDOR — verifica se o marcador pertence ao usuário
+        if (!marcador.getUsuario().getId().equals(usuario.getId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Você não tem permissão.");
+        }
+
         marcadorRepository.delete(marcador);
     }
 }
