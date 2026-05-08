@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { RouterLink } from '@angular/router'
+import { RouterLink, RouterLinkActive } from '@angular/router'
 import { IconComponent } from '../../shared/components/icon/icon.component';
 
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, IconComponent],
+  imports: [RouterLink, IconComponent, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
