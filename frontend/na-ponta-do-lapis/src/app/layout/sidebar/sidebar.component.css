@@ -1,0 +1,15 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+* {
+  font-family: 'Poppins', sans-serif;
+}
+.sidebar { 
+    width: 45px;
+    transition: width 0.3s ease, padding 0.3s ease;
+    overflow: hidden;
+ }      
+.sidebar.aberta { 
+    width: 210px;
+    padding: 14px 36px ;
+} 
+

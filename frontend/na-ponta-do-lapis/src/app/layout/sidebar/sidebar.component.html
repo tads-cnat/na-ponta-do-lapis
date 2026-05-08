@@ -1,0 +1,14 @@
+<aside class="sidebar flex flex-col min-h-screen bg-gray-800 p-3.5" [class.aberta]="aberto">
+    <button (click)="toggleSidebar()">☰</button>
+    @for (item of items; track item.label){
+        <div class="flex">
+            <a [routerLink]="item.routerLink" class="flex text-white py-3.5 gap-2.5">
+                <app-icon [name]="item.icon"  class=" w-5"/>
+                <span class="">
+                    {{ item.label }}
+                </span>
+            </a>
+
+        </div>
+    }
+</aside>
