@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { RouterLink } from '@angular/router'
+import { RouterLink, RouterLinkActive } from '@angular/router'
 import { IconComponent } from '../../shared/components/icon/icon.component';
 
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, IconComponent],
+  imports: [RouterLink, IconComponent, RouterLinkActive],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
@@ -17,11 +17,11 @@ export class SidebarComponent implements OnInit {
   ngOnInit(): void {
     this.items = [
       {label: 'Transações', icon: 'transacao', routerLink:'/app/transacoes'},
-      {label: 'Contas', icon: 'conta', routerLink:''},
-      {label: 'Metas', icon: 'meta', routerLink:''},
-      {label: 'Familia', icon: 'familia', routerLink:''},
-      {label: 'Dashboard', icon:'dashboard', routerLink:''},
-      {label: 'Ajustes', icon:'ajuste', routerLink:''},
+      {label: 'Contas', icon: 'conta', routerLink:'/app/contas'},
+      {label: 'Metas', icon: 'meta', routerLink:'/app/metas'},
+      {label: 'Familia', icon: 'familia', routerLink:'/app/familia'},
+      {label: 'Dashboard', icon:'dashboard', routerLink:'/app/dashboard'},
+      {label: 'Ajustes', icon:'ajuste', routerLink:'/app/ajustes'},
     ]
   }
 
