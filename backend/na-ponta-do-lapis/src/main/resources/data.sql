@@ -18,37 +18,28 @@ VALUES
     ( 5,'test', 'test@gmail.com', 'test', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 'USUARIO');
 
 -- SQL Categoria
-INSERT INTO tipo_categoria (nome, usuario_id)
+INSERT INTO tipo_categoria (nome)
 VALUES
-    -- Categorias do Lucas (ID 1)
-    ('Supermercado', 1),
-    ('Restaurantes', 1),
-    ('Academia', 1),
-    ('Assinaturas Streaming', 1),
-
-    -- Categorias do Bruno (ID 2)
-    ('Combustível', 2),
-    ('Manutenção Carro', 2),
-    ('Estacionamento', 2),
-    ('Pedágio', 2),
-
-    -- Categorias do Eduardo (ID 3)
-    ('Cinema', 3),
-    ('Jogos Online', 3),
-    ('Viagens', 3),
-    ('Hospedagem', 3),
-
-    -- Categorias do Pedro (ID 4)
-    ('Farmácia', 4),
-    ('Consultas Médicas', 4),
-    ('Exames', 4),
-    ('Suplementos', 4),
-
-    -- Categorias do Test (ID 5)
-    ('Cursos Online', 5),
-    ('Livros', 5),
-    ('Material Escolar', 5),
-    ('Mensalidade Faculdade', 5);
+    ('Supermercado' ),
+    ('Restaurantes'),
+    ('Academia'),
+    ('Assinaturas Streaming'),
+    ('Combustível'),
+    ('Manutenção Carro'),
+    ('Estacionamento'),
+    ('Pedágio'),
+    ('Cinema'),
+    ('Jogos Online'),
+    ('Viagens'),
+    ('Hospedagem'),
+    ('Farmácia'),
+    ('Consultas Médicas'),
+    ('Exames'),
+    ('Suplementos'),
+    ('Cursos Online'),
+    ('Livros'),
+    ('Material Escolar'),
+    ('Mensalidade Faculdade');
 
 -- SQL Conta Financeira
 INSERT INTO conta_financeira (id, nome, saldo, usuario_id)
