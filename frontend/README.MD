@@ -1,4 +1,4 @@
-# Como rodar a aplicação Frontend Angular
+# Como rodar a aplicação Frontend Angular 
 
 1. Entrar na pasta do frontend
 ```bash
