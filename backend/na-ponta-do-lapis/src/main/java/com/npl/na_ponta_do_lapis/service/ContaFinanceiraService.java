@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.service;
 
 import java.util.List;
 
+import com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter;
 import org.springframework.stereotype.Service;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
@@ -38,6 +39,11 @@ public class ContaFinanceiraService {
         return contaFinanceiraRepository.findAll().stream()
         .map(contaFinanceira -> new ContaFinanceiraResponseDTO(contaFinanceira))
         .toList();
+    }
+
+    public List<ContaFinanceira> listarContaFinanceiraUsuarioLogado(){
+        String email = JwtAuthFilter.getEmailUsuarioLogado();
+        return contaFinanceiraRepository.buscarContaFinanceiraUsuarioLogado(email);
     }
 
     public ContaFinanceiraResponseDTO buscarContaPorId(Long id){

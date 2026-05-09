@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { StorageService } from '../../service/storage.service';
-import { Token } from '../../../model/IToken';
+import { Token } from '../../../model/IToken.models';
 
 @Component({
   selector: 'app-login',
@@ -29,7 +29,7 @@ export class LoginComponent {
         StorageService.salvarToken(res.token)
         const usuario = StorageService.getUsuarioDecodificado()
         console.log(usuario?.sub, usuario?.email)
-        this.router.navigateByUrl("/transacoes")
+        this.router.navigateByUrl("app/transacoes")
       },
       error: (erro:Error) => {
         console.error(erro)

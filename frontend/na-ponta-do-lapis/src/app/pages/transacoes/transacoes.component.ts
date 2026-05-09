@@ -1,25 +1,39 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
-import { Conta, EstadoTransacao, ITransacoes } from '../../model/ITransacoes';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
+import { Categoria, ITransacoes, Tipo } from '../../model/ITransacoes.model';
+import { ContasRequest } from '../../model/IContas.models';
+import { Marcador } from '../../model/IMarcador.models';
 
 @Component({
   selector: 'app-transacoes',
-  imports: [PrimeNGModuleModule, CommonModule, FormsModule],
+  imports: [PrimeNGModuleModule, CommonModule, ReactiveFormsModule],
   templateUrl: './transacoes.component.html',
   styleUrl: './transacoes.component.css',
 })
 export class TransacoesComponent {
-   exibirDialog: boolean = false;
+    exibirDialog: boolean = false;
     transacoesDados: any[] = [];
-   constructor(private transacoesService:TransacoesService, private cdr: ChangeDetectorRef){
-    
-   }
+
+   formTransacao:FormGroup;
+   constructor(private fb:FormBuilder ,private transacoesService:TransacoesService, private cdr: ChangeDetectorRef){
+    this.formTransacao = this.fb.group({
+      descricao: ['', [Validators.required, Validators.minLength(3)]],
+      categoria: ['', [Validators.required]],
+      valor: [0, [Validators.required, Validators.min(0.01)]],
+      conta: ['', [Validators.required]],
+      estado: ['', [Validators.required]],
+      tipo: ['', [Validators.required]]
+    })
+  }
 
    ngOnInit():void {
     this.listarTransacoes()
+    this.listarContas()
+    this.listarCategorias()
+    this.listarMarcadores()
    }
 
    public listarTransacoes():any {
@@ -31,11 +45,12 @@ export class TransacoesComponent {
       },
       error: (erro:Error) => {
         console.log(erro)
+        alert("Erro ao listar TRANSACOES(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
       }
     })
    }
 
-   excluir(id: number):void {
+   public excluir(id: number):void {
     this.transacoesService.deletarTransacaoPorId(id).subscribe({
       next: (res:any) => {
         console.log(res)
@@ -43,37 +58,74 @@ export class TransacoesComponent {
       },
       error: (res:Error) => {
         console.error("Erro ao deletar Transação", res)
+        alert("Erro ao EXCLUIR TRANSACAO(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
       }
     })
   }
    
   
- 
   novaTransacao: ITransacoes = this.resetForm();
+  opcoesConta:ContasRequest[] = [];
 
-  
-  opcoesConta: { label: string, value: Conta }[] = [
-  ];
+  public listarContas(){
+      this.transacoesService.listarContasUsuarioLogado().subscribe({
+      next: (res:ContasRequest[]) => {
+        this.opcoesConta = res
+      },
+      error: (error:Error) => {
+        console.error("Erro ao listar Contas Financeiras", error)
+        alert("Erro ao listar TRANSACOES(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+      }
+    })
+  }
 
-  opcoesEstado: { label: string, value: EstadoTransacao }[] = [
-  ];
+  opcoesCategoria:Categoria[] = []
+  public listarCategorias(){
+    this.transacoesService.listarCategorias().subscribe({
+      next: (res:Categoria[]) => {
+        this.opcoesCategoria = res
+      },
+      error: (error:Error) =>{
+        console.error("Erro ao listar Categorias", error)
+        alert("Erro ao listar categorias(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+      }
+    })
+  }
 
-  tiposTransacao = [
-  ];
+  opcoesMarcador:Marcador[] = []
+  public listarMarcadores(){
+    this.transacoesService.listarMarcadores().subscribe({
+      next: (res:Marcador[]) => {
+        this.opcoesMarcador = res
+        console.log(res)
+      },
+      error: (error:Error) => {
+        console.error("Erro a listar Marcadores", error)
+        alert("Erro ao listar marcadores(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+      }
+    })
+  }
 
-
+  opcoesEstado:any[] = [
+     { label: 'Pendente', value: 'PENDENTE' },
+     { label: 'Realizada', value: 'REALIZADA' }
+  ]
+ opcoesTipo:any[] = [
+    { label: 'Receita', value: 'RECEITA' },
+    { label: 'Despesa', value: 'DESPESA' }
+];
 
 
   resetForm(): ITransacoes {
     return {
       id: 0,
       descricao: '',
-      categoria: '',
-      conta: 'Santander',
-      tipoTransacao: 'RECEITA',
+      categoria: null,
+      conta: null,
+      tipo: null,
       estado: 'PENDENTE',
       valor: 0,
-      dataHora: new Date()
+      dataHora: new Date().toISOString()
     };
   }
 

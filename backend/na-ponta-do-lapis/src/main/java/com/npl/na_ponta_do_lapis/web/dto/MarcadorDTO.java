@@ -1,6 +1,9 @@
 package com.npl.na_ponta_do_lapis.web.dto;
 
 import com.npl.na_ponta_do_lapis.entity.Marcador;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 public record MarcadorDTO(
 

@@ -69,6 +69,15 @@ public class ContaFinanceiraController {
         return ResponseEntity.status(HttpStatus.OK).body(contaService.atualizarConta(id, contaDTO));
     }
 
+    @Operation(summary = "Listar contas do usuário logado")
+    @GetMapping("/me")
+    public ResponseEntity<List<ContaFinanceiraResponseDTO>> minhasContasFinanceiras(){
+        List<ContaFinanceiraResponseDTO> minhasContas = contaService.listarContaFinanceiraUsuarioLogado().stream()
+                .map(c -> new ContaFinanceiraResponseDTO(c))
+                .toList();
+        return ResponseEntity.ok(minhasContas);
+    }
+
     @Operation(summary = "Atualizar parte da conta")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PatchMapping("/{id}")

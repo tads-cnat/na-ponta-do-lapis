@@ -14,11 +14,15 @@ import { DialogModule } from 'primeng/dialog';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { SelectModule } from 'primeng/select';
 import { RadioButtonModule } from 'primeng/radiobutton';
+import { InputGroupModule } from 'primeng/inputgroup';
+import { PopoverModule } from 'primeng/popover';
 
 
 
 @NgModule({
   exports: [
+    InputGroupModule,
+    PopoverModule,
      ButtonModule,
       InputTextModule,
       TableModule,

@@ -36,8 +36,8 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Listar Transacoe do Usuário Logado")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
-    @GetMapping
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @GetMapping("/me")
     public ResponseEntity<List<TransacoesResponseDTO>> listarTransacoesUsuarioLogado() {
         List<Transacao> transacoes = transacaoService.listarTransacoesUsuarioNaSessao();
         List<TransacoesResponseDTO> response = transacoes.stream()
@@ -62,7 +62,7 @@ public class TransacaoController {
     @PutMapping("/{id}")
     public ResponseEntity<TransacoesResponseDTO> atualizarTransacao(
            @PathVariable Long id,
-           @Valid  @RequestBody TransacaoRequestDTO transacao) {
+           @Valid  @RequestBody TransacaoRequestDTO transacao) throws AccessDeniedException {
         Transacao atualizada = transacaoService.atualizarTransacao(id, transacao);
         return ResponseEntity.ok(new TransacoesResponseDTO(atualizada));
     }
@@ -70,7 +70,7 @@ public class TransacaoController {
     @Operation(summary = "Deletar Transacao")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> remover(@PathVariable Long id) {
+    public ResponseEntity<Void> remover(@PathVariable Long id) throws AccessDeniedException {
         transacaoService.removerTransacao(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

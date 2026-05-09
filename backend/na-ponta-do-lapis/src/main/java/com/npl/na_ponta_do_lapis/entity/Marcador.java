@@ -1,11 +1,13 @@
 package com.npl.na_ponta_do_lapis.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 import java.util.Objects;
 
 @Entity
-@Table(name = "marcadores")
+@Table(name = "marcador")
 public class Marcador {
 
     @Id

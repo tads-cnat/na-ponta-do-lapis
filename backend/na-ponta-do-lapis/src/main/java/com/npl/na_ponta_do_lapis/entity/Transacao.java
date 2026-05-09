@@ -41,6 +41,19 @@ public class Transacao {
     @JoinColumn(name = "id_conta_financeira", nullable = false)
     private ContaFinanceira contaFinanceira;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "marcador_id")
+    private Marcador marcador;
+
+
+    public Marcador getMarcador() {
+        return marcador;
+    }
+
+    public void setMarcador(Marcador marcador) {
+        this.marcador = marcador;
+    }
+
     public Transacao() {
     }
 

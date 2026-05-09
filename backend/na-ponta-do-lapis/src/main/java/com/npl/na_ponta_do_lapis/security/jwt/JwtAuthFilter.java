@@ -31,13 +31,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     public static String getEmailUsuarioLogado(){
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        try {
+            var authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        if (principal instanceof UserDetails) {
-            return ((Usuario) principal).getEmail();
-        } else {
-            return principal.toString();
+            if (authentication == null || !authentication.isAuthenticated()) {
+                return null;
+            }
+
+            Object principal = authentication.getPrincipal();
+
+            if (principal instanceof Usuario) {
+                return ((Usuario) principal).getEmail();
+            } else if (principal instanceof UserDetails) {
+                return ((UserDetails) principal).getUsername();
+            } else if (principal != null) {
+                return principal.toString();
+            }
+        } catch (Exception e) {
+            System.err.println("Erro ao extrair email do usuário logado: " + e.getMessage());
         }
+        return null;
     }
 
     private void toAuthentication(HttpServletRequest req, String email) throws ServletException, IOException {

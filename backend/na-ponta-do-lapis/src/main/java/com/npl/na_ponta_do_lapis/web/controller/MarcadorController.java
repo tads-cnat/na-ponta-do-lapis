@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.List;
@@ -20,52 +21,43 @@ import java.util.List;
 public class MarcadorController {
 
     private final MarcadorService marcadorService;
-    private final UsuarioService usuarioService;
 
-    public MarcadorController(MarcadorService marcadorService, UsuarioService usuarioService) {
+    public MarcadorController(MarcadorService marcadorService) {
         this.marcadorService = marcadorService;
-        this.usuarioService = usuarioService;
     }
 
-    @Operation(summary = "Criar marcador")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @Operation(summary = "Criar marcador do usuário Logado")
     @PostMapping
-    private ResponseEntity<MarcadorResponseDTO> criarMarcador(
-            @Valid @RequestBody MarcadorDTO dto,
-            Principal principal) {
-
-        Usuario usuario = usuarioService.buscarUsuarioAutenticado(principal, null);
+    public ResponseEntity<MarcadorResponseDTO> criarMarcador(@Valid @RequestBody MarcadorDTO dto) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(marcadorService.criarMarcador(dto, usuario));
+                .body(marcadorService.criarMarcador(dto));
     }
 
-    @Operation(summary = "Listar marcadores do usuário")
-    @GetMapping
-    private ResponseEntity<List<MarcadorResponseDTO>> listarMarcadores(Principal principal) {
-        Usuario usuario = usuarioService.buscarUsuarioAutenticado(principal, null);
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @Operation(summary = "Listar marcadores do usuário Logado")
+    @GetMapping("/me")
+    public ResponseEntity<List<MarcadorResponseDTO>> listarMarcadores() {
         return ResponseEntity.status(HttpStatus.OK)
-                .body(marcadorService.listarMarcadores(usuario));
+                .body(marcadorService.listarMarcadores());
     }
 
-    @Operation(summary = "Editar marcador")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @Operation(summary = "Editar marcador do usuário Logado")
     @PutMapping("/{id}")
-    private ResponseEntity<MarcadorResponseDTO> editarMarcador(
-            @PathVariable Long id,
-            @Valid @RequestBody MarcadorDTO dto,
-            Principal principal) {
+    public ResponseEntity<MarcadorResponseDTO> editarMarcador(
+            @Valid @RequestBody MarcadorDTO dto,  @PathVariable long id) {
 
-        Usuario usuario = usuarioService.buscarUsuarioAutenticado(principal, null);
         return ResponseEntity.status(HttpStatus.OK)
-                .body(marcadorService.editarMarcador(id, dto, usuario));
+                .body(marcadorService.editarMarcador(id ,dto));
     }
 
-    @Operation(summary = "Excluir marcador")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @Operation(summary = "Excluir marcador do usuário Logado")
     @DeleteMapping("/{id}")
-    private ResponseEntity<Void> excluirMarcador(
-            @PathVariable Long id,
-            Principal principal) {
-
-        Usuario usuario = usuarioService.buscarUsuarioAutenticado(principal, null);
-        marcadorService.excluirMarcador(id, usuario);
+    public ResponseEntity<Void> excluirMarcador(
+            @PathVariable Long id) {
+        marcadorService.excluirMarcador(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

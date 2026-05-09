@@ -27,8 +27,8 @@ public class TipoCategoraService {
 
     public List<CategoriaDTO> listarCategorias() {
         String email = getEmailUsuarioLogado();
-        List<CategoriaDTO> tipoCategoriaUsuarioLogado = tipoCategoriaRepository.buscarTipoCategoriaPorEmail(email).stream()
-                .map(tc -> new CategoriaDTO(tc.getId(), tc.getNome(), tc.getUsuario().getNome()))
+        List<CategoriaDTO> tipoCategoriaUsuarioLogado = tipoCategoriaRepository.findAll().stream()
+                .map(tipoCategoria -> new CategoriaDTO(tipoCategoria.getId(), tipoCategoria.getNome()))
                 .toList();
 
         return tipoCategoriaUsuarioLogado;
@@ -42,9 +42,6 @@ public class TipoCategoraService {
 
     @Transactional
     public TipoCategoria criarCategoria( TipoCategoria categoria){
-        String email = getEmailUsuarioLogado();
-        Usuario usuarioLogado = usuarioService.buscarUsuarioPorEmail(email);
-        categoria.setUsuario(usuarioLogado);
         return tipoCategoriaRepository.save(categoria);
     }
 

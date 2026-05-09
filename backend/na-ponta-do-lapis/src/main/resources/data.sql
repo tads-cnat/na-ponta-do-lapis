@@ -8,47 +8,37 @@ VALUES
 -- SQL Usuario as senhas são 123456
 INSERT INTO usuario (id ,nome, email, username, senha, foto_perfil, familia_id, papel)
 VALUES
-    (1,'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 1, 'ADMIN_SITE'),
+    (1,'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 1, 'USUARIO'),
     (2,'Bruno', 'bruno@gmail.com', 'Brunozz', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 1,'ADMIN_FAMILIA'),
     (3,'Eduardo', 'dudu@gmail.com', 'Dudurant', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 2, 'ADMIN_SITE'),
     ( 4,'Pedro', 'pedro@gmail.com', 'Predo', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 3, 'USUARIO');
 
-INSERT INTO usuario (id,nome, email, username, senha, foto_perfil, papel)
-VALUES
-    ( 5,'test', 'test@gmail.com', 'test', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 'USUARIO');
+INSERT INTO usuario (id, nome, email, username, senha, papel) VALUES
+    ( 5,'ADMIN', 'admin@gmail.com', 'ademirDaSilva', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'USUARIO');
 
 -- SQL Categoria
-INSERT INTO tipo_categoria (nome, usuario_id)
+INSERT INTO tipo_categoria (nome)
 VALUES
-    -- Categorias do Lucas (ID 1)
-    ('Supermercado', 1),
-    ('Restaurantes', 1),
-    ('Academia', 1),
-    ('Assinaturas Streaming', 1),
-
-    -- Categorias do Bruno (ID 2)
-    ('Combustível', 2),
-    ('Manutenção Carro', 2),
-    ('Estacionamento', 2),
-    ('Pedágio', 2),
-
-    -- Categorias do Eduardo (ID 3)
-    ('Cinema', 3),
-    ('Jogos Online', 3),
-    ('Viagens', 3),
-    ('Hospedagem', 3),
-
-    -- Categorias do Pedro (ID 4)
-    ('Farmácia', 4),
-    ('Consultas Médicas', 4),
-    ('Exames', 4),
-    ('Suplementos', 4),
-
-    -- Categorias do Test (ID 5)
-    ('Cursos Online', 5),
-    ('Livros', 5),
-    ('Material Escolar', 5),
-    ('Mensalidade Faculdade', 5);
+    ('Supermercado' ),
+    ('Restaurantes'),
+    ('Academia'),
+    ('Assinaturas Streaming'),
+    ('Combustível'),
+    ('Manutenção Carro'),
+    ('Estacionamento'),
+    ('Pedágio'),
+    ('Cinema'),
+    ('Jogos Online'),
+    ('Viagens'),
+    ('Hospedagem'),
+    ('Farmácia'),
+    ('Consultas Médicas'),
+    ('Exames'),
+    ('Suplementos'),
+    ('Cursos Online'),
+    ('Livros'),
+    ('Material Escolar'),
+    ('Mensalidade Faculdade');
 
 -- SQL Conta Financeira
 INSERT INTO conta_financeira (id, nome, saldo, usuario_id)
@@ -120,6 +110,47 @@ VALUES
 ('Presente Amigo', 60.00, 9, 'REALIZADA', 'DESPESA', '2026-05-05 14:00:00', 4),
 ('Salgado e Refri', 15.00, 2, 'REALIZADA', 'DESPESA', '2026-05-04 16:00:00', 4),
 ('Açaí', 25.00, 2, 'REALIZADA', 'DESPESA', '2026-05-04 15:00:00', 4);
+
+-- Marcadores para o Usuário 1 (Lucas Henrique)
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('Trabalho', '#2196F3', 1),
+                                                 ('Estudos', '#9C27B0', 1),
+                                                 ('Urgente', '#F44336', 1),
+                                                 ('Lazer', '#4CAF50', 1),
+                                                 ('Casa', '#FF9800', 1);
+
+-- Marcadores para o Usuário 2 (Bruno)
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('Investimentos', '#00BCD4', 2),
+                                                 ('Negócios', '#3F51B5', 2),
+                                                 ('Cartão Black', '#000000', 2),
+                                                 ('Manutenção', '#795548', 2),
+                                                 ('Viagens', '#E91E63', 2);
+
+-- Marcadores para o Usuário 3 (Eduardo)
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('Freelance', '#673AB7', 3),
+                                                 ('Streaming', '#E91E63', 3),
+                                                 ('Saúde', '#009688', 3),
+                                                 ('Escritório', '#607D8B', 3),
+                                                 ('Educação', '#CDDC39', 3);
+
+-- Marcadores para o Usuário 4 (Pedro)
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('Faculdade', '#3F51B5', 4),
+                                                 ('Alimentação', '#FF5722', 4),
+                                                 ('Transporte', '#9E9E9E', 4),
+                                                 ('Hobbies', '#FFEB3B', 4),
+                                                 ('Presentes', '#F06292', 4);
+
+-- Marcadores para o Usuário 5 (test/ADMIN)
+-- Nota: Como você inseriu dois usuários com ID 5, este SQL assume o último ID 5 válido.
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('Testes Sistema', '#212121', 5),
+                                                 ('Bug Fix', '#D32F2F', 5),
+                                                 ('Desenvolvimento', '#1976D2', 5),
+                                                 ('Deploy', '#388E3C', 5),
+                                                 ('Documentação', '#FBC02D', 5);
 
 --- SQL Meta
 INSERT INTO tipo_meta(id, nome)

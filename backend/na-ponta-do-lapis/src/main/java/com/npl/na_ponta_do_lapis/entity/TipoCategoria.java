@@ -19,26 +19,13 @@ public class TipoCategoria {
     @NotBlank
     private String nome;
 
-    @ManyToOne
-    @JoinColumn(name = "usuario_id")
-    private Usuario usuario;
-
     @Override
     public String toString() {
         return "TipoCategoria{" +
                 "id=" + id +
-                ", nome='" + nome + '\'' +
-                ", nome='" + usuario + '\'' +
-                '}';
+                ", nome='" + nome +"}";
     }
 
-    public Usuario getUsuario() {
-        return usuario;
-    }
-
-    public void setUsuario(Usuario usuario) {
-        this.usuario = usuario;
-    }
 
     @Override
     public boolean equals(Object o) {

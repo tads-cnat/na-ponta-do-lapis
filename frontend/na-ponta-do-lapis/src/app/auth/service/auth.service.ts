@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoginRequest } from '../../model/ILoginRequest';
-import { Token } from '../../model/IToken';
+import { Token } from '../../model/IToken.models';
 
 
 

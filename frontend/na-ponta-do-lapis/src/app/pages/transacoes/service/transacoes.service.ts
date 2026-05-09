@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import ht from '@angular/common/locales/ht';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { Categoria, ITransacaoRequest, ITransacoes,  } from '../../../model/ITransacoes.model';
 
 @Injectable({
   providedIn: 'root',
@@ -12,10 +13,26 @@ export class TransacoesService {
   constructor(private http:HttpClient){}
 
   public listarTransacoes(): Observable<any> {
-    return this.http.get<any>(`${this.BASE_URL}/transacoes`)
+    return this.http.get<any>(`${this.BASE_URL}/transacoes/me`)
   }
 
   public deletarTransacaoPorId(id:number): Observable<void>{
     return this.http.delete<void>(`${this.BASE_URL}/transacoes/${id}`)
+  }
+
+  public adicionarTransacao(transacao:ITransacaoRequest): Observable<ITransacoes> {
+    return this.http.post<ITransacoes>(`${this.BASE_URL}/transacoes`, transacao)
+  }
+
+  public listarContasUsuarioLogado(): Observable<any>{
+    return this.http.get<any>(`${this.BASE_URL}/contas/me`)
+  }
+
+  public listarCategorias(): Observable<Categoria[]>{
+    return this.http.get<Categoria[]>(`${this.BASE_URL}/categorias`)
+  }
+
+  public listarMarcadores(): Observable<any>{
+    return this.http.get<any>(`${this.BASE_URL}/marcadores/me`)
   }
 }

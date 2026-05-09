@@ -10,6 +10,4 @@ import java.util.List;
 @Repository
 public interface TipoCategoriaRepository extends JpaRepository<TipoCategoria, Long> {
 
-    @Query("SELECT tc FROM TipoCategoria tc WHERE tc.usuario.email = :email")
-    List<TipoCategoria> buscarTipoCategoriaPorEmail(String email);
 }
