@@ -3,7 +3,9 @@ import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
-import { Categoria, ITransacoes } from '../../model/ITransacoes.model';
+import { Categoria, ITransacoes, Tipo } from '../../model/ITransacoes.model';
+import { ContasRequest } from '../../model/IContas.models';
+import { Marcador } from '../../model/IMarcador.models';
 
 @Component({
   selector: 'app-transacoes',
@@ -22,7 +24,8 @@ export class TransacoesComponent {
       categoria: ['', [Validators.required]],
       valor: [0, [Validators.required, Validators.min(0.01)]],
       conta: ['', [Validators.required]],
-      estado: ['', [Validators.required]]
+      estado: ['', [Validators.required]],
+      tipo: ['', [Validators.required]]
     })
   }
 
@@ -30,6 +33,7 @@ export class TransacoesComponent {
     this.listarTransacoes()
     this.listarContas()
     this.listarCategorias()
+    this.listarMarcadores()
    }
 
    public listarTransacoes():any {
@@ -61,12 +65,11 @@ export class TransacoesComponent {
    
   
   novaTransacao: ITransacoes = this.resetForm();
-  opcoesConta:any[] = [];
-  opcoesCategoria:any[] = []
+  opcoesConta:ContasRequest[] = [];
 
   public listarContas(){
       this.transacoesService.listarContasUsuarioLogado().subscribe({
-      next: (res:any) => {
+      next: (res:ContasRequest[]) => {
         this.opcoesConta = res
       },
       error: (error:Error) => {
@@ -76,6 +79,7 @@ export class TransacoesComponent {
     })
   }
 
+  opcoesCategoria:Categoria[] = []
   public listarCategorias(){
     this.transacoesService.listarCategorias().subscribe({
       next: (res:Categoria[]) => {
@@ -88,8 +92,28 @@ export class TransacoesComponent {
     })
   }
 
-  opcoesEstado:string[] = ['RECEITA', 'DESPESA']
+  opcoesMarcador:Marcador[] = []
+  public listarMarcadores(){
+    this.transacoesService.listarMarcadores().subscribe({
+      next: (res:Marcador[]) => {
+        this.opcoesMarcador = res
+        console.log(res)
+      },
+      error: (error:Error) => {
+        console.error("Erro a listar Marcadores", error)
+        alert("Erro ao listar marcadores(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+      }
+    })
+  }
 
+  opcoesEstado:any[] = [
+     { label: 'Pendente', value: 'PENDENTE' },
+     { label: 'Realizada', value: 'REALIZADA' }
+  ]
+ opcoesTipo:any[] = [
+    { label: 'Receita', value: 'RECEITA' },
+    { label: 'Despesa', value: 'DESPESA' }
+];
 
 
   resetForm(): ITransacoes {

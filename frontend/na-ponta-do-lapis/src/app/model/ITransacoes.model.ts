@@ -31,3 +31,5 @@ export interface ITransacaoRequest {
     idContaFinanceira:number;
     dataHora:string
 }
+
+

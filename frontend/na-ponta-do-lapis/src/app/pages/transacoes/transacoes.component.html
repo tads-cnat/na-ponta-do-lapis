@@ -1,7 +1,5 @@
 <div>
-
     <div>
-
         <div class="flex h-screen items-center justify-center ">
             <p-card class="bg-[#F8FAFC]!">
                 <div class="flex justify-between items-center mb-3">
@@ -22,7 +20,7 @@
                     </div>
                 </div>
 
-                <p-table [value]="transacoesDados" [paginator]="true" [rows]="5" class="w-400">
+                <p-table [value]="transacoesDados" [paginator]="true" [rows]="5" class="w-100 sm:w-150 md:w-200 lg:w-400">
                     <ng-template pTemplate="header">
                         <tr>
                             <th class="bg-[#F8F8FC]! text-slate-700!">Descrição</th>
@@ -60,57 +58,76 @@
     </div>
 
 
-    <form [formGroup]="formTransacao">
+    <form [formGroup]="formTransacao" >
         <p-dialog header="Nova Movimentação" [(visible)]="exibirDialog" [modal]="true">
 
-            <div class="flex flex-col gap-4 mt-4">
-                <div class="flex flex-col gap-1">
-                    <label class="font-bold">Descrição</label>
-                    <input pInputText formControlName="descricao" placeholder="Ex: Internet" />
-                </div>
+            <p-button>
+                <p-popover></p-popover>
+            </p-button>
 
-                <div class="grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-6 mt-4 m-20">
+                <div class="grid grid-cols-2 gap-13">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Categoria</label>
-                        <p-select [options]="opcoesCategoria" optionLabel="nome" formControlName="categoria" placeholder="Selecione"
-                            [appendTo]="'body'"></p-select>
-
+                        <label class="font-bold">Descrição</label>
+                        <input pInputText formControlName="descricao" placeholder="Ex: Internet" class="w-full" />
                     </div>
+
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Valor</label>
-                        <p-inputNumber formControlName="valor" mode="currency" currency="BRL" locale="pt-BR" />
+                        <p-inputNumber formControlName="valor" mode="currency" currency="BRL" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full"/>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-4">
+                <div class="grid grid-cols-2 gap-13">
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Conta</label>
 
-                        <p-select [options]="opcoesConta" optionLabel="nome" formControlName="conta"
-                            placeholder="Selecione" [appendTo]="'body'"></p-select>
+                        <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id" formControlName="conta"
+                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
                     <div class="flex flex-col gap-1">
+                        <label class="font-bold">Categoria</label>
+                        <p-select [options]="opcoesCategoria" optionLabel="nome" optionValue="id"
+                            formControlName="categoria" placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
+
+                    </div>
+
+                </div>
+
+               <div class="flex">
+                 <div class="grid grid-cols-2 gap-4">
+
+                    <div class="flex flex-col gap-1">
                         <label class="font-bold">Estado</label>
-                        <p-select [options]="opcoesEstado" formControlName="estado" placeholder="Selecione"
-                            [appendTo]="'body'"></p-select>
+                        <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
+                            optionValue="value" placeholder="Selecione" [appendTo]="'body'"></p-select>
+                    </div>
+                </div>
+                 <div class="grid grid-cols-2 gap-4">
+
+                    <div class="flex flex-col gap-1">
+                        <label class="font-bold">Estado</label>
+                        <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
+                            optionValue="value" placeholder="Selecione" [appendTo]="'body'"></p-select>
                     </div>
                 </div>
 
                 <div class="flex flex-col gap-2">
                     <label class="font-bold">Tipo</label>
                     <div class="flex gap-4">
-                        <!-- <div *ngFor="let tipo of tiposTransacao" class="flex items-center">
-                    <p-radioButton [name]="'tipoTransacao'" [value]="tipo.value" [(ngModel)]="novaTransacao.tipoTransacao" [inputId]="tipo.value"></p-radioButton>
-                    <label [for]="tipo.value" class="ml-2">{{ tipo.label }}</label>
-                </div> -->
+                        <div class="flex items-center">
+                            <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label"
+                                optionValue="value" placeholder="Selecione o Tipo" [appendTo]="'body'"></p-select>
+                        </div>
                     </div>
                 </div>
+               </div>
             </div>
 
             <ng-template pTemplate="footer">
-                <p-button label="Cancelar" icon="pi pi-times" [text]="true" severity="secondary"
-                    (onClick)="exibirDialog = false"></p-button>
-                <p-button label="Salvar" icon="pi pi-check" severity="success" (onClick)="salvar()"></p-button>
+                <div class=" flex justify-center w-full mb-5">
+                    <p-button styleClass="w-60 h-12 rounded-xl! bg-[#AA7FFF]! border-[#AA7FFF]!" label="Salvar alterações" severity="success" (onClick)="salvar() "></p-button>
+                </div>
             </ng-template>
         </p-dialog>
     </form>

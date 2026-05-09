@@ -31,4 +31,8 @@ export class TransacoesService {
   public listarCategorias(): Observable<Categoria[]>{
     return this.http.get<Categoria[]>(`${this.BASE_URL}/categorias`)
   }
+
+  public listarMarcadores(): Observable<any>{
+    return this.http.get<any>(`${this.BASE_URL}/marcadores/me`)
+  }
 }
