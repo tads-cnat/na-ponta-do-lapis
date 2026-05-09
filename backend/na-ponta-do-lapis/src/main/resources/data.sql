@@ -155,3 +155,5 @@ SELECT setval(
     'conta_financeira_id_seq',
     COALESCE((SELECT MAX(id) FROM conta_financeira), 1)
 );
+SELECT setval(pg_get_serial_sequence('usuario', 'id'), coalesce(MAX(id), 1)) FROM usuario;
+SELECT setval(pg_get_serial_sequence('transacao', 'id'), coalesce(max(id), 0) + 1, false) FROM transacao;
