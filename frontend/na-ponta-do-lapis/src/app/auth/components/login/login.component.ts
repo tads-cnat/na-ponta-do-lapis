@@ -29,7 +29,7 @@ export class LoginComponent {
         StorageService.salvarToken(res.token)
         const usuario = StorageService.getUsuarioDecodificado()
         console.log(usuario?.sub, usuario?.email)
-        this.router.navigateByUrl("/transacoes")
+        this.router.navigateByUrl("app/transacoes")
       },
       error: (erro:Error) => {
         console.error(erro)
