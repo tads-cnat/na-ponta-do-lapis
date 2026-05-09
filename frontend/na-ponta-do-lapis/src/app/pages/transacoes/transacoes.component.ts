@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,7 +7,6 @@ import { Categoria, ITransacoes, Tipo } from '../../model/ITransacoes.model';
 import { IContas, IContasRequest } from '../../model/IContas.models';
 import { Marcador } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
-import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-transacoes',
@@ -136,7 +135,6 @@ export class TransacoesComponent {
     this.op.hide();
     this.formTransacao.get('marcadorId')?.markAsDirty();
   }
-
   public listarMarcadores(){
     this.transacoesService.listarMarcadores().subscribe({
       next: (res:Marcador[]) => {
@@ -186,23 +184,15 @@ export class TransacoesComponent {
   salvar() {
     if(this.formTransacao.valid){
       const dadosParaEnviar = this.formTransacao.value
-      this.exibirDialog = false
+      console.log(dadosParaEnviar)
+
       this.transacoesService.adicionarTransacao(dadosParaEnviar).subscribe({
         next: (res:ITransacoes) => {
-            this.messageService.add({
-            severity: 'success',
-            summary: 'Transação salva com sucesso',
-            detail: '',
-            life: 2000
-        });
+          console.log(res)
+          alert("Lembrar de colocar um feedback melhor. TRANSACAO ENVIADA COM SUCESSO")
         },
         error: (error:Error) => {
-               this.messageService.add({
-               severity: 'warn',
-               summary: 'Erro ao excluir transação',
-               detail: '',
-            life: 2000
-        });
+          alert("Errro ao enviar Transacao LEMBRAR DE COLOCAR UM FEEDBACK MELHOR" )
           console.error(error)
         }
       })
@@ -226,5 +216,5 @@ export class TransacoesComponent {
     }
     return 'info'
   }
-  
+
 }
