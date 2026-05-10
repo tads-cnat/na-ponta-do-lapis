@@ -24,7 +24,7 @@ public class ContaFinanceira {
     private Long id;
 
     @NotNull(message = "O nome é obrigatório")
-    @NotBlank(message = "O nome não pode ser em branco")
+    @NotBlank(message = "O nome não pode ser vazio")
     @Column(name = "nome", length = 100, nullable = false)
     @Size(min = 3)
     private String nome;
@@ -35,6 +35,7 @@ public class ContaFinanceira {
 
     @NotNull(message = "A cor é obrigatória")
     @Column(name = "cor", length = 7, nullable = false)
+    @NotBlank(message = "A cor não pode ser vazia")
     @Size(max = 7)
     private String cor;
 

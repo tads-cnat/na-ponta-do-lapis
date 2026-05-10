@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -42,8 +43,27 @@ public class ContaFinanceiraController {
     @Operation(summary = "Criar conta")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping
-    public ResponseEntity<ContaFinanceiraResponseDTO> criarConta(@Valid @RequestBody ContaFinanceiraDTO contaDTO){
-        return ResponseEntity.status(HttpStatus.CREATED).body(contaService.criarConta(contaDTO));
+    public ResponseEntity<ContaFinanceiraResponseDTO> criarConta(
+
+            Authentication authentication,
+
+            @Valid @RequestBody ContaFinanceiraDTO contaDTO
+    ){
+
+        System.out.println("\n========== CONTROLLER ==========");
+        System.out.println("Usuário autenticado: " + authentication.getName());
+
+        System.out.println("Authorities no controller:");
+
+        authentication.getAuthorities().forEach(auth ->
+                System.out.println(auth.getAuthority())
+        );
+
+        System.out.println("================================\n");
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(contaService.criarConta(contaDTO));
     }
 
     @Operation(summary = "Listar contas")
@@ -70,6 +90,7 @@ public class ContaFinanceiraController {
     }
 
     @Operation(summary = "Listar contas do usuário logado")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/me")
     public ResponseEntity<List<ContaFinanceiraResponseDTO>> minhasContasFinanceiras(){
         List<ContaFinanceiraResponseDTO> minhasContas = contaService.listarContaFinanceiraUsuarioLogado().stream()

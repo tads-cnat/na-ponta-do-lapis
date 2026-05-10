@@ -2,12 +2,12 @@ package com.npl.na_ponta_do_lapis.service;
 
 import java.util.List;
 
-import com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter;
 import org.springframework.stereotype.Service;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
+import com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraPatchDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraResponseDTO;
@@ -29,7 +29,8 @@ public class ContaFinanceiraService {
 
     @Transactional
     public ContaFinanceiraResponseDTO criarConta(ContaFinanceiraDTO contaDTO) {
-        Usuario usuario = usuarioService.buscarUsuarioPorId(contaDTO.usuarioId());
+        String email = JwtAuthFilter.getEmailUsuarioLogado();
+        Usuario usuario = usuarioService.buscarUsuarioPorEmail(email);
         ContaFinanceira novaConta = contaDTO.toEntity(usuario);
         contaFinanceiraRepository.save(novaConta);
         return new ContaFinanceiraResponseDTO(novaConta);
@@ -62,33 +63,40 @@ public class ContaFinanceiraService {
 
     @Transactional
     public ContaFinanceiraResponseDTO atualizarConta(Long id, ContaFinanceiraDTO contaDTO){
+
         ContaFinanceira conta = contaFinanceiraRepository.findById(id)
-            .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
-        
-        Usuario usuario = usuarioService.buscarUsuarioPorId(contaDTO.usuarioId());
-        
+            .orElseThrow(() ->
+                new ContaIdNaoExisteException("Conta de ID: " + id + " não existe")
+            );
+
         conta.setNome(contaDTO.nome());
         conta.setSaldo(contaDTO.saldo());
-        conta.setUsuario(usuario);
-        
+        conta.setCor(contaDTO.cor());
+
         contaFinanceiraRepository.save(conta);
+
         return new ContaFinanceiraResponseDTO(conta);
     }
 
     @Transactional
-    public ContaFinanceiraResponseDTO atualizarContaParcial(Long id, ContaFinanceiraPatchDTO contaPatchDTO){
+    public ContaFinanceiraResponseDTO atualizarContaParcial(
+            Long id,
+            ContaFinanceiraPatchDTO contaPatchDTO
+    ){
+
         ContaFinanceira conta = contaFinanceiraRepository.findById(id)
-            .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
-        
+            .orElseThrow(() ->
+                new ContaIdNaoExisteException(
+                    "Conta de ID: " + id + " não existe"
+                )
+            );
+
         contaPatchDTO.nome().ifPresent(conta::setNome);
         contaPatchDTO.saldo().ifPresent(conta::setSaldo);
-        
-        contaPatchDTO.usuarioId().ifPresent(usuarioId -> {
-            Usuario usuario = usuarioService.buscarUsuarioPorId(usuarioId);
-            conta.setUsuario(usuario);
-        });
-        
+        contaPatchDTO.cor().ifPresent(conta::setCor);
+
         contaFinanceiraRepository.save(conta);
+
         return new ContaFinanceiraResponseDTO(conta);
     }
 

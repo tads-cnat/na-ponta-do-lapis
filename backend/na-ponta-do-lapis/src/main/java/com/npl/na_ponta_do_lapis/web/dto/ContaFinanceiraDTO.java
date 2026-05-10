@@ -13,14 +13,12 @@ public record ContaFinanceiraDTO(
     @NotBlank(message = "O nome da conta não pode ser vazio")
     String nome,
     
-    @NotBlank(message = "O saldo não pode ser vazio")
+    @NotNull(message = "O saldo é obrigatório")
     BigDecimal saldo,
 
     @NotBlank(message = "A cor não pode ser vazia")
-    String cor,
-    
-    @NotNull(message = "O usuário é obrigatório")
-    Long usuarioId) {
+    String cor
+    ) {
 
     public ContaFinanceira toEntity(Usuario usuario){
         ContaFinanceira conta = new ContaFinanceira();
