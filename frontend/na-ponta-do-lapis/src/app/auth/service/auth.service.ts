@@ -20,10 +20,6 @@ export class AuthService {
     return this.http.post<Token>(`${this.BASE_URL}/auth/login`, loginRequest)
   }
 
-  public register(signupRequest:SignupRequest): Observable<SignupRequest> {
-    return this.http.post<SignupRequest>(`${this.BASE_URL}/auth/register`, signupRequest)
-  }
-
   public meusDados(): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.BASE_URL}/usuario/me`)
   }
