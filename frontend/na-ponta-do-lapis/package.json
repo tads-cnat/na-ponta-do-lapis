@@ -3,7 +3,10 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --host 0.0.0.0 -o",
+    "frontend":"npm start",
+    "backend": "sh -c 'cd ../../backend/na-ponta-do-lapis && ./mvnw spring-boot:run'",
+    "dev": "trap \"kill 0\" INT TERM EXIT; sh -c '(npm run frontend) & (npm run backend) && wait'",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
@@ -27,7 +30,7 @@
   },
   "devDependencies": {
     "@angular/build": "^21.2.7",
-    "@angular/cli": "^21.2.7",
+    "@angular/cli": "^21.2.10",
     "@angular/compiler-cli": "^21.2.0",
     "@tailwindcss/postcss": "^4.1.12",
     "jsdom": "^28.0.0",

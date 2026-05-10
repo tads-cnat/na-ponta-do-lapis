@@ -1,14 +1,14 @@
 import { Component } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../../service/auth.service';
 import { StorageService } from '../../service/storage.service';
 import { Token } from '../../../model/IToken.models';
 
 @Component({
   selector: 'app-login',
-  imports: [PrimeNGModuleModule, ReactiveFormsModule, RouterLink],
+  imports: [PrimeNGModuleModule, ReactiveFormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })

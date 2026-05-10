@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
 import { Categoria, ITransacoes, Tipo } from '../../model/ITransacoes.model';
-import { ContasRequest } from '../../model/IContas.models';
+import { IContaFinanceira, IContaFinanceiraRequest } from '../../model/IContas.models';
 import { Marcador } from '../../model/IMarcador.models';
 
 @Component({
@@ -62,14 +62,14 @@ export class TransacoesComponent {
       }
     })
   }
-   
-  
+
+
   novaTransacao: ITransacoes = this.resetForm();
-  opcoesConta:ContasRequest[] = [];
+  opcoesConta:IContaFinanceiraRequest[] = [];
 
   public listarContas(){
       this.transacoesService.listarContasUsuarioLogado().subscribe({
-      next: (res:ContasRequest[]) => {
+      next: (res:IContaFinanceiraRequest[]) => {
         this.opcoesConta = res
       },
       error: (error:Error) => {
@@ -137,7 +137,7 @@ export class TransacoesComponent {
   salvar() {
   }
 
-  
+
 
   getSeverity(status: string) {
     return status === 'RECEITA' ? 'success' : 'danger';

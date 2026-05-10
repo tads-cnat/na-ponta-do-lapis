@@ -41,15 +41,15 @@ VALUES
     ('Mensalidade Faculdade');
 
 -- SQL Conta Financeira
-INSERT INTO conta_financeira (id, nome, saldo, usuario_id)
+INSERT INTO conta_financeira (id, nome, saldo, cor, usuario_id)
 VALUES
-    (1, 'Banco Inter', 100, 1),
-    (2, 'Banco Master', 50000000.50, 2),
-    (3, 'Santander', 0, 3),
-    (4, 'Itaú', 150, 4),
-    (5, 'Nubank', 3000, 3),
-    (6, 'BB', 10, 2),
-    (7, 'PicPay', 1, 1);
+    (1, 'Banco Inter', 100, '#FF7300', 1),
+    (2, 'Banco Master', 50000000.50, '#FF0000', 2),
+    (3, 'Santander', 0, '#D40000', 3),
+    (4, 'Itaú', 150, '#0B00D4', 4),
+    (5, 'Nubank', 3000, '#7300FF', 3),
+    (6, 'BB', 10, '#FFFF00', 2),
+    (7, 'PicPay', 1, '#00FF00', 1);
 -- SQL Transações (Corrigido)
 INSERT INTO transacao (descricao, valor, id_categoria, estado, tipo, data_hora, id_conta_financeira)
 VALUES
@@ -173,4 +173,4 @@ VALUES
     (10, 'Quitar Empréstimo', 'Finalizar pagamento do empréstimo pessoal', 7000.00, 'https://link-da-foto.com/emprestimo.png', '2027-06-30', 4);
 
 -- Sincroniza a sequência do ID do Usuário
-SELECT setval(pg_get_serial_sequence('usuario', 'id'), coalesce(MAX(id), 1)) FROM usuario;
+--SELECT setval(pg_get_serial_sequence('usuario', 'id'), coalesce(MAX(id), 1)) FROM usuario;

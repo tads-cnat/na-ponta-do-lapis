@@ -1,8 +1,19 @@
-import { UsuarioResume } from "./IUsuario.models";
+export interface IContaFinanceira {
+    id: number | null,
+    nome: string,
+    saldo: number,
+    cor: string | undefined,
+    usuarioResume: UsuarioResume | null,
+}
 
-export interface ContasRequest{
-    id:number,
-    nome:string,
-    saldo:number,
-    usuarioResume:UsuarioResume,
+export interface UsuarioResume {
+  id: number;
+  nome: string;
+}
+
+export interface IContaFinanceiraRequest {
+    nome: string;
+    saldo: number;
+    cor: string;
+    idUsuario: number
 }

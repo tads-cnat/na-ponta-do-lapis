@@ -25,6 +25,7 @@ public class ContaFinanceiraPatchValidator {
         // Validar que pelo menos um campo foi fornecido
         boolean temAlgumCampo = contaPatchDTO.nome().isPresent() || 
                                contaPatchDTO.saldo().isPresent() ||
+                               contaPatchDTO.cor().isPresent() ||
                                contaPatchDTO.usuarioId().isPresent();
         
         if (!temAlgumCampo) {
@@ -34,7 +35,7 @@ public class ContaFinanceiraPatchValidator {
         if (contaPatchDTO.nome().isPresent()) {
             String nome = contaPatchDTO.nome().get();
             if (nome == null || nome.trim().isEmpty()) {
-                throw new IllegalArgumentException("O nome da conta não pode ser em branco");
+                throw new IllegalArgumentException("O nome da conta não pode ser vazio");
             }
             if (nome.length() > 100) {
                 throw new IllegalArgumentException("O nome da conta não pode ter mais de 100 caracteres");
@@ -46,13 +47,19 @@ public class ContaFinanceiraPatchValidator {
             if (saldo == null) {
                 throw new IllegalArgumentException("O saldo não pode ser nulo");
             }
-            if (saldo.signum() < 0) {
-                throw new IllegalArgumentException("O saldo não pode ser negativo");
+        }
+
+        if (contaPatchDTO.cor().isPresent()) {
+            String cor = contaPatchDTO.cor().get();
+            if (cor == null || cor.trim().isEmpty()) {
+                throw new IllegalArgumentException("A cor não pode ser vazia");
+            }
+            if (cor.length() > 7) {
+                throw new IllegalArgumentException("A não pode ter mais de 7 caracteres");
             }
         }
 
-        // Campos tipo e usuarioId são opcionais e não requerem validação adicional aqui
-        // - tipo: validação de enum é feita automaticamente pela serialização JSON
+        // Campo usuarioId é opcional e não requer validação adicional aqui
         // - usuarioId: validação de existência deve ser feita no service/repository
         // para evitar consultas extras no validator
     }

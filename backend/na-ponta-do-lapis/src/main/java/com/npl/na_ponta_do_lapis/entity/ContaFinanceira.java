@@ -3,12 +3,8 @@ package com.npl.na_ponta_do_lapis.entity;
 import java.math.BigDecimal;
 import java.util.Objects;
 
-import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -37,6 +33,10 @@ public class ContaFinanceira {
     @Column(name = "saldo", precision = 19, scale = 2, nullable = false)
     private BigDecimal saldo;
 
+    @NotNull(message = "A cor é obrigatória")
+    @Column(name = "cor", length = 7, nullable = false)
+    @Size(max = 7)
+    private String cor;
 
     @NotNull(message = "O usuário é obrigatório")
     @ManyToOne
@@ -71,6 +71,14 @@ public class ContaFinanceira {
         this.nome = nome;
     }
 
+    public String getCor() {
+        return this.cor;
+    }
+
+    public void setCor(String cor) {
+        this.cor = cor;
+    }
+
     public BigDecimal getSaldo() {
         return this.saldo;
     }
@@ -92,7 +100,8 @@ public class ContaFinanceira {
         return "ContaFinanceira{" +
                 "nome='" + this.nome + '\n' +
                 ", saldo='" + this.saldo + '\n' +
-                ", usuario=" + this.usuario + '\n' +
+                ", cor='" + this.cor + '\n' +
+                ", usuario= " + this.usuario.getId() + " - " + this.usuario.getNome() + '\n' +
                 "}";
     }
 
