@@ -39,6 +39,9 @@ public class Usuario implements UserDetails {
     @Column(name = "senha", nullable = false, length = 254)
     private String senha;
 
+    @Column(name = "telefone", nullable = true, length = 20)
+    private String telefone;
+
     @Column(name = "foto_perfil")
     private String fotoPerfil;
 
@@ -49,6 +52,14 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "papel")
     private Papel papel;
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
 
     @Override
     public boolean equals(Object o) {

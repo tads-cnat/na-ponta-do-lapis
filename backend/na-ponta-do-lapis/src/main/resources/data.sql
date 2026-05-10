@@ -8,13 +8,13 @@ VALUES
 -- SQL Usuario as senhas são 123456
 INSERT INTO usuario (id ,nome, email, username, senha, foto_perfil, familia_id, papel)
 VALUES
-    (1,'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 1, 'USUARIO'),
-    (2,'Bruno', 'bruno@gmail.com', 'Brunozz', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 1,'ADMIN_FAMILIA'),
-    (3,'Eduardo', 'dudu@gmail.com', 'Dudurant', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 2, 'ADMIN_SITE'),
-    ( 4,'Pedro', 'pedro@gmail.com', 'Predo', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'http://foto.com', 3, 'USUARIO');
+    (1,'Lucas Henrique', 'lucas@gmail.com', 'Lucaasshq', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'https://res.cloudinary.com/doqohj5cv/image/upload/v1778434359/eu_xvyhwk.png', 1, 'USUARIO'),
+    (2,'Bruno', 'bruno@gmail.com', 'Brunozz', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'https://res.cloudinary.com/doqohj5cv/image/upload/v1778434114/Screenshot_2026-05-10_135527.png_btm58t.jpg', 1,'ADMIN_FAMILIA'),
+    (3,'Eduardo', 'dudu@gmail.com', 'Dudurant', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'https://res.cloudinary.com/doqohj5cv/image/upload/v1778434114/Screenshot_2026-05-10_135555_r4ut0s.jpg', 2, 'ADMIN_SITE'),
+    ( 4,'Pedro', 'pedro@gmail.com', 'Predo', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'https://res.cloudinary.com/doqohj5cv/image/upload/v1778434114/Screenshot_2026-05-10_135624_ppmxzb.jpg', 3, 'USUARIO');
 
-INSERT INTO usuario (id, nome, email, username, senha, papel) VALUES
-    ( 5,'ADMIN', 'admin@gmail.com', 'ademirDaSilva', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'USUARIO');
+INSERT INTO usuario (id, nome, email, username, senha, foto_perfil , papel) VALUES
+    ( 5,'ADMIN', 'admin@gmail.com', 'ademirDaSilva', '$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6', 'https://res.cloudinary.com/doqohj5cv/image/upload/v1778434114/Screenshot_2026-05-10_135730_gby643.jpg', 'USUARIO');
 
 -- SQL Categoria
 INSERT INTO tipo_categoria (nome)

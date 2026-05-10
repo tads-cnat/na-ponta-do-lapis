@@ -38,6 +38,13 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @Operation(summary = "Usuário logado")
+    @GetMapping("/me")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    public ResponseEntity<UsuarioResponseDTO> me(){
+        return ResponseEntity.ok(new UsuarioResponseDTO(usuarioService.buscarUsuarioLogado()));
+    }
+
     @PreAuthorize("hasRole('ADMIN_SITE') or (hasRole('USUARIO') and #id == authentication.principal.id)")
     @Operation(summary = "Buscar por ID")
     @GetMapping("/{id}")

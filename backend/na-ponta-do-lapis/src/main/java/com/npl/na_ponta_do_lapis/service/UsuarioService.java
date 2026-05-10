@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.service;
 
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
+import com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter;
 import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,11 @@ public class UsuarioService {
         return usuarioRepository.findById(id).orElseThrow(
                         () -> new UsuarioIdNaoExisteException("Usuário de ID " + id + " não existe!")
                 );
+    }
+
+    public Usuario buscarUsuarioLogado(){
+        String email = JwtAuthFilter.getEmailUsuarioLogado();
+        return buscarUsuarioPorEmail(email);
     }
 
     @Transactional
