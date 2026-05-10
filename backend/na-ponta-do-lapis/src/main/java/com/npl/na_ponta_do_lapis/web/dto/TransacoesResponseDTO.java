@@ -16,7 +16,8 @@ public record TransacoesResponseDTO(
         @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
         LocalDateTime dataHora,
         CategoriaResumoDTO categoria,
-        ContaResumoDTO conta
+        ContaResumoDTO conta,
+        MarcadorResumeDTO marcador
 ) {
        public TransacoesResponseDTO(Transacao transacao){
                this(
@@ -33,7 +34,11 @@ public record TransacoesResponseDTO(
                        new ContaResumoDTO(
                                transacao.getContaFinanceira().getId(),
                                transacao.getContaFinanceira().getNome()
-                       )
+                       ),
+                       transacao.getMarcador() != null ? new MarcadorResumeDTO(
+                               transacao.getMarcador().getNome(),
+                               transacao.getMarcador().getCor()
+                       ): null
                );
        };
 }

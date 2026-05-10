@@ -16,11 +16,14 @@ import { SelectModule } from 'primeng/select';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { PopoverModule } from 'primeng/popover';
-
+import { DatePickerModule } from 'primeng/datepicker';
+import { InputMaskModule } from 'primeng/inputmask';
 
 
 @NgModule({
   exports: [
+    DatePickerModule,
+    InputMaskModule,
     InputGroupModule,
     PopoverModule,
      ButtonModule,

@@ -20,7 +20,8 @@
                     </div>
                 </div>
 
-                <p-table [value]="transacoesDados" [paginator]="true" [rows]="5" class="w-100 sm:w-150 md:w-200 lg:w-400">
+                <p-table [value]="transacoesDados" [paginator]="true" [rows]="5"
+                    class="w-100 sm:w-150 md:w-200 lg:w-400">
                     <ng-template pTemplate="header">
                         <tr>
                             <th class="bg-[#F8F8FC]! text-slate-700!">Descrição</th>
@@ -58,12 +59,39 @@
     </div>
 
 
-    <form [formGroup]="formTransacao" >
+    <form [formGroup]="formTransacao">
         <p-dialog header="Nova Movimentação" [(visible)]="exibirDialog" [modal]="true">
 
-            <p-button>
-                <p-popover></p-popover>
-            </p-button>
+            <div class="flex flex-col items-center justify-center gap-2">
+
+                <div class="relative inline-flex cursor-pointer" (click)="toggle($event)">
+                    <i class="pi pi-tags text-4xl transition-colors duration-200 "
+                        [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
+                    </i>
+                </div>
+
+                <button pButton type="button"
+                    [label]="marcadorSelecionado ? marcadorSelecionado.nome : 'Selecionar Marcador'"
+                    (click)="toggle($event)" class="p-button-link p-0 font-medium"></button>
+                <p-popover #op>
+                    <div class="flex flex-col gap4">
+                        <div>
+                            <span class="mb-2 font-bold text-surface-700">Marcadores</span>
+                            <ul class="list-none p-0 m-0 flex flex-col">
+                                @for (m of opcoesMarcador; track $index) {
+                                <li class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border"
+                                    (click)="selecionarMarcador(m)">
+
+                                    <span class="font-medium text-surface-900">{{ m.nome }}</span>
+                                    <span class="inline-block rounded-full" [style.background-color]="m.cor"
+                                        style="width: 15px; height: 15px; border: 1px solid #ddd;"></span>
+                                </li>
+                                }
+                            </ul>
+                        </div>
+                    </div>
+                </p-popover>
+            </div>
 
             <div class="flex flex-col gap-6 mt-4 m-20">
                 <div class="grid grid-cols-2 gap-13">
@@ -74,7 +102,8 @@
 
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Valor</label>
-                        <p-inputNumber formControlName="valor" mode="currency" currency="BRL" locale="pt-BR" styleClass="w-full" inputStyleClass="w-full"/>
+                        <p-inputNumber formControlName="valor" mode="currency" currency="BRL" locale="pt-BR"
+                            styleClass="w-full" inputStyleClass="w-full" />
                     </div>
                 </div>
 
@@ -82,51 +111,52 @@
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Conta</label>
 
-                        <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id" formControlName="conta"
+                        <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id" formControlName="idContaFinanceira"
                             placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Categoria</label>
                         <p-select [options]="opcoesCategoria" optionLabel="nome" optionValue="id"
-                            formControlName="categoria" placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
+                            formControlName="idCategoria" placeholder="Selecione" [appendTo]="'body'"
+                            styleClass="w-full"></p-select>
 
-                    </div>
-
-                </div>
-
-               <div class="flex">
-                 <div class="grid grid-cols-2 gap-4">
-
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold">Estado</label>
-                        <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
-                            optionValue="value" placeholder="Selecione" [appendTo]="'body'"></p-select>
-                    </div>
-                </div>
-                 <div class="grid grid-cols-2 gap-4">
-
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold">Estado</label>
-                        <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
-                            optionValue="value" placeholder="Selecione" [appendTo]="'body'"></p-select>
                     </div>
                 </div>
 
-                <div class="flex flex-col gap-2">
-                    <label class="font-bold">Tipo</label>
-                    <div class="flex gap-4">
-                        <div class="flex items-center">
-                            <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label"
-                                optionValue="value" placeholder="Selecione o Tipo" [appendTo]="'body'"></p-select>
+                <div class="flex">
+                    <div class="grid grid-cols-2 gap-4">
+
+                        <div class="flex flex-col gap-1">
+                            <label class="font-bold">Data</label>
+                            <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yyyy" showIcon="tue" 
+                                 placeholder="Selecione o dia" [appendTo]="'body'"></p-datePicker>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+
+                        <div class="flex flex-col gap-1">
+                            <label class="font-bold">Estado</label>
+                            <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
+                                optionValue="value" placeholder="Selecione" [appendTo]="'body'"></p-select>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-col gap-2">
+                        <label class="font-bold">Tipo</label>
+                        <div class="flex gap-4">
+                            <div class="flex items-center">
+                                <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label"
+                                    optionValue="value" placeholder="Selecione o Tipo" [appendTo]="'body'"></p-select>
+                            </div>
                         </div>
                     </div>
                 </div>
-               </div>
             </div>
 
             <ng-template pTemplate="footer">
                 <div class=" flex justify-center w-full mb-5">
-                    <p-button styleClass="w-60 h-12 rounded-xl! bg-[#AA7FFF]! border-[#AA7FFF]!" label="Salvar alterações" severity="success" (onClick)="salvar() "></p-button>
+                    <p-button styleClass="w-60 h-12 rounded-xl! bg-[#AA7FFF]! border-[#AA7FFF]!"
+                        label="Salvar alterações" severity="success" (onClick)="salvar() "></p-button>
                 </div>
             </ng-template>
         </p-dialog>

@@ -11,6 +11,8 @@ import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import static com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter.getEmailUsuarioLogado;
@@ -47,7 +49,11 @@ public class TransacaoService {
         novaTrasacao.setDescricao(transacao.descricao());
         novaTrasacao.setValor(transacao.valor());
         novaTrasacao.setTipo(transacao.tipo());
-        novaTrasacao.setDataHora(transacao.dataHora());
+
+        LocalDateTime dataUsuario = transacao.dataHora();
+        LocalTime horaAtual = LocalTime.now();
+        novaTrasacao.setDataHora(dataUsuario.with(horaAtual));
+
         novaTrasacao.setEstado(EstadoTransacao.PENDENTE);
 
         TipoCategoria categoria = tipoCategoriaService.buscarPorId(transacao.idCategoria());

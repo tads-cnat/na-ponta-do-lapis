@@ -31,11 +31,10 @@ public record TransacaoRequestDTO(
         @NotNull(message = "ID conta financeira não pode ser null")
         Long idContaFinanceira,
 
-        @NotNull(message = "ID marcador não pode ser null")
         Long marcadorId,
 
-        @Schema(type = "string", pattern = "dd/MM/yyyy HH:mm", example = "20/04/2026 15:30")
-        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+        @Schema(description = "Data da transação em formato ISO 8601", example = "2026-05-09T19:41:49.000Z")
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
         LocalDateTime dataHora
 ) {
 }

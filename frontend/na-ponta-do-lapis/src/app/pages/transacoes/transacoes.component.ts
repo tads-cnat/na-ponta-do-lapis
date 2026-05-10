@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -6,6 +6,7 @@ import { TransacoesService } from './service/transacoes.service';
 import { Categoria, ITransacoes, Tipo } from '../../model/ITransacoes.model';
 import { ContasRequest } from '../../model/IContas.models';
 import { Marcador } from '../../model/IMarcador.models';
+import { Popover } from 'primeng/popover';
 
 @Component({
   selector: 'app-transacoes',
@@ -21,11 +22,13 @@ export class TransacoesComponent {
    constructor(private fb:FormBuilder ,private transacoesService:TransacoesService, private cdr: ChangeDetectorRef){
     this.formTransacao = this.fb.group({
       descricao: ['', [Validators.required, Validators.minLength(3)]],
-      categoria: ['', [Validators.required]],
+      idCategoria: ['', [Validators.required]],
       valor: [0, [Validators.required, Validators.min(0.01)]],
-      conta: ['', [Validators.required]],
+      idContaFinanceira: ['', [Validators.required]],
+      dataHora: [[null, Validators.required]],
       estado: ['', [Validators.required]],
-      tipo: ['', [Validators.required]]
+      tipo: ['', [Validators.required]],
+      marcadorId: [null]
     })
   }
 
@@ -92,7 +95,21 @@ export class TransacoesComponent {
     })
   }
 
+  marcadorSelecionado: any = null
   opcoesMarcador:Marcador[] = []
+  @ViewChild('op') op!: Popover;
+  toggle(event:any){
+    this.op.toggle(event);
+  }
+  selecionarMarcador(marcador:Marcador){
+    this.marcadorSelecionado = marcador
+    this.formTransacao.patchValue({
+      marcadorId: marcador.id
+    })
+    this.op.hide();
+    this.formTransacao.get('marcadorId')?.markAsDirty();
+  }
+  
   public listarMarcadores(){
     this.transacoesService.listarMarcadores().subscribe({
       next: (res:Marcador[]) => {
@@ -135,6 +152,21 @@ export class TransacoesComponent {
   }
 
   salvar() {
+    if(this.formTransacao.valid){
+      const dadosParaEnviar = this.formTransacao.value
+      console.log(dadosParaEnviar)
+
+      this.transacoesService.adicionarTransacao(dadosParaEnviar).subscribe({
+        next: (res:ITransacoes) => {
+          console.log(res)
+          alert("Lembrar de colocar um feedback melhor. TRANSACAO ENVIADA COM SUCESSO")
+        },
+        error: (error:Error) => {
+          alert("Errro ao enviar Transacao LEMBRAR DE COLOCAR UM FEEDBACK MELHOR" )
+          console.error(error)
+        }
+      })
+    }
   }
 
   
