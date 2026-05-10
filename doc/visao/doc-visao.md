@@ -93,7 +93,7 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 
 |  ID  |             Regra              |                                     Descrição                                      |
 |:----:|:------------------------------:|:----------------------------------------------------------------------------------:|
-| RN01 | Utilização das funcionalidades |         Somente usuários logados podem acessar as funcionalidades do site.         |
+| RN01 | Utilização das funcionalidades |                 Os usuários não logados só podem acessar os posts.                 |
 | RN02 |       Criação de família       |                        O usuário só poderá ter uma família.                        |
 | RN03 |    Pertencimento à família     |                   O usuário só poderá participar de uma família.                   |
 | RN04 |   Exclusão no grupo familiar   |            Somente o fundador do grupo pode  excluir o grupo familiar.             |
