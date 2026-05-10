@@ -16,6 +16,9 @@
 
                         <p-button
                            [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
+                                class="pi pi-print" pButtonIcon></i> Imprimir</p-button>
+                        <p-button
+                           [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
                                 class="pi pi-sliders-h" pButtonIcon></i> Filtrar</p-button>
                         <p-button styleClass="rounded-xl!" (onClick)="abrirDialog()">
                             <i class="pi pi-plus"></i> Adicionar Transação</p-button>
@@ -86,13 +89,13 @@
 
 
     <form [formGroup]="formTransacao">
-        <p-dialog header="Nova Movimentação" [(visible)]="exibirDialog" [modal]="true">
+        <p-dialog header="" [(visible)]="exibirDialog" [modal]="true">
 
             <div class="flex flex-col items-center justify-center gap-2">
 
                 <div class="relative inline-flex cursor-pointer" (click)="toggle($event)">
-                    <i class="pi pi-tags text-4xl transition-colors duration-200 "
-                        [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
+                    <i class="pi pi-bookmark-fill
+ text-4xl transition-colors duration-200 " [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
                     </i>
                 </div>
 
@@ -137,8 +140,9 @@
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Conta</label>
 
-                        <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id" formControlName="idContaFinanceira"
-                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
+                        <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
+                            formControlName="idContaFinanceira" placeholder="Selecione" [appendTo]="'body'"
+                            styleClass="w-full"></p-select>
                     </div>
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Categoria</label>
@@ -154,8 +158,8 @@
 
                         <div class="flex flex-col gap-1">
                             <label class="font-bold">Data</label>
-                            <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yyyy" showIcon="tue"
-                                 placeholder="Selecione o dia" [appendTo]="'body'"></p-datePicker>
+                            <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yy" showIcon="tue"
+                                placeholder="Selecione o dia" [appendTo]="'body'"></p-datePicker>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">
