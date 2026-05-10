@@ -1,9 +1,9 @@
-<div class="h-dvh">
-    <app-header></app-header>
-    <div class="layout-body flex h-full">
+<div class="h-dvh flex flex-col overflow-hidden">
+    <app-header class="flex 1"></app-header>
+    <div class="layout-body flex flex-1">
         <app-sidebar></app-sidebar>
         <main class="flex justify-center items-center m-auto">
-        <router-outlet ></router-outlet>
+            <router-outlet ></router-outlet>
         </main>
     </div>
 

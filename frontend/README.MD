@@ -1,4 +1,4 @@
-# Como rodar a aplicação Backend Spring Boot 
+# Como rodar a aplicação Frontend Angular 
 
 1. Entrar na pasta do frontend
 ```bash
@@ -13,5 +13,5 @@ npm install
 
 3. Rodar a aplicação
 ```bash
-ng serve
+npm start
 ```
