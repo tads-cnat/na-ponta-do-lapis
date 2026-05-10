@@ -3,3 +3,8 @@ export interface Marcador{
     nome:string,
     cor:string
 }
+
+export interface MarcadorResume{
+    nome:string,
+    cor:string
+}
