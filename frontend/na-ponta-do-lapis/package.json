@@ -4,6 +4,9 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --host 0.0.0.0 -o",
+    "frontend":"npm start",
+    "backend": "sh -c 'cd ../../backend/na-ponta-do-lapis && ./mvnw spring-boot:run'",
+    "dev": "trap \"kill 0\" INT TERM EXIT; sh -c '(npm run frontend) & (npm run backend) && wait'",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
