@@ -31,6 +31,12 @@ public class ContaFinanceiraService {
     public ContaFinanceiraResponseDTO criarConta(ContaFinanceiraDTO contaDTO) {
         String email = JwtAuthFilter.getEmailUsuarioLogado();
         Usuario usuario = usuarioService.buscarUsuarioPorEmail(email);
+        List<ContaFinanceira> contas = listarContaFinanceiraUsuarioLogado();
+        for (ContaFinanceira conta : contas){
+            if (conta.getNome() == contaDTO.nome()) {
+                throw new IllegalArgumentException("Não é possível criar contas com o mesmo nome.");
+            }
+        }
         ContaFinanceira novaConta = contaDTO.toEntity(usuario);
         contaFinanceiraRepository.save(novaConta);
         return new ContaFinanceiraResponseDTO(novaConta);
