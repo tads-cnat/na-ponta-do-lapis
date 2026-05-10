@@ -97,7 +97,7 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 | RN02 |       Criação de família       |                        O usuário só poderá ter uma família.                        |
 | RN03 |    Pertencimento à família     |                   O usuário só poderá participar de uma família.                   |
 | RN04 |   Exclusão no grupo familiar   |            Somente o fundador do grupo pode  excluir o grupo familiar.             |
-| RN05 |    Adição no grupo familiar    |     Somente os administradores podem convidar outra pessoa ao grupo famíliar.      |
+| RN05 |    Adição no grupo familiar    |     Somente os administradores podem convidar outra pessoa ao grupo familiar.      |
 | RN06 |       Remoção de membros       |       Somente os administradores da família podem remover do grupo familiar.       |
 | RN07 |  Promoção para administrador   | Somente os administradores da família podem promover membros para administradores. | 
 | RN08 |    Nome da conta financeira    |  Um mesmo usuário não pode ter duas ou mais contas financeiras com o mesmo nome.   |
