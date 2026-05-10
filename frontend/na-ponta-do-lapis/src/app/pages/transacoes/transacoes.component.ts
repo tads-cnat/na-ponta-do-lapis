@@ -4,7 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
 import { Categoria, ITransacoes, Tipo } from '../../model/ITransacoes.model';
-import { IContaFinanceira, IContaFinanceiraRequest } from '../../model/IContas.models';
+import { IContas, IContasRequest } from '../../model/IContas.models';
 import { Marcador } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
 
@@ -68,11 +68,11 @@ export class TransacoesComponent {
 
 
   novaTransacao: ITransacoes = this.resetForm();
-  opcoesConta:IContaFinanceiraRequest[] = [];
+  opcoesConta:IContasRequest[] = [];
 
   public listarContas(){
       this.transacoesService.listarContasUsuarioLogado().subscribe({
-      next: (res:IContaFinanceiraRequest[]) => {
+      next: (res:IContasRequest[]) => {
         this.opcoesConta = res
       },
       error: (error:Error) => {
@@ -109,7 +109,7 @@ export class TransacoesComponent {
     this.op.hide();
     this.formTransacao.get('marcadorId')?.markAsDirty();
   }
-  
+
   public listarMarcadores(){
     this.transacoesService.listarMarcadores().subscribe({
       next: (res:Marcador[]) => {
