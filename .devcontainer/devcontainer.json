@@ -26,6 +26,9 @@
 				// Extensões de Angular
 				"Angular.ng-template",
 
+				//Tailwind
+				"bradlc.vscode-tailwindcss",
+
 				// Cliente de Banco de Dados
 				"mtxr.sqltools",
 				"mtxr.sqltools-driver-pg"
