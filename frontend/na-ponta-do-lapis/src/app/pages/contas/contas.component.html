@@ -1,0 +1,383 @@
+<div class="min-h-screen bg-[#F5F6FA] p-8">
+
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
+
+        <!-- COLUNA ESQUERDA -->
+        <div class="xl:col-span-5 flex flex-col gap-6">
+
+            <!-- HEADER -->
+            <div class="flex items-center justify-between">
+
+                <h1 class="text-4xl font-bold text-slate-900">
+                    Contas
+                </h1>
+
+                <div class="flex gap-3">
+
+                  <!-- ADICIONAR -->
+                  <p-button
+                      label="Adicionar"
+                      icon="pi pi-plus"
+                      severity="success"
+                      class="rounded-xl"
+                      (click)="abrirDialog()">
+                  </p-button>
+
+                  <!-- EDITAR -->
+                  <p-button
+                      label="Editar"
+                      icon="pi pi-pencil"
+                      severity="contrast"
+                      [disabled]="!contaSelecionada"
+                      class="rounded-xl"
+                      (click)="abrirDialog()">
+                  </p-button>
+
+                  <!-- EXCLUIR -->
+                  <p-button
+                      label="Excluir"
+                      icon="pi pi-trash"
+                      severity="danger"
+                      [disabled]="!contaSelecionada"
+                      class="rounded-xl"
+                      (click)="excluir(contaSelecionada!.id!)">
+                  </p-button>
+
+              </div>
+
+            </div>
+
+            <!-- CARROSSEL DE CONTAS -->
+            <div class="flex flex-col gap-6">
+
+                <!-- LISTA DE CARDS -->
+                <div class="w-full overflow-hidden">
+
+                    <div class="flex gap-6 overflow-x-auto pb-4 px-2 scrollbar-hide">
+
+                        <div
+                            *ngFor="let conta of contaFinanceiraDados; let i = index"
+                            (click)="selecionarConta(i)"
+                            class="cursor-pointer shrink-0 transition-all duration-300 ease-in-out"
+                            [class.opacity-100]="i === contaSelecionadaIndex"
+                            [class.scale-100]="i === contaSelecionadaIndex"
+                            [class.opacity-40]="i !== contaSelecionadaIndex"
+                            [class.scale-90]="i !== contaSelecionadaIndex"
+                        >
+
+                            <div
+                                class="relative w-[340px] h-[220px] rounded-3xl overflow-hidden shadow-xl"
+                                [style.background]="conta.cor">
+
+                                <!-- EFEITOS VISUAIS -->
+                                <div
+                                    class="absolute top-[-30px] right-[-20px] w-52 h-52 rounded-full border border-white/20">
+                                </div>
+
+                                <div
+                                    class="absolute top-[-70px] right-[20px] w-72 h-72 rounded-full border border-white/10">
+                                </div>
+
+                                <div class="absolute inset-0 bg-black/10"></div>
+
+                                <!-- CONTEÚDO -->
+                                <div class="absolute bottom-0 w-full p-6">
+
+                                    <div class="flex flex-col gap-2">
+
+                                        <span class="text-white text-2xl font-bold tracking-wide">
+                                            {{ conta.nome }}
+                                        </span>
+
+                                        <span class="text-white/90 text-lg font-medium">
+
+                                            {{
+                                                conta.saldo
+                                                | currency:'BRL':'symbol':'1.2-2'
+                                            }}
+
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- BOLINHAS -->
+                <div class="flex items-center justify-center gap-3">
+
+                    <div
+                        *ngFor="let conta of contaFinanceiraDados; let i = index"
+                        (click)="selecionarConta(i)"
+                        class="rounded-full cursor-pointer transition-all duration-300"
+
+                        [class.w-4]="i === contaSelecionadaIndex"
+                        [class.h-4]="i === contaSelecionadaIndex"
+                        [class.bg-orange-500]="i === contaSelecionadaIndex"
+                        [class.scale-110]="i === contaSelecionadaIndex"
+
+                        [class.w-3]="i !== contaSelecionadaIndex"
+                        [class.h-3]="i !== contaSelecionadaIndex"
+                        [class.bg-slate-300]="i !== contaSelecionadaIndex"
+                    >
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- INFORMAÇÕES DA CONTA -->
+            <p-card styleClass="rounded-3xl shadow-sm border-0">
+
+                <div class="flex flex-col gap-8">
+
+                    <div class="flex items-center justify-between">
+
+                        <h2 class="text-2xl font-bold text-slate-900">
+                            Informações da Conta
+                        </h2>
+
+                        <div
+                            class="w-10 h-10 rounded-full border"
+                            [style.background]="contaFinanceiraDados[0]?.cor">
+                        </div>
+
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-8">
+
+                        <div class="flex flex-col gap-2">
+
+                            <span class="text-slate-400 font-medium">
+                                Saldo
+                            </span>
+
+                            <span class="text-3xl font-bold text-slate-900">
+
+                                {{
+                                    contaFinanceiraDados[0]?.saldo |
+                                    currency:'BRL':'symbol':'1.2-2':'pt-BR'
+                                }}
+
+                            </span>
+
+                        </div>
+
+                        <div class="flex flex-col gap-2">
+
+                            <span class="text-slate-400 font-medium">
+                                Cor
+                            </span>
+
+                            <div class="flex items-center gap-3">
+
+                                <div
+                                    class="w-8 h-8 rounded-full border"
+                                    [style.background]="contaFinanceiraDados[0]?.cor">
+                                </div>
+
+                                <span class="font-medium text-slate-700">
+                                    {{ contaFinanceiraDados[0]?.cor }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </p-card>
+
+        </div>
+
+        <!-- COLUNA DIREITA -->
+        <div class="xl:col-span-7 flex flex-col gap-6">
+
+            <!-- GRÁFICO -->
+            <p-card styleClass="rounded-3xl shadow-sm border-0">
+
+                <div class="flex items-center justify-between mb-6">
+
+                    <h2 class="text-3xl font-bold text-slate-900">
+                        Evolução do saldo
+                    </h2>
+
+                    <p-select
+                        [options]="[
+                            { label: 'Semanal', value: 'week' },
+                            { label: 'Mensal', value: 'month' }
+                        ]"
+                        optionLabel="label"
+                        placeholder="Período"
+                        styleClass="w-44">
+                    </p-select>
+
+                </div>
+
+                <div
+                    class="h-[400px] rounded-2xl border border-slate-100 bg-slate-50 flex items-center justify-center">
+
+                    <span class="text-slate-400 text-lg">
+                        Gráfico futuramente
+                    </span>
+
+                </div>
+
+            </p-card>
+
+            <!-- TRANSAÇÕES -->
+            <p-card styleClass="rounded-3xl shadow-sm border-0">
+
+                <div class="flex items-center justify-between mb-8">
+
+                    <h2 class="text-2xl font-bold text-slate-900">
+                        Últimas transações
+                    </h2>
+
+                    <p-button
+                        label="Mostrar todas"
+                        severity="secondary"
+                        styleClass="rounded-xl!">
+                    </p-button>
+
+                </div>
+
+                <div class="flex flex-col gap-5">
+
+                    <div
+                        class="flex items-center justify-between p-4 rounded-2xl hover:bg-slate-50 transition-all duration-200">
+
+                        <div class="flex items-center gap-4">
+
+                            <div
+                                class="w-14 h-14 rounded-full bg-orange-100 flex items-center justify-center">
+
+                                <i class="pi pi-dollar text-orange-500 text-xl"></i>
+
+                            </div>
+
+                            <div class="flex flex-col">
+
+                                <span class="font-semibold text-lg">
+                                    Netflix
+                                </span>
+
+                                <span class="text-slate-400">
+                                    Hoje, 29 Agosto às 10:20
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <span class="font-bold text-red-500">
+                            - R$ 39,90
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </p-card>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- DIALOG -->
+<form [formGroup]="formContaFinanceira">
+
+    <p-dialog
+        header="Nova Conta"
+        [(visible)]="exibirDialog"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        styleClass="rounded-3xl!"
+        [style]="{ width: '42rem' }">
+
+        <div class="flex flex-col gap-8 py-4">
+
+            <!-- NOME -->
+            <div class="flex flex-col gap-2">
+
+                <label class="font-semibold text-slate-700">
+                    Nome da Conta
+                </label>
+
+                <input
+                    pInputText
+                    formControlName="nome"
+                    placeholder="Ex: Santander"
+                    class="w-full" />
+
+            </div>
+
+            <!-- SALDO -->
+            <div class="flex flex-col gap-2">
+
+                <label class="font-semibold text-slate-700">
+                    Saldo
+                </label>
+
+                <p-inputNumber
+                    formControlName="saldo"
+                    locale="pt-BR"
+                    mode="currency"
+                    currency="BRL"
+                    inputStyleClass="w-full">
+                </p-inputNumber>
+
+            </div>
+
+            <!-- COR -->
+            <div class="flex flex-col gap-4">
+
+                <label class="font-semibold text-slate-700">
+                    Cor do cartão
+                </label>
+
+                <p-colorpicker
+                    formControlName="cor"
+                    [inline]="true">
+                </p-colorpicker>
+
+            </div>
+
+        </div>
+
+        <ng-template pTemplate="footer">
+
+            <div class="flex justify-end gap-3 w-full">
+
+                <p-button
+                    label="Cancelar"
+                    severity="secondary"
+                    (click)="exibirDialog = false">
+                </p-button>
+
+                <p-button
+                  icon="pi pi-check"
+                  severity="success"
+                  label="Salvar Conta"
+                  (click)="salvarConta()">
+                </p-button>
+
+            </div>
+
+        </ng-template>
+
+    </p-dialog>
+
+</form>
