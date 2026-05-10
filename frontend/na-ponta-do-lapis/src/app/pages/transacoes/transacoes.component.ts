@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, ViewChild } from '@angular/core';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -7,16 +7,18 @@ import { Categoria, ITransacoes, Tipo } from '../../model/ITransacoes.model';
 import { ContasRequest } from '../../model/IContas.models';
 import { Marcador } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-transacoes',
   imports: [PrimeNGModuleModule, CommonModule, ReactiveFormsModule],
   templateUrl: './transacoes.component.html',
+  providers: [MessageService],
   styleUrl: './transacoes.component.css',
 })
 export class TransacoesComponent {
     exibirDialog: boolean = false;
-    transacoesDados: any[] = [];
+    private messageService = inject(MessageService)
 
    formTransacao:FormGroup;
    constructor(private fb:FormBuilder ,private transacoesService:TransacoesService, private cdr: ChangeDetectorRef){
@@ -38,17 +40,21 @@ export class TransacoesComponent {
     this.listarCategorias()
     this.listarMarcadores()
    }
-
+    transacoesDados: ITransacoes[] = [];
    public listarTransacoes():any {
     this.transacoesService.listarTransacoes().subscribe({
-      next: (res:any) => {
+      next: (res:ITransacoes[]) => {
         this.transacoesDados = res
-        //serve para atualizar a pagina após receber a lista de transacoes
         this.cdr.detectChanges()
       },
       error: (erro:Error) => {
         console.log(erro)
-        alert("Erro ao listar TRANSACOES(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+            this.messageService.add({
+               severity: 'warn',
+               summary: 'Erro as carregar transação',
+               detail: '',
+            life: 2000
+        });
       }
     })
    }
@@ -56,12 +62,23 @@ export class TransacoesComponent {
    public excluir(id: number):void {
     this.transacoesService.deletarTransacaoPorId(id).subscribe({
       next: (res:any) => {
-        console.log(res)
         this.listarTransacoes()
+            this.messageService.add({
+               severity: 'success',
+               summary: 'Transação excluida com sucesso',
+               detail: '',
+            life: 2000
+        });
       },
       error: (res:Error) => {
         console.error("Erro ao deletar Transação", res)
-        alert("Erro ao EXCLUIR TRANSACAO(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+         this.listarTransacoes()
+            this.messageService.add({
+               severity: 'warn',
+               summary: 'Erro ao excluir com transação',
+               detail: '',
+            life: 2000
+        });
       }
     })
   }
@@ -77,7 +94,12 @@ export class TransacoesComponent {
       },
       error: (error:Error) => {
         console.error("Erro ao listar Contas Financeiras", error)
-        alert("Erro ao listar TRANSACOES(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+            this.messageService.add({
+               severity: 'warn',
+               summary: 'Erro ao carregar as transações',
+               detail: ``,
+            life: 2000
+        });
       }
     })
   }
@@ -90,7 +112,12 @@ export class TransacoesComponent {
       },
       error: (error:Error) =>{
         console.error("Erro ao listar Categorias", error)
-        alert("Erro ao listar categorias(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+         this.messageService.add({
+               severity: 'warn',
+               summary: 'Erro ao carregar as categorias',
+               detail: ``,
+            life: 2000
+        });
       }
     })
   }
@@ -114,11 +141,15 @@ export class TransacoesComponent {
     this.transacoesService.listarMarcadores().subscribe({
       next: (res:Marcador[]) => {
         this.opcoesMarcador = res
-        console.log(res)
       },
       error: (error:Error) => {
         console.error("Erro a listar Marcadores", error)
-        alert("Erro ao listar marcadores(LEMBRAR DE COLOCAR UM FEEDBACK MELHOR)")
+         this.messageService.add({
+               severity: 'warn',
+               summary: 'Erro ao carregar os marcadores',
+               detail: ``,
+            life: 2000
+        });
       }
     })
   }
@@ -142,7 +173,8 @@ export class TransacoesComponent {
       tipo: null,
       estado: 'PENDENTE',
       valor: 0,
-      dataHora: new Date().toISOString()
+      dataHora: new Date().toISOString(),
+      marcador: null
     };
   }
 
@@ -154,15 +186,23 @@ export class TransacoesComponent {
   salvar() {
     if(this.formTransacao.valid){
       const dadosParaEnviar = this.formTransacao.value
-      console.log(dadosParaEnviar)
-
+      this.exibirDialog = false
       this.transacoesService.adicionarTransacao(dadosParaEnviar).subscribe({
         next: (res:ITransacoes) => {
-          console.log(res)
-          alert("Lembrar de colocar um feedback melhor. TRANSACAO ENVIADA COM SUCESSO")
+            this.messageService.add({
+            severity: 'success',
+            summary: 'Transação salva com sucesso',
+            detail: '',
+            life: 2000
+        });
         },
         error: (error:Error) => {
-          alert("Errro ao enviar Transacao LEMBRAR DE COLOCAR UM FEEDBACK MELHOR" )
+               this.messageService.add({
+               severity: 'warn',
+               summary: 'Erro ao excluir transação',
+               detail: '',
+            life: 2000
+        });
           console.error(error)
         }
       })
@@ -172,6 +212,19 @@ export class TransacoesComponent {
   
 
   getSeverity(status: string) {
-    return status === 'RECEITA' ? 'success' : 'danger';
+    if(status == 'RECEITA'){
+      return 'success'
+    }
+    if(status == 'DESPESA'){
+      return 'danger'
+    }
+    if (status == 'PENDENTE'){
+      return 'danger'
+    }
+    if (status == 'REALIZADA'){
+      return 'success'
+    }
+    return 'info'
   }
+  
 }

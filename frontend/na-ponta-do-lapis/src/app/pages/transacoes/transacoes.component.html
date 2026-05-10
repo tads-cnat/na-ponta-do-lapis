@@ -1,5 +1,6 @@
 <div>
     <div>
+        <p-toast/>
         <div class="flex h-screen items-center justify-center ">
             <p-card class="bg-[#F8FAFC]!">
                 <div class="flex justify-between items-center mb-3">
@@ -8,8 +9,13 @@
 
                     <div class="flex gap-2">
                         <p-button
-                            styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm">Filtrar</p-button>
-                        <p-button (onClick)="abrirDialog()">Adicionar Transação</p-button>
+                           [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
+                                class="pi pi-print" pButtonIcon></i> Imprimir</p-button>
+                        <p-button
+                           [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
+                                class="pi pi-sliders-h" pButtonIcon></i> Filtrar</p-button>
+                        <p-button styleClass="rounded-xl!" (onClick)="abrirDialog()">
+                            <i class="pi pi-plus"></i> Adicionar Transação</p-button>
                         <p-floatlabel>
                             <p-iconfield>
                                 <p-inputicon class="pi pi-search" />
@@ -24,6 +30,8 @@
                     class="w-100 sm:w-150 md:w-200 lg:w-400">
                     <ng-template pTemplate="header">
                         <tr>
+                            <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                            <th class="bg-[#F8F8FC]! text-slate-700!">Marcador</th>
                             <th class="bg-[#F8F8FC]! text-slate-700!">Descrição</th>
                             <th class="bg-[#F8F8FC]! text-slate-700!">Categoria</th>
                             <th class="bg-[#F8F8FC]! text-slate-700!">Conta</th>
@@ -36,14 +44,26 @@
                     </ng-template>
                     <ng-template pTemplate="body" let-t>
                         <tr>
+                            <td>
+                                <p-tableCheckbox [value]="t" />
+                            </td>
+                            <td><span class="pi pi-bookmark-fill mr-3" [style.color]="t.marcador.cor"></span>
+                                <span>{{t.marcador.nome }}</span>
+                            </td>
                             <td>{{ t.descricao }}</td>
                             <td>{{ t.categoria.nome }}</td>
                             <td>{{ t.conta.nome }}</td>
                             <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
                             <td>
-                                <p-tag [value]="t.tipo" [severity]="getSeverity(t.tipo)"></p-tag>
+                                <p-tag class="" [value]="t.tipo" [style]="{ 
+                                'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340', 
+                                'color': t.tipo === 'PENDENTE' ? '#ffffff' : '#ffffff' 
+                                }"></p-tag>
                             </td>
-                            <td>{{ t.estado }}</td>
+                            <td><p-tag [value]="t.estado" [style]="{ 
+                                'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1', 
+                                'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74' 
+                                }"></p-tag></td>
                             <td>{{ t.valor | currency: 'BRL'}}</td>
                             <td>
                                 <p-button icon="pi pi-trash" (onClick)="excluir(t.id)">
@@ -52,6 +72,7 @@
                             </td>
                         </tr>
                     </ng-template>
+                    <ng-template pTemplate="paginatorleft"></ng-template>
                 </p-table>
             </p-card>
         </div>
@@ -60,13 +81,13 @@
 
 
     <form [formGroup]="formTransacao">
-        <p-dialog header="Nova Movimentação" [(visible)]="exibirDialog" [modal]="true">
+        <p-dialog header="" [(visible)]="exibirDialog" [modal]="true">
 
             <div class="flex flex-col items-center justify-center gap-2">
 
                 <div class="relative inline-flex cursor-pointer" (click)="toggle($event)">
-                    <i class="pi pi-tags text-4xl transition-colors duration-200 "
-                        [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
+                    <i class="pi pi-bookmark-fill
+ text-4xl transition-colors duration-200 " [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
                     </i>
                 </div>
 
@@ -111,8 +132,9 @@
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Conta</label>
 
-                        <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id" formControlName="idContaFinanceira"
-                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
+                        <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
+                            formControlName="idContaFinanceira" placeholder="Selecione" [appendTo]="'body'"
+                            styleClass="w-full"></p-select>
                     </div>
                     <div class="flex flex-col gap-1">
                         <label class="font-bold">Categoria</label>
@@ -128,8 +150,8 @@
 
                         <div class="flex flex-col gap-1">
                             <label class="font-bold">Data</label>
-                            <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yyyy" showIcon="tue" 
-                                 placeholder="Selecione o dia" [appendTo]="'body'"></p-datePicker>
+                            <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yy" showIcon="tue"
+                                placeholder="Selecione o dia" [appendTo]="'body'"></p-datePicker>
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-4">

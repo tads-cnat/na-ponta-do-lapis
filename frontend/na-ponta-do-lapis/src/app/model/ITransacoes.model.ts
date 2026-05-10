@@ -1,3 +1,6 @@
+import { MarcadorResume } from "./IMarcador.models";
+
+
 export type Tipo = "RECEITA" | "DESPESA";
 export type Estado = "PENDENTE" | "REALIZADA";
 
@@ -20,6 +23,7 @@ export interface ITransacoes {
   dataHora: string;
   categoria: Categoria | null;
   conta: Conta | null;
+  marcador: MarcadorResume | null
 }
 
 export interface ITransacaoRequest {

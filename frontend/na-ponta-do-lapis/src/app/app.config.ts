@@ -7,7 +7,8 @@ import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeuix/themes';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptor/auth.interceptor';
-
+import { MessageService } from 'primeng/api';
+import { provideAnimations } from '@angular/platform-browser/animations'; // Verifique este caminho
 const naPontaDoLapisTema = definePreset(Aura, {
     semantic: {
         primary: {
@@ -30,6 +31,8 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
+    provideAnimations(),
+    MessageService,
     providePrimeNG({
       theme : {
         preset: naPontaDoLapisTema,
