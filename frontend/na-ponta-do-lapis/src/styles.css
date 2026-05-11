@@ -3,3 +3,8 @@
 @import 'tailwindcss';
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
+
+html,
+body {
+    overflow-x: hidden;
+}
