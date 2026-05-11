@@ -9,7 +9,7 @@
             </p>
 
             <div class="flex flex-col gap-2 mt-4">
-                <label for="email" class="font-medium">Email</label>
+                <label for="email" class="font-medium">Email <span class="text-red-400">*</span></label>
                 <input id="email" pInputText placeholder="nome@gmail.com" class="w-full" formControlName="email"
                     [class.ng-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
                     [class.ng-dirty]="loginForm.get('email')?.touched">
@@ -25,7 +25,7 @@
             </div>
 
             <div class="flex flex-col gap-2">
-                <label for="password" class="font-medium">Senha</label>
+                <label for="password" class="font-medium">Senha <span class="text-red-400">*</span></label>
                 <p-password id="password" [toggleMask]="true" [feedback]="false" placeholder="Digite sua senha aqui"
                     inputStyleClass="w-full" formControlName="password"
                     [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
