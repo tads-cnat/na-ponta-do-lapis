@@ -8,7 +8,7 @@
       <a routerLink="/login" class="text-[#FBBC05] font-bold transition duration-300 ease-in-out hover:text-[#d1c4ff]">Cadastre-se</a>
 
       <div class="flex flex-col gap-1">
-        <label for="nome" class="font-medium text-sm">Nome Completo</label>
+        <label for="nome" class="font-medium text-sm">Nome Completo <span class="text-red-400">*</span></label>
         <input id="nome" pInputText placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full"
                [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
                [class.ng-dirty]="registerForm.get('nomeCompleto')?.touched">
@@ -18,7 +18,7 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="username" class="font-medium text-sm">Nome de Usuário</label>
+        <label for="username" class="font-medium text-sm">Nome de Usuário <span class="text-red-400">*</span></label>
         <input id="username" pInputText placeholder="ex: Lucaasshq" formControlName="username" class="w-full"
                [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
                [class.ng-dirty]="registerForm.get('username')?.touched">
@@ -29,7 +29,7 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div class="flex flex-col gap-1">
-          <label for="email" class="font-medium text-sm">Email</label>
+          <label for="email" class="font-medium text-sm">Email <span class="text-red-400">*</span></label>
           <input id="email" pInputText placeholder="nome@gmail.com" formControlName="email" class="w-full"
                  [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
                  [class.ng-dirty]="registerForm.get('email')?.touched">
@@ -45,7 +45,7 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="password" class="font-medium text-sm">Senha</label>
+        <label for="password" class="font-medium text-sm">Senha <span class="text-red-400">*</span></label>
         <p-password id="password" [toggleMask]="true" placeholder="Digite sua senha" styleClass="w-full"
           inputStyleClass="w-full" formControlName="password" [feedback]="true" promptLabel="Força da senha"
           weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte"
@@ -56,7 +56,7 @@
       </div>
 
       <div class="flex flex-col gap-1">
-        <label for="confirmPassword" class="font-medium text-sm">Confirmar Senha</label>
+        <label for="confirmPassword" class="font-medium text-sm">Confirmar Senha <span class="text-red-400">*</span></label>
         <p-password id="confirmPassword" [toggleMask]="true" [feedback]="false" placeholder="Repita a senha"
           styleClass="w-full" inputStyleClass="w-full" formControlName="passwordConfirmation"
           [styleClass]="registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
