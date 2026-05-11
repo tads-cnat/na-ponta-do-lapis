@@ -16,14 +16,11 @@ Nosso sistema web cria um ambiente digital acolhedor e interativo voltado para j
 
 # Horário de Reuniões
 
-- Quarta-Feira: 20:30 às 21:30. (Discord)
-- Quinta-Feira: 16:30 às 18:00. (Presencial com o Orientador) 
-- Sexta-Feira:  20:30 às 21:30. (Discord)
+- Terça-Feira: 14:30 às 16:00. (Presencial com o Orientador)
+- Quarta-Feira: 20:30 às 21:30. (Discord) 
+- Sábado: 19:30 às 20:00. (Discord)
 
 # Documentação
 
 [Link para os documentos do projeto](doc/documentacao.md)
 
-# Manual do Desenvolvedor
-
-[Orientações para os desenvolvedores do projeto](doc/guia-ds/guia.md)

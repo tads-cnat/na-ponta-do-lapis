@@ -9,10 +9,10 @@ cd backend/na-ponta-do-lapis
 2. Limpar e compilar o projeto
 
 ```bash
-./mvnw clean install
+mvn clean install
 ```
 3. Rodar a aplicação
 
 ```bash
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
