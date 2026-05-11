@@ -18,10 +18,12 @@ import { InputGroupModule } from 'primeng/inputgroup';
 import { PopoverModule } from 'primeng/popover';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
+import { CheckboxModule } from 'primeng/checkbox';
 
 
 @NgModule({
   exports: [
+    CheckboxModule,
     DatePickerModule,
     InputMaskModule,
     InputGroupModule,

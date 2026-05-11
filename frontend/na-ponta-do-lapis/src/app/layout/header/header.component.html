@@ -5,9 +5,9 @@
         <div class="flex items-center gap-5 ">
             <i class="pi pi-bell"></i>
             <div><img class="h-12 w-12 rounded-full border-4 border-[#f9db70]  object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}"></div>
-            <div><p class="">{{ usuarioLogado?.nome }}</p></div>
+            <div><p class="nomeUser font-medium">{{ usuarioLogado?.nome }}</p></div>
             <div>
-                <p-button variant="text" styleClass="text-red-500! hover:bg-[#fef2f2]!" (onClick)="logout()">logout<i class="pi pi-sign-out "></i></p-button>
+                <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]!" (onClick)="logout()">Sair<i class="pi pi-sign-out "></i></p-button>
             </div>
         </div>
 
