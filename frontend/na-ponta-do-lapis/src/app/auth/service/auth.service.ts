@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { LoginRequest } from '../../model/ILoginRequest';
+import { LoginRequest, SignupRequest } from '../../model/ILoginRequest';
 import { Token } from '../../model/IToken.models';
 import { Usuario } from '../../model/IUsuario.models';
 
@@ -18,6 +18,10 @@ export class AuthService {
 
   public login(loginRequest:LoginRequest): Observable<Token>{
     return this.http.post<Token>(`${this.BASE_URL}/auth/login`, loginRequest)
+  }
+
+  public register(signupRequest:SignupRequest): Observable<SignupRequest> {
+    return this.http.post<SignupRequest>(`${this.BASE_URL}/auth/register`, signupRequest)
   }
 
   public meusDados(): Observable<Usuario> {
