@@ -1,33 +1,47 @@
 <p-toast></p-toast>
 <div class="flex h-screen w-full">
     <form [formGroup]="loginForm" class="flex flex-1 flex-col justify-center items-center p-10">
-        <!-- Lado Esquerdo (Formulário) -->
         <div class="flex flex-col gap-3 w-full max-w-md">
             <h1 class="text-5xl font-bold">Entrar</h1>
             <p class="text-lg">
                 Ainda não tem uma conta?
-                <a href="/signup" class="text-[#FBBC05] font-bold">Cadastre-se</a>
+                <a routerLink="/signup" class="text-[#FBBC05] font-bold transition duration-300 ease-in-out hover:text-[#d1c4ff] ">Cadastre-se</a>
             </p>
 
             <div class="flex flex-col gap-2 mt-4">
                 <label for="email" class="font-medium">Email</label>
-                <input id="email" pInputText placeholder="nome@gmail.com" class="w-full" formControlName="email" required="true">
+                <input id="email" pInputText placeholder="nome@gmail.com" class="w-full" formControlName="email"
+                    [class.ng-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
+                    [class.ng-dirty]="loginForm.get('email')?.touched">
+
+                @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                @if (loginForm.get('email')?.errors?.['required']) {
+                <small class="text-red-500 font-semibold">O e-mail é obrigatório.</small>
+                }
+                @if (loginForm.get('email')?.errors?.['email']) {
+                <small class="text-red-500 font-semibold">Informe um formato de e-mail válido.</small>
+                }
+                }
             </div>
 
             <div class="flex flex-col gap-2">
                 <label for="password" class="font-medium">Senha</label>
-                <p-password id="password" type="password" [toggleMask]="true" [feedback]="false"
-                    placeholder="Digite sua senha aqui" fluid="true" inputStyleClass="w-full"
-                    inputStyleClass="w-full" formControlName="password" required="true"/>
+                <p-password id="password" [toggleMask]="true" [feedback]="false" placeholder="Digite sua senha aqui"
+                    inputStyleClass="w-full" formControlName="password"
+                    [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
+
+                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                <small class="text-red-500 font-semibold">A senha é obrigatória.</small>
+                }
             </div>
 
             <div class="flex flex-col gap-2 mt-2">
-                <p-button label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!" [disabled]="loginForm.invalid" (click)="login()"/>
+                <p-button label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
+                    [disabled]="loginForm.invalid" (onClick)="login()" />
             </div>
         </div>
     </form>
 
-    <!-- Lado Direito (Fundo Roxo Ocupando Tudo) -->
     <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center">
         <img src="/logo.svg" alt="Logo" class="w-1/2 max-w-sm">
     </div>

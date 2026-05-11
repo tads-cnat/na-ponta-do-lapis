@@ -1,34 +1,87 @@
-<!-- <p-toast></p-toast>
-<div class="flex h-screen w-full">
-    <form [formGroup]="registerForm" class="flex flex-1 flex-col justify-center items-center p-10">
-        
-        <div class="flex flex-col gap-3 w-full max-w-md">
-            <h1 class="text-5xl font-bold text-[#313131]">Cadastre-se</h1>
-            <p class="text-lg text-[#4A4A4A]">
-                Preencha todos os campos abaixo para criar sua conta.
-                <a href="/login" class="text-[#FBBC05] font-bold">Já tem conta?</a>
-            </p>
+<div class="flex h-screen w-full overflow-hidden">
+  <form [formGroup]="registerForm" class="flex flex-1 flex-col justify-center items-center p-10 overflow-y-auto">
 
-            <div class="flex flex-col gap-2 mt-4">
-                <label for="email" class="font-medium">Email</label>
-                <input id="email" pInputText placeholder="nome@gmail.com" class="w-full" formControlName="" required="true">
-            </div>
+    <div class="flex flex-col gap-3 w-full max-w-md">
+      <h1 class="text-5xl font-bold text-[#313131]">Cadastre-se</h1>
+      <p class="text-[#4A4A4A] mb-4">Preencha todos os campos abaixo para criar sua conta. 
+      </p>
+      <a routerLink="/login" class="text-[#FBBC05] font-bold transition duration-300 ease-in-out hover:text-[#d1c4ff]">Cadastre-se</a>
 
-            <div class="flex flex-col gap-2">
-                <label for="password" class="font-medium">Senha</label>
-                <p-password id="password" type="password" [toggleMask]="true" [feedback]="false"
-                    placeholder="Digite sua senha aqui" fluid="true" inputStyleClass="w-full"
-                    inputStyleClass="w-full" formControlName="" required="true"/>
-            </div>
+      <div class="flex flex-col gap-1">
+        <label for="nome" class="font-medium text-sm">Nome Completo</label>
+        <input id="nome" pInputText placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full"
+               [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
+               [class.ng-dirty]="registerForm.get('nomeCompleto')?.touched">
+        @if (registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched) {
+          <small class="text-red-500 font-medium">O nome deve ter no mínimo 3 caracteres.</small>
+        }
+      </div>
 
-            <div class="flex flex-col gap-2 mt-2">
-                <p-button label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!" [disabled]="registerForm.invalid" (click)="register()"/>
-            </div>
+      <div class="flex flex-col gap-1">
+        <label for="username" class="font-medium text-sm">Nome de Usuário</label>
+        <input id="username" pInputText placeholder="ex: Lucaasshq" formControlName="username" class="w-full"
+               [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+               [class.ng-dirty]="registerForm.get('username')?.touched">
+        @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+          <small class="text-red-500 font-medium">Nome de usuário obrigatório (mín. 3 letras).</small>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1">
+          <label for="email" class="font-medium text-sm">Email</label>
+          <input id="email" pInputText placeholder="nome@gmail.com" formControlName="email" class="w-full"
+                 [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+                 [class.ng-dirty]="registerForm.get('email')?.touched">
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <small class="text-red-500 font-medium">E-mail inválido.</small>
+          }
         </div>
-    </form>
+        <div class="flex flex-col gap-1">
+          <label for="celular" class="font-medium text-sm">Celular</label>
+          <p-inputMask id="celular" mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName="telefone"
+            styleClass="w-full"></p-inputMask>
+        </div>
+      </div>
 
-   
-    <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center">
-        <img src="/logo.svg" alt="Logo" class="w-1/2 max-w-sm">
+      <div class="flex flex-col gap-1">
+        <label for="password" class="font-medium text-sm">Senha</label>
+        <p-password id="password" [toggleMask]="true" placeholder="Digite sua senha" styleClass="w-full"
+          inputStyleClass="w-full" formControlName="password" [feedback]="true" promptLabel="Força da senha"
+          weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte"
+          [styleClass]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          <small class="text-red-500 font-medium">A senha deve ter pelo menos 8 caracteres.</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1">
+        <label for="confirmPassword" class="font-medium text-sm">Confirmar Senha</label>
+        <p-password id="confirmPassword" [toggleMask]="true" [feedback]="false" placeholder="Repita a senha"
+          styleClass="w-full" inputStyleClass="w-full" formControlName="passwordConfirmation"
+          [styleClass]="registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
+        @if (registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched) {
+          <small class="text-red-500 font-medium">Confirme sua senha corretamente.</small>
+        }
+      </div>
+
+      <div class="flex items-center gap-2 mt-2">
+        <p-checkbox [(ngModel)]="termos" [binary]="true" [ngModelOptions]="{standalone: true}"></p-checkbox>
+        <label for="termos" class="text-sm text-slate-600">
+          Eu concordo com os <span class="text-amber-500 underline cursor-pointer">termos e políticas de privacidade</span>.
+        </label>
+      </div>
+
+      <div class="flex flex-col gap-2 mt-4">
+        <p-button type="submit" label="Criar Conta" 
+                  styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
+                  (onClick)="register()" 
+                  [disabled]="registerForm.invalid || !termos"></p-button>
+      </div>
     </div>
-</div> -->
+  </form>
+
+  <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center">
+    <img src="/logo.svg" alt="Logo" class="w-1/2 max-w-sm">
+  </div>
+</div>

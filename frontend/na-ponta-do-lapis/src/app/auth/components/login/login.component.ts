@@ -31,7 +31,7 @@ export class LoginComponent {
       next: (res: Token) => {
           this.messageService.add({
             severity: 'success',
-            summary: 'Login Realizado',
+            summary: 'Login Realizado!',
             detail: 'Bem-vindo ao Na Ponta do Lápis',
             life:2000
           })
@@ -49,7 +49,7 @@ export class LoginComponent {
          this.messageService.add({
             severity: 'error',
             summary: 'Erro',
-            detail: 'Erro ao se conectar ao servidor.',
+            detail: 'Email ou senha inválido.',
             life: 3000
           })
       }
