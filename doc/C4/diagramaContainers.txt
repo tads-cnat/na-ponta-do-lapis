@@ -24,5 +24,6 @@ Rel(admin_site, frontend, "Acessa o sistema de gestão financeira")
 Rel(Admin_familia, frontend, "Acessa o sistema de gestão financeira")
 Rel(frontend, backend, "Chamada para a API (JSON/HTTP)")
 Rel(backend, database, "Acessa e escreve informações no banco")
-Rel(backend, api_externa, "Acessa cotações de moedas")
+Rel(backend, api_externa, "Chamada para a API (JSON/HTTP)")
+
 @enduml
