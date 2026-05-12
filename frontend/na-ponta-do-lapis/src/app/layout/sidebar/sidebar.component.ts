@@ -11,7 +11,7 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent implements OnInit {
-  aberto: boolean = false;
+  aberto: boolean = true;
   items: MenuItem[] | undefined ;
 
   ngOnInit(): void {
@@ -26,7 +26,7 @@ export class SidebarComponent implements OnInit {
   }
 
   toggleSidebar(){
-    this.aberto =  !this.aberto;
+    this.aberto = !this.aberto;
   }
 
 }
