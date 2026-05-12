@@ -51,8 +51,14 @@ export class ContasComponent implements OnInit {
   // =========================================
 
   exibirDialog: boolean = false;
+
   idContaEdicao: number | null = null;
+
   modoEdicao: boolean = false;
+
+  excluirDialog: boolean = false;
+
+  contaExcluir: IContas | null = null;
 
 // =========================================
 // DADOS
@@ -516,13 +522,41 @@ readonly transacoesPorPagina: number = 5;
       });
   }
 
-  public excluir(id: number): void {
+// =========================================
+// EXCLUSÃO COM CONFIRMAÇÃO
+// =========================================
+
+  public abrirDialogExcluir(conta: IContas | null): void {
+
+    if (!conta) {
+      return;
+    }
+
+    this.contaExcluir = conta;
+
+    this.excluirDialog = true;
+  }
+
+  public fecharDialogExcluir(): void {
+
+    this.excluirDialog = false;
+
+    this.contaExcluir = null;
+  }
+
+  public confirmarExcluirConta(): void {
+
+    if (!this.contaExcluir?.id) {
+      return;
+    }
 
     this.contaFinanceiraService
-      .deletarContaPorId(id)
+      .deletarContaPorId(this.contaExcluir.id)
       .subscribe({
 
         next: () => {
+
+          this.fecharDialogExcluir();
 
           this.listarContas();
         },
