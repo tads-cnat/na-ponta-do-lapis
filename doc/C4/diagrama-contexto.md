@@ -1,0 +1,1 @@
+![Diagrama de contexto na-ponta-do-lapis](Diagrama_Contexto.jpeg)
