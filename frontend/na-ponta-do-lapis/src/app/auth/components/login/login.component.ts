@@ -35,7 +35,7 @@ export class LoginComponent {
             detail: 'Bem-vindo ao Na Ponta do Lápis',
             life:2000
           })
-
+        
 
         StorageService.salvarToken(res.token)
         const usuario = StorageService.getUsuarioDecodificado()

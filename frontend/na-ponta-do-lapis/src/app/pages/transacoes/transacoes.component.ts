@@ -183,7 +183,7 @@ export class TransacoesComponent {
   }
 
   public prepararEdicao(transacao: ITransacoes) {
-    this.id = transacao.id;
+    this.id = transacao.id; 
     this.exibirDialog = true;
 
     // Preenche o formulário com os dados da linha selecionada
@@ -253,4 +253,5 @@ export class TransacoesComponent {
     }
     return 'info'
   }
+
 }

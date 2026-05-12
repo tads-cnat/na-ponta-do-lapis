@@ -19,6 +19,9 @@
                                 class="pi pi-print" pButtonIcon></i> Imprimir</p-button>
                         <p-button
                            [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
+                                class="pi pi-print" pButtonIcon></i> Imprimir</p-button>
+                        <p-button
+                           [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
                                 class="pi pi-sliders-h" pButtonIcon></i> Filtrar</p-button>
                         <p-button styleClass="rounded-xl!" (onClick)="abrirDialog()">
                             <i class="pi pi-plus"></i> Adicionar Transação</p-button>
@@ -61,14 +64,14 @@
                             <td>{{ t.conta.nome }}</td>
                             <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
                             <td>
-                                <p-tag class="" [value]="t.tipo" [style]="{
-                                'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340',
-                                'color': t.tipo === 'PENDENTE' ? '#ffffff' : '#ffffff'
+                                <p-tag class="" [value]="t.tipo" [style]="{ 
+                                'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340', 
+                                'color': t.tipo === 'PENDENTE' ? '#ffffff' : '#ffffff' 
                                 }"></p-tag>
                             </td>
-                            <td><p-tag [value]="t.estado" [style]="{
-                                'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1',
-                                'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74'
+                            <td><p-tag [value]="t.estado" [style]="{ 
+                                'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1', 
+                                'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74' 
                                 }"></p-tag></td>
                             <td>{{ t.valor | currency: 'BRL'}}</td>
                             <td>
@@ -77,7 +80,7 @@
                                 <p-button icon="pi pi-pencil" styleClass="bg-amber-400! border-[#FFB900]!" (onClick)="prepararEdicao(t)"></p-button>
                                 </div>
                             </td>
-
+                            
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="paginatorleft"></ng-template>
