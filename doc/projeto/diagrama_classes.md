@@ -88,6 +88,8 @@ classDiagram
     }
 
     class Marcador {
+        -String nome
+        -String cor
     }
 
     class Post {

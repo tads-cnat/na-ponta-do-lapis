@@ -3,10 +3,11 @@
 ## Histórico de Revisões
 
 |    Data    | Versão |   Descrição    |               Autores                |
-| :--------: | :----: | :------------: | :----------------------------------: |
+|:----------:| :----: | :------------: | :----------------------------------: |
 | 24/09/2025 |  1.0   | Versão inicial | Bruno, Eduardo, Lucas, Pedro, Wagner |
 | 25/01/2026 |  2.0   | Segunda versão  | Bruno, Eduardo, Lucas, Pedro, Wagner |
 | 28/03/2026 |  3.0   | Terceira versão | Bruno, Eduardo, Eric, Lucas, Pedro, Vinicius, Wagner |
+| 10/05/2026 |  4.0   | Quarta versão   | Bruno, Eduardo, Eric, Lucas, Pedro, Vinicius, Wagner |
 
 ## 1. Visão Geral do Sistema Proposto
 
@@ -90,25 +91,57 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 
 ## 7. Regras de Negócio
 
-|  ID   |  Regra  |  Descrição   |
-| :---: | :-----: | :----------: |
-| RN01  | Exclusão no grupo familiar | Somente o fundador do grupo pode  excluir o grupo familiar. |
-| RN02  |   Adição no grupo familiar   |     Somente os administradores podem adicionar outra pessoa ao grupo da família.      |
-| RN03  |   Remoção de membros   |     Somente os administradores podem remover do grupo familiar.      |
+|  ID  |             Regra              |                                     Descrição                                      |
+|:----:|:------------------------------:|:----------------------------------------------------------------------------------:|
+| RN01 | Utilização das funcionalidades |                 Os usuários não logados só podem acessar os posts.                 |
+| RN02 |       Criação de família       |                        O usuário só poderá ter uma família.                        |
+| RN03 |    Pertencimento à família     |                   O usuário só poderá participar de uma família.                   |
+| RN04 |   Exclusão no grupo familiar   |            Somente o fundador do grupo pode  excluir o grupo familiar.             |
+| RN05 |    Adição no grupo familiar    |     Somente os administradores podem convidar outra pessoa ao grupo familiar.      |
+| RN06 |       Remoção de membros       |       Somente os administradores da família podem remover do grupo familiar.       |
+| RN07 |  Promoção para administrador   | Somente os administradores da família podem promover membros para administradores. | 
+| RN08 |    Nome da conta financeira    |  Um mesmo usuário não pode ter duas ou mais contas financeiras com o mesmo nome.   |
+| RN09 |     Gerenciamento de posts     |         Somente administradores podem adicionar, editar ou excluir posts.          |
 
 ## 8. Requisitos Funcionais
 
-| Código |                              Nome                              |                                                                Descrição                                                                 | Prioridade |
-| :----: | :------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------: | :--------: |
-|  RF01  | Sistema de Autenticação de usuario e gerenciamento de usuários |                Permitir que o usuario se autentique no sistema, cadastre uma nova conta, edite seus dados e faça logout.                 |    Alta    |
-|  RF02  |                    Gerenciamento de gastos                     |                                     Permitir o registro, edição, exclusão e vizualização de gastos.                                      |    Alta    |
-|  RF03  |                   Vizualização de Relatórios                   |                        Permitir ao usuário a vizualização de tabelas, gráficos e relatório de evolução de gastos.                        |    Alta    |
-|  RF04  |                        Sistema de Metas                        | O sistema terá um sistema de metas baseada nas entradas e gastos, será definido a partir do perfil do usuario ou de forma personalizada. |   Baixa    |
-|  RF05  |                    Gerenciamento de Contas.                    |    Permitir o cadastro, edição, exclusão e vizualização de contas bancárias vinculadas ao sistema, afim de vincular entradas e saidas    |   Média    |
-|  RF06  |                    Categorização dos Gastos                    |                   Permitir o cadastro, edição, exclusão , vizualização das categorias e vincular um gasto a categoria.                   |   Média    |
-|  RF07  |                   Sistema de Grupo Familiar                    |     Permitir que o usuário crie, edite e exclua grupos familiares, além de visualizar os gastos individuais e totais de cada membro.     |   Baixa    |
-|  RF08  |                     Gerenciamento de Posts                     |                            Permitir o administrador crie, edite, exclua posts relacionado a área de finanças.                            |   Baixa    |
-|  RF9  |                       Vizualizar Cotação                       |                                              Permitir vizualizar a cotação de várias moedas                                              |   Baixa    |
+| Código |                              Nome                              |                                                                 Descrição                                                                  | Prioridade |
+|:------:|:--------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------:|:----------:|
+|  RF01  |                      Cadastro de usuário                       |                                        O usuário poderá se cadastrar e criar uma conta no sistema.                                         |    Alta    |
+|  RF02  |                        Login de usuário                        |                                              O usuário poderá logar em sua conta no sistema.                                               |    Alta    |
+|  RF03  |                       Logout de usuário                        |                                             O usuário poderá deslogar de sua conta no sistema.                                             |    Alta    |
+|  RF04  |                    Editar conta de usuário                     |                                               O usuário poderá editar os dados de sua conta.                                               |    Alta    |
+|  RF05  |                      Cadastrar transação                       |                            O usuário poderá cadastrar transações tanto de receita como de despesa em sua conta.                            |    Alta    |
+|  RF06  |                      Vizualizar transação                      |                                 O usuário poderá vizualizar todas as transações registradas em sua conta.                                  |    Alta    |
+|  RF07  |                       Excluir transação                        |                          O usuário poderá excluir quais transações quiser das que foram regitradas em sua conta.                           |    Alta    |
+|  RF08  |                        Editar transação                        |                             O usuário poderá editar os dados das transações que foram regitradas em sua conta.                             |    Alta    |
+|  RF09  |                   Vizualização de Relatórios                   |                         Permitir ao usuário a vizualização de tabelas, gráficos e relatório de evolução de gastos.                         |    Alta    |
+|  RF10  |                   Cadastrar conta financeira                   |                                     O usuário poderá cadastrar uma nova conta financeira em sua conta.                                     |   Médio    |
+|  RF11  |                  Vizualizar conta financeira                   |                                O usuário poderá vizualizar as contas financeiras registardas em sua conta.                                 |   Médio    |
+|  RF12  |                    Excluir conta financeira                    |                           O usuário poderá excluir quais contas financeiras quiser das registradas em sua conta.                           |   Médio    |
+|  RF13  |                    Editar conta financeira                     |                                  O usuário poderá editar as contas financeiras registradas em sua conta.                                   |   Médio    |
+|  RF14  |                      Vizualizar categoria                      |                                     O usuário poderá vizualizar as categorias registradas no sistema.                                      |   Média    |
+|  RF15  |                       Vincular categoria                       |                                            O usuário poderá vincular uma categoria à transação.                                            |   Média    |
+|  RF16  |                       Cadastrar família                        |                                         O usuário poderá cadastrar uma nova família em sua conta.                                          |   Baixa    |
+|  RF17  |                       Vizualizar família                       |                               O usuário poderá vizualizar sua família, os membros e as despesas da família.                                |   Baixa    |
+|  RF18  |                        Excluir família                         |                                        O usuário poderá excluir a família registrada em sua conta.                                         |   Baixa    |
+|  RF19  |                         Editar família                         |                                    O usuário poderá editar os dados da família registrada em sua conta.                                    |   Baixa    |
+|  RF20  |                  Convidar membro para família                  |                           Terá a opção de convidar outro usuário para sua família através do username do mesmo.                            |   Baixa    |
+|  RF21  |                 Aceitar convite de uma família                 |                        O usuário que recebeu um convite de uma família poderá aceitar o mesmo e se vincular a ela.                         |   Baixa    |
+|  RF22  |                   Remover membro da família                    |                                          Terá a opção de remover um membro registrado na família.                                          |   Baixa    |
+|  RF23  |          Promover membro para administador da família          |                                Terá a opção de promover um membro da família para administrador da família.                                |   Baixa    |
+|  RF24  |                        Sistema de Metas                        | O sistema terá um sistema de metas baseada nas receitas e despesas, será definido a partir do perfil do usuario ou de forma personalizada. |   Baixa    |
+|  RF25  |                        Cadastrar posts                         |                                                     O usuário poderá registrar posts.                                                      |   Baixa    |
+|  RF26  |                        Vizualizar posts                        |                                      O usuário poderá vizualizar os posts criados na página de posts.                                      |   Baixa    |
+|  RF27  |                         Excluir posts                          |                                         O usuário poderá excluir os posts registrados no sistema.                                          |   Baixa    |
+|  RF28  |                          Editar posts                          |                                          O usuário poderá editar os posts registrados no sistema.                                          |   Baixa    |
+|  RF29  |                       Cadastrar marcador                       |                                         O usuário poderá cadastrar um novo marcador na sua conta.                                          |   Baixa    |
+|  RF30  |                       Vincular marcador                        |                               O usuário poderá vincular uma transação a um marcador registrado em sua conta.                               |   Baixa    |
+|  RF31  |                      Vizualizar marcador                       |                                    O usuário poderá vizualizar os marcadores registrados em sua conta.                                     |   Baixa    |
+|  RF32  |                        Excluir marcador                        |                                       O usuário poderá excluir um marcador registrado em sua conta.                                        |   Baixa    |
+|  RF33  |                        Editar marcador                         |                                  O usuário poderá editar os dados de um marcador registrado em sua conta.                                  |   Baixa    |
+|  RF34  |                       Vizualizar Cotação                       |                                               Permitir vizualizar a cotação de várias moedas                                               |   Baixa    |
+|  RF35  |                        Login com Google                        |                                     O usuário poderá logar no sistema através da sua conta do Google.                                      |   Baixa    |
 
 > **Prioridade**: alta, média ou baixa
 
@@ -123,27 +156,6 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 |  NF05  |     Acessibilidade      |          O sistema deverá ter algumas funcionalidades de acessibilidade como HTML semântico, botões grandes e chamativo.          |     Usabilidade      |   Desejável   |
 |  NF06  | Facilidade de Navegação |      Todas as funcionalidades devem poder ser acessadas com poucos clicks       |     Usabilidade      |  Obrigatório  |
 |  RF07  |                     Seleção de tema visual                     |                                        Permitir o usuário alternar entre o tema claro e o escuro.                                        |   Baixa    |
-
-## 10. Riscos ⚠️
-Possíveis Riscos:
-
-- Má comunicação entre os membros do projeto durante o desenvolvimento e tomada de decisões.
-
-- Baixo conhecimento de desenvolvimento utilizando os frameworks Angular, Spring Boot e Deploy do sistema.
-
-- Interface ser confusa ou não resolver o problema do usuário final.
-
-- Baixa escalabilidade, sistema funcionar para 10 usuários, mas não suportar uma carga de 1.000 clientes simultâneos.
-
-- Vazamento de dados, autenticação frágil ou falta de conformidade com Lei LGPD
-
-- Incoerência em relação ao projeto proposto com o que foi desenvolvido.
-
-- Projeto demorar tanto que, quando for lançado já vai estar fora do prazo estipulado pelos Stakeholders.
-
-- Baixa confiabilidade e disponibilidade do sistema (abaixo de 99% ao ano), causando perda de reputação da marca.
-
-
 
 > **Categoria** Usabilidade, confiabilidade, performance, suportabilidade, restrição de projeto, implementação, interface e requisito físico - segundo classificação [FURP+](https://pt.wikipedia.org/wiki/FURPS).
 > **Classificação**: desejável ou obrigatório.
