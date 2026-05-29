@@ -8,4 +8,10 @@ import { ProgressBarModule } from 'primeng/progressbar';
   templateUrl: './meta-item.component.html',
   styleUrl: './meta-item.component.css',
 })
-export class MetaItemComponent {}
+export class MetaItemComponent {
+  titulo: string = "Primeira Casa";
+  valorAtual: number = 300.00;
+  valorTotal: number = 500.00;
+  valorFalta: number = this.valorTotal - this.valorAtual;
+  progressoAtual: number = this.valorAtual / this.valorTotal * 100;
+}

@@ -79,20 +79,20 @@
             </svg>
         </div>
         <div>
-            <p class="font-bold text-xl text-gray-800">Primeira Casa</p>
-            <p class="text-base font-bold text-npl-amarelo">33%</p>
+            <p class="font-bold text-xl text-gray-800">{{titulo}}</p>
+            <p class="text-base font-bold text-npl-amarelo">{{progressoAtual}}%</p>
         </div>
     </div>
     <div class="flex items-center">
         <div class="text-end">
-            <p class="text-npl-verde font-bold text-base">R$150.000</p>
-            <p class="text-sm text-gray-500">faltam R$100.00</p>
+            <p class="text-npl-verde font-bold text-base">R$ {{valorTotal}}</p>
+            <p class="text-sm text-gray-500">faltam R${{valorAtual}}</p>
         </div>
         <div class="flex items-center ml-4 gap-2">
-            <p-button size="small" icon="pi pi-trash" styleClass="bg-red-500! border-red-500!"></p-button>
-            <p-button size="small" icon="pi pi-pencil" > </p-button>
+            <p-button size="small" icon="pi pi-trash" severity="danger"></p-button>
+            <p-button size="small" icon="pi pi-pencil"> </p-button>
         </div>
     </div>
 
 </div>
-<p-progressbar [value]="33" color="#EEC046" showValue="false"/>
+<p-progressbar class="h-3!" [value]="progressoAtual" color="linear-gradient(119deg, #E8D73F, #F5A84E )" showValue="false" />
