@@ -1,36 +1,29 @@
 <div class="w-full">
     <app-card-saldo></app-card-saldo>
-    
+
     <div class="w-full">
         <p-toast />
-        
+
         <div class="flex min-h-[calc(100vh-150px)] items-start justify-center px-2 md:px-6 pt-4 sm:pt-8 mt-4 sm:mt-6">
-            
+
             <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
-                
+
                 <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
 
                     <h1 class="text-amber-400 font-bold text-2xl text-center xl:text-left whitespace-nowrap">
                         Movimentações
                     </h1>
 
-                    <div class="flex flex-wrap xl:flex-nowrap gap-2 justify-center xl:justify-end items-center">
-                        <p-button styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm sm:text-base px-2 py-1"
-                            (onClick)="abrirDialog()">
-                            <i class="pi pi-plus mr-1"></i> Adicionar Transação
-                        </p-button>
-                        
-                        <p-button [disabled]="false" styleClass="text-[#6b7280]! !bg-[#fafafa] !text-slate-700 !border-[#e2e4e4] rounded-xl! text-sm sm:text-base px-2 py-1">
-                            <i class="pi pi-sliders-h mr-1" pButtonIcon></i> Filtrar
-                        </p-button>
-                        
+                    <div class="flex gap-2">
+                          <p-button styleClass=" font-bold rounded-xl! border-[#11b981]! bg-[#11b981]!" (onClick)="abrirDialog()">
+                            <i class="pi pi-plus"></i> Adicionar Transação</p-button>
                         <p-button
-                            styleClass="text-[#1976d2]! !bg-[#fafafa] !text-slate-700 !border-[#1976d2] rounded-xl! text-sm sm:text-base px-2 py-1"
-                            (onClick)="abrirDialog()">
-                            <i class="pi pi-bookmark-fill mr-1" pButtonIcon></i> Marcador
-                        </p-button>
-                        
-                        <p-floatlabel class="w-full sm:w-auto mt-2 sm:mt-0">
+                           [disabled]="true" styleClass=" text-[#1976d2]! !bg-[#fafafa] !text-[#1976d2]! border-[#3B82F6]! rounded-xl!"><i
+                                class="pi pi-sliders-h" pButtonIcon></i> Filtrar</p-button>
+                                 <p-button
+                           [disabled]="true" styleClass=" text-[#1976d2]! !bg-[#fafafa] !text-slate-70 0 !border-[#1976d2] rounded-xl!"><i
+                                class="pi pi-print" pButtonIcon></i> Marcador</p-button>
+                        <p-floatlabel>
                             <p-iconfield>
                                 <p-inputicon class="pi pi-search" />
                                 <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)" id="buscar" autocomplete="on" class="w-full sm:w-auto rounded-xl" />
@@ -43,7 +36,7 @@
                 <p-table [value]="transacoesDados" [paginator]="true" [rows]="5"
                     [scrollable]="true" scrollDirection="horizontal" responsiveLayout="scroll"
                     styleClass="p-datatable-sm w-full">
-                    
+
                     <ng-template pTemplate="header">
                         <tr>
                             <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
@@ -58,7 +51,7 @@
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Ações</th>
                         </tr>
                     </ng-template>
-                    
+
                     <ng-template pTemplate="body" let-t>
                         <tr>
                             <td>
@@ -73,18 +66,16 @@
                             <td class="whitespace-nowrap">{{ t.conta.nome }}</td>
                             <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
                             <td>
-                                <p-tag [value]="t.tipo" [style]="{ 
-                                'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340', 
-                                'color': '#ffffff' 
+                                <p-tag class="" [value]="t.tipo" [style]="{
+                                'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340',
+                                'color': t.tipo === 'PENDENTE' ? '#ffffff' : '#ffffff'
                                 }"></p-tag>
                             </td>
-                            <td>
-                                <p-tag [value]="t.estado" [style]="{ 
-                                'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1', 
-                                'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74' 
-                                }"></p-tag>
-                            </td>
-                            <td class="font-bold">{{ t.valor | currency: 'BRL'}}</td>
+                            <td><p-tag [value]="t.estado" [style]="{
+                                'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1',
+                                'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74'
+                                }"></p-tag></td>
+                            <td>{{ t.valor | currency: 'BRL'}}</td>
                             <td>
                                 <div class="flex gap-2">
                                     <p-button icon="pi pi-trash"
@@ -104,20 +95,20 @@
     </div>
 
     <form [formGroup]="formTransacao">
-        <p-dialog header="Transação" [(visible)]="exibirDialog" [modal]="true" 
+        <p-dialog header="Transação" [(visible)]="exibirDialog" [modal]="true"
             [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '50vw' }">
 
             <div class="flex flex-col items-center justify-center gap-2 mt-2">
                 <div class="relative inline-flex cursor-pointer" (click)="toggle($event)">
-                    <i class="pi pi-bookmark-fill text-4xl transition-colors duration-200" 
+                    <i class="pi pi-bookmark-fill text-4xl transition-colors duration-200"
                        [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
                     </i>
                 </div>
-                
+
                 <button pButton type="button"
                     [label]="marcadorSelecionado ? marcadorSelecionado.nome : 'Selecionar Marcador'"
                     (click)="toggle($event)" class="p-button-link p-0 font-medium"></button>
-                
+
                 <p-popover #op>
                     <div class="flex flex-col gap-4">
                         <div>
@@ -158,7 +149,7 @@
                             formControlName="idContaFinanceira" placeholder="Selecione" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
                     </div>
-                    
+
                     <div class="flex flex-col gap-1">
                         <label class="font-bold text-sm">Categoria</label>
                         <p-select [options]="opcoesCategoria" optionLabel="nome" optionValue="id"

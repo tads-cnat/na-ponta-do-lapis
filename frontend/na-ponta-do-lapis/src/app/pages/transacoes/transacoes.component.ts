@@ -10,8 +10,6 @@ import { Marcador } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-transacoes',
@@ -236,7 +234,7 @@ export class TransacoesComponent {
   }
 
   public prepararEdicao(transacao: ITransacoes) {
-    this.id = transacao.id; 
+    this.id = transacao.id;
     this.exibirDialog = true;
 
     // Preenche o formulário com os dados da linha selecionada
