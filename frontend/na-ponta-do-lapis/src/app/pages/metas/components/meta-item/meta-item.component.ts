@@ -9,10 +9,9 @@ import { ProgressBarModule } from 'primeng/progressbar';
   styleUrl: './meta-item.component.css',
 })
 export class MetaItemComponent {
-  @Input() titulo: string = "";
-  @Input() valorAtual: number = 0;
-  @Input() valorTotal: number = 0;
-  @Input() progressoAtual: number = 0;
-
-  get valorFalta(): number { return this.valorTotal - this.valorAtual; }
+  titulo: string = "Primeira Casa";
+  valorAtual: number = 300.00;
+  valorTotal: number = 500.00;
+  valorFalta: number = this.valorTotal - this.valorAtual;
+  progressoAtual: number = this.valorAtual / this.valorTotal * 100;
 }

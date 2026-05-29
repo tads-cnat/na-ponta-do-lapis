@@ -1,6 +1,5 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MetaItemComponent } from './components/meta-item/meta-item.component';
-import { MetasService } from './services/metas.service';
 import { Button } from 'primeng/button';
 
 @Component({
