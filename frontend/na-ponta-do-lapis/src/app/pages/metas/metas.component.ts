@@ -1,23 +1,11 @@
 import { MetaRequest, MetaResponse, TipoMetaResponse } from '../../model/IMetas.models';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MetaItemComponent } from './components/meta-item/meta-item.component';
-import { MetasService } from './services/metas.service';
-import { ContaFinanceiraService } from '../contas/service/contas.service';
-
-import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { DialogModule } from 'primeng/dialog';
-import { InputTextModule } from 'primeng/inputtext';
-import { InputNumber } from 'primeng/inputnumber';
-import { DatePicker } from 'primeng/datepicker';
-import { Select } from 'primeng/select';
-import { ToastModule } from 'primeng/toast';
-import { Textarea } from 'primeng/textarea';
 
 @Component({
   selector: 'app-metas',
-  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, InputNumber, DatePicker, Select, Textarea, ToastModule],
+  imports: [MetaItemComponent, Button],
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
 })
