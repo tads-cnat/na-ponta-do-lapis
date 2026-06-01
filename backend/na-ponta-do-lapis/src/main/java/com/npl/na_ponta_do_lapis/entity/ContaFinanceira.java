@@ -11,12 +11,16 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "conta_financeira")
+@Table(name = "conta_financeira", uniqueConstraints = @UniqueConstraint(
+    name = "nome_conta_unico",
+    columnNames = {"nome", "usuario_id"}
+))
 public class ContaFinanceira {
 
     @Id
