@@ -281,14 +281,32 @@ export class ContasComponent implements OnInit {
       return;
     }
 
-    this.contaFinanceiraService.adicionarConta(payload).subscribe({
-      next: () => {
-        this.exibirDialog = false;
-        this.formContaFinanceira.reset({ nome: '', saldo: 0, cor: '' });
-        this.listarContas();
-      },
-      error: (error) => console.error(error)
-    });
+    // =====================================
+    // CREATE
+    // =====================================
+
+    this.contaFinanceiraService
+      .adicionarConta(payload)
+      .subscribe({
+
+        next: () => {
+
+          this.exibirDialog = false;
+
+          this.formContaFinanceira.reset({
+
+            nome: '',
+            saldo: 0,
+            cor: ''
+          });
+
+          this.listarContas();
+        },
+
+        error: (error) => {
+          console.error(error);
+        }
+      });
   }
 
   // =========================================
