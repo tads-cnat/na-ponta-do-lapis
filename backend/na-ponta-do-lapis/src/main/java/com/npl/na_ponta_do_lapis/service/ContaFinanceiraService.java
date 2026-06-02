@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.service;
 
 import java.util.List;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
@@ -14,6 +15,7 @@ import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraResponseDTO;
 import com.npl.na_ponta_do_lapis.web.exception.ContaIdNaoExisteException;
 
 import jakarta.transaction.Transactional;
+import jakarta.validation.ConstraintViolationException;
 
 
 @Service
@@ -31,14 +33,16 @@ public class ContaFinanceiraService {
     public ContaFinanceiraResponseDTO criarConta(ContaFinanceiraDTO contaDTO) {
         String email = JwtAuthFilter.getEmailUsuarioLogado();
         Usuario usuario = usuarioService.buscarUsuarioPorEmail(email);
-        List<ContaFinanceira> contas = listarContaFinanceiraUsuarioLogado();
-        for (ContaFinanceira conta : contas){
-            if (conta.getNome() == contaDTO.nome()) {
-                throw new IllegalArgumentException("Não é possível criar contas com o mesmo nome.");
-            }
-        }
         ContaFinanceira novaConta = contaDTO.toEntity(usuario);
-        contaFinanceiraRepository.save(novaConta);
+        try {
+            contaFinanceiraRepository.save(novaConta);  
+        }
+        catch (DataIntegrityViolationException e){
+            if (e.getCause() instanceof ConstraintViolationException) {
+                throw new IllegalArgumentException("Já existe uma conta com este nome para este usuário.");
+            }
+            throw e;
+        }
         return new ContaFinanceiraResponseDTO(novaConta);
     }
 
@@ -56,9 +60,7 @@ public class ContaFinanceiraService {
     public ContaFinanceiraResponseDTO buscarContaPorId(Long id){
         return contaFinanceiraRepository.findById(id)
         .map(contaFinanceira -> new ContaFinanceiraResponseDTO(contaFinanceira))
-        .orElseThrow(
-        () -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe")
-        );
+        .orElseThrow( () -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
     }
 
     // Método para o Service transacao utilizar pois o outro retorna "ContaFinanceiraResponseDTO" (Não deve ser exposto ao controller)
@@ -71,37 +73,44 @@ public class ContaFinanceiraService {
     public ContaFinanceiraResponseDTO atualizarConta(Long id, ContaFinanceiraDTO contaDTO){
 
         ContaFinanceira conta = contaFinanceiraRepository.findById(id)
-            .orElseThrow(() ->
-                new ContaIdNaoExisteException("Conta de ID: " + id + " não existe")
-            );
+            .orElseThrow( () -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
 
         conta.setNome(contaDTO.nome());
         conta.setSaldo(contaDTO.saldo());
         conta.setCor(contaDTO.cor());
 
-        contaFinanceiraRepository.save(conta);
+        try {
+            contaFinanceiraRepository.save(conta);
+        }
+        catch (DataIntegrityViolationException e){
+            if (e.getCause() instanceof ConstraintViolationException) {
+                throw new IllegalArgumentException("Já existe uma conta com este nome para este usuário.");
+            }
+            throw e;
+        }
 
         return new ContaFinanceiraResponseDTO(conta);
     }
 
     @Transactional
-    public ContaFinanceiraResponseDTO atualizarContaParcial(
-            Long id,
-            ContaFinanceiraPatchDTO contaPatchDTO
-    ){
+    public ContaFinanceiraResponseDTO atualizarContaParcial(Long id, ContaFinanceiraPatchDTO contaPatchDTO){
 
         ContaFinanceira conta = contaFinanceiraRepository.findById(id)
-            .orElseThrow(() ->
-                new ContaIdNaoExisteException(
-                    "Conta de ID: " + id + " não existe"
-                )
-            );
+            .orElseThrow( () -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
 
         contaPatchDTO.nome().ifPresent(conta::setNome);
         contaPatchDTO.saldo().ifPresent(conta::setSaldo);
         contaPatchDTO.cor().ifPresent(conta::setCor);
 
-        contaFinanceiraRepository.save(conta);
+        try {
+            contaFinanceiraRepository.save(conta);
+        }
+        catch (DataIntegrityViolationException e){
+            if (e.getCause() instanceof ConstraintViolationException) {
+                throw new IllegalArgumentException("Já existe uma conta com este nome para este usuário.");
+            }
+            throw e;
+        }
 
         return new ContaFinanceiraResponseDTO(conta);
     }

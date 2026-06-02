@@ -516,7 +516,6 @@ readonly transacoesPorPagina: number = 5;
         },
 
         error: (error) => {
-
           console.error(error);
         }
       });
