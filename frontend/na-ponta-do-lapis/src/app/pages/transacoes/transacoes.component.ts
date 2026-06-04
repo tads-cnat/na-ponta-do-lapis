@@ -75,7 +75,7 @@ export class TransacoesComponent {
         console.log(erro)
         this.messageService.add({
           severity: 'warn',
-          summary: 'Erro as carregar transação',
+          summary: 'Erro ao carregar transação',
           detail: '',
           life: 2000
         });
