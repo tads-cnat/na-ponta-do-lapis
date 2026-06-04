@@ -14,28 +14,23 @@ import { FamiliaComponent } from './pages/familia/familia.component';
 
 export const routes: Routes = [
     {
-        path: '',
-        component: LandingPageComponent,
-        pathMatch: 'full'
-    },
-    { path: 'login', component: LoginComponent },
-    { path: 'signup', component: SignupComponent },
-
-    // Área interna protegida
-    {
-        path: 'app',
+        path: "familia",
         component: MainLayoutComponent,
-        canActivate: [authGuard],
         children: [
-            { path: 'transacoes', component: TransacoesComponent },
-            { path: 'contas', component: ContasComponent },
-            { path: 'metas', component: MetasComponent },
-            { path: '', redirectTo: 'transacoes', pathMatch: 'full' }
+            {path: "", component: FamiliaComponent},
         ]
     },
     {
-        path: "familia",
-        component: FamiliaComponent,
+        path: "app",
+        component: MainLayoutComponent,
+        canActivate: [authGuard],
+        children: [
+            {path: "transacoes", component: TransacoesComponent },
+            {path: "contas", component: ContasComponent },
+            {path: "metas", component: MetasComponent },
+            {path: "familia", component: FamiliaComponent},
+        ]
     },
+
 
 ];
