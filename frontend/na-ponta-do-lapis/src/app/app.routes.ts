@@ -7,6 +7,10 @@ import { MetasComponent } from './pages/metas/metas.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { authGuard } from './core/guard/auth.guard';
+import { MainLayoutComponent } from './layout/main-layout/main-layout.component'
+import { SignupComponent } from './auth/components/signup/signup.component';
+import { FamiliaComponent } from './pages/familia/familia.component';
+
 
 export const routes: Routes = [
     {
@@ -29,5 +33,9 @@ export const routes: Routes = [
             { path: '', redirectTo: 'transacoes', pathMatch: 'full' }
         ]
     },
-    { path: '**', redirectTo: '' }
+    {
+        path: "familia",
+        component: FamiliaComponent,
+    },
+
 ];
