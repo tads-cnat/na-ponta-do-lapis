@@ -16,7 +16,7 @@
     <div>
         <p-card header="Saldo atual">
             <div class="flex flex-col gap-6"> <div class="flex gap-12 items-center">
-                    <span class="font-bold text-4xl">R$ 1.000,00</span>
+                    <span class="font-bold text-4xl">{{ saldoTotal | currency : 'BRL' }}</span>
                     <img src="Icon-pessoa.svg" alt="Grafico">
                 </div>
                 <span class="flex gap-2"> 
