@@ -13,7 +13,7 @@
         </a>
     @for (item of items; track item.label){
         <a [routerLink]="item.routerLink" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem flex  text-gray-900 gap-2.5 ">
-            <app-icon [name]="item.icon" class="w-5.5" />
+            <app-icon [name]="item.icon" class="w-5.5" /> 
             <span class="menulabel">
                 {{ item.label }}
             </span>
