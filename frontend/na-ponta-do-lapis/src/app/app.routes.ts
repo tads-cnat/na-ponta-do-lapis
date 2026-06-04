@@ -14,6 +14,13 @@ export const routes: Routes = [
     {path: "login", component: LoginComponent},
     {path: 'signup', component:SignupComponent},
     {
+        path: "familia",
+        component: MainLayoutComponent,
+        children: [
+            {path: "", component: FamiliaComponent},
+        ]
+    },
+    {
         path: "app",
         component: MainLayoutComponent,
         canActivate: [authGuard],
@@ -21,12 +28,9 @@ export const routes: Routes = [
             {path: "transacoes", component: TransacoesComponent },
             {path: "contas", component: ContasComponent },
             {path: "metas", component: MetasComponent },
-
+            {path: "familia", component: FamiliaComponent},
         ]
     },
-    {
-        path: "familia",
-        component: FamiliaComponent,
-    },
+    
 
 ];
