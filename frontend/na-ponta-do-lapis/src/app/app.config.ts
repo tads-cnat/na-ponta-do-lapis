@@ -5,7 +5,7 @@ import { routes } from './app.routes';
 import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
 import { definePreset } from '@primeuix/themes';
-import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { authInterceptor } from './core/interceptor/auth.interceptor';
 import { MessageService } from 'primeng/api';
 import { provideAnimations } from '@angular/platform-browser/animations'; // Verifique este caminho
@@ -46,6 +46,7 @@ export const appConfig: ApplicationConfig = {
       }
     }),
     provideHttpClient(
+      withFetch(),
       withInterceptors([authInterceptor])
     )
   ]
