@@ -5,9 +5,15 @@
             <app-icon name="menu" class="text-black"/>
         </button>
     </div>
+    <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'true' }" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem flex  gap-2.5 bg-[#10b981]! text-white!">
+            <app-icon name="plus" class="w-5 h-5" />
+            <span class="menulabel">
+                Adicionar
+            </span>
+        </a>
     @for (item of items; track item.label){
         <a [routerLink]="item.routerLink" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem flex  text-gray-900 gap-2.5 ">
-            <app-icon [name]="item.icon" class="w-5.5" />
+            <app-icon [name]="item.icon" class="w-5.5" /> 
             <span class="menulabel">
                 {{ item.label }}
             </span>

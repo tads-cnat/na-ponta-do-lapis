@@ -1,4 +1,5 @@
-import { ChangeDetectorRef, Component, inject, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,10 +9,12 @@ import { IContasRequest } from '../../model/IContas.models';
 import { Marcador } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
+import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-transacoes',
-  imports: [PrimeNGModuleModule, CommonModule, ReactiveFormsModule],
+  imports: [CardSaldoComponent ,PrimeNGModuleModule, CommonModule, ReactiveFormsModule],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
@@ -19,9 +22,16 @@ import { MessageService } from 'primeng/api';
 export class TransacoesComponent {
   exibirDialog: boolean = false;
   private messageService = inject(MessageService)
+  private destroyRef = inject(DestroyRef)
   id: number | null = null;
   formTransacao: FormGroup;
-  constructor(private fb: FormBuilder, private transacoesService: TransacoesService, private cdr: ChangeDetectorRef) {
+  constructor(
+    private fb: FormBuilder,
+    private transacoesService: TransacoesService,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
     this.formTransacao = this.fb.group({
       descricao: ['', [Validators.required, Validators.minLength(3)]],
       idCategoria: ['', [Validators.required]],
@@ -39,6 +49,20 @@ export class TransacoesComponent {
     this.listarContas()
     this.listarCategorias()
     this.listarMarcadores()
+
+    this.route.queryParamMap
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((params) => {
+        if (params.get('openDialog') === 'true') {
+          void this.router.navigate([], {
+            relativeTo: this.route,
+            queryParams: {},
+            replaceUrl: true,
+          });
+
+          this.abrirDialog();
+        }
+      });
   }
   transacoesDados: ITransacoes[] = [];
   public listarTransacoes(): any {
@@ -51,7 +75,7 @@ export class TransacoesComponent {
         console.log(erro)
         this.messageService.add({
           severity: 'warn',
-          summary: 'Erro as carregar transação',
+          summary: 'Erro ao carregar transação',
           detail: '',
           life: 2000
         });
@@ -178,6 +202,18 @@ export class TransacoesComponent {
   }
 
   abrirDialog() {
+    this.id = null;
+    this.marcadorSelecionado = null;
+    this.formTransacao.reset({
+      descricao: '',
+      idCategoria: '',
+      valor: 0,
+      idContaFinanceira: '',
+      dataHora: null,
+      estado: 'PENDENTE',
+      tipo: '',
+      marcadorId: null,
+    });
     this.novaTransacao = this.resetForm();
     this.exibirDialog = true;
   }

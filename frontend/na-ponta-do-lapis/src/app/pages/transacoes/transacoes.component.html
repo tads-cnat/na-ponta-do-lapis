@@ -1,30 +1,25 @@
+
+
 <div>
+
+    <app-card-saldo></app-card-saldo>
     <div>
         <p-toast/>
-        <div class="flex h-screen items-center justify-center ">
+        <div class="flex min-h-[calc(100vh-150px)] items-start justify-center pt-8 mt-6 ">
             <p-card class="bg-[#F8FAFC]!">
                 <div class="flex justify-between items-center mb-3">
 
                     <h1 class=" text-amber-400 font-bold text-2xl">Movimentações</h1>
 
-                    <div class="flex gap-2">
-                      <!--
-                      <p-button
-                           [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
-                                class="pi pi-print" pButtonIcon></i> Imprimir</p-button>
-                      -->
-
-                        <p-button
-                           [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
-                                class="pi pi-print" pButtonIcon></i> Imprimir</p-button>
-                        <p-button
-                           [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
-                                class="pi pi-print" pButtonIcon></i> Imprimir</p-button>
-                        <p-button
-                           [disabled]="true" styleClass=" text-white! !bg-[#3B82F6] !text-slate-70 0 !border-slate-200 hover:!bg-slate-100 shadow-sm rounded-xl!"><i
-                                class="pi pi-sliders-h" pButtonIcon></i> Filtrar</p-button>
-                        <p-button styleClass="rounded-xl!" (onClick)="abrirDialog()">
+                    <div class="flex gap-2">  
+                          <p-button styleClass=" font-bold rounded-xl! border-[#11b981]! bg-[#11b981]!" (onClick)="abrirDialog()">
                             <i class="pi pi-plus"></i> Adicionar Transação</p-button>
+                        <p-button
+                           [disabled]="true" styleClass=""><i
+                                class="pi pi-sliders-h" pButtonIcon></i> Filtrar</p-button>
+                                 <p-button
+                            styleClass=" text-[#1976d2]! !bg-[#fafafa] !text-slate-70 0 !border-[#1976d2] rounded-xl!" (onClick)="abrirDialog()"><i
+                                class="pi pi-print" pButtonIcon></i> Marcador</p-button>
                         <p-floatlabel>
                             <p-iconfield>
                                 <p-inputicon class="pi pi-search" />
@@ -76,8 +71,8 @@
                             <td>{{ t.valor | currency: 'BRL'}}</td>
                             <td>
                                 <div class="flex gap-3">
-                                    <p-button icon="pi pi-trash" (onClick)="excluir(t.id)"></p-button>
-                                <p-button icon="pi pi-pencil" styleClass="bg-amber-400! border-[#FFB900]!" (onClick)="prepararEdicao(t)"></p-button>
+                                    <p-button icon="pi pi-trash" styleClass=" text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]!" (onClick)="excluir(t.id)"></p-button>
+                                <p-button icon="pi pi-pencil" styleClass=" text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]!" (onClick)="prepararEdicao(t)"></p-button>
                                 </div>
                             </td>
                             
@@ -188,7 +183,7 @@
 
             <ng-template pTemplate="footer">
                 <div class=" flex justify-center w-full mb-5">
-                    <p-button styleClass="w-60 h-12 rounded-xl! bg-[#AA7FFF]! border-[#AA7FFF]!"
+                    <p-button styleClass="w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!"
                         label="Salvar" [disabled]="formTransacao.invalid" severity="success" (onClick)="salvar() "></p-button>
                 </div>
             </ng-template>

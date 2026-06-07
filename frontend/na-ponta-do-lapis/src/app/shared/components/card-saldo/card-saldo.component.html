@@ -1,0 +1,29 @@
+<div class="flex flex-col sm:flex-row gap-y-6 sm:gap-8 md:gap-12 lg:gap-35 justify-center items-center sm:items-start">
+    <div>
+        <p-card header="Saldo inicial">
+            <div class="flex flex-col gap-6"> <div class="flex gap-12 items-center">
+                    <span class="font-bold text-4xl">R$ 1.000,00</span>
+                    <img src="Icon-grafico.svg" alt="Grafico">
+                </div> 
+                <span class="flex gap-2"> 
+                    <img src="ic-trending-down.svg" alt="icon seta"> 
+                    <span class="text-red-500">4.3%</span> Menos que abril
+                </span>
+            </div>
+        </p-card> 
+    </div>
+
+    <div>
+        <p-card header="Saldo atual">
+            <div class="flex flex-col gap-6"> <div class="flex gap-12 items-center">
+                    <span class="font-bold text-4xl">{{ saldoTotal | currency : 'BRL' }}</span>
+                    <img src="Icon-pessoa.svg" alt="Grafico">
+                </div>
+                <span class="flex gap-2"> 
+                    <img src="ic-treding-up.svg" alt="icon seta"> 
+                    <span class="text-green-500">2.1%</span> Mais que ontem
+                </span>
+            </div>
+        </p-card>
+    </div>
+</div>
