@@ -8,24 +8,25 @@ import { Button } from 'primeng/button';
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
 })
-export class MetasComponent implements OnInit {
-  metas = signal<any[]>([]);
-  constructor(private metasService: MetasService) {}
+export class MetasComponent {
 
-  ngOnInit(): void {
-    this.listarMetas();
-  }
+  constructor(){}
 
-  public listarMetas(): void {
-    this.metasService.listarMetas().subscribe({
-      next: (response) => {
-        this.metas.set(response);
-        console.log(this.metas());
-      },
-      error: (error) => {
-        console.error('Erro ao listar metas:', error);
-      }
-    });
-  }
-
+  public listarMetas(): any {
+      this.transacozService.listarTransacoes().subscribe({
+        next: (res: ITransacoes[]) => {
+          this.transacoesDados = res
+          this.cdr.detectChanges()
+        },
+        error: (erro: Error) => {
+          console.log(erro)
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Erro as carregar transação',
+            detail: '',
+            life: 2000
+          });
+        }
+      })
+    }
 }
