@@ -85,8 +85,8 @@ public class TransacaoService {
         return transacaoRepository.buscarTransacoesUsuarioLogado(getEmailUsuarioLogado());
     }
 
-    public List<Transacao> listarTransacoes() {
-        return transacaoRepository.findAll();
+    public List<Transacao> buscarPorDescricao(String descricao) {
+        return transacaoRepository.buscarPorDescricao(getEmailUsuarioLogado(), descricao);
     }
 
     public Transacao buscarPorId(Long id) {
