@@ -58,6 +58,17 @@ public class TransacaoController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "Buscar Transacao por Descrição")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @GetMapping("/buscar")
+    public ResponseEntity<List<TransacoesResponseDTO>> buscarPorDescricao(@RequestParam String descricao) {
+        List<Transacao> transacao = transacaoService.buscarPorDescricao(descricao);
+
+        List<TransacoesResponseDTO> response = transacao.stream()
+                .map(t -> new TransacoesResponseDTO(t))
+                .toList();
+        return ResponseEntity.ok(response);
+    }
 
     @Operation(summary = "Buscar Transacao por ID")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
@@ -67,6 +78,8 @@ public class TransacaoController {
 
         return ResponseEntity.ok(new TransacoesResponseDTO(transacao));
     }
+
+
 
     @Operation(summary = "Atualizar Transacao")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
