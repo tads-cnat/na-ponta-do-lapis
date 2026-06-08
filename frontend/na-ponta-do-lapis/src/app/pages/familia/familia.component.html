@@ -1,1 +1,36 @@
-<p>familia works!</p>
+<div class="w-full h-full flex flex-col items-center rounded-lg py-6">
+    <div id="forms-familia" style="background-color: #F8F8F8;" class="grid grid-cols-1 w-240 max-w-240px h-160 mx-auto rounded-4xl">
+        <div>
+            <div id="input-familia" class="w-full h-20 rounded-t-4xl bg-white">
+                <div class="flex w-full h-full items-center px-8 gap-4">
+                    <input 
+                    [(ngModel)]="nomeFamilia" 
+                    class="flex-1 h-full outline-none bg-transparent text-gray-500 text-lg font-bold"
+                    placeholder="Digite o nome da família"
+                    />
+                    
+                    <div 
+                    (click)="resetNome()" 
+                    class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer shrink-0"
+                    >
+                    <span class="pi pi-times"></span>
+                    </div>
+                    
+                </div>
+            </div>
+            @if (submitted && !nomeFamilia.trim()) {
+                <p class="text-red-500 text-sm mt-1 ml-8">O nome da família é obrigatório.</p>
+            }
+        </div>
+        
+        <div id="actions-familia" class="flex flex-col items-center gap-12 w-full h-full -mt-4">
+            <div class="convidar-familia w-[90%] h-20 sm:h-24 lg:h-30 bg-white rounded-2xl mx-auto">
+            </div>
+            <div class="convidados-familia w-[90%] h-40 sm:h-40 lg:h-50 bg-white rounded-2xl mx-auto">
+            </div>
+        </div>
+    </div>
+    <p-button label="Criar Família" (click)="criarFamilia()" [style]="{'border-radius':'10px', 'width':'220px', 'height':'50px', 'background':'#10B981', 'border-color':'#10B981', 'margin-top':'16px'}" />
+    
+</div>
+    
