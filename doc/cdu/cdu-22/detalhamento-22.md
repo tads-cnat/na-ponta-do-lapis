@@ -1,6 +1,6 @@
 # CDU 22. Convidar membro à família
 
-- **Ator principal**: Usuário.
+- **Ator principal**: Usuário administrador da família.
 
 - **Atores secundários**: Usuário convidado.
 - **Resumo**:  Na página “Grupo Familiar” o usuário aperta o botão “convidar” para convidar um novo membro à sua família, caso ainda não tenha membros a família será criada.
@@ -29,7 +29,7 @@
 
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
-| | 4.2 - O sistema mostra uma notificação no icone da família. |
+| | 4.2 - O sistema mostra uma notificação no sino de notificações. |
 | 5.2 - O usuário clica no icone da família. | |
 | | 6.2 - O sistema apresenta o(s) convite(s) da(s) respectiva(s) família(s) ao usuário. |
 | 7.2 - O usuário aceita o convite da família. | |
@@ -39,7 +39,7 @@
 
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
-| | 4.3 - O sistema mostra uma notificação no icone da família. |
+| | 4.3 - O sistema mostra uma notificação no sino de notificações. |
 | 5.3 - O usuário clica no icone da família. | |
 | | 6.3 - O sistema apresenta o(s) convite(s) da(s) respectiva(s) família(s) ao usuário. |
 | 7.3 - O usuário clica no botão "recusar" e recusa o convite da família. | |
