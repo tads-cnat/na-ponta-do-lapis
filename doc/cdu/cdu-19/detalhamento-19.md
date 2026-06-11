@@ -1,6 +1,6 @@
 # CDU 19. Manter Conta Financeira
 
-- **Ator principal**: Usuário
+- **Ator principal**: Cliente ou Administrador da família
 
 - **Atores secundários**: não existe.
 - **Resumo**: O sistema exibe uma página contendo as contas criadas até então, e as ações que podem ser feitas, caso já haja outras contas. No caso negativo, o sistema exibe uma mensagem de ausência de contas criadas e aconselha a criação de uma para poder realizar as demais ações. Posteriormente uma das contas já estará selecionada e serão mostrados seu nome, tipo e saldo. O usuário clica no botão de “Adicionar Conta” para realizar a operação. Um formulário aparece e deve ser preenchido corretamente nos campos obrigatórios. Caso algum campo não tenha sido preenchido da forma certa, o sistema avisa que não pode criar a conta devido à falta de informações. Também as operações de visualizar histórico de transações, atualizar e excluir conta podem ser feitas, alternativamente.
@@ -12,16 +12,16 @@
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
 | 1 - O usuário clica no botão "Adicionar Conta" | |  
-| | 2 - O sistema abre um formulário pedindo as informações necessárias para o prosseguimento da operação (nome*, saldo* e tipo* - * : obrigatórias) |
+| | 2 - O sistema abre um [formulário](../prototipos/Editar%20conta.png) pedindo as informações necessárias para o prosseguimento da operação (nome*, saldo*, cor* e moeda* - * : obrigatórias) |
 | 3 - O usuário preenche as informações e envia | |
 | | 4 - O sistema valida a operação e mostra uma mensagem de êxito: "Conta criada com sucesso" |
 
-## Fluxo Alternativo I - Visualizar conta
+## Fluxo Alternativo I - Informações da conta
 
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
-| 1.1 - O usuário seleciona uma conta e clica na opção de "Visualizar Conta" | |  
-| | 2.1 - O sistema mostra uma visão detalhada das informações da conta selecionada e o seu histórico de transações ordenado cronologicamente e em formato de tabela |
+| 1.1 - O usuário seleciona uma conta | |  
+| | 2.1 - O sistema mostra uma visão detalhada das informações da conta selecionada |
 
 ## Fluxo Alternativo II - Alteração de dados de conta
 
@@ -32,14 +32,7 @@
 | 3.2 - O usuário altera o que desejar e envia os dados | |
 | | 4.2 - O sistema faz a validação e mostra uma mensagem de êxito: "Conta alterada com sucesso" |
 
-## Fluxo Alternativo III - Alteração de dados parciais de conta
-
-| Ações do ator | Ações do sistema |
-| :-----------: | :--------------: |
-| 1.3 - O usuário seleciona um dos campos da conta selecionada, ou seja, centralizada na tela e altera e confirma a alteração | |  
-| | 2.3 - O sistema valida a alteração e mostra uma mensagem de êxito: "Dado alterado com sucesso" |
-
-## Fluxo Alternativo IV - Exclusão de conta
+## Fluxo Alternativo III - Exclusão de conta
 
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: |
@@ -47,6 +40,13 @@
 | | 2.4 - O sistema envidencia qual conta foi selecionada e solicita a confirmação do usuário |
 | 3.4 - O usuário confirma a solicitação de exclusão | |
 | | 4.4 - O sistema exclui a conta e apresenta uma mensagem de sucesso: "A Conta '(nome da conta)' foi excluída!" |
+
+## Fluxo Alternativo IV - Exibição de evolução gráfica do saldo
+
+| Ações do ator | Ações do sistema |
+| :-----------: | :--------------: |
+| 1.3 - O usuário seleciona um dos campos da conta selecionada, ou seja, centralizada na tela e altera e confirma a alteração | |  
+| | 2.3 - O sistema valida a alteração e mostra uma mensagem de êxito: "Dado alterado com sucesso" |
 
 ## Fluxo de Exceção I - Informações incongruentes
 
