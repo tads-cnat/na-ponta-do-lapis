@@ -18,10 +18,14 @@ import { ChartModule } from 'primeng/chart';
 import { ContaFinanceiraService } from './service/contas.service';
 import { IContas, IContasRequest } from '../../model/IContas.models';
 
-import { CartaoContaComponent }  from './components/cartoes/cartoes.component';
-import { InformacoesComponent }  from './components/informacoes/informacoes.component';
-import { GraficoComponent }      from './components/grafico/grafico.component';
-import { TransacoesComponent }   from './components/transacoes/transacoes.component';
+import {
+  IContas,
+  IContasRequest
+} from '../../model/IContas.models';
+import { GraficoComponent } from "./components/grafico/grafico.component";
+import { InformacoesComponent } from "./components/informacoes/informacoes.component";
+import { TransacoesComponent } from "./components/transacoes/transacoes.component";
+import { CartaoContaComponent } from "./components/cartoes/cartoes.component";
 
 @Component({
   selector: 'app-Contas',
@@ -33,11 +37,13 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
     PrimeNGModuleModule,
     ColorPickerModule,
     ChartModule,
-    CartaoContaComponent,
-    InformacoesComponent,
+    SelectButtonModule,
     GraficoComponent,
-    TransacoesComponent
-  ],
+    InformacoesComponent,
+    TransacoesComponent,
+    CartaoContaComponent
+],
+
   templateUrl: './contas.component.html',
 })
 export class ContasComponent implements OnInit {
