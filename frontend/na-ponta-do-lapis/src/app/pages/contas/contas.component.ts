@@ -25,6 +25,10 @@ import {
   IContas,
   IContasRequest
 } from '../../model/IContas.models';
+import { GraficoComponent } from "./components/grafico/grafico.component";
+import { InformacoesComponent } from "./components/informacoes/informacoes.component";
+import { TransacoesComponent } from "./components/transacoes/transacoes.component";
+import { CartaoContaComponent } from "./components/cartoes/cartoes.component";
 
 @Component({
   selector: 'app-Contas',
@@ -38,8 +42,12 @@ import {
     PrimeNGModuleModule,
     ColorPickerModule,
     ChartModule,
-    SelectButtonModule
-  ],
+    SelectButtonModule,
+    GraficoComponent,
+    InformacoesComponent,
+    TransacoesComponent,
+    CartaoContaComponent
+],
 
   templateUrl: './contas.component.html',
 })
