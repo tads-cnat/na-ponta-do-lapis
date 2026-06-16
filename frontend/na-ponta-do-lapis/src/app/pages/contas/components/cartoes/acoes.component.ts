@@ -1,46 +1,38 @@
-import { Component, Output, EventEmitter } from '@angular/core';
-import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
+import { Component } from "@angular/core";
 
 @Component({
   selector: 'app-acoes-cartoes',
-  standalone: true,
-  imports: [PrimeNGModuleModule],
+  imports: [],
   template: `
     <div class="flex flex-wrap gap-3">
 
       <p-button
-        label="Adicionar"
-        icon="pi pi-plus"
-        severity="success"
-        class="rounded-xl"
-        (click)="onAdicionar.emit()">
+          label="Adicionar"
+          icon="pi pi-plus"
+          severity="success"
+          class="rounded-xl"
+          (click)="abrirDialog()">
       </p-button>
 
       <p-button
-        label="Editar"
-        icon="pi pi-pencil"
-        severity="contrast"
-        class="rounded-xl"
-        (click)="onEditar.emit()">
+          label="Editar"
+          icon="pi pi-pencil"
+          severity="contrast"
+          class="rounded-xl"
+          (click)="editarConta(contaSelecionada)">
       </p-button>
 
       <p-button
-        label="Excluir"
-        icon="pi pi-trash"
-        severity="danger"
-        class="rounded-xl"
-        (click)="onExcluir.emit()">
+          label="Excluir"
+          icon="pi pi-trash"
+          severity="danger"
+          class="rounded-xl"
+          (click)="abrirDialogExcluir(contaSelecionada)">
       </p-button>
 
-    </div>
+  </div>
   `
+
 })
-export class AcoesCartoesComponent {
 
-  @Output() onAdicionar = new EventEmitter<void>();
-
-  @Output() onEditar = new EventEmitter<void>();
-
-  @Output() onExcluir = new EventEmitter<void>();
-
-}
+export class AcoesCartoesConta {}

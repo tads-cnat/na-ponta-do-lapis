@@ -18,10 +18,10 @@ import { ChartModule } from 'primeng/chart';
 import { ContaFinanceiraService } from './service/contas.service';
 import { IContas, IContasRequest, Moeda } from '../../model/IContas.models';
 
-import { CartaoContaComponent }  from './components/cartoes/cartoes.component';
-import { InformacoesComponent }  from './components/informacoes/informacoes.component';
-import { GraficoComponent }      from './components/grafico/grafico.component';
-import { TransacoesComponent }   from './components/transacoes/transacoes.component';
+import { GraficoComponent } from "./components/grafico/grafico.component";
+import { InformacoesComponent } from "./components/informacoes/informacoes.component";
+import { TransacoesComponent } from "./components/transacoes/transacoes.component";
+import { CartaoContaComponent } from "./components/cartoes/cartoes.component";
 
 @Component({
   selector: 'app-Contas',
@@ -33,18 +33,13 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
     PrimeNGModuleModule,
     ColorPickerModule,
     ChartModule,
-    CartaoContaComponent,
-    InformacoesComponent,
     GraficoComponent,
-    TransacoesComponent
-  ],
-  template: `
-    <div
-  class="bg-[#F5F6FA]
-         p-6 2xl:p-8
-         h-[calc(100vh-64px)]
-         overflow-y-auto
-         overflow-x-hidden">
+    InformacoesComponent,
+    TransacoesComponent,
+    CartaoContaComponent
+],
+
+template: `
 
   <div class="grid grid-cols-1 2xl:grid-cols-12 gap-6 min-h-full">
 
@@ -265,7 +260,6 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
   </form>
 
 </div>
-
   `,
 })
 export class ContasComponent implements OnInit {
