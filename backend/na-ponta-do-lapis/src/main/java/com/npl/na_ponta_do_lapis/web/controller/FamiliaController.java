@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.service.FamiliaService;
 import com.npl.na_ponta_do_lapis.service.UsuarioService;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaDTO;
@@ -38,6 +39,13 @@ public class FamiliaController {
     @GetMapping
     public ResponseEntity<List<FamiliaResponseDTO>> listarFamilias() {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.listarFamilias());
+    }
+
+    @Operation(summary = "Lista de Transações da Família")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @GetMapping("/{familiaId}/transacoes")
+    public ResponseEntity<List<Transacao>> listarTransacoesDaFamilia(@PathVariable Long familiaId) {
+        return ResponseEntity.status(HttpStatus.OK).body(familiaService.listarTransacoesDaFamilia(familiaId));
     }
 
     @Operation(summary = "Buscar por Id")

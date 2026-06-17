@@ -1,10 +1,11 @@
 package com.npl.na_ponta_do_lapis.service;
 import com.npl.na_ponta_do_lapis.entity.Familia;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 
 import com.npl.na_ponta_do_lapis.repository.FamiliaRepository;
-
+import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaResponseDTO;
@@ -24,10 +25,12 @@ import java.util.List;
 public class FamiliaService {
     private final FamiliaRepository familiaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final TransacaoRepository transacaoRepository;
 
-    public FamiliaService(FamiliaRepository familiaRepository, UsuarioRepository usuarioRepository) {
+    public FamiliaService(FamiliaRepository familiaRepository, UsuarioRepository usuarioRepository, TransacaoRepository transacaoRepository) {
         this.familiaRepository = familiaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.transacaoRepository = transacaoRepository;
     }
 
     @Transactional
@@ -142,5 +145,9 @@ public class FamiliaService {
         return familia.getMembros().stream()
                 .map(UsuarioResponseDTO::new)
                 .toList();
+    }
+
+    public List<Transacao> listarTransacoesDaFamilia(Long familiaId) {
+        return transacaoRepository.buscarTransacoesDaFamilia(familiaId);
     }
 }
