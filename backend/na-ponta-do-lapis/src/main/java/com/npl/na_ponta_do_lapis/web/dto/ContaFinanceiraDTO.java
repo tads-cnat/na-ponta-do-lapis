@@ -20,7 +20,7 @@ public record ContaFinanceiraDTO(
     @NotBlank(message = "A cor não pode ser vazia")
     String cor,
 
-    @NotNull(message = "A moeda é obrigatória")
+    @NotBlank(message = "A moeda não pode ser vazia")
     Moeda moeda
     ) {
 
