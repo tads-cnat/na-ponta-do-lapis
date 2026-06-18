@@ -1,27 +1,78 @@
-<div class="bg-[#F5F6FA] p-6 2xl:p-8 h-[calc(100vh-64px)] overflow-y-auto overflow-x-hidden">
+<div
+  class="bg-[#F5F6FA]
+         p-6 2xl:p-8
+         h-[calc(100vh-64px)]
+         overflow-y-auto
+         overflow-x-hidden">
 
-    <div class="grid grid-cols-1 2xl:grid-cols-12 gap-6 min-h-full">
+  <div class="grid grid-cols-1 2xl:grid-cols-12 gap-6 min-h-full">
 
-        <!-- COLUNA ESQUERDA -->
-        <div class="2xl:col-span-5 flex flex-col gap-6 min-w-0">
-          <!-- Cartões -->
-          <app-cartoes-contas></app-cartoes-contas>
+    <!-- COLUNA ESQUERDA -->
+    <div class="2xl:col-span-5 flex flex-col gap-6 min-w-0">
 
-            <!-- INFORMAÇÕES -->
-            <app-informacoes-conta></app-informacoes-conta>
+      <!-- CARTÕES (header + ações + carrossel) -->
+      <app-cartoes-contas
+        [contas]="contaFinanceiraDados"
+        [contaSelecionadaIndex]="contaSelecionadaIndex"
+        [contaAnterior]="contaAnterior"
+        [contaProxima]="contaProxima"
+        [carregando]="carregandoContas"
+        (onAdicionar)="abrirDialog()"
+        (onEditar)="editarConta(contaSelecionada)"
+        (onExcluir)="abrirDialogExcluir(contaSelecionada)"
+        (onContaSelecionada)="selecionarConta($event)"
+        (onAnterior)="selecionarAnterior()"
+        (onProxima)="selecionarProxima()">
+      </app-cartoes-contas>
 
-        <!-- COLUNA DIREITA -->
-        <div class="2xl:col-span-7 flex flex-col gap-6 min-w-0 min-h-0">
+      <!-- INFORMAÇÕES DA CONTA SELECIONADA -->
+      <app-informacoes-conta
+        [conta]="contaSelecionada">
+      </app-informacoes-conta>
 
-            <!-- GRÁFICO -->
-            <app-grafico-conta></app-grafico-conta>
+    </div>
 
-            <!-- TRANSAÇÕES -->
-            <app-transacoes-conta></app-transacoes-conta>
+    <!-- COLUNA DIREITA -->
+    <div class="2xl:col-span-7 flex flex-col gap-6 min-w-0 min-h-0">
 
-<!-- DIALOG -->
-<form [formGroup]="formContaFinanceira">
+      <!-- GRÁFICO -->
+      <app-grafico-conta
+        [chartData]="chartData"
+        [chartOptions]="chartOptions"
+        (onPeriodoMudou)="atualizarGraficoSaldo($event)">
+      </app-grafico-conta>
 
+      <!-- TRANSAÇÕES -->
+      <app-transacoes-conta
+        [transacoesPaginadas]="transacoesPaginadas"
+        [ultimasTransacoes]="ultimasTransacoes"
+        [transacoesPorPagina]="transacoesPorPagina"
+        [paginaAtualTransacoes]="paginaAtualTransacoes"
+        (onProximaPagina)="proximaPaginaTransacoes()"
+        (onPaginaAnterior)="paginaAnteriorTransacoes()"
+        (onIrParaTransacoes)="irParaTransacoes()">
+      </app-transacoes-conta>
+
+    </div>
+
+  </div>
+
+  <!--
+    DIALOGS — ficam fora do grid, no nível raiz do componente.
+
+    Motivo: p-dialog é um overlay renderizado como portal no body, não como
+    seção de página. O estado que os controla (exibirDialog, excluirDialog,
+    formContaFinanceira) pertence ao ContasComponent, portanto aqui é o lugar
+    natural. Extrair para um filho exigiria passar o FormGroup por @Input ou
+    duplicar a lógica de CRUD, sem nenhum ganho arquitetural.
+
+    O <form [formGroup]> precisa ser ancestral dos formControlName no template;
+    como p-dialog projeta seu conteúdo no slot do componente (não fora da
+    árvore de componentes Angular), o binding reativo funciona corretamente.
+  -->
+  <form [formGroup]="formContaFinanceira">
+
+    <!-- DIALOG — NOVA CONTA / EDITAR CONTA -->
     <p-dialog
       [header]="modoEdicao ? 'Editar Conta' : 'Nova Conta'"
       [(visible)]="exibirDialog"
@@ -47,11 +98,11 @@
         <div class="flex flex-col gap-2">
           <label class="font-semibold text-slate-700">Saldo</label>
           <p-inputNumber
-              formControlName="saldo"
-              locale="pt-BR"
-              mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2">
+            formControlName="saldo"
+            locale="pt-BR"
+            mode="currency"
+            currency="BRL"
+            inputStyleClass="w-full">
           </p-inputNumber>
         </div>
 
@@ -62,26 +113,6 @@
             formControlName="cor"
             [inline]="true">
           </p-colorpicker>
-        </div>
-
-        <!-- MOEDA -->
-        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-
-          <span class="text-slate-700 font-bold">
-            Moeda
-          </span>
-
-          <div class="mt-3 flex flex-col">
-
-            <span class="text-2xl font-bold text-slate-900">
-              {{ simboloMoeda(conta.moeda) }}
-            </span>
-
-            <span class="text-slate-500">
-              {{ nomeMoeda(conta.moeda) }}
-            </span>
-          </div>
-
         </div>
 
       </div>
