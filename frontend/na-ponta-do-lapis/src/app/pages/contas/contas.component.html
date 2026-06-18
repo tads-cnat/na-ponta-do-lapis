@@ -1,181 +1,204 @@
-<div class="bg-[#F5F6FA] p-6 2xl:p-8 h-[calc(100vh-64px)] overflow-y-auto overflow-x-hidden">
+<div
+  class="bg-[#F5F6FA]
+         p-6 2xl:p-8
+         h-[calc(100vh-64px)]
+         overflow-y-auto
+         overflow-x-hidden">
 
-    <div class="grid grid-cols-1 2xl:grid-cols-12 gap-6 min-h-full">
+  <div class="grid grid-cols-1 2xl:grid-cols-12 gap-6 min-h-full">
 
-        <!-- COLUNA ESQUERDA -->
-        <div class="2xl:col-span-5 flex flex-col gap-6 min-w-0">
-          <!-- Cartões -->
-          <app-cartoes-contas></app-cartoes-contas>
+    <!-- COLUNA ESQUERDA -->
+    <div class="2xl:col-span-5 flex flex-col gap-6 min-w-0">
 
-            <!-- INFORMAÇÕES -->
-            <app-informacoes-conta></app-informacoes-conta>
+      <!-- CARTÕES (header + ações + carrossel) -->
+      <app-cartoes-contas
+        [contas]="contaFinanceiraDados"
+        [contaSelecionadaIndex]="contaSelecionadaIndex"
+        [contaAnterior]="contaAnterior"
+        [contaProxima]="contaProxima"
+        [carregando]="carregandoContas"
+        (onAdicionar)="abrirDialog()"
+        (onEditar)="editarConta(contaSelecionada)"
+        (onExcluir)="abrirDialogExcluir(contaSelecionada)"
+        (onContaSelecionada)="selecionarConta($event)"
+        (onAnterior)="selecionarAnterior()"
+        (onProxima)="selecionarProxima()">
+      </app-cartoes-contas>
 
-        <!-- COLUNA DIREITA -->
-        <div class="2xl:col-span-7 flex flex-col gap-6 min-w-0 min-h-0">
+      <!-- INFORMAÇÕES DA CONTA SELECIONADA -->
+      <app-informacoes-conta
+        [conta]="contaSelecionada">
+      </app-informacoes-conta>
 
-            <!-- GRÁFICO -->
-            <app-grafico-conta></app-grafico-conta>
+    </div>
 
-            <!-- TRANSAÇÕES -->
-            <app-transacoes-conta></app-transacoes-conta>
+    <!-- COLUNA DIREITA -->
+    <div class="2xl:col-span-7 flex flex-col gap-6 min-w-0 min-h-0">
 
-<!-- DIALOG -->
-<form [formGroup]="formContaFinanceira">
+      <!-- GRÁFICO -->
+      <app-grafico-conta
+        [chartData]="chartData"
+        [chartOptions]="chartOptions"
+        (onPeriodoMudou)="atualizarGraficoSaldo($event)">
+      </app-grafico-conta>
 
+      <!-- TRANSAÇÕES -->
+      <app-transacoes-conta
+        [transacoesPaginadas]="transacoesPaginadas"
+        [ultimasTransacoes]="ultimasTransacoes"
+        [transacoesPorPagina]="transacoesPorPagina"
+        [paginaAtualTransacoes]="paginaAtualTransacoes"
+        (onProximaPagina)="proximaPaginaTransacoes()"
+        (onPaginaAnterior)="paginaAnteriorTransacoes()"
+        (onIrParaTransacoes)="irParaTransacoes()">
+      </app-transacoes-conta>
+
+    </div>
+
+  </div>
+
+  <!--
+    DIALOGS — ficam fora do grid, no nível raiz do componente.
+
+    Motivo: p-dialog é um overlay renderizado como portal no body, não como
+    seção de página. O estado que os controla (exibirDialog, excluirDialog,
+    formContaFinanceira) pertence ao ContasComponent, portanto aqui é o lugar
+    natural. Extrair para um filho exigiria passar o FormGroup por @Input ou
+    duplicar a lógica de CRUD, sem nenhum ganho arquitetural.
+
+    O <form [formGroup]> precisa ser ancestral dos formControlName no template;
+    como p-dialog projeta seu conteúdo no slot do componente (não fora da
+    árvore de componentes Angular), o binding reativo funciona corretamente.
+  -->
+  <form [formGroup]="formContaFinanceira">
+
+    <!-- DIALOG — NOVA CONTA / EDITAR CONTA -->
     <p-dialog
-        header="Nova Conta"
-        [(visible)]="exibirDialog"
-        [modal]="true"
-        [draggable]="false"
-        [resizable]="false"
-        styleClass="rounded-3xl!"
-        [style]="{ width: '42rem' }">
+      [header]="modoEdicao ? 'Editar Conta' : 'Nova Conta'"
+      [(visible)]="exibirDialog"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      styleClass="rounded-3xl!"
+      [style]="{ width: '42rem' }">
 
-        <div class="flex flex-col gap-8 py-4">
+      <div class="flex flex-col gap-8 py-4">
 
-            <!-- NOME -->
-            <div class="flex flex-col gap-2">
-
-                <label class="font-semibold text-slate-700">
-                    Nome da Conta
-                </label>
-
-                <input
-                    pInputText
-                    formControlName="nome"
-                    placeholder="Ex: Santander"
-                    class="w-full" />
-
-            </div>
-
-            <!-- SALDO -->
-            <div class="flex flex-col gap-2">
-
-                <label class="font-semibold text-slate-700">
-                    Saldo
-                </label>
-
-                <p-inputNumber
-                    formControlName="saldo"
-                    locale="pt-BR"
-                    mode="currency"
-                    currency="BRL"
-                    inputStyleClass="w-full">
-                </p-inputNumber>
-
-            </div>
-
-            <!-- COR -->
-            <div class="flex flex-col gap-4">
-
-                <label class="font-semibold text-slate-700">
-                    Cor do cartão
-                </label>
-
-                <p-colorpicker
-                    formControlName="cor"
-                    [inline]="true">
-                </p-colorpicker>
-
-            </div>
-
+        <!-- NOME -->
+        <div class="flex flex-col gap-2">
+          <label class="font-semibold text-slate-700">Nome da Conta</label>
+          <input
+            pInputText
+            formControlName="nome"
+            placeholder="Ex: Santander"
+            class="w-full" />
         </div>
 
-        <ng-template pTemplate="footer">
+        <!-- SALDO -->
+        <div class="flex flex-col gap-2">
+          <label class="font-semibold text-slate-700">Saldo</label>
+          <p-inputNumber
+            formControlName="saldo"
+            locale="pt-BR"
+            mode="currency"
+            currency="BRL"
+            inputStyleClass="w-full">
+          </p-inputNumber>
+        </div>
 
-            <div class="flex justify-end gap-3 w-full">
+        <!-- COR -->
+        <div class="flex flex-col gap-4">
+          <label class="font-semibold text-slate-700">Cor do cartão</label>
+          <p-colorpicker
+            formControlName="cor"
+            [inline]="true">
+          </p-colorpicker>
+        </div>
 
-                <p-button
-                    label="Cancelar"
-                    severity="secondary"
-                    (click)="exibirDialog = false">
-                </p-button>
+      </div>
 
-                <p-button
-                    icon="pi pi-check"
-                    severity="success"
-                    label="Salvar Conta"
-                    (click)="salvarConta()">
-                </p-button>
+      <ng-template pTemplate="footer">
+        <div class="flex justify-end gap-3 w-full">
 
-            </div>
+          <p-button
+            label="Cancelar"
+            severity="secondary"
+            (click)="exibirDialog = false">
+          </p-button>
 
-        </ng-template>
+          <p-button
+            icon="pi pi-check"
+            severity="success"
+            label="Salvar Conta"
+            (click)="salvarConta()">
+          </p-button>
+
+        </div>
+      </ng-template>
 
     </p-dialog>
 
+    <!-- DIALOG — CONFIRMAR EXCLUSÃO -->
     <p-dialog
-        header="Excluir Conta"
-        [(visible)]="excluirDialog"
-        [modal]="true"
-        [draggable]="false"
-        [resizable]="false"
-        styleClass="rounded-3xl!"
-        [style]="{ width: '32rem' }">
+      header="Excluir Conta"
+      [(visible)]="excluirDialog"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      styleClass="rounded-3xl!"
+      [style]="{ width: '32rem' }">
 
-        <div class="flex flex-col gap-6 py-4">
+      <div class="flex flex-col gap-6 py-4">
 
-            <div class="flex items-center gap-4">
+        <div class="flex items-center gap-4">
 
-                <div
-                    class="w-14 h-14 rounded-full
-                          bg-red-100
-                          flex items-center justify-center">
+          <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
+            <i class="pi pi-trash text-red-500 text-2xl"></i>
+          </div>
 
-                    <i class="pi pi-trash text-red-500 text-2xl"></i>
-
-                </div>
-
-                <div class="flex flex-col">
-
-                    <span class="text-xl font-semibold text-slate-900">
-                        Confirmar exclusão
-                    </span>
-
-                    <span class="text-slate-500">
-                        Esta ação não poderá ser desfeita.
-                    </span>
-
-                </div>
-
-            </div>
-
-            <div
-                class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
-
-                <span class="text-slate-400 text-sm block mb-2">
-                    Conta selecionada
-                </span>
-
-                <span class="text-2xl font-bold text-slate-900">
-                    {{ contaExcluir?.nome }}
-                </span>
-
-            </div>
+          <div class="flex flex-col">
+            <span class="text-xl font-semibold text-slate-900">
+              Confirmar exclusão
+            </span>
+            <span class="text-slate-500">
+              Esta ação não poderá ser desfeita.
+            </span>
+          </div>
 
         </div>
 
-        <ng-template pTemplate="footer">
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+          <span class="text-slate-400 text-sm block mb-2">
+            Conta selecionada
+          </span>
+          <span class="text-2xl font-bold text-slate-900">
+            {{ contaExcluir?.nome }}
+          </span>
+        </div>
 
-            <div class="flex justify-end gap-3 w-full">
+      </div>
 
-                <p-button
-                    label="Cancelar"
-                    severity="secondary"
-                    (click)="fecharDialogExcluir()">
-                </p-button>
+      <ng-template pTemplate="footer">
+        <div class="flex justify-end gap-3 w-full">
 
-                <p-button
-                    label="Confirmar Exclusão"
-                    icon="pi pi-trash"
-                    severity="danger"
-                    (click)="confirmarExcluirConta()">
-                </p-button>
+          <p-button
+            label="Cancelar"
+            severity="secondary"
+            (click)="fecharDialogExcluir()">
+          </p-button>
 
-            </div>
+          <p-button
+            label="Confirmar Exclusão"
+            icon="pi pi-trash"
+            severity="danger"
+            (click)="confirmarExcluirConta()">
+          </p-button>
 
-        </ng-template>
+        </div>
+      </ng-template>
 
     </p-dialog>
 
-</form>
+  </form>
+
+</div>
