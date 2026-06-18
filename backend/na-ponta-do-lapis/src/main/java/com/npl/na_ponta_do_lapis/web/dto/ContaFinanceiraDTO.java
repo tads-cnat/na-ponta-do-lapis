@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -17,7 +18,10 @@ public record ContaFinanceiraDTO(
     BigDecimal saldo,
 
     @NotBlank(message = "A cor não pode ser vazia")
-    String cor
+    String cor,
+
+    @NotBlank(message = "A moeda não pode ser vazia")
+    Moeda moeda
     ) {
 
     public ContaFinanceira toEntity(Usuario usuario){
@@ -25,6 +29,7 @@ public record ContaFinanceiraDTO(
         conta.setNome(nome);
         conta.setSaldo(saldo);
         conta.setCor(cor);
+        conta.setMoeda(moeda);
         conta.setUsuario(usuario);
         return conta;
     }
