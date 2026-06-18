@@ -18,14 +18,10 @@ import { ChartModule } from 'primeng/chart';
 import { ContaFinanceiraService } from './service/contas.service';
 import { IContas, IContasRequest } from '../../model/IContas.models';
 
-import {
-  IContas,
-  IContasRequest
-} from '../../model/IContas.models';
-import { GraficoComponent } from "./components/grafico/grafico.component";
-import { InformacoesComponent } from "./components/informacoes/informacoes.component";
-import { TransacoesComponent } from "./components/transacoes/transacoes.component";
-import { CartaoContaComponent } from "./components/cartoes/cartoes.component";
+import { CartaoContaComponent }  from './components/cartoes/cartoes.component';
+import { InformacoesComponent }  from './components/informacoes/informacoes.component';
+import { GraficoComponent }      from './components/grafico/grafico.component';
+import { TransacoesComponent }   from './components/transacoes/transacoes.component';
 
 @Component({
   selector: 'app-Contas',
@@ -37,13 +33,11 @@ import { CartaoContaComponent } from "./components/cartoes/cartoes.component";
     PrimeNGModuleModule,
     ColorPickerModule,
     ChartModule,
-    SelectButtonModule,
-    GraficoComponent,
+    CartaoContaComponent,
     InformacoesComponent,
-    TransacoesComponent,
-    CartaoContaComponent
-],
-
+    GraficoComponent,
+    TransacoesComponent
+  ],
   templateUrl: './contas.component.html',
 })
 export class ContasComponent implements OnInit {
@@ -287,32 +281,14 @@ export class ContasComponent implements OnInit {
       return;
     }
 
-    // =====================================
-    // CREATE
-    // =====================================
-
-    this.contaFinanceiraService
-      .adicionarConta(payload)
-      .subscribe({
-
-        next: () => {
-
-          this.exibirDialog = false;
-
-          this.formContaFinanceira.reset({
-
-            nome: '',
-            saldo: 0,
-            cor: ''
-          });
-
-          this.listarContas();
-        },
-
-        error: (error) => {
-          console.error(error);
-        }
-      });
+    this.contaFinanceiraService.adicionarConta(payload).subscribe({
+      next: () => {
+        this.exibirDialog = false;
+        this.formContaFinanceira.reset({ nome: '', saldo: 0, cor: '' });
+        this.listarContas();
+      },
+      error: (error) => console.error(error)
+    });
   }
 
   // =========================================
