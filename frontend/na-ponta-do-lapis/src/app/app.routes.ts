@@ -7,7 +7,6 @@ import { MetasComponent } from './pages/metas/metas.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { authGuard } from './core/guard/auth.guard';
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
 
 export const routes: Routes = [
     {
@@ -24,11 +23,10 @@ export const routes: Routes = [
         component: MainLayoutComponent,
         canActivate: [authGuard],
         children: [
-            { path: 'dashboard', component: DashboardComponent },
             { path: 'transacoes', component: TransacoesComponent },
             { path: 'contas', component: ContasComponent },
             { path: 'metas', component: MetasComponent },
-            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
+            { path: '', redirectTo: 'transacoes', pathMatch: 'full' }
         ]
     },
     { path: '**', redirectTo: '' }

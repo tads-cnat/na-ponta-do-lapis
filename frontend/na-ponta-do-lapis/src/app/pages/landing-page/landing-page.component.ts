@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NavbarComponent } from './components/navbar/navbar.component';
 import { HeroSectionComponent } from './components/hero-section/hero-section.component';
 
 @Component({
@@ -7,9 +8,10 @@ import { HeroSectionComponent } from './components/hero-section/hero-section.com
   standalone: true,
   imports: [
     CommonModule,
+    NavbarComponent,
     HeroSectionComponent
   ],
   templateUrl: './landing-page.component.html',
-  styleUrls: ['./landing-page.component.css'],
+  styleUrl: './landing-page.component.css',
 })
 export class LandingPageComponent {}
