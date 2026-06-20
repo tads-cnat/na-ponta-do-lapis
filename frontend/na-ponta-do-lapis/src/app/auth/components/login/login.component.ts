@@ -35,13 +35,13 @@ export class LoginComponent {
             detail: 'Bem-vindo ao Na Ponta do Lápis',
             life:2000
           })
-        
+
 
         StorageService.salvarToken(res.token)
         const usuario = StorageService.getUsuarioDecodificado()
         console.log(usuario?.sub, usuario?.email)
         setTimeout(() => {
-          this.router.navigateByUrl("app/transacoes")
+          this.router.navigateByUrl("app/dashboard")
         }, 1200)
       },
       error: (erro:Error) => {
