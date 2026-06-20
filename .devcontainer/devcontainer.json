@@ -10,6 +10,11 @@
 	},
 
 	"forwardPorts": [8080, 4200, 5432],
+	"portsAttributes": {
+		"8080": {"label": "Spring Server"},
+		"4200": {"label": "Angular Server"},
+		"5432": {"label": "PostgreSQL"}
+	},
 
 	"postCreateCommand": "npm install -g @angular/cli@21",
 
@@ -36,6 +41,4 @@
 		}
 	}
 
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-	// "remoteUser": "root"
 }

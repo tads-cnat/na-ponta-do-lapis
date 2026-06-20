@@ -41,15 +41,15 @@ VALUES
     ('Mensalidade Faculdade');
 
 -- SQL Conta Financeira
-INSERT INTO conta_financeira (id, nome, saldo, cor, usuario_id)
+INSERT INTO conta_financeira (id, nome, saldo, cor, usuario_id, moeda)
 VALUES
-    (1, 'Banco Inter', 100, '#FF7300', 1),
-    (2, 'Banco Master', 50000000.50, '#FF0000', 2),
-    (3, 'Santander', 0, '#D40000', 3),
-    (4, 'Itaú', 150, '#0B00D4', 4),
-    (5, 'Nubank', 3000, '#7300FF', 3),
-    (6, 'BB', 10, '#FFFF00', 2),
-    (7, 'PicPay', 1, '#00FF00', 1);
+    (1, 'Banco Inter', 100, '#FF7300', 1, 'BRL'),
+    (2, 'Banco Master', 50000000.50, '#FF0000', 2, 'BRL'),
+    (3, 'Santander', 0, '#D40000', 3, 'BRL'),
+    (4, 'Itaú', 150, '#0B00D4', 4, 'BRL'),
+    (5, 'Nubank', 3000, '#7300FF', 3, 'BRL'),
+    (6, 'BB', 10, '#FFFF00', 2, 'BRL'),
+    (7, 'PicPay', 1, '#00FF00', 1, 'BRL');
 
 -- Marcadores para o Usuário 1 (Lucas Henrique)
 INSERT INTO marcador (id ,nome, cor, usuario_id) VALUES
