@@ -1,5 +1,5 @@
 <div class="flex h-screen w-full overflow-hidden">
-  <form [formGroup]="registerForm" class="flex flex-1 flex-col justify-center items-center p-10 overflow-y-auto">
+  <form [formGroup]="registerForm" (ngSubmit)="register()" class="flex flex-1 flex-col justify-center items-center p-10 overflow-y-auto">
 
     <div class="flex flex-col gap-3 w-full max-w-md">
       <h1 class="text-5xl font-bold text-[#313131]">Cadastre-se</h1>
@@ -75,7 +75,7 @@
       <div class="flex flex-col gap-2 mt-4">
         <p-button type="submit" label="Criar Conta" 
                   styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
-                  (onClick)="register()" 
+                  type="submit" 
                   [disabled]="registerForm.invalid || !termos"></p-button>
       </div>
     </div>

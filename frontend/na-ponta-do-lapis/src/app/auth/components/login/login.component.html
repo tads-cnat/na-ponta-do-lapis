@@ -1,11 +1,12 @@
 <p-toast></p-toast>
 <div class="flex h-screen w-full">
-    <form [formGroup]="loginForm" class="flex flex-1 flex-col justify-center items-center p-10">
+    <form [formGroup]="loginForm" (ngSubmit)="login()" class="flex flex-1 flex-col justify-center items-center p-10">
         <div class="flex flex-col gap-3 w-full max-w-md">
             <h1 class="text-5xl font-bold">Entrar</h1>
             <p class="text-lg">
                 Ainda não tem uma conta?
-                <a routerLink="/signup" class="text-[#FBBC05] font-bold transition duration-300 ease-in-out hover:text-[#d1c4ff] ">Cadastre-se</a>
+                <a routerLink="/signup"
+                    class="text-[#FBBC05] font-bold transition duration-300 ease-in-out hover:text-[#d1c4ff] ">Cadastre-se</a>
             </p>
 
             <div class="flex flex-col gap-2 mt-4">
@@ -36,8 +37,8 @@
             </div>
 
             <div class="flex flex-col gap-2 mt-2">
-                <p-button label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
-                    [disabled]="loginForm.invalid" (onClick)="login()" />
+              <p-button type="submit" label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
+                    [disabled]="loginForm.invalid" />
             </div>
         </div>
     </form>
