@@ -98,11 +98,11 @@
         <div class="flex flex-col gap-2">
           <label class="font-semibold text-slate-700">Saldo</label>
           <p-inputNumber
-            formControlName="saldo"
-            locale="pt-BR"
-            mode="currency"
-            currency="BRL"
-            inputStyleClass="w-full">
+              formControlName="saldo"
+              locale="pt-BR"
+              mode="decimal"
+              [minFractionDigits]="2"
+              [maxFractionDigits]="2">
           </p-inputNumber>
         </div>
 
@@ -113,6 +113,26 @@
             formControlName="cor"
             [inline]="true">
           </p-colorpicker>
+        </div>
+
+        <!-- MOEDA -->
+        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
+
+          <span class="text-slate-700 font-bold">
+            Moeda
+          </span>
+
+          <div class="mt-3 flex flex-col">
+
+            <span class="text-2xl font-bold text-slate-900">
+              {{ simboloMoeda(conta.moeda) }}
+            </span>
+
+            <span class="text-slate-500">
+              {{ nomeMoeda(conta.moeda) }}
+            </span>
+          </div>
+
         </div>
 
       </div>
