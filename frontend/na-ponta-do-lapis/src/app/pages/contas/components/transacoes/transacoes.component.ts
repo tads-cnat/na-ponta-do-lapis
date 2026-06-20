@@ -73,7 +73,7 @@ import { ITransacoes } from '../../../../model/ITransacoes.model';
                   'text-red-500':    transacao.tipo === 'DESPESA',
                   'text-emerald-600': transacao.tipo === 'RECEITA'
                 }">
-                {{ transacao.valor | currency:'BRL':'symbol':'1.2-2':'pt-BR' }}
+                {{ transacao.valor | currency:'BRL' }}
               </span>
 
             </div>
