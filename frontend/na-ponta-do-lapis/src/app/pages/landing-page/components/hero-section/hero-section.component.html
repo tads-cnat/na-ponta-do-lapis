@@ -53,13 +53,95 @@
     </div>
   </div>
 
-  <!-- MANCHA ROXA (Fill-1.png): Travada no bottom 0 e jogada 50% para baixo para cobrir a transição -->
+  <!-- MANCHA ROXA SUPERIOR (Fill-1.png): Travada no bottom 0 e jogada 50% para baixo para cobrir a transição -->
   <img src="/Fill-1.png" class="absolute pointer-events-none z-30" 
        style="bottom: 0; right: 0; transform: translateY(50%); width: 140px; height: auto;" alt="" />
 
 </section>
 
-<!-- SEÇÃO BRANCA SUBSEQÜENTE -->
-<section class="w-full bg-white relative" style="min-height: 400px; padding: 60px 20px;">
-  <!-- O restante do conteúdo da sua página continua aqui dentro -->
+<!-- SEÇÃO BRANCA SUBSEQÜENTE: Adicionado overflow-hidden para eliminar o scroll lateral indesejado -->
+<section class="w-full bg-white relative px-6 md:px-20 pt-24 pb-20 flex flex-col gap-16 overflow-hidden">
+  
+  <div class="w-full flex flex-col md:flex-row justify-between items-start gap-8 relative z-10">
+    
+    <div class="flex-1 flex flex-col gap-3">
+      <span class="font-['Lexend_Deca'] font-medium text-lg text-[#7843CD]">
+        Por que nós?
+      </span>
+      <h2 class="font-['Urbanist'] font-bold text-4xl md:text-[56px] text-[#1A1A1A] tracking-[-1.68px] leading-[110%] max-w-[540px]">
+        Transformamos sua relação com o <span class="relative inline-block">dinheiro
+          <svg class="absolute -bottom-2 left-0 w-full h-auto pointer-events-none" viewBox="0 0 240 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M4 12C60 4 180 4 236 14" stroke="#7843CD" stroke-width="4" stroke-linecap="round"/>
+          </svg>
+        </span>
+      </h2>
+    </div>
+
+    <div class="flex-1 flex flex-col items-start gap-6 md:max-w-[480px] md:mt-10">
+      <p class="font-['Lexend_Deca'] font-light text-base text-[#808080] leading-7 tracking-[-0.32px]">
+        Nossa plataforma foi desenhada para acolher quem está começando a sua jornada, transformando o controle financeiro em um hábito simples. Unimos educação prática e tecnologia intuitiva para abrir caminho para sua liberdade e uma carreira de sucesso.
+      </p>
+      
+      <a routerLink="/signup" class="inline-flex items-center justify-center gap-2 px-6 h-14 bg-[#7843CD] text-white font-['Lexend_Deca'] font-medium text-base rounded-xl hover:bg-[#6533b3] transition-all shadow-sm group">
+        Conheça 
+        <span class="transform group-hover:translate-x-1 transition-transform">→</span>
+      </a>
+    </div>
+
+  </div>
+
+  <!-- GRID DE CARDS: z-20 garante que fique Fisicamente acima da mancha roxa de fundo -->
+  <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 relative z-20">
+    
+    <!-- CARD 1 -->
+    <div class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-gray-100 hover:border-purple-200 hover:shadow-lg transition-all group" style="border-bottom: 4px solid #FFDE59;">
+      <div class="w-24 h-24 flex items-center justify-center bg-amber-50 rounded-[28px]">
+        <img src="/group-3512.png" class="w-16 h-16 object-contain" alt="Ícone Carteira" />
+      </div>
+      <div class="flex flex-col gap-4 items-center">
+        <h3 class="font-['Urbanist'] font-bold text-3xl text-[#1A1A1A] tracking-[-0.48px]">
+          Se organize mais facilmente
+        </h3>
+        <p class="font-['Lexend_Deca'] font-light text-base text-[#808080] leading-7 max-w-[320px]">
+          Projetado para simplificar sua vida adulta, o Na Ponta do Lápis organiza seu presente para garantir o seu futuro. Através de uma interface acolhedora e gestão inteligente, entregamos a clareza necessária para você dominar suas finanças e alcançar suas metas.
+        </p>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-gray-100 hover:border-purple-200 hover:shadow-lg transition-all group" style="border-bottom: 4px solid #FFDE59;">
+      <div class="w-24 h-24 flex items-center justify-center bg-amber-50 rounded-[28px]">
+        <img src="/group-3513.png" class="w-16 h-16 object-contain" alt="Ícone Alvo" />
+      </div>
+      <div class="flex flex-col gap-4 items-center">
+        <h3 class="font-['Urbanist'] font-bold text-3xl text-[#1A1A1A] tracking-[-0.48px]">
+          Obtenha o alvo dos sonhos
+        </h3>
+        <p class="font-['Lexend_Deca'] font-light text-base text-[#808080] leading-7 max-w-[320px]">
+          Transforme desejos em conquistas reais mapeando sua jornada financeira no Na Ponta do Lápis. Com ferramentas intuitivas, entregamos o controle necessário para você visualizar suas economias e atingir seus alvos com segurança e tranquilidade.
+        </p>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-gray-100 hover:border-purple-200 hover:shadow-lg transition-all group" style="border-bottom: 4px solid #FFDE59;">
+      <div class="w-24 h-24 flex items-center justify-center bg-amber-50 rounded-[28px]">
+        <img src="/icon-monitor.png" class="w-16 h-16 object-contain" alt="Ícone Monitor" />
+      </div>
+      <div class="flex flex-col gap-4 items-center">
+        <h3 class="font-['Urbanist'] font-bold text-3xl text-[#1A1A1A] tracking-[-0.48px]">
+          Efetivo e eficiente
+        </h3>
+        <p class="font-['Lexend_Deca'] font-light text-base text-[#808080] leading-7 max-w-[320px]">
+          Otimize transações com processos ágeis e seguros. Unindo tecnologia de ponta e usabilidade intuitiva, entregamos a performance necessária para você gerenciar contas e investimentos sem perder tempo ou comprometer a clareza absoluta do seu planejamento financeiro.
+        </p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MANCHA ROXA INFERIOR (Fill-1.png): Espelhada com scale-x-[-1] e z-0 para não sobrepor o conteúdo dos cards -->
+  <img src="/Fill-1.png" class="absolute pointer-events-none z-0 scale-x-[-1]" 
+       style="bottom: 40px; left: -60px; width: 150px; height: auto;" alt="" />
+
 </section>
