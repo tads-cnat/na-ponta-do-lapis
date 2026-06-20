@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 
@@ -9,9 +9,10 @@ import { ProgressBarModule } from 'primeng/progressbar';
   styleUrl: './meta-item.component.css',
 })
 export class MetaItemComponent {
-  titulo: string = "Primeira Casa";
-  valorAtual: number = 300.00;
-  valorTotal: number = 500.00;
-  valorFalta: number = this.valorTotal - this.valorAtual;
-  progressoAtual: number = this.valorAtual / this.valorTotal * 100;
+  @Input() titulo: string = "";
+  @Input() valorAtual: number =0;
+  @Input() valorTotal: number = 0;
+  
+  get valorFalta(): number { return this.valorTotal - this.valorAtual; }
+  get progressoAtual(): number { return this.valorAtual / this.valorTotal * 100; }
 }
