@@ -33,10 +33,13 @@ import { IContas } from '../../../../model/IContas.models';
             <div class="mt-3">
               <span class="text-2xl font-bold text-slate-900 break-words leading-tight">
                 {{
-                  conta.saldo.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL'
-                  })
+
+                  conta.saldo.toLocaleString(
+                    this.localeDaMoeda(conta.moeda),
+                    {
+                      style: 'currency',
+                      currency: conta.moeda
+                    })
                 }}
               </span>
             </div>
@@ -69,4 +72,45 @@ export class InformacoesComponent {
 
   @Input() conta: IContas | null = null;
 
+
+  localeDaMoeda(moeda: string | null): string {
+
+    switch (moeda) {
+      case 'USD':
+        return 'en-US';
+
+      case 'EUR':
+        return 'de-DE';
+
+      default:
+        return 'pt-BR';
+    }
+
+  }
+
+
+  simboloMoeda(moeda: string | null): string {
+
+    const simbolos: Record<string, string> = {
+      BRL: 'R$',
+      USD: 'US$',
+      EUR: '€'
+    };
+
+    return simbolos[moeda ?? 'BRL'] ?? moeda ?? '';
+
+  }
+
+
+  nomeMoeda(moeda: string | null): string {
+
+    const nomes: Record<string, string> = {
+      BRL: 'Real brasileiro',
+      USD: 'Dólar americano',
+      EUR: 'Euro'
+    };
+
+    return nomes[moeda ?? 'BRL'] ?? 'Moeda desconhecida';
+
+  }
 }
