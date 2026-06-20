@@ -1,29 +1,45 @@
-<div class="flex flex-col sm:flex-row gap-y-6 sm:gap-8 md:gap-12 lg:gap-35 justify-center items-center sm:items-start">
-    <div>
-        <p-card header="Saldo inicial">
-            <div class="flex flex-col gap-6"> <div class="flex gap-12 items-center">
-                    <span class="font-bold text-4xl">R$ 1.000,00</span>
-                    <img src="Icon-grafico.svg" alt="Grafico">
+<div class="flex flex-col sm:flex-row gap-y-6 sm:gap-8 md:gap-12 lg:gap-16 justify-between items-stretch w-full max-w-7xl mx-auto px-4">
+
+    <div class="flex-1 min-w-[300px]">
+        <p-card header="Saldo inicial" styleClass="w-full h-full relative p-2">
+            <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-6 right-6 w-12 h-12 opacity-80">
+
+            <div class="flex flex-col justify-between h-full gap-8 mt-4">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Referente ao início do mês</p>
+                    <span class="font-bold text-5xl tracking-tight text-gray-800">R$ 1.000,00</span>
                 </div>
-                <span class="flex gap-2">
-                    <img src="ic-trending-down.svg" alt="icon seta">
-                    <span class="text-red-500">4.3%</span> Menos que abril
-                </span>
+
+                <div class="flex justify-between items-center border-t pt-3 border-gray-100">
+                    <span class="flex items-center gap-2 text-sm text-gray-600">
+                        <img src="ic-trending-down.svg" alt="icon seta" class="w-4 h-4">
+                        <span class="text-red-500 font-semibold">4.3%</span> menos que abril
+                    </span>
+                    <span class="text-xs text-gray-400">Fixo por período</span>
+                </div>
             </div>
         </p-card>
     </div>
 
-    <div>
-        <p-card header="Saldo atual">
-            <div class="flex flex-col gap-6"> <div class="flex gap-12 items-center">
-                    <span class="font-bold text-4xl">{{ saldoTotal | currency : 'BRL' }}</span>
-                    <img src="Icon-pessoa.svg" alt="Grafico">
+    <div class="flex-1 min-w-[300px]">
+        <p-card header="Saldo atual" styleClass="w-full h-full relative p-2">
+            <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-6 right-6 w-12 h-12 opacity-80">
+
+            <div class="flex flex-col justify-between h-full gap-8 mt-4">
+                <div>
+                    <p class="text-sm text-gray-500 mb-1">Disponível em suas contas</p>
+                    <span class="font-bold text-5xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
                 </div>
-                <span class="flex gap-2">
-                    <img src="ic-treding-up.svg" alt="icon seta">
-                    <span class="text-green-500">2.1%</span> Mais que ontem
-                </span>
+
+                <div class="flex justify-between items-center border-t pt-3 border-gray-100">
+                    <span class="flex items-center gap-2 text-sm text-gray-600">
+                        <img src="ic-treding-up.svg" alt="icon seta" class="w-4 h-4">
+                        <span class="text-green-500 font-semibold">2.1%</span> mais que ontem
+                    </span>
+                    <span class="text-xs text-gray-400">Atualizado em tempo real</span>
+                </div>
             </div>
         </p-card>
     </div>
+
 </div>
