@@ -1,16 +1,29 @@
-<nav class="w-full h-30 bg-[#FAFAFA] px-6 md:px-20 py-8 flex justify-between items-center border-b border-gray-100">
+<nav class="w-full h-30 bg-[#FAFAFA] px-6 md:px-20 py-8 flex justify-center items-center border-b border-gray-100 gap-8">
   
   <div class="flex items-center justify-center">
     <img src="logo.svg" alt="Na Ponta do Lápis" class="h-12 md:h-14 object-contain" />
   </div>
 
-  <div class="hidden md:flex items-center gap-8">
-    <a href="#" class="font-['Lexend_Deca'] font-light text-xl text-[#7843CD] leading-[1.2] transition-colors">Home</a>
-    <a href="#" class="font-['Lexend_Deca'] font-light text-xl text-[#4D4D4D] hover:text-[#7843CD] leading-[1.2] transition-colors">Produto</a>
-    <a href="#" class="font-['Lexend_Deca'] font-light text-xl text-[#4D4D4D] hover:text-[#7843CD] leading-[1.2] transition-colors">Sobre nós</a>
+  <div class="hidden md:flex items-center gap-8" style="margin-left: 227px; margin-top: 12px;">
+    <a routerLink="/home" 
+     class="transition-colors" 
+     style="color: #7843CD; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 400; line-height: 120%;">
+    Home
+  </a>
+   <a routerLink="/features" 
+     class="transition-colors hover:text-[#1A1A1A]" 
+     style="color: #4D4D4D; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 300; line-height: 120%;">
+    Produtos
+  </a>
+  
+  <a routerLink="/about" 
+     class="transition-colors hover:text-[#1A1A1A]" 
+     style="color: #4D4D4D; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 300; line-height: 120%;">
+    Sobre nós
+  </a>
   </div>
 
-  <div class="flex items-center gap-4">
+  <div class="flex items-center gap-4 ml-auto">
     <a routerLink="/login" class="w-32.5 h-12 border-2 border-[#7843CD] text-[#7843CD] font-semibold flex items-center justify-center rounded-xl hover:bg-purple-50 transition-all">
       Entrar
     </a>

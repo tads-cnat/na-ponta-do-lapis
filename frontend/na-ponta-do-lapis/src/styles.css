@@ -1,10 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import url('https://fonts.googleapis.com/css2?family=Lexend+Deca:wght@300;400;500&family=Urbanist:wght@700;800&display=swap');
 @import 'tailwindcss';
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
 
-@theme {
+:root {
   --color-npl-amarelo: #EEC046;
   --color-npl-verde:#46B171;
 }
@@ -14,4 +15,8 @@ main > *:not(p-toast):not(router-outlet) {
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+.hero-min-h {
+  min-height: 705px !important;
 }
