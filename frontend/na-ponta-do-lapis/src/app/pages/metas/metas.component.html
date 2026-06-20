@@ -10,19 +10,23 @@
        <span>Adicionar meta</span>
     </p-button>
 </div>
-<ul>
-    @for(meta of metas(); track meta.id) {
-        <li>
-            <app-meta-item 
-                [titulo]="meta.nome"
-                [valorAtual]="meta.valorAtual"
-                [valorTotal]="meta.valor"
-            >
-            </app-meta-item>
-        </li>
-    } @empty {
-        <div class="text-center text-gray-500">
-            Nenhuma meta cadastrada ainda
-        </div>
-    }
-</ul>
+<div class="overflow-y-auto max-h-[500px]">
+    <ul >
+        @for(meta of metas(); track meta.id) {
+            <li class="mb-8">
+                <app-meta-item 
+                    [titulo]="meta.nome"
+                    [valorAtual]="meta.valorAtual"
+                    [valorTotal]="meta.valorTotal"
+                    [progressoAtual]="meta.progresso"
+                >
+                </app-meta-item>
+            </li>
+        } @empty {
+            <div class="text-center text-gray-500">
+                Nenhuma meta cadastrada ainda
+            </div>
+        }
+    </ul>
+
+</div>
