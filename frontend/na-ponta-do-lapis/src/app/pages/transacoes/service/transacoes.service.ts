@@ -16,6 +16,10 @@ export class TransacoesService {
     return this.http.get<any>(`${this.BASE_URL}/transacoes/me`)
   }
 
+  public listarTransacoesPorDescricao(descricao:string): Observable<ITransacoes[]> {
+    return this.http.get<ITransacoes[]>(`${this.BASE_URL}/transacoes/buscar?descricao=${descricao}`)
+  }
+
     public buscarTransacaoPorId(id:number): Observable<ITransacaoRequest> {
     return this.http.get<ITransacaoRequest>(`${this.BASE_URL}/transacoes/${id}`)
   }

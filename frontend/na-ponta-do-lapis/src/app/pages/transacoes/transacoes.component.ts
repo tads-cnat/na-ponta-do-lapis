@@ -11,6 +11,7 @@ import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-transacoes',
@@ -24,6 +25,7 @@ export class TransacoesComponent {
   private messageService = inject(MessageService)
   private destroyRef = inject(DestroyRef)
   id: number | null = null;
+  @ViewChild(CardSaldoComponent) cardSaldo?: CardSaldoComponent;
   formTransacao: FormGroup;
   constructor(
     private fb: FormBuilder,
@@ -65,6 +67,20 @@ export class TransacoesComponent {
       });
   }
   transacoesDados: ITransacoes[] = [];
+
+  public buscarPorDescricao(descricao:string) :void {
+    this.transacoesService.listarTransacoesPorDescricao(descricao).subscribe({
+      next: (res: ITransacoes[]) => {
+        this.transacoesDados = res
+        this.cdr.detectChanges()
+      },
+      error: (erro: HttpErrorResponse) => {
+        console.error(erro)
+        this.erroAoSalvar("Erro ao carregar transação", erro);
+      }
+    })
+  }
+
   public listarTransacoes(): any {
     this.transacoesService.listarTransacoes().subscribe({
       next: (res: ITransacoes[]) => {
@@ -86,6 +102,7 @@ export class TransacoesComponent {
     this.transacoesService.deletarTransacaoPorId(id).subscribe({
       next: (res: any) => {
         this.listarTransacoes()
+        this.atualizarSaldo()
         this.messageService.add({
           severity: 'success',
           summary: 'Transação excluida com sucesso',
@@ -264,7 +281,12 @@ export class TransacoesComponent {
   private sucessoAoSalvar(mensagem: string) {
     this.messageService.add({ severity: 'success', summary: mensagem, life: 2000 });
     this.listarTransacoes();
+    this.atualizarSaldo();
     this.id = null;
+  }
+
+  private atualizarSaldo(): void {
+    this.cardSaldo?.listarContas();
   }
 
   private erroAoSalvar(mensagem: string, erro: any) {

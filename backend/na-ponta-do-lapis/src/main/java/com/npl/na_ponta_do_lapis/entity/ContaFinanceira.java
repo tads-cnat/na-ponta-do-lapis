@@ -50,8 +50,6 @@ public class ContaFinanceira {
     @Enumerated(EnumType.STRING)
     @NotNull(message = "A moeda é obrigatória")
     @Column(name = "moeda", length = 3, nullable = false)
-    @NotBlank(message = "A moeda não pode ser vazia")
-    @Size(max = 3)
     private Moeda moeda;
 
     @NotNull(message = "O usuário é obrigatório")
