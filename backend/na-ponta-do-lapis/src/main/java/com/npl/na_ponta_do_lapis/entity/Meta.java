@@ -44,13 +44,21 @@ public class Meta {
     @Column(name = "tipo_meta", nullable = false)
     private TipoMeta tipoMeta;
 
+    @ManyToOne()
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @ManyToOne()
+    @JoinColumn(name = "conta_financeira_id")
+    private ContaFinanceira conta;
+
     public Meta() {
     }
 
-    public Meta(BigDecimal valor, String nome, TipoMeta tipoMeta) {
+    public Meta(BigDecimal valor, String nome, TipoMeta tipoMeta, Usuario usuario) {
         this.valor = valor;
         this.nome = nome;
-        this.tipoMeta = tipoMeta;
+        this.usuario = usuario;
         this.valorAtual = BigDecimal.ZERO;
     }
 
@@ -83,4 +91,10 @@ public class Meta {
 
     public TipoMeta getTipoMeta() { return tipoMeta; }
     public void setTipoMeta(TipoMeta tipoMeta) { this.tipoMeta = tipoMeta; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+
+    public ContaFinanceira getConta() { return conta; }
+    public void setConta(ContaFinanceira conta) { this.conta = conta; }
 }
