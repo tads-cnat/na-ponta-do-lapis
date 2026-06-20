@@ -15,6 +15,8 @@ public record MetaResponseDTO(
         String fotoUrl,
         LocalDate dataLimite,
         TipoMeta tipoMeta,
+        Long usuarioId,
+        Long contaId,
         double progresso 
 ) {
     public MetaResponseDTO(Meta meta, double progressoCalculado) {
@@ -27,6 +29,8 @@ public record MetaResponseDTO(
             meta.getFotoUrl(),
             meta.getDataLimite(),
             meta.getTipoMeta(),
+            meta.getUsuario() != null ? meta.getUsuario().getId() : null,
+            meta.getConta() != null ? meta.getConta().getId() : null,
             progressoCalculado
         );
     }

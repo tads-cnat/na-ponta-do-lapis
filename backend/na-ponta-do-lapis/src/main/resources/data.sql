@@ -130,18 +130,18 @@ VALUES
 
 --- SQL Meta
 
-INSERT INTO meta (id, nome, descricao, valor, valor_atual, foto_url, data_inicio, data_limite, tipo_meta)
+INSERT INTO meta (id, nome, descricao, valor, valor_atual, foto_url, data_inicio, data_limite, tipo_meta, usuario_id)
 VALUES
-    (1, 'Reserva de Emergência', 'Guardar dinheiro para imprevistos', 5000.00, 1500.00, 'https://link-da-foto.com/reserva.png', '2026-01-01', '2026-12-31', 'POUPANCA'),
-    (2, 'Viagem de Férias', 'Juntar dinheiro para viajar no final do ano', 3000.00, 1200.00, 'https://link-da-foto.com/viagem.png', '2026-02-15', '2026-11-30', 'PRAZO_FIXO'),
-    (3, 'Limite Alimentação', 'Controlar gastos mensais com supermercado e ifood', 800.00, 650.00, 'https://link-da-foto.com/comida.png', '2026-06-01', '2026-06-30', 'GASTO'),
-    (4, 'Limite Lazer', 'Evitar gastar demais com saídas', 500.00, 120.00, 'https://link-da-foto.com/lazer.png', '2026-06-01', '2026-06-30', 'GASTO'),
-    (5, 'Tesouro Direto', 'Investir em renda fixa para o futuro', 10000.00, 4500.00, 'https://link-da-foto.com/investimento.png', '2026-01-10', '2026-12-31', 'POUPANCA'),
-    (6, 'Quitar Cartão de Crédito', 'Pagar dívida acumulada do cartão', 2000.00, 800.00, 'https://link-da-foto.com/cartao.png', '2026-05-01', '2026-08-31', 'DIVIDA'),
-    (7, 'Comprar Notebook', 'Equipamento novo para trabalho e estudos', 4000.00, 3800.00, 'https://link-da-foto.com/notebook.png', '2026-03-20', '2026-10-15', 'POUPANCA'),
-    (8, 'Assinaturas e Academia', 'Orçamento para Netflix, Spotify e SmartFit', 150.00, 150.00, 'https://link-da-foto.com/academia.png', '2026-06-01', '2026-06-30', 'GASTO'),
-    (9, 'Intercâmbio', 'Juntar para curso de idiomas no exterior', 25000.00, 5000.00, 'https://link-da-foto.com/fundo.png', '2026-01-01', '2027-12-31', 'PRAZO_FIXO'),
-    (10, 'Quitar Empréstimo', 'Finalizar parcelas do empréstimo pessoal', 7000.00, 3500.00, 'https://link-da-foto.com/emprestimo.png', '2026-01-05', '2027-06-30', 'DIVIDA');
+    (1, 'Reserva de Emergência', 'Guardar dinheiro para imprevistos', 5000.00, 1500.00, 'https://link-da-foto.com/reserva.png', '2026-01-01', '2026-12-31', 'POUPANCA', 1),
+    (2, 'Viagem de Férias', 'Juntar dinheiro para viajar no final do ano', 3000.00, 1200.00, 'https://link-da-foto.com/viagem.png', '2026-02-15', '2026-11-30', 'PRAZO_FIXO', 2),
+    (3, 'Limite Alimentação', 'Controlar gastos mensais com supermercado e ifood', 800.00, 650.00, 'https://link-da-foto.com/comida.png', '2026-06-01', '2026-06-30', 'GASTO', 3),
+    (4, 'Limite Lazer', 'Evitar gastar demais com saídas', 500.00, 120.00, 'https://link-da-foto.com/lazer.png', '2026-06-01', '2026-06-30', 'GASTO', 4),
+    (5, 'Tesouro Direto', 'Investir em renda fixa para o futuro', 10000.00, 4500.00, 'https://link-da-foto.com/investimento.png', '2026-01-01', '2026-12-31', 'POUPANCA', 1),
+    (6, 'Curso de Especialização', 'Guardar para curso de pós-graduação', 8000.00, 2000.00, 'https://link-da-foto.com/curso.png', '2026-03-01', '2026-09-30', 'PRAZO_FIXO', 2),
+    (7, 'Comprar Notebook', 'Equipamento novo para trabalho e estudos', 4000.00, 3800.00, 'https://link-da-foto.com/notebook.png', '2026-03-20', '2026-10-15', 'POUPANCA', 3),
+    (8, 'Assinaturas e Academia', 'Orçamento para Netflix, Spotify e SmartFit', 150.00, 150.00, 'https://link-da-foto.com/academia.png', '2026-06-01', '2026-06-30', 'GASTO', 4),
+    (9, 'Intercâmbio', 'Juntar para curso de idiomas no exterior', 25000.00, 5000.00, 'https://link-da-foto.com/fundo.png', '2026-01-01', '2027-12-31', 'PRAZO_FIXO', 2),
+    (10, 'Quitar Empréstimo', 'Finalizar parcelas do empréstimo pessoal', 7000.00, 3500.00, 'https://link-da-foto.com/emprestimo.png', '2026-01-05', '2027-06-30', 'DIVIDA', 1);
 
 SELECT setval(pg_get_serial_sequence('transacao', 'id'), coalesce(max(id), 0) + 1, false) FROM transacao;
 -- Sincroniza a sequência do ID do Usuário

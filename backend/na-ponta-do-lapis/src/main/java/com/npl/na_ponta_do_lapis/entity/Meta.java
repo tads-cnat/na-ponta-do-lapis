@@ -69,7 +69,7 @@ public class Meta {
     public Meta(BigDecimal valor, String nome, TipoMeta tipoMeta, Usuario usuario) {
         this.valor = valor;
         this.nome = nome;
-        this.tipoMeta = tipoMeta;
+        this.usuario = usuario;
         this.valorAtual = BigDecimal.ZERO;
     }
 
@@ -121,4 +121,10 @@ public class Meta {
 
     public TipoMeta getTipoMeta() { return tipoMeta; }
     public void setTipoMeta(TipoMeta tipoMeta) { this.tipoMeta = tipoMeta; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+
+    public ContaFinanceira getConta() { return conta; }
+    public void setConta(ContaFinanceira conta) { this.conta = conta; }
 }
