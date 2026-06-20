@@ -1,42 +1,42 @@
-<div class="flex flex-col sm:flex-row gap-4 sm:gap-10 md:gap-16 lg:gap-24 justify-center items-start w-full max-w-7xl mx-auto px-4 md:px-8">
+<div class="flex flex-col sm:flex-row gap-y-6 sm:gap-8 md:gap-12 lg:gap-16 justify-between items-stretch w-full max-w-7xl mx-auto px-4">
 
-    <div class="w-full sm:w-[380px]">
-        <p-card header="Saldo inicial" styleClass="w-full relative">
-            <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+    <div class="flex-1 min-w-[300px]">
+        <p-card header="Saldo inicial" styleClass="w-full h-full relative p-2">
+            <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-6 right-6 w-12 h-12 opacity-80">
 
-            <div class="flex flex-col gap-2 mt-1 pr-16">
+            <div class="flex flex-col justify-between h-full gap-8 mt-4">
                 <div>
-                    <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
-                    <span class="font-bold text-3xl tracking-tight text-gray-800">R$ 1.000,00</span>
+                    <p class="text-sm text-gray-500 mb-1">Referente ao início do mês</p>
+                    <span class="font-bold text-5xl tracking-tight text-gray-800">R$ 1.000,00</span>
                 </div>
 
-                <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
-                    <span class="flex items-center gap-1">
-                        <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5">
-                        <span class="text-red-500 font-semibold">4.3%</span>
+                <div class="flex justify-between items-center border-t pt-3 border-gray-100">
+                    <span class="flex items-center gap-2 text-sm text-gray-600">
+                        <img src="ic-trending-down.svg" alt="icon seta" class="w-4 h-4">
+                        <span class="text-red-500 font-semibold">4.3%</span> menos que abril
                     </span>
-                    <span class="text-gray-400">menos que abril</span>
+                    <span class="text-xs text-gray-400">Fixo por período</span>
                 </div>
             </div>
         </p-card>
     </div>
 
-    <div class="w-full sm:w-[380px]">
-        <p-card header="Saldo atual" styleClass="w-full relative">
-            <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+    <div class="flex-1 min-w-[300px]">
+        <p-card header="Saldo atual" styleClass="w-full h-full relative p-2">
+            <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-6 right-6 w-12 h-12 opacity-80">
 
-            <div class="flex flex-col gap-2 mt-1 pr-16">
+            <div class="flex flex-col justify-between h-full gap-8 mt-4">
                 <div>
-                    <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
-                    <span class="font-bold text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
+                    <p class="text-sm text-gray-500 mb-1">Disponível em suas contas</p>
+                    <span class="font-bold text-5xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
                 </div>
 
-                <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
-                    <span class="flex items-center gap-1">
-                        <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5">
-                        <span class="text-green-500 font-semibold">2.1%</span>
+                <div class="flex justify-between items-center border-t pt-3 border-gray-100">
+                    <span class="flex items-center gap-2 text-sm text-gray-600">
+                        <img src="ic-treding-up.svg" alt="icon seta" class="w-4 h-4">
+                        <span class="text-green-500 font-semibold">2.1%</span> mais que ontem
                     </span>
-                    <span class="text-gray-400">mais que ontem</span>
+                    <span class="text-xs text-gray-400">Atualizado em tempo real</span>
                 </div>
             </div>
         </p-card>
