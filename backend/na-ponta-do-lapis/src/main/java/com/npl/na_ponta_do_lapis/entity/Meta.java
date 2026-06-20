@@ -1,11 +1,22 @@
 package com.npl.na_ponta_do_lapis.entity;
 
-import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
-import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "meta")
@@ -58,7 +69,7 @@ public class Meta {
     public Meta(BigDecimal valor, String nome, TipoMeta tipoMeta, Usuario usuario) {
         this.valor = valor;
         this.nome = nome;
-        this.usuario = usuario;
+        this.tipoMeta = tipoMeta;
         this.valorAtual = BigDecimal.ZERO;
     }
 
@@ -91,10 +102,4 @@ public class Meta {
 
     public TipoMeta getTipoMeta() { return tipoMeta; }
     public void setTipoMeta(TipoMeta tipoMeta) { this.tipoMeta = tipoMeta; }
-
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
-
-    public ContaFinanceira getConta() { return conta; }
-    public void setConta(ContaFinanceira conta) { this.conta = conta; }
 }
