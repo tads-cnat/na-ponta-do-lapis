@@ -1,20 +1,39 @@
-<section class="w-full hero-min-h px-6 md:px-20 pt-12 pb-12 flex flex-col md:flex-row items-start justify-between gap-12 relative overflow-hidden" style="background-color: #D1C4FF;">
+<!-- CONTAINER PRINCIPAL: overflow: visible garante que os elementos consigam vazar para a seção branca -->
+<section class="w-full px-6 md:px-20 pt-12 pb-6 flex flex-col md:flex-row items-start justify-between gap-12 relative" 
+         style="background-color: #D1C4FF; min-height: 580px; overflow: visible !important;">
   
+  <!-- COLUNA DA ESQUERDA: Elementos visuais e Personagem -->
   <div class="flex-1 flex justify-center items-center w-full relative min-h-100 mt-8 md:mt-12">
     <div class="relative w-full max-w-[320px] flex justify-center items-center">
+      <!-- Linhas e molduras amarelas existentes -->
       <div class="absolute" style="width: 255px; height: 320px; border: 1px solid #FFDE59; left: -5.5px; top: calc(50% - 227px); z-index: 5;"></div>
       <div class="absolute" style="width: 225px; height: 290px; border: 1px solid #FFDE59; left: 10.75px; top: calc(50% - 212px); z-index: 5;"></div>
-      <div class="absolute" style="width: 540px; height: 2.322px; background-color: #FBBC05; left: -142.5px; top: calc(50% + 93px); z-index: 5;"></div>
+      
+      <!-- Linha Horizontal Amarela -->
+      <div class="absolute" style="width: 400px; height: 2.322px; background-color: #FBBC05; left: -60px; top: calc(50% + 93px); z-index: 5;"></div>
+      
+      <!-- ARQUIVO 24 (Alinhado de forma independente na borda esquerda da linha amarela) -->
+      <img src="24.svg" class="absolute z-10 opacity-80" style="left: -140px; top: calc(50% + 102px); width: 40px; height: auto;" alt="" />
+      
+      <!-- Personagem Principal -->
       <img src="j.svg" alt="Ilustração Principal" class="hero-j-dimensions object-contain relative z-10" />
       
+      <!-- Elementos Decorativos Menores -->
       <img src="g.svg" class="absolute -bottom-6 -right-12 w-28 h-auto z-20 drop-shadow-md" alt="" />
       <img src="d.svg" class="absolute w-24 h-auto opacity-90" style="top: calc(50% - 223px); left: 170px; z-index: 15;" alt="" />
       <img src="f.svg" class="absolute z-20 drop-shadow-md" style="top: -20px; left: 15px; width: 56px; height: auto;" alt="" />
+
+      <!-- Vetores Estrelas (Sincronizados e Equidistantes) -->
+      <img src="/Vector-1.svg" class="absolute pointer-events-none z-20" 
+           style="top: calc(50% - 240px); left: 269.5px; width: 20px; height: auto;" alt="" />
+
+      <img src="/Vector-2.svg" class="absolute pointer-events-none z-20" 
+           style="top: calc(50% - 40px); left: -25.5px; width: 18px; height: auto;" alt="" />
     </div>
   </div>
 
-  <div class="flex-1 flex flex-col items-start w-full md:hero-container-max z-10 mt-8 md:mt-12">
-    
+  <!-- COLUNA DA DIREITA: Textos e Botão único de Ação -->
+  <div class="flex-1 flex flex-col items-start w-full md:hero-container-max z-40 mt-8 md:mt-12">
     <div class="relative w-full">
       <h1 class="w-full font-['Urbanist'] font-bold text-5xl md:text-[64px] text-[#1A1A1A] tracking-[-1.92px] leading-tight mb-4">
         Nunca foi tão fácil <br class="hidden md:inline"><span class="md:whitespace-nowrap">administrar suas finanças</span>
@@ -26,11 +45,21 @@
       A gestão financeira pessoal envolve o controle de gastos e planejamento – não apenas ganhar e gastar o seu dinheiro.
     </p>
     
-    <div class="w-full sm:w-auto">
-      <a routerLink="/signup" class="w-full sm:w-60 h-16.25 bg-[#7843CD] text-white font-['Lexend_Deca'] font-medium text-lg flex items-center justify-center rounded-lg hover:bg-[#6533b3] transition-all shadow-md">
+    <!-- APENAS O BOTÃO VEM ENRIQUECER: Forçado cursor-pointer e z-50 para teste físico definitivo -->
+    <div class="w-full sm:w-auto relative z-50">
+      <a routerLink="/signup" class="w-full sm:w-60 h-16.25 bg-[#7843CD] text-white font-['Lexend_Deca'] font-medium text-lg flex items-center justify-center rounded-lg hover:bg-[#6533b3] transition-all shadow-md cursor-pointer block">
         Vem enriquecer
       </a>
     </div>
   </div>
 
+  <!-- MANCHA ROXA (Fill-1.png): Travada no bottom 0 e jogada 50% para baixo para cobrir a transição -->
+  <img src="/Fill-1.png" class="absolute pointer-events-none z-30" 
+       style="bottom: 0; right: 0; transform: translateY(50%); width: 140px; height: auto;" alt="" />
+
+</section>
+
+<!-- SEÇÃO BRANCA SUBSEQÜENTE -->
+<section class="w-full bg-white relative" style="min-height: 400px; padding: 60px 20px;">
+  <!-- O restante do conteúdo da sua página continua aqui dentro -->
 </section>

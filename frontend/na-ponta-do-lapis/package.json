@@ -24,6 +24,7 @@
     "@primeuix/themes": "^2.0.3",
     "chart.js": "^4.5.1",
     "jwt-decode": "^4.0.0",
+    "pg": "^8.22.0",
     "primeicons": "^7.0.0",
     "primeng": "^21.1.6",
     "rxjs": "~7.8.0",
