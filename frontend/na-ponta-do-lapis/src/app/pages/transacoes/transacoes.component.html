@@ -1,37 +1,39 @@
-<div>
+<div class="w-full">
     <app-card-saldo></app-card-saldo>
 
-    <div>
+    <div class="w-full">
         <p-toast />
 
-        <div class="flex min-h-[calc(100vh-150px)] items-start justify-center p-2 sm:pt-8 sm:mt-6">
+        <div class="flex min-h-[calc(100vh-150px)] items-start justify-center px-2 md:px-6 pt-4 sm:pt-8 mt-4 sm:mt-6">
 
-            <p-card class="bg-[#F8FAFC]! w-full max-w-7xl overflow-x-auto">
+            <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
 
-                <div class="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-4">
+                <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
 
-                    <h1 class="text-amber-400 font-bold text-2xl text-center md:text-left">Movimentações</h1>
+                    <h1 class="text-amber-400 font-bold text-2xl text-center xl:text-left whitespace-nowrap">
+                        Movimentações
+                    </h1>
 
-                    <div class="flex flex-wrap md:flex-nowrap gap-2 justify-center md:justify-end items-center">
-                        <p-button styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm md:text-base"
+                    <div class="flex flex-wrap xl:flex-nowrap gap-2 justify-center xl:justify-end items-center">
+                        <p-button styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm sm:text-base px-2 py-1"
                             (onClick)="abrirDialog()">
-                            <i class="pi pi-plus"></i> Adicionar Transação
+                            <i class="pi pi-plus mr-1"></i> Adicionar Transação
                         </p-button>
 
-                        <p-button [disabled]="true" styleClass="text-sm md:text-base">
-                            <i class="pi pi-sliders-h" pButtonIcon></i> Filtrar
+                        <p-button [disabled]="false" styleClass="text-[#6b7280]! !bg-[#fafafa] !text-slate-700 !border-[#e2e4e4] rounded-xl! text-sm sm:text-base px-2 py-1">
+                            <i class="pi pi-sliders-h mr-1" pButtonIcon></i> Filtrar
                         </p-button>
 
                         <p-button
-                            styleClass="text-[#1976d2]! !bg-[#fafafa] !text-slate-700 !border-[#1976d2] rounded-xl! text-sm md:text-base"
+                            styleClass="text-[#1976d2]! !bg-[#fafafa] !text-slate-700 !border-[#1976d2] rounded-xl! text-sm sm:text-base px-2 py-1"
                             (onClick)="abrirDialog()">
-                            <i class="pi pi-print" pButtonIcon></i> Marcador
+                            <i class="pi pi-bookmark-fill mr-1" pButtonIcon></i> Marcador
                         </p-button>
 
-                        <p-floatlabel class="w-full md:w-auto mt-2 md:mt-0">
+                        <p-floatlabel class="w-full sm:w-auto mt-2 sm:mt-0">
                             <p-iconfield>
                                 <p-inputicon class="pi pi-search" />
-                                <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)" id="buscar" autocomplete="on" class="w-full md:w-auto" />
+                                <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)" id="buscar" autocomplete="on" class="w-full sm:w-auto rounded-xl" />
                             </p-iconfield>
                             <label for="buscar">Buscar</label>
                         </p-floatlabel>
@@ -44,7 +46,7 @@
 
                     <ng-template pTemplate="header">
                         <tr>
-                            <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Marcador</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[180px]">Descrição</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Categoria</th>
@@ -52,8 +54,8 @@
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Data</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[100px]">Tipo</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Estado</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Valor</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[100px]">Ações</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[120px]">Valor</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Ações</th>
                         </tr>
                     </ng-template>
 
@@ -86,10 +88,10 @@
                             <td>
                                 <div class="flex gap-2">
                                     <p-button icon="pi pi-trash"
-                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]!"
+                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
                                         (onClick)="excluir(t.id)"></p-button>
                                     <p-button icon="pi pi-pencil"
-                                        styleClass="text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]!"
+                                        styleClass="text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]! h-8 w-8"
                                         (onClick)="prepararEdicao(t)"></p-button>
                                 </div>
                             </td>
@@ -150,7 +152,7 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Conta</label>
+                        <label class="font-bold text-sm">Conta</label>
                         <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
                             formControlName="idContaFinanceira" placeholder="Selecione" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
@@ -165,21 +167,21 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Data</label>
+                        <label class="font-bold text-sm">Data</label>
                         <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yy" showIcon="true"
-                            placeholder="Selecione o dia" [appendTo]="'body'" styleClass="w-full"></p-datePicker>
+                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-datePicker>
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Estado</label>
+                        <label class="font-bold text-sm">Estado</label>
                         <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
                             optionValue="value" placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Tipo</label>
+                        <label class="font-bold text-sm">Tipo</label>
                         <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label"
-                            optionValue="value" placeholder="Selecione o Tipo" [appendTo]="'body'" styleClass="w-full"></p-select>
+                            optionValue="value" placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
                 </div>
             </div>
