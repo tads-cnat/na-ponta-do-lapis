@@ -1,31 +1,29 @@
-
-
 <div>
 
     <app-card-saldo></app-card-saldo>
     <div>
-        <p-toast/>
+        <p-toast />
         <div class="flex min-h-[calc(100vh-150px)] items-start justify-center pt-8 mt-6 ">
             <p-card class="bg-[#F8FAFC]!">
                 <div class="flex justify-between items-center mb-3">
 
                     <h1 class=" text-amber-400 font-bold text-2xl">Movimentações</h1>
 
-                    <div class="flex gap-2">  
-                          <p-button styleClass=" font-bold rounded-xl! border-[#11b981]! bg-[#11b981]!" (onClick)="abrirDialog()">
+                    <div class="flex gap-2">
+                        <p-button styleClass=" font-bold rounded-xl! border-[#11b981]! bg-[#11b981]!"
+                            (onClick)="abrirDialog()">
                             <i class="pi pi-plus"></i> Adicionar Transação</p-button>
+                        <p-button [disabled]="true" styleClass=""><i class="pi pi-sliders-h" pButtonIcon></i>
+                            Filtrar</p-button>
                         <p-button
-                           [disabled]="true" styleClass=""><i
-                                class="pi pi-sliders-h" pButtonIcon></i> Filtrar</p-button>
-                                 <p-button
-                            styleClass=" text-[#1976d2]! !bg-[#fafafa] !text-slate-70 0 !border-[#1976d2] rounded-xl!" (onClick)="abrirDialog()"><i
-                                class="pi pi-print" pButtonIcon></i> Marcador</p-button>
+                            styleClass=" text-[#1976d2]! !bg-[#fafafa] !text-slate-70 0 !border-[#1976d2] rounded-xl!"
+                            (onClick)="abrirDialog()"><i class="pi pi-print" pButtonIcon></i> Marcador</p-button>
                         <p-floatlabel>
                             <p-iconfield>
                                 <p-inputicon class="pi pi-search" />
-                                <input pInputText id="over_label" autocomplete="off" />
+                                <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)" id="buscar" autocomplete="on" />
                             </p-iconfield>
-                            <label for="over_label">Buscar</label>
+                            <label for="buscar">Buscar</label>
                         </p-floatlabel>
                     </div>
                 </div>
@@ -71,11 +69,15 @@
                             <td>{{ t.valor | currency: 'BRL'}}</td>
                             <td>
                                 <div class="flex gap-3">
-                                    <p-button icon="pi pi-trash" styleClass=" text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]!" (onClick)="excluir(t.id)"></p-button>
-                                <p-button icon="pi pi-pencil" styleClass=" text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]!" (onClick)="prepararEdicao(t)"></p-button>
+                                    <p-button icon="pi pi-trash"
+                                        styleClass=" text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]!"
+                                        (onClick)="excluir(t.id)"></p-button>
+                                    <p-button icon="pi pi-pencil"
+                                        styleClass=" text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]!"
+                                        (onClick)="prepararEdicao(t)"></p-button>
                                 </div>
                             </td>
-                            
+
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="paginatorleft"></ng-template>
@@ -183,8 +185,8 @@
 
             <ng-template pTemplate="footer">
                 <div class=" flex justify-center w-full mb-5">
-                    <p-button styleClass="w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!"
-                        label="Salvar" [disabled]="formTransacao.invalid" severity="success" (onClick)="salvar() "></p-button>
+                    <p-button styleClass="w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!" label="Salvar"
+                        [disabled]="formTransacao.invalid" severity="success" (onClick)="salvar() "></p-button>
                 </div>
             </ng-template>
         </p-dialog>
