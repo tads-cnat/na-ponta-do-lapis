@@ -1,8 +1,9 @@
 package com.npl.na_ponta_do_lapis.web.dto;
 
-import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
 import com.npl.na_ponta_do_lapis.entity.Meta;
-import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -36,10 +37,7 @@ public record MetaDTO(
 
         @Schema(example = "POUPANCA")
         @NotNull(message = "Tipo meta é Obrigatorio")
-        TipoMeta tipoMeta,
-
-        @Schema(example = "1")
-        Long contaId
+        TipoMeta tipoMeta
 ) {
     public Meta toEntity() {
         Meta meta = new Meta();
@@ -49,7 +47,7 @@ public record MetaDTO(
         meta.setFotoUrl(this.fotoUrl);
         meta.setDataLimite(this.dataLimite);
         meta.setTipoMeta(this.tipoMeta);
-        meta.setValorAtual(BigDecimal.ZERO);
+        meta.setValorAtual(BigDecimal.ZERO); // Inicializa com zero na criação
         return meta;
     }
 }

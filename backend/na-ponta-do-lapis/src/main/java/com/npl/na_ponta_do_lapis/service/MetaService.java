@@ -7,8 +7,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.entity.Meta;
-import com.npl.na_ponta_do_lapis.entity.Usuario;
-import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.MetaRepository;
 import com.npl.na_ponta_do_lapis.service.factory.CalculadoraMetaFactory;
 import com.npl.na_ponta_do_lapis.service.strategy.CalculadoraMetaStrategy;
@@ -22,73 +20,37 @@ public class MetaService {
 
     private final CalculadoraMetaFactory factory;
     private final MetaRepository metaRepository;
-    private final ContaFinanceiraRepository contaFinanceiraRepository;
 
-    public MetaService(MetaRepository metaRepository, CalculadoraMetaFactory factory,
-                       ContaFinanceiraRepository contaFinanceiraRepository) {
+    public MetaService(MetaRepository metaRepository, CalculadoraMetaFactory factory) {
         this.metaRepository = metaRepository;
         this.factory = factory;
-        this.contaFinanceiraRepository = contaFinanceiraRepository;
     }
 
     @Transactional(readOnly = true)
-    public List<MetaResponseDTO> listarTodas(Usuario usuarioAutenticado) {
-        return metaRepository.findByUsuarioId(usuarioAutenticado.getId())
+    public List<MetaResponseDTO> listarTodas() {
+        return metaRepository.findAll()
                 .stream()
                 .map(this::montarResponseComProgresso)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public MetaResponseDTO buscarPorId(Long id, Usuario usuarioAutenticado) {
-        Meta meta = metaRepository.findById(id)
-                .orElseThrow(MetaNaoEncontradaException::new);
-
-        if (!meta.getUsuario().getId().equals(usuarioAutenticado.getId())) {
-            throw new MetaNaoEncontradaException();
-        }
-
+    public MetaResponseDTO buscarPorId(Long id) {
+        Meta meta = metaRepository.findById(id).orElseThrow(MetaNaoEncontradaException::new);
         return montarResponseComProgresso(meta);
     }
 
     @Transactional
-    public MetaResponseDTO criar(MetaDTO dto, Usuario usuarioAutenticado) {
-        ContaFinanceira conta = null;
-        if (dto.contaId() != null) {
-            conta = contaFinanceiraRepository.findById(dto.contaId())
-                    .orElseThrow(() -> new ContaIdNaoExisteException("Conta financeira não encontrada"));
-
-            if (!conta.getUsuario().getId().equals(usuarioAutenticado.getId())) {
-                throw new ContaIdNaoExisteException("Conta não pertence ao usuário autenticado");
-            }
-        }
-
+    public MetaResponseDTO criar(MetaDTO dto) {
         Meta novaMeta = dto.toEntity();
-        novaMeta.setUsuario(usuarioAutenticado);
-        novaMeta.setConta(conta);
-
         Meta metaSalva = metaRepository.save(novaMeta);
+
         return montarResponseComProgresso(metaSalva);
     }
 
     @Transactional
-    public MetaResponseDTO atualizar(Long id, MetaDTO dto, Usuario usuarioAutenticado) {
-        Meta meta = metaRepository.findById(id)
-                .orElseThrow(MetaNaoEncontradaException::new);
-
-        if (!meta.getUsuario().getId().equals(usuarioAutenticado.getId())) {
-            throw new MetaNaoEncontradaException();
-        }
-
-        ContaFinanceira conta = null;
-        if (dto.contaId() != null) {
-            conta = contaFinanceiraRepository.findById(dto.contaId())
-                    .orElseThrow(() -> new ContaIdNaoExisteException("Conta financeira não encontrada"));
-
-            if (!conta.getUsuario().getId().equals(usuarioAutenticado.getId())) {
-                throw new ContaIdNaoExisteException("Conta não pertence ao usuário autenticado");
-            }
-        }
+    public MetaResponseDTO atualizar(Long id, MetaDTO dto) {
+        Meta meta = metaRepository.findById(id).orElseThrow(MetaNaoEncontradaException::new);
 
         meta.setNome(dto.nome());
         meta.setDescricao(dto.descricao());
@@ -96,27 +58,23 @@ public class MetaService {
         meta.setValor(dto.valor());
         meta.setDataLimite(dto.dataLimite());
         meta.setTipoMeta(dto.tipoMeta());
-        meta.setConta(conta);
 
         Meta atualizado = metaRepository.save(meta);
         return montarResponseComProgresso(atualizado);
     }
 
     @Transactional
-    public void deletar(Long id, Usuario usuarioAutenticado) {
-        Meta meta = metaRepository.findById(id)
-                .orElseThrow(MetaNaoEncontradaException::new);
-
-        if (!meta.getUsuario().getId().equals(usuarioAutenticado.getId())) {
-            throw new MetaNaoEncontradaException();
-        }
-
+    public void deletar(Long id) {
+        Meta meta = metaRepository.findById(id).orElseThrow(MetaNaoEncontradaException::new);
         metaRepository.delete(meta);
     }
 
+    // Método auxiliar privado que orquestra os padrões Factory e Strategy
     private MetaResponseDTO montarResponseComProgresso(Meta meta) {
         CalculadoraMetaStrategy calculadora = factory.obterCalculadora(meta.getTipoMeta());
+        
         double progresso = calculadora.calcularProgresso(meta.getValorAtual(), meta.getValor());
+        
         return new MetaResponseDTO(meta, progresso);
     }
 }
