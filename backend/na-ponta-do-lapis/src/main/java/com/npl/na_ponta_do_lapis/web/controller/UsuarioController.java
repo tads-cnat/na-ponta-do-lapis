@@ -54,6 +54,15 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
     }
 
+    @PreAuthorize("hasRole('ADMIN_SITE') or (hasRole('USUARIO') or hasRole('ADMIN_FAMILIA'))")
+    @Operation(summary = "Buscar por Username")
+    @GetMapping("/{username}")
+    public ResponseEntity<UsuarioResponseDTO> buscarPorUsername(@PathVariable String username){
+        Usuario usuario = usuarioService.buscarUsuarioPorUsername(username);
+        UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO(usuario);
+        return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
+    }
+
     @PreAuthorize("hasRole('ADMIN_SITE')")
     @Operation(summary = "Cadastrar Usuário")
     @PostMapping()
