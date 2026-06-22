@@ -2,9 +2,25 @@ package com.npl.na_ponta_do_lapis.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+
+import org.hibernate.annotations.CreationTimestamp;
+
+import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "meta")
@@ -23,6 +39,9 @@ public class Meta {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valor;
 
+    @Column(name = "valor_atual", nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorAtual = BigDecimal.ZERO;
+
     @Column(name = "foto_url")
     private String fotoUrl;
 
@@ -36,88 +55,61 @@ public class Meta {
     @Column(name = "data_encerramento")
     private LocalDate dataEncerramento;
 
-    @ManyToOne
-    @JoinColumn(name = "tipo_meta_id")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_meta", nullable = false)
     private TipoMeta tipoMeta;
+
+    @ManyToOne()
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @ManyToOne()
+    @JoinColumn(name = "conta_financeira_id")
+    private ContaFinanceira conta;
 
     public Meta() {
     }
 
-    public Meta(BigDecimal valor, String nome, TipoMeta tipoMeta) {
+    public Meta(BigDecimal valor, String nome, TipoMeta tipoMeta, Usuario usuario) {
         this.valor = valor;
         this.nome = nome;
-        this.tipoMeta = tipoMeta;
+        this.usuario = usuario;
+        this.valorAtual = BigDecimal.ZERO;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
 
-    public String getNome() {
-        return nome;
-    }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
+    public BigDecimal getValor() { return valor; }
+    public void setValor(BigDecimal valor) { this.valor = valor; }
 
-    public String getDescricao() {
-        return descricao;
-    }
+    public BigDecimal getValorAtual() { return valorAtual; }
+    public void setValorAtual(BigDecimal valorAtual) { this.valorAtual = valorAtual; }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
+    public String getFotoUrl() { return fotoUrl; }
+    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
-    public BigDecimal getValor() {
-        return valor;
-    }
+    public LocalDate getDataInicio() { return dataInicio; }
+    public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
 
-    public void setValor(BigDecimal valor) {
-        this.valor = valor;
-    }
+    public LocalDate getDataLimite() { return dataLimite; }
+    public void setDataLimite(LocalDate dataLimite) { this.dataLimite = dataLimite; }
 
-    public String getFotoUrl() {
-        return fotoUrl;
-    }
+    public LocalDate getDataEncerramento() { return dataEncerramento; }
+    public void setDataEncerramento(LocalDate dataEncerramento) { this.dataEncerramento = dataEncerramento; }
 
-    public void setFotoUrl(String fotoUrl) {
-        this.fotoUrl = fotoUrl;
-    }
+    public TipoMeta getTipoMeta() { return tipoMeta; }
+    public void setTipoMeta(TipoMeta tipoMeta) { this.tipoMeta = tipoMeta; }
 
-    public LocalDate getDataInicio() {
-        return dataInicio;
-    }
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
-    public void setDataInicio(LocalDate dataInicio) {
-        this.dataInicio = dataInicio;
-    }
-
-    public LocalDate getDataLimite() {
-        return dataLimite;
-    }
-
-    public void setDataLimite(LocalDate dataLimite) {
-        this.dataLimite = dataLimite;
-    }
-
-    public LocalDate getDataEncerramento() {
-        return dataEncerramento;
-    }
-
-    public void setDataEncerramento(LocalDate dataEncerramento) {
-        this.dataEncerramento = dataEncerramento;
-    }
-
-    public TipoMeta getTipoMeta() {
-        return tipoMeta;
-    }
-
-    public void setTipoMeta(TipoMeta tipoMeta) {
-        this.tipoMeta = tipoMeta;
-    }
+    public ContaFinanceira getConta() { return conta; }
+    public void setConta(ContaFinanceira conta) { this.conta = conta; }
 }

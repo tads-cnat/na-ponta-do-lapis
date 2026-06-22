@@ -6,7 +6,6 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -32,6 +31,7 @@ import jakarta.validation.Valid;
 @Tag(name = "Contas", description = "Gerenciamento de Contas Financeiras")
 public class ContaFinanceiraController {
 
+
     private final ContaFinanceiraService contaService;
     private final ContaFinanceiraPatchValidator patchValidator;
 
@@ -43,27 +43,8 @@ public class ContaFinanceiraController {
     @Operation(summary = "Criar conta")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping
-    public ResponseEntity<ContaFinanceiraResponseDTO> criarConta(
-
-            Authentication authentication,
-
-            @Valid @RequestBody ContaFinanceiraDTO contaDTO
-    ){
-
-        System.out.println("\n========== CONTROLLER ==========");
-        System.out.println("Usuário autenticado: " + authentication.getName());
-
-        System.out.println("Authorities no controller:");
-
-        authentication.getAuthorities().forEach(auth ->
-                System.out.println(auth.getAuthority())
-        );
-
-        System.out.println("================================\n");
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(contaService.criarConta(contaDTO));
+    public ResponseEntity<ContaFinanceiraResponseDTO> criarConta(@Valid @RequestBody ContaFinanceiraDTO contaDTO){
+        return ResponseEntity.status(HttpStatus.CREATED).body(contaService.criarConta(contaDTO));
     }
 
     @Operation(summary = "Listar contas")
@@ -83,9 +64,7 @@ public class ContaFinanceiraController {
     @Operation(summary = "Atualizar conta")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PutMapping("/{id}")
-    public ResponseEntity<ContaFinanceiraResponseDTO> atualizarConta(
-        @PathVariable Long id,
-        @Valid @RequestBody ContaFinanceiraDTO contaDTO){
+    public ResponseEntity<ContaFinanceiraResponseDTO> atualizarConta(@PathVariable Long id, @Valid @RequestBody ContaFinanceiraDTO contaDTO){
         return ResponseEntity.status(HttpStatus.OK).body(contaService.atualizarConta(id, contaDTO));
     }
 
@@ -102,9 +81,7 @@ public class ContaFinanceiraController {
     @Operation(summary = "Atualizar parte da conta")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PatchMapping("/{id}")
-    public ResponseEntity<ContaFinanceiraResponseDTO> atualizarParteDaConta(
-        @PathVariable Long id,
-        @RequestBody ContaFinanceiraPatchDTO contaPatchDTO){
+    public ResponseEntity<ContaFinanceiraResponseDTO> atualizarParteDaConta(@PathVariable Long id, @RequestBody ContaFinanceiraPatchDTO contaPatchDTO){
         patchValidator.validate(contaPatchDTO);
         return ResponseEntity.status(HttpStatus.OK).body(contaService.atualizarContaParcial(id, contaPatchDTO));
     }

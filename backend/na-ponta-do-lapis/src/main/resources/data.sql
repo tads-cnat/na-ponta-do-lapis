@@ -41,15 +41,15 @@ VALUES
     ('Mensalidade Faculdade');
 
 -- SQL Conta Financeira
-INSERT INTO conta_financeira (id, nome, saldo, cor, usuario_id)
+INSERT INTO conta_financeira (id, nome, saldo, cor, usuario_id, moeda)
 VALUES
-    (1, 'Banco Inter', 100, '#FF7300', 1),
-    (2, 'Banco Master', 50000000.50, '#FF0000', 2),
-    (3, 'Santander', 0, '#D40000', 3),
-    (4, 'Itaú', 150, '#0B00D4', 4),
-    (5, 'Nubank', 3000, '#7300FF', 3),
-    (6, 'BB', 10, '#FFFF00', 2),
-    (7, 'PicPay', 1, '#00FF00', 1);
+    (1, 'Banco Inter', 100, '#FF7300', 1, 'BRL'),
+    (2, 'Banco Master', 50000000.50, '#FF0000', 2, 'BRL'),
+    (3, 'Santander', 0, '#D40000', 3, 'BRL'),
+    (4, 'Itaú', 150, '#0B00D4', 4, 'BRL'),
+    (5, 'Nubank', 3000, '#7300FF', 3, 'BRL'),
+    (6, 'BB', 10, '#FFFF00', 2, 'BRL'),
+    (7, 'PicPay', 1, '#00FF00', 1, 'BRL');
 
 -- Marcadores para o Usuário 1 (Lucas Henrique)
 INSERT INTO marcador (id ,nome, cor, usuario_id) VALUES
@@ -129,25 +129,19 @@ VALUES
 
 
 --- SQL Meta
-INSERT INTO tipo_meta(id, nome)
-VALUES
-    (1, 'ECONOMIA'),
-    (2, 'LIMITE_GASTO'),
-    (3, 'INVESTIMENTO'),
-    (4, 'DIVIDA');
-INSERT INTO meta(id, nome, descricao, valor, foto_url, data_inicio, tipo_meta_id)
-VALUES
-    (1, 'Reserva de Emergência', 'Guardar dinheiro para imprevistos', 5000.00, 'https://link-da-foto.com/reserva.png', '2026-12-31', 1),
-    (2, 'Viagem de Férias', 'Juntar dinheiro para viajar no final do ano', 3000.00, 'https://link-da-foto.com/viagem.png', '2026-11-30', 1),
-    (3, 'Limite Alimentação', 'Controlar gastos com comida', 800.00, 'https://link-da-foto.com/comida.png', '2026-06-30', 2),
-    (4, 'Limite Lazer', 'Evitar gastar demais com lazer', 500.00, 'https://link-da-foto.com/lazer.png', '2026-06-30', 2),
-    (5, 'Investimento Mensal', 'Investir mensalmente em renda fixa', 1000.00, 'https://link-da-foto.com/investimento.png', '2026-12-31', 3),
-    (6, 'Quitar Cartão', 'Pagar dívida do cartão de crédito', 2000.00, 'https://link-da-foto.com/cartao.png', '2026-08-31', 4),
-    (7, 'Comprar Notebook', 'Guardar dinheiro para comprar um notebook novo', 4000.00, 'https://link-da-foto.com/notebook.png', '2026-10-15', 1),
-    (8, 'Academia', 'Controlar gastos com academia', 150.00, 'https://link-da-foto.com/academia.png', '2026-12-31', 2),
-    (9, 'Fundo de Investimento', 'Aumentar patrimônio com investimentos', 10000.00, 'https://link-da-foto.com/fundo.png', '2027-12-31', 3),
-    (10, 'Quitar Empréstimo', 'Finalizar pagamento do empréstimo pessoal', 7000.00, 'https://link-da-foto.com/emprestimo.png', '2027-06-30', 4);
 
+INSERT INTO meta (id, nome, descricao, valor, valor_atual, foto_url, data_inicio, data_limite, tipo_meta, usuario_id)
+VALUES
+    (1, 'Reserva de Emergência', 'Guardar dinheiro para imprevistos', 5000.00, 1500.00, 'https://link-da-foto.com/reserva.png', '2026-01-01', '2026-12-31', 'POUPANCA', 1),
+    (2, 'Viagem de Férias', 'Juntar dinheiro para viajar no final do ano', 3000.00, 1200.00, 'https://link-da-foto.com/viagem.png', '2026-02-15', '2026-11-30', 'PRAZO_FIXO', 2),
+    (3, 'Limite Alimentação', 'Controlar gastos mensais com supermercado e ifood', 800.00, 650.00, 'https://link-da-foto.com/comida.png', '2026-06-01', '2026-06-30', 'GASTO', 3),
+    (4, 'Limite Lazer', 'Evitar gastar demais com saídas', 500.00, 120.00, 'https://link-da-foto.com/lazer.png', '2026-06-01', '2026-06-30', 'GASTO', 4),
+    (5, 'Tesouro Direto', 'Investir em renda fixa para o futuro', 10000.00, 4500.00, 'https://link-da-foto.com/investimento.png', '2026-01-01', '2026-12-31', 'POUPANCA', 1),
+    (6, 'Curso de Especialização', 'Guardar para curso de pós-graduação', 8000.00, 2000.00, 'https://link-da-foto.com/curso.png', '2026-03-01', '2026-09-30', 'PRAZO_FIXO', 2),
+    (7, 'Comprar Notebook', 'Equipamento novo para trabalho e estudos', 4000.00, 3800.00, 'https://link-da-foto.com/notebook.png', '2026-03-20', '2026-10-15', 'POUPANCA', 3),
+    (8, 'Assinaturas e Academia', 'Orçamento para Netflix, Spotify e SmartFit', 150.00, 150.00, 'https://link-da-foto.com/academia.png', '2026-06-01', '2026-06-30', 'GASTO', 4),
+    (9, 'Intercâmbio', 'Juntar para curso de idiomas no exterior', 25000.00, 5000.00, 'https://link-da-foto.com/fundo.png', '2026-01-01', '2027-12-31', 'PRAZO_FIXO', 2),
+    (10, 'Quitar Empréstimo', 'Finalizar parcelas do empréstimo pessoal', 7000.00, 3500.00, 'https://link-da-foto.com/emprestimo.png', '2026-01-05', '2027-06-30', 'DIVIDA', 1);
 
 SELECT setval(pg_get_serial_sequence('transacao', 'id'), coalesce(max(id), 0) + 1, false) FROM transacao;
 -- Sincroniza a sequência do ID do Usuário

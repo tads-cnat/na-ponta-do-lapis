@@ -1,2 +1,32 @@
-<app-meta-item>
-</app-meta-item>
+<div class="text-center">
+    <div class="text-xl text-gray-400">Valor total das metas</div>
+    <div class="text-3xl font-bold mb-2.5"><span class="text-npl-verde">R$</span> 245.000</div>
+    <div class="text-lg text-gray-500">+R$3.500 desde que voce começou</div>
+</div>
+<div class="mb-8 flex justify-between">
+    <h1 class="text-primary font-bold text-3xl ">Metas</h1>
+    <p-button size="small">
+        <i class="pi pi-plus"></i>
+       <span>Adicionar meta</span>
+    </p-button>
+</div>
+<div class="overflow-y-auto max-h-[500px]">
+    <ul >
+        @for(meta of metas(); track meta.id) {
+            <li class="mb-8">
+                <app-meta-item 
+                    [titulo]="meta.nome"
+                    [valorAtual]="meta.valorAtual"
+                    [valorTotal]="meta.valorTotal"
+                    [progressoAtual]="meta.progresso"
+                >
+                </app-meta-item>
+            </li>
+        } @empty {
+            <div class="text-center text-gray-500">
+                Nenhuma meta cadastrada ainda
+            </div>
+        }
+    </ul>
+
+</div>

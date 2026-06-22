@@ -1,116 +1,133 @@
-
-
-<div>
-
+<div class="w-full">
     <app-card-saldo></app-card-saldo>
-    <div>
-        <p-toast/>
-        <div class="flex min-h-[calc(100vh-150px)] items-start justify-center pt-8 mt-6 ">
-            <p-card class="bg-[#F8FAFC]!">
-                <div class="flex justify-between items-center mb-3">
+    
+    <div class="w-full">
+        <p-toast />
+        
+        <div class="flex min-h-[calc(100vh-150px)] items-start justify-center px-2 md:px-6 pt-4 sm:pt-8 mt-4 sm:mt-6">
+            
+            <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
+                
+                <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
 
-                    <h1 class=" text-amber-400 font-bold text-2xl">Movimentações</h1>
+                    <h1 class="text-amber-400 font-bold text-2xl text-center xl:text-left whitespace-nowrap">
+                        Movimentações
+                    </h1>
 
-                    <div class="flex gap-2">  
-                          <p-button styleClass=" font-bold rounded-xl! border-[#11b981]! bg-[#11b981]!" (onClick)="abrirDialog()">
-                            <i class="pi pi-plus"></i> Adicionar Transação</p-button>
+                    <div class="flex flex-wrap xl:flex-nowrap gap-2 justify-center xl:justify-end items-center">
+                        <p-button styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm sm:text-base px-2 py-1"
+                            (onClick)="abrirDialog()">
+                            <i class="pi pi-plus mr-1"></i> Adicionar Transação
+                        </p-button>
+                        
+                        <p-button [disabled]="false" styleClass="text-[#6b7280]! !bg-[#fafafa] !text-slate-700 !border-[#e2e4e4] rounded-xl! text-sm sm:text-base px-2 py-1">
+                            <i class="pi pi-sliders-h mr-1" pButtonIcon></i> Filtrar
+                        </p-button>
+                        
                         <p-button
-                           [disabled]="true" styleClass=""><i
-                                class="pi pi-sliders-h" pButtonIcon></i> Filtrar</p-button>
-                                 <p-button
-                            styleClass=" text-[#1976d2]! !bg-[#fafafa] !text-slate-70 0 !border-[#1976d2] rounded-xl!" (onClick)="abrirDialog()"><i
-                                class="pi pi-print" pButtonIcon></i> Marcador</p-button>
-                        <p-floatlabel>
+                            styleClass="text-[#1976d2]! !bg-[#fafafa] !text-slate-700 !border-[#1976d2] rounded-xl! text-sm sm:text-base px-2 py-1"
+                            (onClick)="abrirDialog()">
+                            <i class="pi pi-bookmark-fill mr-1" pButtonIcon></i> Marcador
+                        </p-button>
+                        
+                        <p-floatlabel class="w-full sm:w-auto mt-2 sm:mt-0">
                             <p-iconfield>
                                 <p-inputicon class="pi pi-search" />
-                                <input pInputText id="over_label" autocomplete="off" />
+                                <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)" id="buscar" autocomplete="on" class="w-full sm:w-auto rounded-xl" />
                             </p-iconfield>
-                            <label for="over_label">Buscar</label>
+                            <label for="buscar">Buscar</label>
                         </p-floatlabel>
                     </div>
                 </div>
 
                 <p-table [value]="transacoesDados" [paginator]="true" [rows]="5"
-                    class="w-100 sm:w-150 md:w-200 lg:w-400">
+                    [scrollable]="true" scrollDirection="horizontal" responsiveLayout="scroll"
+                    styleClass="p-datatable-sm w-full">
+                    
                     <ng-template pTemplate="header">
                         <tr>
-                            <th><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Marcador</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Descrição</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Categoria</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Conta</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Data</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Tipo</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Estado</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Valor</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700!">Ações</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Marcador</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[180px]">Descrição</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Categoria</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Conta</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Data</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[100px]">Tipo</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Estado</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[120px]">Valor</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Ações</th>
                         </tr>
                     </ng-template>
+                    
                     <ng-template pTemplate="body" let-t>
                         <tr>
                             <td>
                                 <p-tableCheckbox [value]="t" />
                             </td>
-                            <td><span class="pi pi-bookmark-fill mr-3" [style.color]="t.marcador.cor"></span>
+                            <td class="whitespace-nowrap">
+                                <span class="pi pi-bookmark-fill mr-2" [style.color]="t.marcador.cor"></span>
                                 <span>{{t.marcador.nome }}</span>
                             </td>
-                            <td>{{ t.descricao }}</td>
-                            <td>{{ t.categoria.nome }}</td>
-                            <td>{{ t.conta.nome }}</td>
+                            <td class="whitespace-nowrap">{{ t.descricao }}</td>
+                            <td class="whitespace-nowrap">{{ t.categoria.nome }}</td>
+                            <td class="whitespace-nowrap">{{ t.conta.nome }}</td>
                             <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
                             <td>
-                                <p-tag class="" [value]="t.tipo" [style]="{ 
+                                <p-tag [value]="t.tipo" [style]="{ 
                                 'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340', 
-                                'color': t.tipo === 'PENDENTE' ? '#ffffff' : '#ffffff' 
+                                'color': '#ffffff' 
                                 }"></p-tag>
                             </td>
-                            <td><p-tag [value]="t.estado" [style]="{ 
+                            <td>
+                                <p-tag [value]="t.estado" [style]="{ 
                                 'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1', 
                                 'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74' 
-                                }"></p-tag></td>
-                            <td>{{ t.valor | currency: 'BRL'}}</td>
+                                }"></p-tag>
+                            </td>
+                            <td class="font-bold">{{ t.valor | currency: 'BRL'}}</td>
                             <td>
-                                <div class="flex gap-3">
-                                    <p-button icon="pi pi-trash" styleClass=" text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]!" (onClick)="excluir(t.id)"></p-button>
-                                <p-button icon="pi pi-pencil" styleClass=" text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]!" (onClick)="prepararEdicao(t)"></p-button>
+                                <div class="flex gap-2">
+                                    <p-button icon="pi pi-trash"
+                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
+                                        (onClick)="excluir(t.id)"></p-button>
+                                    <p-button icon="pi pi-pencil"
+                                        styleClass="text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]! h-8 w-8"
+                                        (onClick)="prepararEdicao(t)"></p-button>
                                 </div>
                             </td>
-                            
                         </tr>
                     </ng-template>
                     <ng-template pTemplate="paginatorleft"></ng-template>
                 </p-table>
             </p-card>
         </div>
-
     </div>
 
-
     <form [formGroup]="formTransacao">
-        <p-dialog header="" [(visible)]="exibirDialog" [modal]="true">
+        <p-dialog header="Transação" [(visible)]="exibirDialog" [modal]="true" 
+            [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '50vw' }">
 
-            <div class="flex flex-col items-center justify-center gap-2">
-
+            <div class="flex flex-col items-center justify-center gap-2 mt-2">
                 <div class="relative inline-flex cursor-pointer" (click)="toggle($event)">
-                    <i class="pi pi-bookmark-fill
- text-4xl transition-colors duration-200 " [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
+                    <i class="pi pi-bookmark-fill text-4xl transition-colors duration-200" 
+                       [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
                     </i>
                 </div>
-
+                
                 <button pButton type="button"
                     [label]="marcadorSelecionado ? marcadorSelecionado.nome : 'Selecionar Marcador'"
                     (click)="toggle($event)" class="p-button-link p-0 font-medium"></button>
+                
                 <p-popover #op>
-                    <div class="flex flex-col gap4">
+                    <div class="flex flex-col gap-4">
                         <div>
                             <span class="mb-2 font-bold text-surface-700">Marcadores</span>
                             <ul class="list-none p-0 m-0 flex flex-col">
                                 @for (m of opcoesMarcador; track $index) {
                                 <li class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border"
                                     (click)="selecionarMarcador(m)">
-
                                     <span class="font-medium text-surface-900">{{ m.nome }}</span>
-                                    <span class="inline-block rounded-full" [style.background-color]="m.cor"
+                                    <span class="inline-block rounded-full ml-auto" [style.background-color]="m.cor"
                                         style="width: 15px; height: 15px; border: 1px solid #ddd;"></span>
                                 </li>
                                 }
@@ -120,72 +137,63 @@
                 </p-popover>
             </div>
 
-            <div class="flex flex-col gap-6 mt-4 m-20">
-                <div class="grid grid-cols-2 gap-13">
+            <div class="flex flex-col gap-4 mt-4 px-2 sm:px-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Descrição</label>
+                        <label class="font-bold text-sm">Descrição</label>
                         <input pInputText formControlName="descricao" placeholder="Ex: Internet" class="w-full" />
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Valor</label>
+                        <label class="font-bold text-sm">Valor</label>
                         <p-inputNumber formControlName="valor" mode="currency" currency="BRL" locale="pt-BR"
                             styleClass="w-full" inputStyleClass="w-full" />
                     </div>
                 </div>
 
-                <div class="grid grid-cols-2 gap-13">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Conta</label>
-
+                        <label class="font-bold text-sm">Conta</label>
                         <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
                             formControlName="idContaFinanceira" placeholder="Selecione" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
                     </div>
+                    
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold">Categoria</label>
+                        <label class="font-bold text-sm">Categoria</label>
                         <p-select [options]="opcoesCategoria" optionLabel="nome" optionValue="id"
                             formControlName="idCategoria" placeholder="Selecione" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
-
                     </div>
                 </div>
 
-                <div class="flex">
-                    <div class="grid grid-cols-2 gap-4">
-
-                        <div class="flex flex-col gap-1">
-                            <label class="font-bold">Data</label>
-                            <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yy" showIcon="tue"
-                                placeholder="Selecione o dia" [appendTo]="'body'"></p-datePicker>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-
-                        <div class="flex flex-col gap-1">
-                            <label class="font-bold">Estado</label>
-                            <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
-                                optionValue="value" placeholder="Selecione" [appendTo]="'body'"></p-select>
-                        </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="flex flex-col gap-1">
+                        <label class="font-bold text-sm">Data</label>
+                        <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yy" showIcon="true"
+                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-datePicker>
                     </div>
 
-                    <div class="flex flex-col gap-2">
-                        <label class="font-bold">Tipo</label>
-                        <div class="flex gap-4">
-                            <div class="flex items-center">
-                                <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label"
-                                    optionValue="value" placeholder="Selecione o Tipo" [appendTo]="'body'"></p-select>
-                            </div>
-                        </div>
+                    <div class="flex flex-col gap-1">
+                        <label class="font-bold text-sm">Estado</label>
+                        <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
+                            optionValue="value" placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="font-bold text-sm">Tipo</label>
+                        <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label"
+                            optionValue="value" placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
                 </div>
             </div>
 
             <ng-template pTemplate="footer">
-                <div class=" flex justify-center w-full mb-5">
-                    <p-button styleClass="w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!"
-                        label="Salvar" [disabled]="formTransacao.invalid" severity="success" (onClick)="salvar() "></p-button>
+                <div class="flex justify-center w-full mb-2 mt-4">
+                    <p-button styleClass="w-full sm:w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!" label="Salvar"
+                        [disabled]="formTransacao.invalid" severity="success" (onClick)="salvar()"></p-button>
                 </div>
             </ng-template>
         </p-dialog>
     </form>
+</div>

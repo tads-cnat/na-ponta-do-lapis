@@ -3,20 +3,28 @@ package com.npl.na_ponta_do_lapis.entity;
 import java.math.BigDecimal;
 import java.util.Objects;
 
+import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 @Entity
-@Table(name = "conta_financeira")
+@Table(name = "conta_financeira", uniqueConstraints = @UniqueConstraint(
+    name = "nome_conta_unico",
+    columnNames = {"nome", "usuario_id"}
+))
 public class ContaFinanceira {
 
     @Id
@@ -38,6 +46,11 @@ public class ContaFinanceira {
     @NotBlank(message = "A cor não pode ser vazia")
     @Size(max = 7)
     private String cor;
+
+    @Enumerated(EnumType.STRING)
+    @NotNull(message = "A moeda é obrigatória")
+    @Column(name = "moeda", length = 3, nullable = false)
+    private Moeda moeda;
 
     @NotNull(message = "O usuário é obrigatório")
     @ManyToOne
@@ -72,6 +85,14 @@ public class ContaFinanceira {
         this.nome = nome;
     }
 
+    public BigDecimal getSaldo() {
+        return this.saldo;
+    }
+
+    public void setSaldo(BigDecimal saldo) {
+        this.saldo = saldo;
+    }
+
     public String getCor() {
         return this.cor;
     }
@@ -80,12 +101,12 @@ public class ContaFinanceira {
         this.cor = cor;
     }
 
-    public BigDecimal getSaldo() {
-        return this.saldo;
+    public void setMoeda(Moeda moeda){
+        this.moeda = moeda;
     }
 
-    public void setSaldo(BigDecimal saldo) {
-        this.saldo = saldo;
+    public Moeda getMoeda(){
+        return this.moeda;
     }
 
     public Usuario getUsuario() {
@@ -102,6 +123,7 @@ public class ContaFinanceira {
                 "nome='" + this.nome + '\n' +
                 ", saldo='" + this.saldo + '\n' +
                 ", cor='" + this.cor + '\n' +
+                ", moeda='" + this.moeda + '\n' +
                 ", usuario= " + this.usuario.getId() + " - " + this.usuario.getNome() + '\n' +
                 "}";
     }
