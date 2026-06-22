@@ -1,18 +1,18 @@
 <div class="flex flex-col sm:flex-row gap-4 sm:gap-10 md:gap-16 lg:gap-24 justify-center items-start w-full max-w-7xl mx-auto px-4 md:px-8">
-
+    
     <div class="w-full sm:w-[380px]">
         <p-card header="Saldo inicial" styleClass="w-full relative">
             <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
-
-            <div class="flex flex-col gap-2 mt-1 pr-16">
+            
+            <div class="flex flex-col gap-2 mt-1 pr-16"> 
                 <div>
                     <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
                     <span class="font-bold text-3xl tracking-tight text-gray-800">R$ 1.000,00</span>
-                </div>
-
+                </div> 
+                
                 <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
                     <span class="flex items-center gap-1">
-                        <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5">
+                        <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5"> 
                         <span class="text-red-500 font-semibold">4.3%</span>
                     </span>
                     <span class="text-gray-400">menos que abril</span>
@@ -24,16 +24,16 @@
     <div class="w-full sm:w-[380px]">
         <p-card header="Saldo atual" styleClass="w-full relative">
             <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
-
-            <div class="flex flex-col gap-2 mt-1 pr-16">
+            
+            <div class="flex flex-col gap-2 mt-1 pr-16"> 
                 <div>
                     <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
                     <span class="font-bold text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
                 </div>
-
+                
                 <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
                     <span class="flex items-center gap-1">
-                        <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5">
+                        <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5"> 
                         <span class="text-green-500 font-semibold">2.1%</span>
                     </span>
                     <span class="text-gray-400">mais que ontem</span>

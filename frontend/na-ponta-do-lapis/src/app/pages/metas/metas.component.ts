@@ -28,5 +28,5 @@ export class MetasComponent implements OnInit {
       }
     });
   }
-
+ 
 }

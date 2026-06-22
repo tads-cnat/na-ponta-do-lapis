@@ -1,5 +1,9 @@
 package com.npl.na_ponta_do_lapis.entity;
 
+import jakarta.persistence.*;
+import org.hibernate.annotations.CreationTimestamp;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -75,16 +79,10 @@ public class Meta {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
 
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
     public String getDescricao() { return descricao; }
     public void setDescricao(String descricao) { this.descricao = descricao; }
 
@@ -93,29 +91,16 @@ public class Meta {
 
     public BigDecimal getValorAtual() { return valorAtual; }
     public void setValorAtual(BigDecimal valorAtual) { this.valorAtual = valorAtual; }
-    public BigDecimal getValor() { return valor; }
-    public void setValor(BigDecimal valor) { this.valor = valor; }
 
-    public BigDecimal getValorAtual() { return valorAtual; }
-    public void setValorAtual(BigDecimal valorAtual) { this.valorAtual = valorAtual; }
-
-    public String getFotoUrl() { return fotoUrl; }
-    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
     public String getFotoUrl() { return fotoUrl; }
     public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
 
     public LocalDate getDataInicio() { return dataInicio; }
     public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
-    public LocalDate getDataInicio() { return dataInicio; }
-    public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
 
     public LocalDate getDataLimite() { return dataLimite; }
     public void setDataLimite(LocalDate dataLimite) { this.dataLimite = dataLimite; }
-    public LocalDate getDataLimite() { return dataLimite; }
-    public void setDataLimite(LocalDate dataLimite) { this.dataLimite = dataLimite; }
 
-    public LocalDate getDataEncerramento() { return dataEncerramento; }
-    public void setDataEncerramento(LocalDate dataEncerramento) { this.dataEncerramento = dataEncerramento; }
     public LocalDate getDataEncerramento() { return dataEncerramento; }
     public void setDataEncerramento(LocalDate dataEncerramento) { this.dataEncerramento = dataEncerramento; }
 

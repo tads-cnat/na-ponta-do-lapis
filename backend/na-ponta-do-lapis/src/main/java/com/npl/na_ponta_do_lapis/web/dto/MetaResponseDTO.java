@@ -1,5 +1,8 @@
 package com.npl.na_ponta_do_lapis.web.dto;
 
+import com.npl.na_ponta_do_lapis.entity.Meta;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
