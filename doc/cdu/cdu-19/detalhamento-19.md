@@ -12,7 +12,7 @@
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
 | 1 - O cliente clica no botão "Adicionar Conta" | |  
-| | 2 - O sistema abre um [formulário](../prototipos/Adicionar%20conta.png) pedindo as informações necessárias para o prosseguimento da operação (nome*, saldo*, cor* e moeda* - * : obrigatórias) |
+| | 2 - O sistema abre um [formulário](../prototipos/cdu19/Adicionar%20conta.png) pedindo as informações necessárias para o prosseguimento da operação (nome*, saldo*, cor* e moeda* - * : obrigatórias) |
 | 3 - O cliente preenche as informações e envia | |
 | | 4 - O sistema valida a operação e mostra uma mensagem de êxito: "Conta criada com sucesso" |
 
@@ -21,14 +21,14 @@
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
 | 1.1 - O cliente seleciona uma conta | |  
-| | 2.1 - O sistema mostra uma visão detalhada das informações da conta selecionada |
+| | 2.1 - O sistema mostra uma [visão detalhada](../prototipos/cdu19/Informacoes%20conta.png) das informações da conta selecionada |
 
 ## Fluxo Alternativo II - Alteração de dados de conta
 
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: |
 | 1.2 - O cliente seleciona uma conta e clica na opção de "Editar Conta" | |  
-| | 2.2 - O sistema exibe um [formulário](../prototipos/Editar%20conta.png) equivalente ao de "Adicionar conta", mas preenchido com as informações da conta selecionada |
+| | 2.2 - O sistema exibe um [formulário](../prototipos/cdu19/Editar%20conta.png) equivalente ao de "Adicionar conta", mas preenchido com as informações da conta selecionada |
 | 3.2 - O cliente altera o que desejar e envia os dados | |
 | | 4.2 - O sistema faz a validação e mostra uma mensagem de êxito: "Conta alterada com sucesso" |
 
@@ -36,8 +36,8 @@
 
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: |
-| 1.3 - O cliente seleciona uma conta através do [carrossel de imagens](../imgs/cdu.png) conta e clica na opção de "Excluir conta" | |  
-| | 2.3 - O sistema envidencia qual [conta] foi selecionada e solicita a confirmação do cliente |
+| 1.3 - O cliente seleciona uma conta e clica na opção de "Excluir conta" | |  
+| | 2.3 - O sistema [envidencia](../prototipos/cdu19/Excluir%20conta.png) qual conta foi selecionada e solicita a confirmação do cliente |
 | 3.3 - O cliente confirma a solicitação de exclusão | |
 | | 4.3 - O sistema exclui a conta e apresenta uma mensagem de sucesso: "A Conta '(nome da conta)' foi excluída!" |
 
@@ -46,14 +46,14 @@
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: |
 | 1.4 - O cliente seleciona uma conta | |  
-| | 2.4 - O sistema exibe um gráfico mostrando a evolução do saldo da conta selecionada ao longo do tempo, podendo ser filtrado mensalmente ou semanalmente |
+| | 2.4 - O sistema exibe um [gráfico](../prototipos/cdu19/Grafico%20saldo.png) mostrando a evolução do saldo da conta selecionada ao longo do tempo, podendo ser filtrado mensalmente ou semanalmente |
 
 ## Fluxo Alternativo V - Histórico de transações
 
 | Ações do ator | Ações do sistema |
 | :-----------: | :--------------: |
 | 1.5 - O cliente seleciona uma conta | |
-| | 2.5 - O sistema exibe uma tabela ordenada das transações mais recentes feitas pela conta |
+| | 2.5 - O sistema exibe uma [tabela](../prototipos/cdu19/Tabela%20transacoes.png) ordenada das transações mais recentes feitas pela conta |
 
 ## Fluxo de Exceção I - Informações incongruentes
 
