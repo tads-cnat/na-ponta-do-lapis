@@ -5,6 +5,10 @@
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
 
+html {
+  scroll-behavior: smooth;
+}
+
 :root {
   --color-npl-amarelo: #EEC046;
   --color-npl-verde:#46B171;
