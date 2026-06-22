@@ -1,9 +1,9 @@
 # CDU 21. Remover Membro da Família 
 
-- **Ator principal**: Usuário.
+- **Ator principal**: Usuário administrador do site.
 - **Atores secundários**: Não existe.	 
-- **Resumo**: Na página "Grupo Familiar" o usuário chefe da família aperta no botão para remover um membro da família.
-- **Pré-condição**: Usuário cadastrado, autenticado e chefe da família.
+- **Resumo**: Na página "Grupo Familiar" o usuário administrador da família aperta no botão para remover um membro da família.
+- **Pré-condição**: Usuário cadastrado, autenticado e administrador da família.
 - **Pós-Condição**: O membro é desligado da família no banco da dados.
 
 ## Fluxo Principal
