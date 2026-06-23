@@ -9,8 +9,8 @@ import { NavbarComponent } from './components/navbar/navbar.component';
   standalone: true,
   imports: [
     CommonModule,
-    HeroSectionComponent,
-    NavbarComponent
+    NavbarComponent,
+    HeroSectionComponent
   ],
   templateUrl: './landing-page.component.html',
   styleUrl: './landing-page.component.css',
