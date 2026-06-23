@@ -1,13 +1,12 @@
-import { Component, signal } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { PrimeNGModuleModule } from "./shared/primeNg.module";
+// Importe o seu Navbar e o seu LandingPage (ou Hero) apontando para as pastas deles:
+import { NavbarComponent } from './pages/landing-page/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, PrimeNGModuleModule],
+  standalone: true,
+  imports: [RouterOutlet, NavbarComponent], 
   templateUrl: './app.html',
-  styleUrl: './app.css'
 })
-export class App {
-  protected readonly title = signal('na-ponta-do-lapis');
-}
+export class AppComponent { }
