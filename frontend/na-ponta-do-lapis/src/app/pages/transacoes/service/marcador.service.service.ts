@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '@env';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +8,7 @@ import { environment } from '../../../../environments/environment.development';
 export class MarcadorServiceService {
   http = Inject(HttpClient);
 
-  private BASE_URL:string = environment.apiBaseUrl
+  private BASE_URL:string = environment.apiBaseUrl;
 
 
 }
