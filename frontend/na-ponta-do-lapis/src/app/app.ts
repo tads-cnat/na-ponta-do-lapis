@@ -1,12 +1,11 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 // Importe o seu Navbar e o seu LandingPage (ou Hero) apontando para as pastas deles:
-import { NavbarComponent } from './pages/landing-page/components/navbar/navbar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, NavbarComponent], 
+  imports: [RouterOutlet], 
   templateUrl: './app.html',
 })
 export class AppComponent { }
