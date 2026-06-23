@@ -4,14 +4,14 @@
 
 - **Atores secundários**: Usuário convidado.
 - **Resumo**:  Na página “Grupo Familiar” o usuário aperta o botão “convidar” para convidar um novo membro à sua família, caso ainda não tenha membros a família será criada.
-- **Pré-condição**: Usuário deve estar cadastrado e autenticado no sistema.
+- **Pré-condição**: Usuário deve estar cadastrado, autenticado no sistema e administrador da família.
 - **Pós-Condição**: Um convite é enviado ao usuário convidado; caso necessário, uma família é criada e o usuário criador recebe o papel admin família; o membro só é vinculado à família após aceitar o convite.
 
 ## Fluxo Principal
 
 | Ações do ator | Ações do sistema |
 | :-----------------: | :-----------------: |
-| 1 - O usuário aperta o botão "+". | |
+| 1 - O usuário aperta o botão "+" na [caixa de membros](https://www.figma.com/design/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=859-1943&t=DQ2OEuq9dFUHHszq-4). | |
 | | 2 - Se o usuário já tiver uma família, o sistema retorna um [formulário](https://www.figma.com/design/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=927-1940&t=DQ2OEuq9dFUHHszq-4). |
 | 3 - O usuário preenche o formulário com as informações do novo membro e aperta "enviar". | |
 | | 4 - O sistema envia o convite para o outro usuário e retorna um pop-up escrito "convite enviado com sucesso". |
