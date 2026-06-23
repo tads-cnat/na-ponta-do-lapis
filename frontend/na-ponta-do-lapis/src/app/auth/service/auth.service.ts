@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { LoginRequest, SignupRequest } from '../../model/ILoginRequest';
 import { Token } from '../../model/IToken.models';
 import { Usuario } from '../../model/IUsuario.models';
+import { environment } from '@env';
 
 
 
@@ -12,7 +13,7 @@ import { Usuario } from '../../model/IUsuario.models';
 })
 export class AuthService {
 
-  private BASE_URL:string = "http://localhost:8080"
+  private BASE_URL:string = environment.apiBaseUrl;
 
   constructor(private http:HttpClient){}
 

@@ -3,12 +3,13 @@ import ht from '@angular/common/locales/ht';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Categoria, ITransacaoRequest, ITransacoes,  } from '../../../model/ITransacoes.model';
+import { environment}  from '@env';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TransacoesService {
-  private BASE_URL:string = "http://localhost:8080"
+  private BASE_URL:string = environment.apiBaseUrl;
 
   constructor(private http:HttpClient){}
 
