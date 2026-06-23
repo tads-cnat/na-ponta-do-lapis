@@ -4,10 +4,22 @@
     <img src="logo.svg" alt="Na Ponta do Lápis" class="h-12 md:h-14 object-contain" />
   </div>
 
-  <div class="hidden md:flex items-center gap-8">
-    <a href="#" class="font-['Lexend_Deca'] font-light text-xl text-[#7843CD] leading-[1.2] transition-colors">Home</a>
-    <a href="#" class="font-['Lexend_Deca'] font-light text-xl text-[#4D4D4D] hover:text-[#7843CD] leading-[1.2] transition-colors">Produto</a>
-    <a href="#" class="font-['Lexend_Deca'] font-light text-xl text-[#4D4D4D] hover:text-[#7843CD] leading-[1.2] transition-colors">Sobre nós</a>
+  <div class="hidden md:flex items-center gap-8" style="margin-left: 120px; margin-top: 12px;">
+    <a href="#" (click)="$event.preventDefault(); $any($event.target).ownerDocument.defaultView.scrollTo({top: 0, behavior: 'smooth'})"
+       class="transition-colors" 
+       style="color: #7843CD; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 400; line-height: 120%;">
+      Home
+    </a>
+    <a href="#o-que-fazemos"
+       class="transition-colors hover:text-[#1A1A1A]" 
+       style="color: #4D4D4D; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 300; line-height: 120%;">
+      Produtos
+    </a>
+    <a href="#por-que-nos"
+       class="transition-colors hover:text-[#1A1A1A]" 
+       style="color: #4D4D4D; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 300; line-height: 120%;">
+      Sobre nós
+    </a>
   </div>
 
   <div class="flex items-center gap-4">
