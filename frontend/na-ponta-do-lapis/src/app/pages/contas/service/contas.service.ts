@@ -2,10 +2,11 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IContas, IContasRequest } from '../../../model/IContas.models';
+import { environment } from '@env'
 
 @Injectable({ providedIn: 'root'})
 export class ContaFinanceiraService {
-  private BASE_URL:string = "http://localhost:8080"
+  private BASE_URL:string = environment.apiBaseUrl;
 
   constructor(private http:HttpClient){
   }
