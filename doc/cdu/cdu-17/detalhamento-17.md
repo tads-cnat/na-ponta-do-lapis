@@ -1,4 +1,4 @@
-# CDU 17. Manter Meta (Persistente)
+# CDU 17. Manter Meta 
 
 - **Ator principal**: Cliente.
 
