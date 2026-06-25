@@ -13,8 +13,8 @@ export class MetasService {
 
   constructor(private http:HttpClient){}
 
-  public listarMetas(): Observable<Meta> {
-    return this.http.get<Meta>(`${this.BASE_URL}/metas`)
+  public listarMetas(): Observable<Meta[]> {
+    return this.http.get<Meta[]>(`${this.BASE_URL}/metas`)
   }
 
   public buscarMeta(id: number): Observable<Meta> {

@@ -1,6 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
 import { MetaItemComponent } from './components/meta-item/meta-item.component';
 import { MetasService } from './services/metas.service';
+import { Meta } from '@models/IMetas.models';
 import { Button } from 'primeng/button';
 
 @Component({
@@ -10,7 +11,7 @@ import { Button } from 'primeng/button';
   styleUrl: './metas.component.css',
 })
 export class MetasComponent implements OnInit {
-  metas = signal<any[]>([]);
+  metas = signal<Meta[]>([]);
   constructor(private metasService: MetasService) {}
 
   ngOnInit(): void {
