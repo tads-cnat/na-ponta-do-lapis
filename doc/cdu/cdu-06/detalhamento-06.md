@@ -1,9 +1,8 @@
-# CDU 06. Visualizar Relatorio Pessoal
+# CDU 06. Visualizar Dashboard
 
-- **Ator principal**: Usuario e Visitante
+- **Ator principal**: Cliente
 
-- **Atores secundários**: N/A
-- **Resumo**: Ao iniciar a funcionalidade no menu lateral o sistema deverá apresentar um gráfico detalhado sobre os filtros: "Despesa por Categoria", "Receita por Categoria", "Despesa por Conta" e "Receita por Conta", podendo ser alternado entre gráficos de barra, pizza, e linhas, clickando em alguma area do gráfico podera ser redirecionado para a pagina de transacoes ja com filtros pre definidos pelos gráficos.
-- **Pré-condição**: O Ator deverá ter cadastrado alguma transação referente ao filtro indicado para que o gráfico seja gerado.
-- **Pós-Condição**: N/A
-
+- **Atores secundários**: Não existe
+- **Resumo**: Ao entrar no sistema ou acessar a aba no menu lateral ["Dashboard"](https://www.figma.com/design/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=1545-21660&t=1d6Ev8nFJJXjzqGf-4) deve apresentar vários gráficos sobre as ações que o cliente logado fez no sistema e informações adicionais como seu saldo, atual cotação de moedas, gastos separados por categorias, metas correntes
+- **Pré-condição**: O cliente deve estar devidamente autenticado
+- **Pós-Condição**: Não existe
