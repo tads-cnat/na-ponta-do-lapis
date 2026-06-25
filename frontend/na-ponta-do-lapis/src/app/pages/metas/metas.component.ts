@@ -11,23 +11,37 @@ import { Button } from 'primeng/button';
   styleUrl: './metas.component.css',
 })
 export class MetasComponent implements OnInit {
+
   metas = signal<Meta[]>([]);
+
   constructor(private metasService: MetasService) {}
 
   ngOnInit(): void {
     this.listarMetas();
   }
 
-  public listarMetas(): void {
+  listarMetas(): void {
     this.metasService.listarMetas().subscribe({
       next: (response) => {
         this.metas.set(response);
-        console.log(this.metas());
       },
       error: (error) => {
         console.error('Erro ao listar metas:', error);
       }
     });
   }
+
+  deletarMeta(id: number): void {
+    this.metasService.deletarMeta(id).subscribe({
+      next: () => {
+        this.metas.update( metas => metas.filter(meta => meta.id !== id));
+      },
+      error: (error) => {
+        console.error('Erro ao deletar meta:', error);
+      }
+    });
+  }
+
+
 
 }

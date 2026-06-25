@@ -19,6 +19,8 @@
                     [valorAtual]="meta.valorAtual"
                     [valorTotal]="meta.valorTotal"
                     [progressoAtual]="meta.progresso"
+                    [meta]="meta"
+                    (deletarMeta)="deletarMeta($event)"
                 >
                 </app-meta-item>
             </li>
