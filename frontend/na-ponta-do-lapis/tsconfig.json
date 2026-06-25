@@ -14,9 +14,9 @@
     "importHelpers": true,
     "target": "ES2022",
     "module": "preserve",
-    "baseUrl": "src",
     "paths": {
-      "@env": ["environments/environment.ts"]
+      "@env": ["./src/environments/environment.ts"],
+      "@models/*": ["./src/app/model/*"]
     }
   },
   "angularCompilerOptions": {
