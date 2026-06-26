@@ -15,10 +15,6 @@
         @for(meta of metas(); track meta.id) {
             <li class="mb-8">
                 <app-meta-item 
-                    [titulo]="meta.nome"
-                    [valorAtual]="meta.valorAtual"
-                    [valorTotal]="meta.valorTotal"
-                    [progressoAtual]="meta.progresso"
                     [meta]="meta"
                     (deletarMeta)="deletarMeta($event)"
                 >
