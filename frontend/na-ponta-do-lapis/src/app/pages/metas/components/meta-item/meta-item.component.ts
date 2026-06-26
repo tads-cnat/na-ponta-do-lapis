@@ -10,10 +10,6 @@ import { ProgressBarModule } from 'primeng/progressbar';
   styleUrl: './meta-item.component.css',
 })
 export class MetaItemComponent {
-  @Input() titulo: string = "";
-  @Input() valorAtual: number = 0;
-  @Input() valorTotal: number = 0;
-  @Input() progressoAtual: number = 0;
   @Input() meta!: Meta;
   @Output() deletarMeta: EventEmitter<number> = new EventEmitter<number>();
 
@@ -21,5 +17,5 @@ export class MetaItemComponent {
     this.deletarMeta.emit(this.meta.id);
   }
 
-  get valorFalta(): number { return this.valorTotal - this.valorAtual; }
+  get valorFalta(): number { return this.meta.valorTotal - this.meta.valorAtual; }
 }

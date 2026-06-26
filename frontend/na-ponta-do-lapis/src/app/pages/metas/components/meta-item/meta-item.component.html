@@ -79,13 +79,13 @@
             </svg>
         </div>
         <div>
-            <p class="font-bold text-xl text-gray-800">{{titulo}}</p>
-            <p class="text-base font-bold text-npl-amarelo">{{progressoAtual}}%</p>
+            <p class="font-bold text-xl text-gray-800">{{meta.nome}}</p>
+            <p class="text-base font-bold text-npl-amarelo">{{meta.progresso}}%</p>
         </div>
     </div>
     <div class="flex items-center">
         <div class="text-end">
-            <p class="text-npl-verde font-bold text-base">R$ {{valorAtual}}</p>
+            <p class="text-npl-verde font-bold text-base">R$ {{meta.valorAtual}}</p>
             <p class="text-sm text-gray-500">faltam R${{valorFalta}}</p>
         </div>
         <div class="flex items-center ml-4 gap-2">
@@ -95,4 +95,4 @@
     </div>
 
 </div>
-<p-progressbar class="h-3!" [value]="progressoAtual" color="linear-gradient(119deg, #E8D73F, #F5A84E )" showValue="false" />
+<p-progressbar class="h-3!" [value]="meta.progresso" color="linear-gradient(119deg, #E8D73F, #F5A84E )" showValue="false" />
