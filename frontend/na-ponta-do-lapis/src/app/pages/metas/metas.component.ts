@@ -1,4 +1,4 @@
-import { Component, OnInit, inject, signal } from '@angular/core';
+import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { MetaItemComponent } from './components/meta-item/meta-item.component';
 import { MetasService } from './services/metas.service';
 import { ContaFinanceiraService } from '../contas/service/contas.service';
@@ -27,6 +27,22 @@ export class MetasComponent implements OnInit {
   tiposMeta = signal<TipoMetaResponse[]>([]);
   contas = signal<any[]>([]);
   exibirDialog: boolean = false;
+
+  totalMetas = computed(() => {
+    return this.metas().reduce((sum, m) => sum + (m.valorTotal || 0), 0);
+  });
+
+  totalAcumulado = computed(() => {
+    return this.metas().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
+  });
+
+  totalMetasFormatado = computed(() =>
+    this.totalMetas().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  );
+
+  totalAcumuladoFormatado = computed(() =>
+    this.totalAcumulado().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  );
 
   metaForm: FormGroup;
   metaSelecionada: MetaResponse | null = null;

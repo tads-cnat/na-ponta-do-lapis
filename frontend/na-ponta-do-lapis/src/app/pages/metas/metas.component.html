@@ -1,7 +1,7 @@
 <div class="text-center">
     <div class="text-xl text-gray-400">Valor total das metas</div>
-    <div class="text-3xl font-bold mb-2.5"><span class="text-npl-verde">R$</span> 245.000</div>
-    <div class="text-lg text-gray-500">+R$3.500 desde que voce começou</div>
+    <div class="text-3xl font-bold mb-2.5"><span class="text-npl-verde">R$</span> {{ totalMetasFormatado() }}</div>
+    <div class="text-lg text-gray-500">+R${{ totalAcumuladoFormatado() }} arrecadados</div>
 </div>
 <div class="mb-8 flex justify-between">
     <h1 class="text-primary font-bold text-3xl ">Metas</h1>
