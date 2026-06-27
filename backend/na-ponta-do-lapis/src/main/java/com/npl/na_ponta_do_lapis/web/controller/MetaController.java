@@ -1,5 +1,6 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 import com.npl.na_ponta_do_lapis.service.MetaService;
 import com.npl.na_ponta_do_lapis.web.dto.MetaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.MetaResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TipoMetaResponseDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -100,5 +103,16 @@ public class MetaController {
             @AuthenticationPrincipal Usuario usuario) {
         metaService.deletar(id, usuario);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Listar tipos de meta disponíveis")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA')")
+    @GetMapping("/tipos")
+    public ResponseEntity<List<TipoMetaResponseDTO>> listarTipos() {
+        return ResponseEntity.ok(
+            Arrays.stream(TipoMeta.values())
+                .map(TipoMetaResponseDTO::fromEnum)
+                .toList()
+        );
     }
 }
