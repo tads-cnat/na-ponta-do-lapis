@@ -143,9 +143,8 @@ VALUES
     (9, 'Intercâmbio', 'Juntar para curso de idiomas no exterior', 25000.00, 5000.00, 'https://link-da-foto.com/fundo.png', '2026-01-01', '2027-12-31', 'PRAZO_FIXO', 2),
     (10, 'Quitar Empréstimo', 'Finalizar parcelas do empréstimo pessoal', 7000.00, 3500.00, 'https://link-da-foto.com/emprestimo.png', '2026-01-05', '2027-06-30', 'DIVIDA', 1);
 
+SELECT setval(pg_get_serial_sequence('meta', 'id'), coalesce(max(id), 0) + 1, false) FROM meta;
 SELECT setval(pg_get_serial_sequence('transacao', 'id'), coalesce(max(id), 0) + 1, false) FROM transacao;
--- Sincroniza a sequência do ID do Usuário
--- SELECT setval(pg_get_serial_sequence('usuario', 'id'), coalesce(MAX(id), 1)) FROM usuario;
 
 SELECT setval(
     'conta_financeira_id_seq',
