@@ -1,0 +1,272 @@
+  <!-- ============================================================
+       ÁREA PRINCIPAL DO DASHBOARD
+       Ignora sidebar e header — apenas o conteúdo central
+  ============================================================ -->
+  <main class="flex gap-6">
+
+    <!-- ============================================================
+         SEÇÃO 1 – CARDS DE RESUMO (4 colunas)
+    ============================================================ -->
+    <section class="grid grid-cols-4 gap-4">
+
+      <!-- Card: Saldo atual -->
+      <div class="bg-white rounded-2xl p-5 flex flex-col gap-2 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-500 font-medium">Saldo atual</span>
+          <div class="w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+            <!-- ícone placeholder -->
+            <span class="text-purple-400 text-lg">👤</span>
+          </div>
+        </div>
+        <span class="text-3xl font-bold text-gray-800">40,689</span>
+        <span class="text-sm text-green-500 font-medium">↑ 8.5% Mais que ontem</span>
+      </div>
+
+      <!-- Card: Moeda -->
+      <div class="bg-white rounded-2xl p-5 flex flex-col gap-2 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-500 font-medium">Moeda</span>
+          <div class="w-10 h-10 rounded-full bg-yellow-100 flex items-center justify-center">
+            <span class="text-yellow-500 text-lg">🪙</span>
+          </div>
+        </div>
+        <span class="text-3xl font-bold text-gray-800">R$89,000</span>
+        <div class="flex items-center gap-3 text-xs text-gray-600">
+          <span>🇺🇸 USD $6.12 <span class="text-green-500">↑</span></span>
+          <span>🇨🇦 CAD $3.82 <span class="text-green-500">↑</span></span>
+          <span>🇵🇹 EUR $3.82 <span class="text-red-500">↓</span></span>
+        </div>
+      </div>
+
+      <!-- Card: Receita -->
+      <div class="bg-white rounded-2xl p-5 flex flex-col gap-2 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-500 font-medium">Receita</span>
+          <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center">
+            <span class="text-green-500 text-lg">📈</span>
+          </div>
+        </div>
+        <span class="text-3xl font-bold text-gray-800">$89,000</span>
+        <span class="text-sm text-red-400 font-medium">↓ 4.3% Menos que ontem</span>
+      </div>
+
+      <!-- Card: Gastos -->
+      <div class="bg-white rounded-2xl p-5 flex flex-col gap-2 shadow-sm">
+        <div class="flex items-center justify-between">
+          <span class="text-sm text-gray-500 font-medium">Gastos</span>
+          <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+            <span class="text-red-400 text-lg">🕐</span>
+          </div>
+        </div>
+        <span class="text-3xl font-bold text-gray-800">2,040</span>
+        <span class="text-sm text-green-500 font-medium">↑ 1.8% Mais que ontem</span>
+      </div>
+
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO 2 – RELATÓRIO MENSAL (gráfico de linha, full width)
+    ============================================================ -->
+    <section class="bg-white rounded-2xl p-6 shadow-sm">
+
+      <!-- Cabeçalho da seção -->
+      <div class="flex items-center justify-between mb-6">
+        <h2 class="text-lg font-bold text-gray-800">Relatório mensal</h2>
+        <!-- Seletor de mês -->
+        <select class="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 bg-white focus:outline-none">
+          <option>Janeiro</option>
+          <option>Fevereiro</option>
+          <option>Março</option>
+          <option>Abril</option>
+          <option>Maio</option>
+          <option>Junho</option>
+          <option>Julho</option>
+          <option>Agosto</option>
+          <option>Setembro</option>
+          <option>Outubro</option>
+          <option>Novembro</option>
+          <option>Dezembro</option>
+        </select>
+      </div>
+
+      <!-- Área do gráfico de linha (placeholder) -->
+      <div class="relative w-full h-64 bg-gray-50 rounded-xl flex items-center justify-center border border-dashed border-gray-200">
+        <div class="text-center text-gray-400">
+          <p class="text-sm font-medium">[ Gráfico de linha — Relatório mensal ]</p>
+          <p class="text-xs mt-1">Eixo X: valores monetários (5k → 60k) · Eixo Y: percentual (20% → 100%)</p>
+          <p class="text-xs mt-1">Tooltip de destaque: <span class="font-semibold text-blue-400">64,3664.77</span> no pico (~20k)</p>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ============================================================
+         SEÇÃO 3 – LINHA INFERIOR (2 colunas: Gastos por categoria + Metas)
+    ============================================================ -->
+    <section class="grid grid-cols-2 gap-4">
+
+      <!-- ──────────────────────────────────────────────
+           3A – Gastos por categoria (gráfico donut)
+      ────────────────────────────────────────────── -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+        <h2 class="text-lg font-bold text-gray-800 text-center mb-6">Gastos por categoria</h2>
+
+        <div class="flex items-center gap-8">
+
+          <!-- Donut placeholder -->
+          <div class="flex-shrink-0 w-52 h-52 rounded-full bg-gray-50 border-[24px] border-gray-200 flex items-center justify-center relative">
+            <span class="text-xs text-gray-400 text-center leading-tight">[ Donut<br/>Chart ]</span>
+          </div>
+
+          <!-- Legenda -->
+          <div class="flex flex-col gap-2 text-sm text-gray-700">
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-purple-500 inline-block"></span>
+              <span class="flex-1">Technology and equip...</span>
+              <span class="font-semibold text-gray-800 ml-4">10.33%</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-gray-800 inline-block"></span>
+              <span class="flex-1">Marketing</span>
+              <span class="font-semibold text-gray-800 ml-4">4.19%</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-blue-400 inline-block"></span>
+              <span class="flex-1">Finance</span>
+              <span class="font-semibold text-gray-800 ml-4">10.33%</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-yellow-400 inline-block"></span>
+              <span class="flex-1">Human Resources</span>
+              <span class="font-semibold text-gray-800 ml-4">4.19%</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3 h-3 rounded-full bg-red-500 inline-block"></span>
+              <span class="flex-1">Marketing</span>
+              <span class="font-semibold text-gray-800 ml-4">10.33%</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ──────────────────────────────────────────────
+           3B – Metas (lista de progresso)
+      ────────────────────────────────────────────── -->
+      <div class="bg-white rounded-2xl p-6 shadow-sm">
+
+        <!-- Cabeçalho -->
+        <div class="flex items-center justify-between mb-6">
+          <h2 class="text-lg font-bold text-gray-800">Metas</h2>
+          <button class="text-sm text-gray-400 hover:text-gray-600 transition">Mostrar todas</button>
+        </div>
+
+        <!-- Lista de metas -->
+        <div class="flex flex-col gap-5">
+
+          <!-- Meta 1 -->
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🏠</span>
+                <span class="text-sm font-semibold text-gray-800">Primeira casa</span>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-bold text-green-500">R$150,000</p>
+                <p class="text-xs text-gray-400">faltam R$100,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-yellow-500 font-semibold">33%</span>
+              <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-yellow-400 rounded-full" style="width: 33%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meta 2 -->
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">💍</span>
+                <span class="text-sm font-semibold text-gray-800">Presente de noivado</span>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-bold text-green-500">R$10,000</p>
+                <p class="text-xs text-gray-400">faltam R$9,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-yellow-500 font-semibold">10%</span>
+              <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-yellow-400 rounded-full" style="width: 10%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meta 3 -->
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🏖️</span>
+                <span class="text-sm font-semibold text-gray-800">Feriadão</span>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-bold text-green-500">R$5,000</p>
+                <p class="text-xs text-gray-400">faltam R$2,500</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-yellow-500 font-semibold">50%</span>
+              <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-yellow-400 rounded-full" style="width: 50%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meta 4 -->
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">🚗</span>
+                <span class="text-sm font-semibold text-gray-800">Novo Carro</span>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-bold text-green-500">R$50,000</p>
+                <p class="text-xs text-gray-400">faltam R$45,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-yellow-500 font-semibold">8%</span>
+              <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-yellow-400 rounded-full" style="width: 8%"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Meta 5 -->
+          <div class="flex flex-col gap-1">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <span class="text-xl">💒</span>
+                <span class="text-sm font-semibold text-gray-800">Casamento</span>
+              </div>
+              <div class="text-right">
+                <p class="text-sm font-bold text-green-500">R$30,000</p>
+                <p class="text-xs text-gray-400">faltam 15,000</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs text-yellow-500 font-semibold">80%</span>
+              <div class="flex-1 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                <div class="h-full bg-yellow-400 rounded-full" style="width: 80%"></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section>
+
+  </main>
