@@ -4,8 +4,6 @@ import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.service.UsuarioService;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
-import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
-import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -47,17 +45,17 @@ public class UsuarioController {
 
     @PreAuthorize("hasRole('ADMIN_SITE') or (hasRole('USUARIO') and #id == authentication.principal.id)")
     @Operation(summary = "Buscar por ID")
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorId(@PathVariable Long id){
         Usuario usuario = usuarioService.buscarUsuarioPorId(id);
         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO(usuario);
         return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
     }
 
-    @PreAuthorize("hasRole('ADMIN_SITE') or (hasRole('USUARIO') or hasRole('ADMIN_FAMILIA'))")
+    @PreAuthorize("hasRole('ADMIN_SITE') or hasRole('USUARIO') or hasRole('ADMIN_FAMILIA')")
     @Operation(summary = "Buscar por Username")
-    @GetMapping("/{username}")
-    public ResponseEntity<UsuarioResponseDTO> buscarPorUsername(@PathVariable String username){
+    @GetMapping("/username/{username}")
+    public ResponseEntity<UsuarioResponseDTO> buscarPorUsername(@PathVariable String username) {
         Usuario usuario = usuarioService.buscarUsuarioPorUsername(username);
         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO(usuario);
         return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);

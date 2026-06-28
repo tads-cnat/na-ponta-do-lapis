@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { Route, Router } from '@angular/router';
 import { AuthService } from '../../auth/service/auth.service';
@@ -16,7 +16,7 @@ import { MessageService } from 'primeng/api';
 })
 export class HeaderComponent {
 
-  constructor(private authService:AuthService ,private router:Router, private messageService: MessageService){}
+  constructor(private authService:AuthService ,private router:Router, private messageService: MessageService, private cdr: ChangeDetectorRef){}
 
   usuarioLogado:Usuario | null = null;
 
@@ -29,6 +29,7 @@ export class HeaderComponent {
    this.authService.meusDados().subscribe({
     next: (res:Usuario) => {
       this.usuarioLogado = res;
+      this.cdr.detectChanges();
       console.log(res)
     },
     error: (res:Error) => {
