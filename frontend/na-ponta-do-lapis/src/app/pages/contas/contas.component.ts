@@ -178,6 +178,7 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
                   optionLabel="label"
                   optionValue="value"
                   formControlName="moeda"
+                  (onChange)="formContaFinanceira.controls['moeda'].setValue($event.value)"
                   placeholder="Selecione a moeda"
                   [appendTo]="'body'">
                 </p-select>
@@ -561,10 +562,13 @@ export class ContasComponent implements OnInit {
   confirmarExcluirConta(): void {
     if (!this.contaExcluir?.id) return;
 
+    // Capturar id e nome ANTES de fecharDialogExcluir(),
+    // pois ela seta this.contaExcluir = null imediatamente.
+    const idExcluir    = this.contaExcluir.id;
     const nomeExcluida = this.contaExcluir.nome;
     this.fecharDialogExcluir();
 
-    this.contaFinanceiraService.deletarContaPorId(this.contaExcluir!.id!).subscribe({
+    this.contaFinanceiraService.deletarContaPorId(idExcluir).subscribe({
       next: () => {
         this.messageService.add({
           severity: 'success',
