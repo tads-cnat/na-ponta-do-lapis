@@ -21,7 +21,7 @@ import { IContas, Moeda } from '../../../../model/IContas.models';
         </div>
 
         <!-- GRID 2 colunas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
 
           <!-- SALDO -->
           <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 min-w-0">
@@ -68,22 +68,6 @@ import { IContas, Moeda } from '../../../../model/IContas.models';
                 </span>
               </div>
 
-            </div>
-
-          </div>
-
-          <!-- COR -->
-          <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-
-            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
-              Cor do Cartão
-            </p>
-
-            <div class="flex items-center gap-3">
-              <div
-                class="w-11 h-11 rounded-xl border border-slate-200 shrink-0"
-                [style.background]="conta.cor">
-              </div>
             </div>
 
           </div>
