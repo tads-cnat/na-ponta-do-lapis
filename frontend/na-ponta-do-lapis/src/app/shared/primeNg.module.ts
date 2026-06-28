@@ -19,6 +19,8 @@ import { PopoverModule } from 'primeng/popover';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ColorPickerModule } from 'primeng/colorpicker';
+
 
 
 @NgModule({
@@ -27,6 +29,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     DatePickerModule,
     InputMaskModule,
     InputGroupModule,
+    ColorPickerModule,
     PopoverModule,
      ButtonModule,
       InputTextModule,
