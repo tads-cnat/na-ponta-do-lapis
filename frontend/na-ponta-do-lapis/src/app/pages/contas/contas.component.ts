@@ -161,7 +161,7 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
               <label class="font-semibold text-slate-700">Cor do cartão</label>
               <p-colorpicker
                 formControlName="cor"
-                [inline]="true">
+                >
               </p-colorpicker>
             </div>
 
