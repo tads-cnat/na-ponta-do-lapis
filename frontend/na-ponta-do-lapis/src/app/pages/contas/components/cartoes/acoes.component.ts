@@ -11,24 +11,24 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
       <p-button
         label="Adicionar"
         icon="pi pi-plus"
-        severity="success"
         class="rounded-xl"
+        [style]="{'background-color': '#10b981', 'border-color': '#10b981'} "
         (click)="onAdicionar.emit()">
       </p-button>
 
       <p-button
         label="Editar"
         icon="pi pi-pencil"
-        severity="contrast"
         class="rounded-xl"
+        [style]="{'background-color': '#f3e8ff', 'color': '#7843cd', 'border-color': '#7843cd'}"
         (click)="onEditar.emit()">
       </p-button>
 
       <p-button
         label="Excluir"
         icon="pi pi-trash"
-        severity="danger"
         class="rounded-xl"
+        [style]="{'background-color': '#fee2e2', 'color': '#ef4444', 'border-color': '#ef4444'}"
         (click)="onExcluir.emit()">
       </p-button>
 

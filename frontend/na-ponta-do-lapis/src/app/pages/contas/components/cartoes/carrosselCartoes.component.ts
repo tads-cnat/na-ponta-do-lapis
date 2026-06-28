@@ -27,15 +27,17 @@ import { IContas } from '../../../../model/IContas.models';
           <button
             type="button"
             (click)="onAnterior.emit()"
-            class="w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center">
-            <i class="pi pi-chevron-left text-slate-700"></i>
+            class="w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center"
+            [style]="{'background-color': '#e56809'}">
+            <i class="pi pi-chevron-left text-white text-slate-700"></i>
           </button>
 
           <button
             type="button"
             (click)="onProxima.emit()"
-            class="w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center">
-            <i class="pi pi-chevron-right text-slate-700"></i>
+            class="w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-700 transition flex items-center justify-center"
+            [style]="{'background-color': '#e56809'}">
+            <i class="pi pi-chevron-right text-white text-slate-700"></i>
           </button>
 
         </div>
