@@ -52,37 +52,37 @@ VALUES
     (7, 'PicPay', 1, '#00FF00', 1, 'BRL');
 
 -- Marcadores para o Usuário 1 (Lucas Henrique)
-INSERT INTO marcador (id ,nome, cor, usuario_id) VALUES
-                                                 (1,'PIX', '#2196F3', 1),
-                                                 (2,'CREDITO', '#9C27B0', 1),
-                                                 (3,'DEBITO', '#F44336', 1);
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('PIX', '#2196F3', 1),
+                                                 ('CREDITO', '#9C27B0', 1),
+                                                 ('DEBITO', '#F44336', 1);
 
 
 -- Marcadores para o Usuário 2 (Bruno)
-INSERT INTO marcador (id ,nome, cor, usuario_id) VALUES
-                                                 (4,'PIX', '#00BCD4', 2),
-                                                 (5,'CREDITO', '#3F51B5', 2),
-                                                 (6,'DEBITO', '#000000', 2);
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('PIX', '#00BCD4', 2),
+                                                 ('CREDITO', '#3F51B5', 2),
+                                                 ('DEBITO', '#000000', 2);
 
 
 -- Marcadores para o Usuário 3 (Eduardo)
-INSERT INTO marcador (id, nome, cor, usuario_id) VALUES
-                                                 (7,'PIX', '#673AB7', 3),
-                                                 (8,'CREDITO', '#E91E63', 3),
-                                                 (9,'DEBITO', '#009688', 3);
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('PIX', '#673AB7', 3),
+                                                 ('CREDITO', '#E91E63', 3),
+                                                 ('DEBITO', '#009688', 3);
 
 -- Marcadores para o Usuário 4 (Pedro)
-INSERT INTO marcador (id,nome, cor, usuario_id) VALUES
-                                                 (10,'PIX', '#3F51B5', 4),
-                                                 (11,'CREDITO', '#FF5722', 4),
-                                                 (12,'DEBITO', '#9E9E9E', 4);
+INSERT INTO marcador (nome, cor, usuario_id) VALUES
+                                                 ('PIX', '#3F51B5', 4),
+                                                 ('CREDITO', '#FF5722', 4),
+                                                 ('DEBITO', '#9E9E9E', 4);
 
 -- Marcadores para o Usuário 5 (test/ADMIN)
 -- Nota: Como você inseriu dois usuários com ID 5, este SQL assume o último ID 5 válido.
-INSERT INTO marcador (id, nome, cor, usuario_id) VALUES
-                                                 (13,'PIX', '#212121', 5),
-                                                 (14,'CREDITO', '#D32F2F', 5),
-                                                 (15,'DEBITO', '#1976D2', 5);
+INSERT INTO marcador ( nome, cor, usuario_id) VALUES
+                                                 ('PIX', '#212121', 5),
+                                                 ('CREDITO', '#D32F2F', 5),
+                                                 ('DEBITO', '#1976D2', 5);
 
 INSERT INTO transacao (id, descricao, valor, id_categoria, estado, tipo, data_hora, id_conta_financeira, marcador_id)
 VALUES

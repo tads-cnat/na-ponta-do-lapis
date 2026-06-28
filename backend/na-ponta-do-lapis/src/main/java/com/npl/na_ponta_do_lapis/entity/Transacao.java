@@ -3,6 +3,8 @@ package com.npl.na_ponta_do_lapis.entity;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import jakarta.persistence.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,6 +45,7 @@ public class Transacao {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "marcador_id")
+    @OnDelete(action = OnDeleteAction.SET_NULL)
     private Marcador marcador;
 
 
