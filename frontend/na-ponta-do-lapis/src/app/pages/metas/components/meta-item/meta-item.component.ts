@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { MetaResponse } from '@models/IMetas.models';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 
@@ -9,10 +10,17 @@ import { ProgressBarModule } from 'primeng/progressbar';
   styleUrl: './meta-item.component.css',
 })
 export class MetaItemComponent {
-  @Input() titulo: string = "";
-  @Input() valorAtual: number = 0;
-  @Input() valorTotal: number = 0;
-  @Input() progressoAtual: number = 0;
+  @Input() meta!: MetaResponse;
+  @Output() deletarMeta: EventEmitter<number> = new EventEmitter<number>();
+  @Output() editarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
 
-  get valorFalta(): number { return this.valorTotal - this.valorAtual; }
+  onDeletar(): void {
+    this.deletarMeta.emit(this.meta.id);
+  }
+
+  onEditar(): void {
+    this.editarMeta.emit(this.meta);
+  }
+
+  get valorFalta(): number { return this.meta.valorTotal - this.meta.valorAtual!; }
 }

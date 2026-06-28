@@ -5,7 +5,7 @@
 1. [Manter transação - CDU 18](./cdu-18/detalhamento-18.md)
 1. [Adicionar Transação (Fatura) - CDU 26](./cdu-26/detalhamento-26.md)
 1. [Manter conta - CDU 19](./cdu-19/detalhamento-19.md)
-1. [Visualizar relatório pessoal - CDU 06](./cdu-06/detalhamento-06.md)
+1. [Visualizar Dashboard - CDU 06](./cdu-06/detalhamento-06.md)
 1. [Convidar Membro à Família - CDU 22](./cdu-22/detalhamento-22.md)
 1. [Aceitar Convite - CDU 27](./cdu-27/detalhamento-27.md)
 1. [Visualizar relatório da família - CDU 24](./cdu-24/detalhamento-24.md)
