@@ -40,6 +40,12 @@ public class TipoCategoraService {
         );
     }
 
+    public TipoCategoria buscarPorNome(String nome){
+        return tipoCategoriaRepository.findByNome(nome).orElseThrow(
+                () -> new TipoCategoriaIdNaoExisteException("Categoria de Nome:" + nome+" não encontrado!")
+        );
+    }
+
     @Transactional
     public TipoCategoria criarCategoria( TipoCategoria categoria){
         return tipoCategoriaRepository.save(categoria);

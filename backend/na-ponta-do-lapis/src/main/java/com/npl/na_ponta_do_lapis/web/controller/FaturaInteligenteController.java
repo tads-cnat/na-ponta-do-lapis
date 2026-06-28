@@ -10,8 +10,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/faturas")
+@Tag(name = "Faturas", description = "Análise inteligente de faturas de cartão de crédito")
 public class FaturaInteligenteController {
 
     private final FaturaInteligenteService faturaService;
@@ -20,15 +26,16 @@ public class FaturaInteligenteController {
         this.faturaService = faturaService;
     }
 
-    @PostMapping(value = "/extrair", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "Extrair transações de uma fatura PDF")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Transações extraídas com sucesso"),
+        @ApiResponse(responseCode = "500", description = "Erro interno ao processar a fatura")
+    })
+    @PostMapping(value = "/analise", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<List<TransacaoFaturaDTO>> extrairTransacoes(@RequestParam("arquivo") MultipartFile arquivo) {
         try {
-            // Chama o seu serviço que faz as duas requisições para o Gemini
             List<TransacaoFaturaDTO> transacoes = faturaService.processarFaturaPdf(arquivo);
-            
-            // Retorna o JSON puro para você visualizar no teste
             return ResponseEntity.ok(transacoes);
-            
         } catch (Exception e) {
             e.printStackTrace();
             return ResponseEntity.internalServerError().build();

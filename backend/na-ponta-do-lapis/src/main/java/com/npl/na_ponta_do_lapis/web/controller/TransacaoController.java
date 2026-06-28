@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.service.TransacaoService;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacoesResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -84,5 +85,21 @@ public class TransacaoController {
     public ResponseEntity<Void> remover(@PathVariable Long id) throws AccessDeniedException {
         transacaoService.removerTransacao(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(summary = "Salvar Transações em Lote")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PostMapping("/lote")
+    public ResponseEntity<Void> salvarTransacoesEmLote(
+            @RequestBody List<TransacaoFaturaDTO> transacoes,
+            @RequestParam("contaId") Long contaId) {
+        
+        try {
+            transacaoService.salvarFaturaEmLote(transacoes, contaId);
+            return ResponseEntity.status(HttpStatus.CREATED).build(); // 201 Created
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build(); 
+        }
     }
 }
