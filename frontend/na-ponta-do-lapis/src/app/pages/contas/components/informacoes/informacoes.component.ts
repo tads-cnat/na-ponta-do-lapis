@@ -84,9 +84,6 @@ import { IContas, Moeda } from '../../../../model/IContas.models';
                 class="w-11 h-11 rounded-xl border border-slate-200 shrink-0"
                 [style.background]="conta.cor">
               </div>
-              <span class="text-sm text-slate-500 font-mono uppercase">
-                {{ conta.cor }}
-              </span>
             </div>
 
           </div>
