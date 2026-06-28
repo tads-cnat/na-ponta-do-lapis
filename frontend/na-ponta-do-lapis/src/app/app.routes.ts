@@ -19,18 +19,6 @@ export const routes: Routes = [
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
 
-    // Para testes
-     {
-        path: "familia",
-        component: MainLayoutComponent,
-        children: [
-            {path: "", component: FamiliaComponent},
-            { path: 'transacoes', component: TransacoesComponent },
-            { path: 'contas', component: ContasComponent },
-            { path: 'metas', component: MetasComponent },
-        ]
-    },
-
     // Área interna protegida
     {
         path: "familia",
@@ -47,7 +35,7 @@ export const routes: Routes = [
             { path: 'transacoes', component: TransacoesComponent },
             { path: 'contas', component: ContasComponent },
             { path: 'metas', component: MetasComponent },
-            {path: 'familia', component: FamiliaComponent},
+            { path: 'familia', component: FamiliaComponent },
             { path: '', redirectTo: 'transacoes', pathMatch: 'full' }
         ]
     },

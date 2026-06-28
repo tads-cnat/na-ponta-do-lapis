@@ -24,16 +24,24 @@ import java.util.List;
 public class FamiliaService {
     private final FamiliaRepository familiaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
 
-    public FamiliaService(FamiliaRepository familiaRepository, UsuarioRepository usuarioRepository) {
+    public FamiliaService(FamiliaRepository familiaRepository, UsuarioRepository usuarioRepository, UsuarioService usuarioService) {
         this.familiaRepository = familiaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.usuarioService = usuarioService;
     }
 
     @Transactional
     public FamiliaResponseDTO criarFamilia(FamiliaDTO familiaDTO) {
         Familia familia = familiaDTO.toEntity();
         familiaRepository.save(familia);
+
+        Usuario criador = usuarioService.buscarUsuarioLogado();
+        criador.setFamilia(familia);
+        criador.setPapel(Papel.ADMIN_FAMILIA);
+        usuarioRepository.save(criador);
+
         return new FamiliaResponseDTO(familia);
     }
 
