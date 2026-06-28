@@ -1,5 +1,11 @@
 <p-toast></p-toast>
-<div class="flex h-screen w-full">
+<div class="  flex h-screen w-full ">
+    <div class="absolute top-6 left-6">
+        <span class="cursor-pointer text-gray-500 transition-colors hover:text-gray-900" (click)="voltar()">
+            <i class="pi pi-arrow-circle-left text-2xl" style="font-size: 1.5rem;"></i>
+        </span>
+    </div>
+
     <form [formGroup]="loginForm" (ngSubmit)="login()" class="flex flex-1 flex-col justify-center items-center p-10">
         <div class="flex flex-col gap-3 w-full max-w-md">
             <h1 class="text-5xl font-bold">Entrar</h1>
@@ -34,11 +40,27 @@
                 @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
                 <small class="text-red-500 font-semibold">A senha é obrigatória.</small>
                 }
+                <label for="esqueceuSenha">
+                    <i class="text-[#FBBC05] cursor-pointer font-semibold hover:text-[#d1c4ff]">Esqueceu a sua senha
+                        ?</i>
+                </label>
             </div>
 
             <div class="flex flex-col gap-2 mt-2">
-              <p-button type="submit" label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
+                <p-button type="submit" label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
                     [disabled]="loginForm.invalid" />
+            </div>
+
+            <div class="flex flex-col gap-2 mt-2">
+                <p-button type="submit"
+                    styleClass="w-full bg-[#ffffff]! border-[#d1c4ff]! text-black! flex items-center justify-center gap-2"
+                    [disabled]="true">
+
+                    <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-5 h-5" />
+
+                    <span>Login com Google</span>
+
+                </p-button>
             </div>
         </div>
     </form>

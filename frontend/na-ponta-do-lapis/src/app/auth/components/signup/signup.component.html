@@ -5,7 +5,7 @@
       <h1 class="text-5xl font-bold text-[#313131]">Cadastre-se</h1>
       <p class="text-[#4A4A4A] mb-4">Preencha todos os campos abaixo para criar sua conta. 
       </p>
-      <a routerLink="/login" class="text-[#FBBC05] font-bold transition duration-300 ease-in-out hover:text-[#d1c4ff]">Cadastre-se</a>
+      <a routerLink="/login" class="text-[#FBBC05] font-bold transition duration-300 ease-in-out hover:text-[#d1c4ff]">Já tenho uma conta ?</a>
 
       <div class="flex flex-col gap-1">
         <label for="nome" class="font-medium text-sm">Nome Completo <span class="text-red-400">*</span></label>
@@ -68,7 +68,7 @@
       <div class="flex items-center gap-2 mt-2">
         <p-checkbox [(ngModel)]="termos" [binary]="true" [ngModelOptions]="{standalone: true}"></p-checkbox>
         <label for="termos" class="text-sm text-slate-600">
-          Eu concordo com os <a href="/landing-page/termos_privacidade.pdf" class="text-amber-500 underline cursor-pointer">termos e políticas de privacidade</a>.
+          Eu concordo com os <a href="/landing-page/termos_privacidade.pdf" class="text-[#FBBC05] underline cursor-pointer hover:text-[#d1c4ff]">termos e políticas de privacidade</a>.
         </label>
       </div>
 

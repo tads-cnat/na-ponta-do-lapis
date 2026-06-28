@@ -56,4 +56,8 @@ export class LoginComponent {
     })
   }
 
+  public voltar(){
+    this.router.navigateByUrl("")
+  }
+
 }

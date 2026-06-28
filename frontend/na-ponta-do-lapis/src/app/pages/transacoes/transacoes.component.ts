@@ -6,22 +6,24 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { TransacoesService } from './service/transacoes.service';
 import { Categoria, ITransacaoRequest, ITransacoes, Tipo } from '../../model/ITransacoes.model';
 import { IContasRequest } from '../../model/IContas.models';
-import { Marcador } from '../../model/IMarcador.models';
+import { Marcador, MarcadorRequest } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MarcadorDlgComponent } from '../marcador-dlg/marcador-dlg.component';
 
 @Component({
   selector: 'app-transacoes',
-  imports: [CardSaldoComponent ,PrimeNGModuleModule, CommonModule, ReactiveFormsModule],
+  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
 })
 export class TransacoesComponent {
   exibirDialog: boolean = false;
+  exibirDialogMarcador: boolean = false;
   private messageService = inject(MessageService)
   private destroyRef = inject(DestroyRef)
   id: number | null = null;
@@ -42,7 +44,7 @@ export class TransacoesComponent {
       dataHora: [[null, Validators.required]],
       estado: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      marcadorId: [null]
+      marcador: [``, [Validators.required]]
     })
   }
 
@@ -68,7 +70,16 @@ export class TransacoesComponent {
   }
   transacoesDados: ITransacoes[] = [];
 
-  public buscarPorDescricao(descricao:string) :void {
+  public abrirDialogMarcador() {
+    this.exibirDialogMarcador = true
+  }
+
+  public aoFecharDialogMarcador() {
+    this.exibirDialogMarcador = false;
+    this.listarMarcadores();
+  }
+
+  public buscarPorDescricao(descricao: string): void {
     this.transacoesService.listarTransacoesPorDescricao(descricao).subscribe({
       next: (res: ITransacoes[]) => {
         this.transacoesDados = res
@@ -168,13 +179,13 @@ export class TransacoesComponent {
   toggle(event: any) {
     this.op.toggle(event);
   }
-  selecionarMarcador(marcador: Marcador) {
+  selecionarMarcador(marcador: MarcadorRequest) {
     this.marcadorSelecionado = marcador
     this.formTransacao.patchValue({
-      marcadorId: marcador.id
+      marcador: marcador
     })
     this.op.hide();
-    this.formTransacao.get('marcadorId')?.markAsDirty();
+    this.formTransacao.get('marcador')?.markAsDirty();
   }
 
   public listarMarcadores() {
@@ -229,7 +240,7 @@ export class TransacoesComponent {
       dataHora: null,
       estado: 'PENDENTE',
       tipo: '',
-      marcadorId: null,
+      marcador: null,
     });
     this.novaTransacao = this.resetForm();
     this.exibirDialog = true;
@@ -248,7 +259,7 @@ export class TransacoesComponent {
       dataHora: new Date(transacao.dataHora),
       estado: transacao.estado,
       tipo: transacao.tipo,
-      marcadorId: transacao.marcador?.id
+      marcador: transacao.marcador
     });
 
     this.marcadorSelecionado = transacao.marcador;
@@ -256,7 +267,8 @@ export class TransacoesComponent {
 
   salvar() {
     if (this.formTransacao.valid) {
-      const dadosParaEnviar:ITransacaoRequest = this.formTransacao.value
+      const dadosParaEnviar: ITransacaoRequest = this.formTransacao.value
+      console.log("Dados para enviar:", dadosParaEnviar)
       this.exibirDialog = false
 
       if (this.id) {

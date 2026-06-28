@@ -1,0 +1,74 @@
+<form [formGroup]="formMarcador">
+    <p-dialog header="Marcadores" [(visible)]="exibirDialog" [modal]="true" (onHide)="fecharModal()"
+        [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '20vw' }">
+
+        @if (!exibirFormulario) {
+            
+            <div class="flex justify-end mb-4 mt-2">
+                <p-button icon="pi pi-plus" label="Novo Marcador" 
+                    styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm px-4 py-2"
+                    (onClick)="abrirFormulario()">
+                </p-button>
+            </div>
+
+            <p-table [value]="marcadores" [paginator]="true" [rows]="5" [scrollable]="true" scrollDirection="horizontal"
+                responsiveLayout="scroll" styleClass="p-datatable-sm w-full">
+                
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Marcador</th>
+                        <th class="bg-[#F8F8FC]! text-slate-700! min-w-[180px]">Ações</th>
+                    </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-marcadorItem>
+                    <tr>
+                        <td class="whitespace-nowrap">
+                            <span class="pi pi-bookmark-fill mr-2" [style.color]="marcadorItem?.cor"></span>
+                            <span>{{ marcadorItem.nome }}</span>
+                        </td>
+                        <td class="whitespace-nowrap">
+                            <p-button icon="pi pi-trash"
+                                styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
+                                (onClick)="excluirMarcador(marcadorItem.id)"></p-button>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+
+        } 
+        @else {
+            
+            <div class="flex flex-col gap-6 mt-4 mb-2">
+                <div class="flex flex-col sm:flex-row gap-4 items-center">
+                    
+                    <div class="w-full flex-1">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Nome do Marcador</label>
+                        <input pInputText type="text" formControlName="nome" placeholder="Ex: Viagem, Alimentação" 
+                               class="w-full p-2 border border-gray-300 rounded-md" />
+                    </div>
+
+                    <div class="flex flex-col items-center">
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Cor</label>
+                        <p-colorPicker formControlName="cor" appendTo="body" class="border border-gray-300 rounded-md block"></p-colorPicker>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-3 mt-4 border-t pt-4">
+                    <p-button label="Cancelar" icon="pi pi-times" 
+                        styleClass="p-button-text text-gray-600 hover:bg-gray-100" 
+                        (onClick)="cancelarCriacao()">
+                    </p-button>
+                    
+                    <p-button label="Salvar Marcador" icon="pi pi-check" 
+                        styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-white" 
+                        [disabled]="formMarcador.invalid"
+                        (onClick)="salvarMarcador()">
+                    </p-button>
+                </div>
+            </div>
+
+        }
+
+    </p-dialog>
+</form>
