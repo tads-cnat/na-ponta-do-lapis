@@ -52,23 +52,6 @@ public class ContaFinanceiraService {
         .toList();
     }
 
-    public List<ContaFinanceira> listarContaFinanceiraUsuarioLogado(){
-        String email = JwtAuthFilter.getEmailUsuarioLogado();
-        return contaFinanceiraRepository.buscarContaFinanceiraUsuarioLogado(email);
-    }
-
-    public ContaFinanceiraResponseDTO buscarContaPorId(Long id){
-        return contaFinanceiraRepository.findById(id)
-        .map(contaFinanceira -> new ContaFinanceiraResponseDTO(contaFinanceira))
-        .orElseThrow( () -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
-    }
-
-    // Método para o Service transacao utilizar pois o outro retorna "ContaFinanceiraResponseDTO" (Não deve ser exposto ao controller)
-    public ContaFinanceira buscarContaPorIdObject(Long id) {
-        return contaFinanceiraRepository.findById(id)
-                .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
-    }
-
     @Transactional
     public ContaFinanceiraResponseDTO atualizarConta(Long id, ContaFinanceiraDTO contaDTO){
 
@@ -78,6 +61,7 @@ public class ContaFinanceiraService {
         conta.setNome(contaDTO.nome());
         conta.setSaldo(contaDTO.saldo());
         conta.setCor(contaDTO.cor());
+        conta.setMoeda(contaDTO.moeda());
 
         try {
             contaFinanceiraRepository.save(conta);
@@ -101,6 +85,7 @@ public class ContaFinanceiraService {
         contaPatchDTO.nome().ifPresent(conta::setNome);
         contaPatchDTO.saldo().ifPresent(conta::setSaldo);
         contaPatchDTO.cor().ifPresent(conta::setCor);
+        contaPatchDTO.moeda().ifPresent(conta::setMoeda);
 
         try {
             contaFinanceiraRepository.save(conta);
@@ -122,4 +107,21 @@ public class ContaFinanceiraService {
         }
         contaFinanceiraRepository.deleteById(id);
     }
+    public List<ContaFinanceira> listarContaFinanceiraUsuarioLogado(){
+        String email = JwtAuthFilter.getEmailUsuarioLogado();
+        return contaFinanceiraRepository.buscarContaFinanceiraUsuarioLogado(email);
+    }
+
+    public ContaFinanceiraResponseDTO buscarContaPorId(Long id){
+        return contaFinanceiraRepository.findById(id)
+        .map(contaFinanceira -> new ContaFinanceiraResponseDTO(contaFinanceira))
+        .orElseThrow( () -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
+    }
+
+    // Método para o Service transacao utilizar pois o outro retorna "ContaFinanceiraResponseDTO" (Não deve ser exposto ao controller)
+    public ContaFinanceira buscarContaPorIdObject(Long id) {
+        return contaFinanceiraRepository.findById(id)
+                .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
+    }
+
 }

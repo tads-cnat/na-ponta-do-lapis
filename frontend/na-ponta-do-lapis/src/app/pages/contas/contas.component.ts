@@ -178,7 +178,7 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
                   optionLabel="label"
                   optionValue="value"
                   formControlName="moeda"
-                  (onChange)="formContaFinanceira.controls['moeda'].setValue($event.value)"
+                  formControlName="moeda"
                   placeholder="Selecione a moeda"
                   [appendTo]="'body'">
                 </p-select>
