@@ -6,8 +6,6 @@ import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-import com.npl.na_ponta_do_lapis.entity.Meta;
-import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 
 public record MetaResponseDTO(
         Long id,

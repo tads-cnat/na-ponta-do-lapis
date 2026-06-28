@@ -40,6 +40,8 @@ public class securityConfig {
                 .authorizeHttpRequests(auth -> auth
                                 .requestMatchers("/auth/login", "/auth/register").permitAll()
                                 .requestMatchers(DOCUMENTATION_API).permitAll()
+                                .requestMatchers("/faturas/**").permitAll()
+                                .requestMatchers("/error").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
