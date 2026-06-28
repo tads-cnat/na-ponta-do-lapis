@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "NG_FORCE_TTY=false ng serve --host 0.0.0.0 -o",
+    "start": "ng serve --host 0.0.0.0 -o",
     "frontend": "npm start",
     "backend": "sh -c 'cd ../../backend/na-ponta-do-lapis && mvn spring-boot:run'",
     "dev": "trap \"kill 0\" INT TERM EXIT; sh -c '(npm run frontend) & (npm run backend) && wait'",
