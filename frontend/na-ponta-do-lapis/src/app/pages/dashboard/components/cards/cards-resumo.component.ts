@@ -1,8 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, inject, Input, ChangeDetectorRef } from "@angular/core";
+import { CurrencyPipe } from "@angular/common";
+import { IContas } from "../../../../model/IContas.models";
+import { ContaFinanceiraService } from "../../../contas/service/contas.service";
+import { MessageService } from "primeng/api";
 
 @Component({
   selector: 'app-cards-resumo',
-  imports: [],
+  imports: [CurrencyPipe],
   template: `
     <section class="grid grid-cols-4 gap-4">
 
@@ -24,8 +28,7 @@ import { Component } from "@angular/core";
             <span class="text-purple-400 text-lg">👤</span>
           </div>
         </div>
-        <span class="text-3xl font-bold text-gray-800">40,689</span>
-        <span class="text-sm text-green-500 font-medium">↑ 8.5% Mais que ontem</span>
+        <span class="text-3xl font-bold text-gray-800">{{ saldoTotal | currency : 'BRL' }}</span>
       </div>
 
       <!-- Card: Moeda -->
@@ -71,7 +74,6 @@ import { Component } from "@angular/core";
           </div>
         </div>
         <span class="text-3xl font-bold text-gray-800">$89,000</span>
-        <span class="text-sm text-red-400 font-medium">↓ 4.3% Menos que ontem</span>
       </div>
 
       <!-- Card: Gastos -->
@@ -92,7 +94,6 @@ import { Component } from "@angular/core";
           </div>
         </div>
         <span class="text-3xl font-bold text-gray-800">2,040</span>
-        <span class="text-sm text-green-500 font-medium">↑ 1.8% Mais que ontem</span>
       </div>
 
     </section>
@@ -100,5 +101,36 @@ import { Component } from "@angular/core";
 })
 
 export class CardsResumoComponent {
+  @Input() contas: IContas[] = [];
+  contaService = inject(ContaFinanceiraService);
+  saldoTotal: number = 0;
+  private cdr = inject(ChangeDetectorRef);
+  private messageService = inject(MessageService)
+
+  ngOnInit(): void {
+    this.listarContas();
+  }
+
+  public listarContas(): void {
+  this.contaService.listarContasUsuarioLogado().subscribe({
+    next: (res:IContas[]) => {
+      this.contas = res;
+      console.log(this.contas)
+      this.saldoTotal = 0;
+      res.forEach(atual =>  this.saldoTotal += atual.saldo);
+      this.cdr.detectChanges();
+    },
+    error: (err:Error) => {
+        console.log(err)
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Erro as carregar Dados da conta',
+        detail: '',
+        life: 2000
+      });
+      this.cdr.detectChanges();
+    }
+  })
+}
 
 }
