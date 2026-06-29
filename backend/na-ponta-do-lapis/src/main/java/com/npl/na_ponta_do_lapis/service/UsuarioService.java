@@ -3,8 +3,12 @@ package com.npl.na_ponta_do_lapis.service;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
 import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
@@ -14,9 +18,11 @@ import java.util.List;
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Usuario> listarUsuarios(){
@@ -36,6 +42,28 @@ public class UsuarioService {
 
     @Transactional
     public Usuario cadastrarUsuario(Usuario usuario){
+        return usuarioRepository.save(usuario);
+    }
+
+    
+    @Transactional
+    public Usuario atualizarUsuarioLogado(UsuarioUpdateDTO dto) {
+        Usuario usuario = buscarUsuarioLogado();
+
+        if (dto.nome() != null && !dto.nome().trim().isEmpty()) {
+            usuario.setNome(dto.nome().trim());
+        }
+
+        if (dto.email() != null && !dto.email().trim().isEmpty()) {
+            usuario.setEmail(dto.email().trim());
+        }
+
+        // ALTERE ESTE BLOCO ABAIXO:
+        if (dto.senha() != null && !dto.senha().trim().isEmpty()) {
+            // Criptografa a nova senha antes de atribuir ao usuário
+            String senhaCriptografada = passwordEncoder.encode(dto.senha());
+            usuario.setSenha(senhaCriptografada); 
+        }
         return usuarioRepository.save(usuario);
     }
 
