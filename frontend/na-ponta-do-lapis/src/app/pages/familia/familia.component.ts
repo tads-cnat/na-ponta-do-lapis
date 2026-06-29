@@ -218,6 +218,11 @@ export class FamiliaComponent {
       this.cdr.detectChanges();
       return;
     }
+    if (nickname.trim().toLowerCase() === this.userLogado?.sub?.trim().toLowerCase()) {
+      this.message = "Você não pode se remover da família.";
+      this.cdr.detectChanges();
+      return;
+    }
     this.familiaService.buscarUsuariosPorNickname(nickname).subscribe(user => {
       const userId = (user as any).id;
       if (this.familiaId && userId) {

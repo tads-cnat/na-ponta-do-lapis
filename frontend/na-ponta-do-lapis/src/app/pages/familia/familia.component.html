@@ -217,8 +217,8 @@
           </div>
           <div class="w-full flex flex-col items-start justify-center mb-4">
             <input pInputText [(ngModel)]="valueMembro" placeholder="Digite o nickname do membro" class="w-full" />
-            @if (submitted && !valueMembro.trim()) {
-              <p class="text-red-500 text-sm mt-1 ml-1">O nickname do membro é obrigatório.</p>
+            @if (submitted && message) {
+              <p class="text-red-500 text-sm mt-1 ml-1">{{message}}</p>
             }
           </div>
           <div class="w-full flex items-center justify-center gap-4">
@@ -236,8 +236,8 @@
           </div>
           <div class="w-full flex flex-col items-start justify-center mb-4">
             <input pInputText [(ngModel)]="valueMembro" placeholder="Digite o nickname do membro" class="w-full" />
-            @if (submitted && !valueMembro.trim()) {
-              <p class="text-red-500 text-sm mt-1 ml-1">O nickname do membro é obrigatório.</p>
+            @if (submitted && message) {
+              <p class="text-red-500 text-sm mt-1 ml-1">{{message}}</p>
             }
           </div>
           <div class="w-full flex items-center justify-center gap-4">
