@@ -2,7 +2,7 @@
 
 - **Ator principal**: Visitante
 
-- **Atores secundários**: Não existe
+- **Atores secundários**: N/A.
 - **Resumo**:  O caso de uso Login permite que um usuário já cadastrado acesse o sistema utilizando suas credenciais. O processo começa quando o usuário informa seu e-mail e senha na tela de login. O sistema verifica se os dados correspondem a um usuário existente e se a conta está ativa. Se as informações estiverem corretas, o sistema concede acesso e cria uma sessão. Caso contrário, o acesso é negado e uma mensagem de erro é exibida solicitando a correção dos dados.
 - **Pré-condição**:  Não deve esta autenticado.
 - **Pós-Condição**:  É autenticado no sistema.

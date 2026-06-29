@@ -1,29 +1,6 @@
 # CDU 05. Visualizar Cotação
 
 - **Ator principal**: Visitante e Usuário.
-- **Atores secundários**: n/a.
+- **Atores secundários**: N/A.
 - **Resumo**: O usuário ou visitante acessa a página principal do site e consegue visualizar a cotação do Dolar, Euro e Real.
-- **Pré-condição**: ...
-- **Pós-Condição**: ...
-
-## Fluxo Principal
-
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: |
-| 1 - ... | |
-| | 2 - ... |
-
-## Fluxo Alternativo I - ...
-
-| Ações do ator | Ações do sistema |
-| :-----------------: |:-----------------: |
-| 1.1 - ... | |
-| | 1.2 - ... |
-
-## Fluxo Alternativo II - ...
-
-| Ações do ator | Ações do sistema |
-| :-----------------: | :-----------------: |
-| 2.1 - ... | |
-| | 2.2 - ... |
 
