@@ -13,7 +13,7 @@ public record TransacoesResponseDTO(
         BigDecimal valor,
         TipoTransacao tipo,
         EstadoTransacao estado,
-        @JsonFormat(pattern = "dd/MM/yyyy HH:mm")
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
         LocalDateTime dataHora,
         CategoriaResumoDTO categoria,
         ContaResumoDTO conta,

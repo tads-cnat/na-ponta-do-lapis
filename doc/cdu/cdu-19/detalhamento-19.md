@@ -1,8 +1,8 @@
 # CDU 19. Manter Conta Financeira
 
-- **Ator principal**: Cliente
+- **Ator principal**: Cliente.
 
-- **Atores secundários**: não existe.
+- **Atores secundários**: N/A.
 - **Resumo**: O sistema exibe uma [página](https://www.figma.com/design/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=759-1244&t=U0qzQP3s9Su2RBkk-4) contendo as contas criadas até então, e as ações que podem ser feitas, caso já haja outras contas. No caso negativo, o sistema exibe uma mensagem de ausência de contas criadas e aconselha a criação de uma para poder realizar as demais ações. Uma das contas já está selecionada e serão mostrados seu nome, saldo, moeda e cor. O usuário clica no botão de “Adicionar Conta” para realizar a operação. Um formulário aparece e deve ser preenchido corretamente nos campos obrigatórios. Caso algum campo não tenha sido preenchido da forma certa, o sistema avisa que não pode criar a conta devido à falta de informações. Também as operações de atualizar e excluir conta podem ser feitas alternativamente.
 - **Pré-condição**: O cliente deve estar devidamente autenticado
 - **Pós-Condição**: Uma nova conta aparece na página de “Contas Financeiras”, possibilitando as demais ações da página.
@@ -68,6 +68,3 @@
 | :-----------------: | :-----------------: |
 | | 2.6 - O sistema ao invés de mostrar as últimas transações feitas, exibe a seguinte mensagem: "Esta conta ainda não possui transações registradas" |
 
-## Diagrama de Interação (Sequência ou Comunicação)
-
-## Diagrama de Classes de Projeto

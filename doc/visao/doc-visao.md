@@ -147,15 +147,89 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 
 ## 9. Requisitos Não-funcionais
 
-| Código |          Nome           |                                    Descrição                                    |      Categoria       | Classificação |
-| :----: | :---------------------: | :-----------------------------------------------------------------------------: | :------------------: | :-----------: |
-|  NF01  |  Linguagens/Frameworks  | Utilização de Java, Spring Boot,Typescript e Angular para desenvolver o projeto | Restrição de projeto |   Desejável   |
-|  NF02  |     Banco de Dados      |                                   PostgreSQL                                    | Restrição de projeto |  Obrigatório  |
-|  NF03  |      Criptografia       |               As senhas deve ser armazenadas usando criptografia                |      Segurança       |  Obrigatório  |
-|  NF04  |     Responsividade      |                    O sistema deve ter a interface responsiva                   |      Interface       |   Desejável   |
-|  NF05  |     Acessibilidade      |          O sistema deverá ter algumas funcionalidades de acessibilidade como HTML semântico, botões grandes e chamativo.          |     Usabilidade      |   Desejável   |
-|  NF06  | Facilidade de Navegação |      Todas as funcionalidades devem poder ser acessadas com poucos clicks       |     Usabilidade      |  Obrigatório  |
-|  RF07  |                     Seleção de tema visual                     |                                        Permitir o usuário alternar entre o tema claro e o escuro.                                        |   Baixa    |
+## Classificação por Característica de Qualidade (ISO/IEC 25010)
 
-> **Categoria** Usabilidade, confiabilidade, performance, suportabilidade, restrição de projeto, implementação, interface e requisito físico - segundo classificação [FURP+](https://pt.wikipedia.org/wiki/FURPS).
-> **Classificação**: desejável ou obrigatório.
+### Compatibilidade
+**NF01 - Linguagens/Frameworks**
+
+Grau em que um produto, sistema ou componente pode trocar informações com outros produtos, sistemas ou componentes, e/ou executar as funções necessárias, compartilhando o mesmo ambiente de hardware ou software.
+
+**Interoperabilidade** - Grau segundo o qual dois ou mais sistemas, produtos ou componentes podem trocar informações entre si e usar a informação que foi trocada.
+
+**Como certificar que o software é interoperável?**
+Testando a integração entre o back-end (Java/Spring Boot) e o front-end (TypeScript/Angular), verificando se as requisições e respostas via API (ex: JSON/REST) são trocadas e interpretadas corretamente entre as duas camadas.
+
+---
+
+### Portabilidade
+**NF02 - Banco de Dados**
+
+Grau de eficácia e eficiência com que um sistema, produto ou componente pode ser transferido de um ambiente de hardware, software ou outro ambiente operacional ou de uso para outro.
+
+**Adaptabilidade** - Grau em que um produto ou sistema pode ser adaptado ou transferido de forma eficaz e eficiente para diferentes ambientes de hardware, software ou outros ambientes operacionais ou de uso.
+
+**Como certificar que o software é adaptável?**
+Testando as operações de persistência (CRUD) diretamente em uma instância PostgreSQL, verificando se o sistema utiliza corretamente os recursos do SGBD especificado e não depende de comportamentos exclusivos de outro banco.
+
+---
+
+### Segurança
+**NF03 - Criptografia**
+
+Grau em que um produto ou sistema protege informações e dados, de modo que pessoas ou outros produtos/sistemas tenham o nível de acesso adequado aos seus tipos e níveis de autorização.
+
+**Confidencialidade** - Grau em que um produto ou sistema garante que os dados são acessíveis somente para aqueles que possuem autorização de acesso.
+
+**Como certificar que o software é confidencial?**
+Inspecionando o banco de dados para confirmar que as senhas são armazenadas como hash (ex: bcrypt, com salt) e não em texto puro, validando que mesmo com acesso direto à base não é possível recuperar a senha original.
+
+---
+
+### Flexibilidade
+**NF04 - Responsividade**
+
+Grau em que um produto pode ser adaptado a mudanças em seus requisitos, contextos de uso ou ambiente de sistema.
+
+**Adaptabilidade** - Grau em que um produto ou sistema pode ser adaptado ou transferido de forma eficaz e eficiente para diferentes ambientes de hardware, software ou outros ambientes operacionais ou de uso.
+
+**Como certificar que o software é adaptável?**
+Testando o software em diferentes dispositivos para ver se os elementos se adequam independentemente da plataforma utilizada, podendo ser Smartphone, Desktop ou Tablet.
+
+---
+
+### Capacidade de interação
+**NF05 - Acessibilidade**
+
+Grau em que um produto ou sistema pode ser usado por usuários específicos para atingir objetivos específicos com eficácia, eficiência e satisfação em um contexto de uso especificado.
+
+**Assistência ao usuário** - Grau em que um produto pode ser usado por pessoas com a mais ampla gama de características e capacidades para atingir objetivos específicos em um contexto específico de uso.
+
+**Como certificar que o software é acessível?**
+Testando a interface com ferramentas de auditoria de acessibilidade (ex: Lighthouse, WAVE, axe) e validando a estrutura semântica do HTML, o contraste de cores e o tamanho dos botões frente às diretrizes WCAG.
+
+---
+
+### Usabilidade
+**NF06 - Facilidade de Navegação**
+
+Grau em que um produto ou sistema pode ser usado por usuários específicos para atingir objetivos específicos com eficácia, eficiência e satisfação em um contexto de uso especificado.
+
+**Operabilidade** - Grau em que um produto ou sistema possui atributos que tornam possível operá-lo e controlá-lo com facilidade.
+
+**Como certificar que o software atende a esse requisito?**
+Realizando testes de usabilidade que contam o número de cliques/passos necessários para alcançar cada funcionalidade, validando que esse número permanece dentro de um limite definido (ex: no máximo 3 cliques).
+
+---
+
+### Usabilidade
+**NF07 - Seleção de Tema Visual**
+
+Grau em que o sistema permite personalizar sua interface de acordo com a preferência do usuário.
+
+**Personalização da Interface** – Grau em que o usuário pode alternar entre os temas claro e escuro, melhorando o conforto visual e a experiência de uso sem comprometer a funcionalidade do sistema.
+
+**Como certificar que o software atende a esse requisito?**
+Realizando testes para verificar se a alternância entre os temas claro e escuro funciona corretamente em todas as telas da aplicação, mantendo a legibilidade, o contraste e a consistência visual.
+
+---
+

@@ -1,7 +1,7 @@
 package com.npl.na_ponta_do_lapis.web.dto;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -15,7 +15,7 @@ public record TransacaoFaturaDTO(
     BigDecimal valor,
 
     @Schema(example = "15/01/2026")
-    LocalDateTime data,
+    LocalDate data,
 
     @Schema(example = "Alimentacao")
     String categoria

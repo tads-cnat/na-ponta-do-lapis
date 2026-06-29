@@ -52,8 +52,3 @@
 | | 4.4 - O sistema retorna uma mensagem "Dado(s) Inválido(s)" e mostra novamente o formulário com o/os campo/os inválido/os em vermelho com uma pequena mensagem em vermelho embaixo do campo. |
 | 5.4 - (retorna para o passo 3 do fluxo principal) | |
 
-> Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
-
-## Diagrama de Interação (Sequência ou Comunicação)
-
-## Diagrama de Classes de Projeto

@@ -1,8 +1,7 @@
 import { HttpClient } from '@angular/common/http';
-import ht from '@angular/common/locales/ht';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Categoria, ITransacaoRequest, ITransacoes,  } from '../../../model/ITransacoes.model';
+import { Categoria, ITransacaoFatura, ITransacaoRequest, ITransacoes,  } from '../../../model/ITransacoes.model';
 import { environment}  from '@env';
 
 @Injectable({
@@ -49,5 +48,14 @@ export class TransacoesService {
     return this.http.get<any>(`${this.BASE_URL}/marcadores/me`)
   }
 
+  public analisarFatura(arquivo: File): Observable<ITransacaoFatura[]> {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
+    return this.http.post<ITransacaoFatura[]>(`${this.BASE_URL}/faturas/analise`, formData);
+  }
+
+  public salvarFaturaEmLote(transacoes: ITransacaoFatura[], contaId: number): Observable<void> {
+    return this.http.post<void>(`${this.BASE_URL}/transacoes/lote?contaId=${contaId}`, transacoes);
+  }
 
 }

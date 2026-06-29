@@ -94,7 +94,7 @@ public class TransacaoService {
             t.setValor(dto.valor());
             
             // Adiciona a hora zerada para converter a data (YYYY-MM-DD) do DTO em LocalDateTime
-            t.setDataHora(dto.data() ); 
+            t.setDataHora(dto.data().atStartOfDay()); 
             
             t.setTipo(TipoTransacao.DESPESA); // Regra de negócio: Faturas são despesas
             t.setEstado(EstadoTransacao.REALIZADA); // Ou "PENDENTE", se preferir que o usuário dê baixa manual depois
@@ -131,6 +131,7 @@ public class TransacaoService {
         Transacao transacaoExistente = buscarPorId(id);
         // Identifica a conta onde a transação ocorreu originalmente para realizar o estorno.
         ContaFinanceira contaFinanceiraAntiga = transacaoExistente.getContaFinanceira();
+        Marcador marcadorExistente = marcadorService.buscarMarcadorPorIdObject(dto.marcadorId());
 
         String emailUsuarioLogado = getEmailUsuarioLogado();
         if (!contaFinanceiraAntiga.getUsuario().getEmail().equals(emailUsuarioLogado)){
@@ -152,6 +153,7 @@ public class TransacaoService {
         transacaoExistente.setEstado(dto.estado());
         transacaoExistente.setTipo(dto.tipo());
         transacaoExistente.setDataHora(dto.dataHora());
+        transacaoExistente.setMarcador(marcadorExistente);
 
         // Busca a nova Categoria e a nova Conta Financeira (caso o usuario tenha trocado a conta da transação).
         transacaoExistente.setCategoria(tipoCategoriaService.buscarPorId(dto.idCategoria()));
