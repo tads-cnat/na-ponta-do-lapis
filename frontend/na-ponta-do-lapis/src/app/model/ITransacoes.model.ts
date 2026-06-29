@@ -37,4 +37,11 @@ export interface ITransacaoRequest {
     marcador: Marcador | null
 }
 
+export interface ITransacaoFatura {
+  descricao: string;
+  valor: number;
+  data: string | Date;
+  categoria: string;
+}
+
 
