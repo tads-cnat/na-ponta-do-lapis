@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
-import { Usuario } from 'app/model/IUsuario.models';
-import { ITransacoes } from 'app/model/ITransacoes.model';
+import { Usuario } from '../../../model/IUsuario.models';
+import { ITransacoes } from '../../../model/ITransacoes.model';
+import { IContas } from '../../../model/IContas.models';
+import { environment } from '../../../../environments/environment.development';
 @Injectable({
   providedIn: 'root',
 })
 export class FamiliaService {
-  private BASE_URL:string = "http://localhost:8080"
+  private BASE_URL:string = environment.apiBaseUrl;
 
   constructor(private http:HttpClient){}
 
@@ -36,12 +38,17 @@ export class FamiliaService {
       map(familias => familias.find(familia => familia.nome === nomeFamilia)!)
     ); 
   }
-  vincularUsuarioAFamilia(nickname: string, familiaId: number): Observable<any> {
+  vincularUsuarioAFamilia(nickname: string, familiaId: number): Observable<Usuario> {
     return this.http.post<any>(
       `${this.BASE_URL}/familias/${familiaId}/membros`,
       null,
       { params: { username: nickname } }
     );
+  }
+  removerUsuarioDaFamilia(familiaId: number, username: string): Observable<void> {
+    return this.http.delete<any>(`${this.BASE_URL}/familias/${familiaId}/membros`, {
+      params: { username: username }
+    });
   }
   promoverParaAdmin(familiaId: number, userId: number): Observable<Usuario> {
     return this.http.patch<Usuario>(`${this.BASE_URL}/familias/${familiaId}/membros/${userId}`, {});
@@ -50,6 +57,17 @@ export class FamiliaService {
     return this.http.get<any>(`${this.BASE_URL}/usuario/username/${nickname}`);
   }
   buscarTransacoesPorFamilia(familiaId: number): Observable<ITransacoes[]> {
-    return this.http.get<ITransacoes[]>(`${this.BASE_URL}/transacoes/familia/${familiaId}`);
+    return this.http.get<ITransacoes[]>(`${this.BASE_URL}/familias/${familiaId}/transacoes`);
+  }
+  buscarMembrosPorFamilia(familiaId: number): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(`${this.BASE_URL}/familias/${familiaId}/membros`);
+  }
+  buscarContasPorFamilia(familiaId: number): Observable<IContas[]> {
+    return this.http.get<IContas[]>(`${this.BASE_URL}/familias/${familiaId}/contas`);
+  }
+  buscarTransacoesFamiliaPorDescricao(familiaId: number, descricao: string): Observable<ITransacoes[]> {
+    return this.http.get<ITransacoes[]>(`${this.BASE_URL}/familias/${familiaId}/transacoes/descricao`, {
+      params: { descricao }
+    });
   }
 }

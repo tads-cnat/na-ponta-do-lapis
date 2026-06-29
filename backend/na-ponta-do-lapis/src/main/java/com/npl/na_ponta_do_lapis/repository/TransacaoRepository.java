@@ -16,4 +16,12 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
             "AND LOWER(t.descricao) LIKE LOWER(CONCAT('%', :descricao, '%')) " +
              "ORDER BY t.dataHora DESC")
     List<Transacao> buscarPorDescricao(@Param("email") String email, @Param("descricao") String descricao);
+
+    @Query("SELECT t FROM Transacao t WHERE t.contaFinanceira.usuario.familia.id = :familiaId ORDER BY t.dataHora DESC")
+    List<Transacao> buscarTransacoesDaFamilia(@Param("familiaId") Long familiaId);
+
+    @Query("SELECT t FROM Transacao t WHERE t.contaFinanceira.usuario.familia.id = :familiaId " +
+            "AND LOWER(t.descricao) LIKE LOWER(CONCAT('%', :descricao, '%')) " +
+            "ORDER BY t.dataHora DESC")
+    List<Transacao> buscarTransacoesDaFamiliaPorDescricao(@Param("familiaId") Long familiaId, @Param("descricao") String descricao);
 }

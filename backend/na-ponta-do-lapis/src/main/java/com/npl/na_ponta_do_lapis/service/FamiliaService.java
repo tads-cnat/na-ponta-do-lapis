@@ -1,14 +1,19 @@
 package com.npl.na_ponta_do_lapis.service;
 import com.npl.na_ponta_do_lapis.entity.Familia;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 
 import com.npl.na_ponta_do_lapis.repository.FamiliaRepository;
+import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
+import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoFamiliaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraFamiliaDTO;
 import com.npl.na_ponta_do_lapis.web.exception.NaoEAdminFamiliaException;
 import com.npl.na_ponta_do_lapis.web.exception.NaoEdaMesmaFamiliaException;
 import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
@@ -24,11 +29,15 @@ import java.util.List;
 public class FamiliaService {
     private final FamiliaRepository familiaRepository;
     private final UsuarioRepository usuarioRepository;
+    private final TransacaoRepository transacaoRepository;
     private final UsuarioService usuarioService;
+    private final ContaFinanceiraRepository contaFinanceiraRepository;
 
-    public FamiliaService(FamiliaRepository familiaRepository, UsuarioRepository usuarioRepository, UsuarioService usuarioService) {
+    public FamiliaService(FamiliaRepository familiaRepository, UsuarioRepository usuarioRepository, ContaFinanceiraRepository contaFinanceiraRepository, TransacaoRepository transacaoRepository, UsuarioService usuarioService) {
         this.familiaRepository = familiaRepository;
         this.usuarioRepository = usuarioRepository;
+        this.contaFinanceiraRepository = contaFinanceiraRepository;
+        this.transacaoRepository = transacaoRepository;
         this.usuarioService = usuarioService;
     }
 
@@ -149,6 +158,24 @@ public class FamiliaService {
 
         return familia.getMembros().stream()
                 .map(UsuarioResponseDTO::new)
+                .toList();
+    }
+    public List<TransacaoFamiliaDTO> listarTransacoesDaFamilia(Long familiaId) {
+        return transacaoRepository.buscarTransacoesDaFamilia(familiaId)
+                .stream()
+                .map(TransacaoFamiliaDTO::new)
+                .toList();
+    }
+    public List<ContaFinanceiraFamiliaDTO> listarContasDaFamilia(Long familiaId) {
+        return contaFinanceiraRepository.findByFamilia(familiaId)
+                .stream()
+                .map(ContaFinanceiraFamiliaDTO::new)
+                .toList();
+    }
+    public List<TransacaoFamiliaDTO> listarTransacoesDaFamiliaPorDescricao(Long familiaId, String descricao) {
+        return transacaoRepository.buscarTransacoesDaFamiliaPorDescricao(familiaId, descricao)
+                .stream()
+                .map(TransacaoFamiliaDTO::new)
                 .toList();
     }
 }
