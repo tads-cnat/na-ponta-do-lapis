@@ -7,6 +7,7 @@ import { MetasComponent } from './pages/metas/metas.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { authGuard } from './core/guard/auth.guard';
+import { PerfilComponent } from './pages/perfil/perfil.component';
 import { FamiliaComponent } from './pages/familia/familia.component';
 
 
@@ -28,6 +29,7 @@ export const routes: Routes = [
             { path: 'transacoes', component: TransacoesComponent },
             { path: 'contas', component: ContasComponent },
             { path: 'metas', component: MetasComponent },
+            { path: 'perfil', component: PerfilComponent},
             { path: 'familia', component: FamiliaComponent },
             { path: '', redirectTo: 'transacoes', pathMatch: 'full' }
         ]

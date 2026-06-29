@@ -1,0 +1,30 @@
+<div class="w-full h-full bg-[#ffffff] rounded-[20px] p-6 flex flex-col font-sans justify-start items-start text-left m-0">
+  
+  <h3 class="text-black font-bold text-lg mb-5 tracking-tight">
+    Informações
+  </h3>
+
+  @if (usuarioLogado) {
+    <div class="flex flex-col gap-4 w-full m-0 p-0">
+      <div class="flex items-baseline min-w-0 w-full text-left justify-start m-0">
+        <span class="text-black font-bold text-sm min-w-[60px] shrink-0">Nome:</span>
+        <span class="text-slate-700 font-normal text-sm truncate pl-1" title="{{ usuarioLogado.nome }}">
+          {{ usuarioLogado.nome }}
+        </span>
+      </div>
+
+      <div class="flex items-baseline min-w-0 w-full text-left justify-start m-0">
+        <span class="text-black font-bold text-sm min-w-[60px] shrink-0">Email:</span>
+        <span class="text-slate-700 font-normal text-sm truncate pl-1" title="{{ usuarioLogado.email }}">
+          {{ usuarioLogado.email }}
+        </span>
+      </div>
+    </div>
+  } @else {
+    <div class="flex flex-col gap-4 animate-pulse w-full m-0 p-0">
+      <div class="h-4 bg-slate-100 rounded w-3/4"></div>
+      <div class="h-4 bg-slate-100 rounded w-5/6"></div>
+    </div>
+  }
+
+</div>

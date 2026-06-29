@@ -1,0 +1,38 @@
+<div class="w-[320px] h-[325px] bg-[#ffffff] rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-slate-100 p-6 flex flex-col items-center justify-center relative font-sans">
+  
+  @if (usuarioLogado) {
+    <div class="relative mb-4">
+      <img 
+        class="h-[200px] w-[200px] rounded-full border-4 border-[#f9db70] object-cover shadow-sm" 
+        [src]="usuarioLogado.fotoPerfil ? usuarioLogado.fotoPerfil : 'user_anonimo.png'" 
+        (error)="usarFotoPadrao($event)" 
+        alt="Foto de {{ usuarioLogado.nome }}">
+
+      <button 
+        pButton 
+        icon="pi pi-pencil" 
+        class="p-button-rounded p-button-text p-button-sm absolute -top-1 -right-1 bg-white text-slate-700 shadow-md hover:bg-slate-50 w-8 h-8 flex items-center justify-center rounded-full border border-slate-200 transition-colors duration-200"
+        aria-label="Editar foto de perfil">
+        <i class="pi pi-pencil text-xs"></i>
+      </button>
+    </div>
+
+    <div class="text-center">
+      <h2 class="text-[#FFC107] font-bold text-xl mb-1 tracking-wide truncate max-w-[280px]" title="@{{ usuarioLogado.username }}">
+        &#64;{{ usuarioLogado.username }}
+      </h2>
+      
+      <p class="text-slate-400 text-sm font-medium truncate max-w-[280px]" title="{{ usuarioLogado.email }}">
+        {{ usuarioLogado.email }}
+      </p>
+    </div>
+
+  } @else {
+    <div class="flex flex-col items-center animate-pulse">
+      <div class="h-24 w-24 rounded-full bg-slate-100 mb-4"></div>
+      <div class="h-6 bg-slate-100 rounded w-32 mb-2"></div>
+      <div class="h-4 bg-slate-100 rounded w-44"></div>
+    </div>
+  }
+
+</div>

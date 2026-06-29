@@ -1,0 +1,29 @@
+<div [formGroup]="perfilForm" class="w-full h-full bg-[#ffffff] rounded-[20px] p-10 flex flex-col font-sans shadow-sm justify-between">
+  
+  <h1 class="text-black font-extrabold text-3xl tracking-tight mb-8">
+    Ajustes do perfil
+  </h1>
+
+  <div class="flex-1 flex flex-col justify-between w-full mb-8">
+    
+    <app-formulario-secao 
+      titulo="Detalhes" 
+      [campos]="camposDetalhes"
+      [formGroupPai]="perfilForm"
+      class="w-full block [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2">
+    </app-formulario-secao>
+
+    <app-formulario-secao 
+      titulo="Senha" 
+      [campos]="camposSenha"
+      [formGroupPai]="perfilForm"
+      class="w-full block [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2">
+    </app-formulario-secao>
+    
+  </div>
+
+  <app-botoes-acao 
+    (cliqueSalvar)="salvarMudancas()">
+  </app-botoes-acao>
+
+</div>
