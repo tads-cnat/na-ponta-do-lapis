@@ -238,7 +238,7 @@ export class TransacoesComponent {
       tipo: null,
       estado: 'PENDENTE',
       valor: 0,
-      dataHora: new Date().toISOString(),
+      dataHora: new Date().toISOString().slice(0, 19),
       marcador: null
     };
   }
@@ -362,7 +362,7 @@ export class TransacoesComponent {
       valor: transacao.valor,
       idCategoria: transacao.categoria?.id,
       idContaFinanceira: transacao.conta?.id,
-      dataHora: new Date(transacao.dataHora),
+      dataHora: new Date(transacao.dataHora).toISOString().slice(0, 19),
       estado: transacao.estado,
       tipo: transacao.tipo,
       marcadorId: transacao.marcador ? transacao.marcador.id : null
