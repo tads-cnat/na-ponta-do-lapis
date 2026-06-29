@@ -65,14 +65,19 @@ export class TransacoesComponent {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
-        if (params.get('openDialog') === 'true') {
+        const openDialog = params.get('openDialog');
+        if (openDialog) {
           void this.router.navigate([], {
             relativeTo: this.route,
             queryParams: {},
             replaceUrl: true,
           });
 
-          this.abrirDialog();
+          if (openDialog === 'escolha') {
+            this.abrirDialogEscolha();
+          } else {
+            this.abrirDialog();
+          }
         }
       });
   }
