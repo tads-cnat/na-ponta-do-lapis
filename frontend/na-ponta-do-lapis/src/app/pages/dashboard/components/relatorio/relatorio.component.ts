@@ -1,9 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnChanges } from "@angular/core";
+import { IContas } from "../../../../model/IContas.models";
+import { ITransacoes } from "../../../../model/ITransacoes.model";
+import { ChartModule } from "primeng/chart";
 
 @Component({
   selector: 'app-relatorio',
   standalone: true,
-  imports: [],
+  imports: [ChartModule],
   /*
    * FIX 4: Nós de texto soltos ("Cabeçalho da seção", "Seletor de mês",
    * "Área do gráfico de linha (placeholder)") eram renderizados como texto
@@ -14,41 +17,143 @@ import { Component } from "@angular/core";
   template: `
     <section class="bg-white rounded-2xl p-6 shadow-sm">
 
-      <!-- Cabeçalho da seção -->
-      <div class="flex items-center justify-between mb-6">
-        <h2 class="text-lg font-bold text-gray-800">Relatório mensal</h2>
+     <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
 
-        <!-- Seletor de mês -->
-        <select class="text-sm border border-gray-200 rounded-lg px-3 py-1.5 text-gray-600 bg-white focus:outline-none cursor-pointer">
-          <option>Janeiro</option>
-          <option>Fevereiro</option>
-          <option>Março</option>
-          <option>Abril</option>
-          <option>Maio</option>
-          <option>Junho</option>
-          <option>Julho</option>
-          <option>Agosto</option>
-          <option>Setembro</option>
-          <option>Outubro</option>
-          <option>Novembro</option>
-          <option>Dezembro</option>
+    <div class="flex justify-between items-center mb-5">
+
+        <h2 class="text-2xl font-bold text-slate-900">
+            Relatório mensal
+        </h2>
+
+        <select
+            class="
+            border
+            border-slate-200
+            rounded-lg
+            px-3
+            py-2
+            text-sm
+            text-slate-600">
+
+            <option>
+                Ano atual
+            </option>
+
         </select>
-      </div>
 
-      <!-- Área do gráfico de linha (placeholder — substituir por p-chart) -->
-      <div class="relative w-full h-[260px] bg-gray-50 rounded-xl flex items-center justify-center border border-dashed border-gray-200">
-        <div class="text-center text-gray-400">
-          <p class="text-sm font-medium">[ Gráfico de linha — Relatório mensal ]</p>
-          <p class="text-xs mt-1">Eixo X: valores monetários (5k → 60k) · Eixo Y: percentual (20% → 100%)</p>
-          <p class="text-xs mt-1">
-            Tooltip de destaque:
-            <span class="font-semibold text-blue-400">64,3664.77</span>
-            no pico (~20k)
-          </p>
-        </div>
-      </div>
+    </div>
+
+
+    @if(chartData){
+
+        <p-chart
+            type="line"
+            [data]="chartData"
+            [options]="chartOptions"
+            [style]="{
+                height:'260px'
+            }"
+            class="w-full">
+
+        </p-chart>
+
+    }
+
+</div>
 
     </section>
   `,
 })
-export class RelatorioComponent {}
+export class RelatorioComponent implements OnChanges {
+
+
+    @Input() transacoes:any[] = [];
+
+    @Input() saldoAtual:number = 0;
+
+    chartData: any;
+
+    chartOptions: any;
+
+    ngOnChanges(){
+        this.gerarGrafico();
+    }
+
+    gerarGrafico(){
+        const valores = this.calcularSaldoMensal();
+
+        this.chartData = {
+            labels: [
+                'Jan','Fev','Mar',
+                'Abr','Mai','Jun',
+                'Jul', 'Ago', 'Set',
+                'Out', 'Nov', 'Dez'
+            ],
+            datasets:[
+              {
+                    label:'Saldo',
+                    data: valores,
+                    fill:true,
+                    tension:0.4,
+                    borderColor:'#3B82F6',
+                    backgroundColor: 'rgba(59,130,246,0.15)',
+                    pointRadius:4
+                }
+            ]
+        };
+        this.chartOptions = {
+            maintainAspectRatio: false,
+            plugins:{
+                legend:{ display:false }
+            },
+            scales:{
+                y:{
+                    ticks:{
+                        callback:(value:any)=>{
+                          return 'R$ '+ value.toLocaleString('pt-BR');
+                        }
+                    }
+                }
+            }
+        };
+    }
+    private calcularSaldoMensal():number[]{
+        const meses = new Array(12).fill(0);
+        /*
+          Agrupa o fluxo financeiro
+
+          Receita  +
+          Despesa -
+
+        */
+        for(const t of this.transacoes){
+          const data = new Date(t.dataHora);
+
+          const mes = data.getMonth();
+
+          if(t.tipo === 'RECEITA'){
+            meses[mes]+=t.valor;
+          }
+          if(t.tipo === 'DESPESA'){
+            meses[mes]-=t.valor;
+          }
+        }
+        /*
+          transforma fluxo em evolução
+
+          saldo inicial
+          +
+          movimentação acumulada
+
+        */
+        let saldo = this.saldoAtual;
+
+        const resultado = new Array(12);
+
+        for(let i=11;i>=0;i--){
+            resultado[i]=saldo;
+            saldo -= meses[i];
+        }
+        return resultado;
+    }
+}

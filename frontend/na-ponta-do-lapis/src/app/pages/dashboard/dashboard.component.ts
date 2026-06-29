@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
@@ -7,6 +7,12 @@ import { RelatorioComponent } from './components/relatorio/relatorio.component';
 import { GastosCategoriaComponent } from './components/gastos-categoria/gastos.component';
 import { MetasDashboardComponent } from './components/metas/metas.component';
 import { IContas } from '../../model/IContas.models';
+import { ITransacoes } from '../../model/ITransacoes.model';
+import { MetaRequest, MetaResponse } from '../../model/IMetas.models';
+import { ContaFinanceiraService } from '../contas/service/contas.service';
+import { MessageService } from 'primeng/api';
+import { MetasService } from '../metas/services/metas.service';
+import { TransacoesService } from '../transacoes/service/transacoes.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -16,7 +22,7 @@ import { IContas } from '../../model/IContas.models';
     CardsResumoComponent,
     RelatorioComponent,
     GastosCategoriaComponent,
-    MetasDashboardComponent,
+    MetasDashboardComponent
   ],
   /*
    * FIX 1: <main> substituído por <div class="flex flex-col gap-6">.
@@ -45,35 +51,129 @@ import { IContas } from '../../model/IContas.models';
       <app-cards-resumo
         class="block w-full"
         [contas]="contas"
+        [transacoes]="transacoes"
         >
         </app-cards-resumo>
 
       <!-- Seção 2: Relatório mensal (largura total) -->
-      <app-relatorio class="block w-full"></app-relatorio>
+      <app-relatorio
+      class="block w-full"
+      [transacoes]="transacoes"
+      [saldoAtual]="saldoAtual"
+      >
+      </app-relatorio>
 
       <!-- Seção 3: Gastos por categoria + Metas (grid 2 colunas)
            FIX 3: Removido h-[320px] — a altura fixa era insuficiente para 5 metas
            com gap-5 (~440px necessários vs 320px disponíveis). Conteúdo auto-dimensiona. -->
       <section class="grid grid-cols-2 gap-4">
-        <app-gastos-categoria class="block"></app-gastos-categoria>
+
+        <app-gastos-categoria
+        class="block"
+        [transacoes]="transacoes"
+        >
+        </app-gastos-categoria>
+
         <app-metas-dashboard
           class="block"
+          [metas]="metas"
           (onIrParaMetas)="irParaMetas()">
         </app-metas-dashboard>
+
       </section>
 
     </div>
   `,
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit {
 
   constructor(private router: Router) {
 
   }
 
-  contas: IContas[] = []
+  contaService = inject(ContaFinanceiraService)
+
+  transacaoService = inject(TransacoesService)
+
+  private messageService = inject(MessageService)
+
+  private cdr = inject(ChangeDetectorRef);
+
+  private metaService = inject(MetasService)
+
+  contas: IContas[] = [];
+
+  transacoes: ITransacoes[] = [];
+
+  saldoAtual: number = 0;
+
+  metas: MetaResponse[] = [];
+
+  ngOnInit(): void {
+    this.buscarContas();
+    this.buscarTransacoes();
+    this.buscarMetas();
+  }
+
+  buscarContas(): void {
+    this.contaService.listarContasUsuario().subscribe({
+      next: (res: IContas[]) => {
+        this.contas = res;
+        console.log(this.contas);
+        this.saldoAtual = this.contas.reduce( (total, conta) =>
+                            total + conta.saldo, 0);
+      },
+      error: (err:Error) => {
+        console.log(err)
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Erro as carregar Dados da conta',
+          detail: '',
+          life: 2000
+        });
+        this.cdr.detectChanges();
+      }
+    })
+  }
+
+  public buscarTransacoes(): void {
+    this.transacaoService.listarTransacoes().subscribe({
+      next: (res: ITransacoes[]) => {
+        this.transacoes = res;
+        console.log(this.transacoes);
+      },
+      error: (err: Error) => {
+          console.log(err)
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'Erro as carregar Dados das transações',
+            detail: '',
+            life: 2000
+          });
+          this.cdr.detectChanges();
+      }
+    });
+  }
 
   irParaMetas(): void {
     this.router.navigate(['/app/metas']);
+  }
+  buscarMetas(): void {
+
+    this.metaService.listarMetas().subscribe({
+      next: (res: MetaResponse[]) => {
+        this.metas = res;
+        console.log("QTd de metas:", res.length);
+      },
+      error: (err: Error) => {
+        console.error(err);
+        this.messageService.add({
+          severity:'warn',
+          summary:'Erro ao carregar metas',
+          detail:'',
+          life:2000
+        });
+      }
+    });
   }
 }

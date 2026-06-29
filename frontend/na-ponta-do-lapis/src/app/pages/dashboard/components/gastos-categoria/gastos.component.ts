@@ -1,4 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
+import { ITransacoes } from "../../../../model/ITransacoes.model";
 
 @Component({
   selector: 'app-gastos-categoria',
@@ -51,5 +52,5 @@ import { Component } from "@angular/core";
 })
 
 export class GastosCategoriaComponent {
-
+  @Input() transacoes: ITransacoes[] = [];
 }
