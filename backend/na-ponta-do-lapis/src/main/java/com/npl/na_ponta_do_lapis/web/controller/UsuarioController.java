@@ -1,18 +1,31 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
-import com.npl.na_ponta_do_lapis.entity.Usuario;
-import com.npl.na_ponta_do_lapis.service.UsuarioService;
-import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
-import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
+import com.npl.na_ponta_do_lapis.service.UsuarioService;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/usuario")
@@ -20,9 +33,11 @@ import java.util.List;
 public class UsuarioController {
 
     private UsuarioService usuarioService;
+    private JwtUtil jwtUtil;
 
-    public UsuarioController(UsuarioService usuarioService){
+    public UsuarioController(UsuarioService usuarioService, JwtUtil jwtUtil){
         this.usuarioService = usuarioService;
+        this.jwtUtil = jwtUtil;
     }
 
     @Operation(summary = "Listar Usuários")
@@ -75,10 +90,23 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Atualizar Usuário Logado (Passe apenas os campos que for atualizar)")
-    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')") // IGUAL AO GET
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @PatchMapping("/me")
-    public ResponseEntity<UsuarioResponseDTO> atualizarUsuarioLogado(@RequestBody @Valid UsuarioUpdateDTO usuarioDTO){
+    public ResponseEntity<?> atualizarUsuarioLogado(@RequestBody @Valid UsuarioUpdateDTO usuarioDTO) {
         Usuario usuarioAtualizado = usuarioService.atualizarUsuarioLogado(usuarioDTO);
+
+        if (usuarioDTO.email() != null && !usuarioDTO.email().trim().isEmpty()) {
+            String novoToken = jwtUtil.generateToken(
+                usuarioAtualizado,
+                new Date(),
+                usuarioAtualizado.getEmail()
+            );
+            return ResponseEntity.status(HttpStatus.OK).body(Map.of(
+                "usuario", new UsuarioResponseDTO(usuarioAtualizado),
+                "token", novoToken
+            ));
+        }
+
         return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponseDTO(usuarioAtualizado));
     }
 
