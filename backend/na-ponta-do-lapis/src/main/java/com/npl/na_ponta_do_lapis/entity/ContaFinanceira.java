@@ -34,7 +34,7 @@ public class ContaFinanceira {
     @NotNull(message = "O nome é obrigatório")
     @NotBlank(message = "O nome não pode ser vazio")
     @Column(name = "nome", length = 100, nullable = false)
-    @Size(min = 3)
+    @Size(min = 1)
     private String nome;
 
     @NotNull(message = "O saldo é obrigatório")

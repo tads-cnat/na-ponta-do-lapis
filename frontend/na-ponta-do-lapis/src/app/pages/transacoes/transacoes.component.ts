@@ -44,7 +44,7 @@ export class TransacoesComponent {
       dataHora: [[null, Validators.required]],
       estado: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      marcador: [``, [Validators.required]]
+      marcadorId: [null, [Validators.required]]
     })
   }
 
@@ -179,13 +179,14 @@ export class TransacoesComponent {
   toggle(event: any) {
     this.op.toggle(event);
   }
-  selecionarMarcador(marcador: MarcadorRequest) {
+  selecionarMarcador(marcador: Marcador) {
     this.marcadorSelecionado = marcador
     this.formTransacao.patchValue({
-      marcador: marcador
+      marcadorId: marcador.id
     })
+    console.log("Marcador selecionado:", marcador)
     this.op.hide();
-    this.formTransacao.get('marcador')?.markAsDirty();
+    this.formTransacao.get('marcadorId')?.markAsDirty();
   }
 
   public listarMarcadores() {
@@ -240,7 +241,7 @@ export class TransacoesComponent {
       dataHora: null,
       estado: 'PENDENTE',
       tipo: '',
-      marcador: null,
+      marcadorId: null,
     });
     this.novaTransacao = this.resetForm();
     this.exibirDialog = true;
@@ -259,7 +260,7 @@ export class TransacoesComponent {
       dataHora: new Date(transacao.dataHora),
       estado: transacao.estado,
       tipo: transacao.tipo,
-      marcador: transacao.marcador
+      marcadorId: transacao.marcador ? transacao.marcador.id : null
     });
 
     this.marcadorSelecionado = transacao.marcador;
