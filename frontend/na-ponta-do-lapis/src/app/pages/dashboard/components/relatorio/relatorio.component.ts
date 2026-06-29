@@ -117,43 +117,32 @@ export class RelatorioComponent implements OnChanges {
             }
         };
     }
-    private calcularSaldoMensal():number[]{
-        const meses = new Array(12).fill(0);
-        /*
-          Agrupa o fluxo financeiro
+    private calcularSaldoMensal(): number[] {
+      const movimentacoes = new Array(12).fill(0);
 
-          Receita  +
-          Despesa -
+      for(const t of this.transacoes){
+        const data = new Date(t.dataHora);
+        const mes = data.getMonth();
 
-        */
-        for(const t of this.transacoes){
-          const data = new Date(t.dataHora);
-
-          const mes = data.getMonth();
-
-          if(t.tipo === 'RECEITA'){
-            meses[mes]+=t.valor;
-          }
-          if(t.tipo === 'DESPESA'){
-            meses[mes]-=t.valor;
-          }
+        if(t.tipo === 'RECEITA'){
+          movimentacoes[mes] += t.valor;
         }
-        /*
-          transforma fluxo em evolução
 
-          saldo inicial
-          +
-          movimentação acumulada
-
-        */
-        let saldo = this.saldoAtual;
-
-        const resultado = new Array(12);
-
-        for(let i=11;i>=0;i--){
-            resultado[i]=saldo;
-            saldo -= meses[i];
+        if(t.tipo === 'DESPESA'){
+          movimentacoes[mes] -= t.valor;
         }
-        return resultado;
+
+      }
+
+      const resultado = new Array(12);
+
+      let saldo = 0;
+
+      for(let i = 0; i < 12; i++){
+        saldo += movimentacoes[i];
+        resultado[i] = saldo;
+      }
+
+      return resultado;
     }
 }

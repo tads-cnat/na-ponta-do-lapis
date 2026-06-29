@@ -1,11 +1,11 @@
-import { MetaItemComponent } from './../../../metas/components/meta-item/meta-item.component';
 import { Component, Output, EventEmitter, Input } from "@angular/core";
 import { PrimeNGModuleModule } from './../../../../shared/primeNg.module';
 import { MetaResponse } from '../../../../model/IMetas.models';
+import { MetaItemDashboardComponent } from './meta-item-dashboard.component';
 
 @Component({
   selector: 'app-metas-dashboard',
-  imports: [PrimeNGModuleModule, MetaItemComponent],
+  imports: [PrimeNGModuleModule, MetaItemDashboardComponent],
   template: `
     <div class="bg-white rounded-2xl p-6 shadow-sm">
 
@@ -23,10 +23,10 @@ import { MetaResponse } from '../../../../model/IMetas.models';
     <ul >
         @for(meta of metas.slice(0, 5); track meta.id) {
             <li class="mb-5">
-                <app-meta-item
+                <app-meta-item-dashboard
                 [meta]="meta"
                 >
-                </app-meta-item>
+                </app-meta-item-dashboard>
             </li>
         } @empty {
             <div class="text-center text-gray-500">
@@ -43,4 +43,5 @@ import { MetaResponse } from '../../../../model/IMetas.models';
 export class MetasDashboardComponent {
   @Input() metas: MetaResponse[] = [];
   @Output() onIrParaMetas = new EventEmitter<void>();
+
 }
