@@ -224,6 +224,11 @@ export class FamiliaComponent {
       return;
     }
     this.familiaService.buscarUsuariosPorNickname(nickname).subscribe(user => {
+      if (user === null || user === undefined) {
+        this.message = "Usuário não encontrado.";
+        this.cdr.detectChanges();
+        return;
+      }
       const userId = (user as any).id;
       if (this.familiaId && userId) {
         this.familiaService.usuarioTemFamilia(nickname).subscribe(temFamilia => {

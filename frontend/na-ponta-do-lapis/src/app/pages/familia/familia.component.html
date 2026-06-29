@@ -210,12 +210,12 @@
   </div>
   @if (modalAdicionarAberto) {
     <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
-      <p-card class="bg-white p-4 w-96">
+      <p-card class="bg-white w-100">
           <div class="w-full flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold">Adicionar Membro</h2>
             <i class="pi pi-times cursor-pointer" (click)="handleModalAdicionarAberto()"></i>
           </div>
-          <div class="w-full flex flex-col items-start justify-center mb-4">
+          <div class="w-full flex flex-col items-start justify-center mb-4 mt-8">
             <input pInputText [(ngModel)]="valueMembro" placeholder="Digite o nickname do membro" class="w-full" />
             @if (submitted && message) {
               <p class="text-red-500 text-sm mt-1 ml-1">{{message}}</p>
@@ -229,12 +229,12 @@
   }
   @if (modalRemoverAberto) {
     <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
-      <p-card class="bg-white p-4 w-96">
+      <p-card class="bg-white w-100">
           <div class="w-full flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold">Remover Membro</h2>
             <i class="pi pi-times cursor-pointer" (click)="handleModalRemoverAberto()"></i>
           </div>
-          <div class="w-full flex flex-col items-start justify-center mb-4">
+          <div class="w-full flex flex-col items-start justify-center mb-4 mt-8">
             <input pInputText [(ngModel)]="valueMembro" placeholder="Digite o nickname do membro" class="w-full" />
             @if (submitted && message) {
               <p class="text-red-500 text-sm mt-1 ml-1">{{message}}</p>
