@@ -272,7 +272,6 @@ export class FamiliaComponent {
     });
   }
   private resetarFormulario() {
-    this.nomeFamilia = "";
     this.foto = "";
     this.convidados = [];
     this.submitted = false;
