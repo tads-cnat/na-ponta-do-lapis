@@ -1,0 +1,338 @@
+@if(temFamilia) {
+  <div class="w-full flex flex-col gap-6 p-4 overflow-y-auto h-[calc(100vh-64px)]">
+    <div class="flex flex-row justify-center items-center gap-24 flex-wrap">
+      <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
+          <p-card header="Saldo inicial" styleClass="w-full relative">
+              <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+              
+              <div class="flex flex-col gap-2 mt-1 pr-16"> 
+                  <div>
+                      <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
+                      <span class="font-bold text-3xl tracking-tight text-gray-800">R$ 4.010,00</span>
+                  </div> 
+                  
+                  <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
+                      <span class="flex items-center gap-1">
+                          <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5"> 
+                          <span class="text-red-500 font-semibold">4.3%</span>
+                      </span>
+                      <span class="text-gray-400">menos que abril</span>
+                  </div>
+              </div>
+          </p-card>
+      </div>
+
+      <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
+          <p-card header="Gastos" styleClass="w-full relative">
+              <img src="Icon_Gastos.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+              
+              <div class="flex flex-col gap-2 mt-1 pr-16"> 
+                  <div>
+                      <p class="text-xs text-gray-500 mb-0.5">Referente aos gastos do mês</p>
+                      <span class="font-bold text-3xl tracking-tight text-gray-800">R$ 860,00</span>
+                  </div> 
+                  
+                  <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
+                      <span class="flex items-center gap-1">
+                          <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5"> 
+                          <span class="text-red-500 font-semibold">1.3%</span>
+                      </span>
+                      <span class="text-gray-400">menos que abril</span>
+                  </div>
+              </div>
+          </p-card>
+      </div>
+
+      <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
+          <p-card header="Saldo atual" styleClass="w-full relative">
+              <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+              
+              <div class="flex flex-col gap-2 mt-1 pr-16"> 
+                  <div>
+                      <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
+                      <span class="font-bold text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
+                  </div>
+                  
+                  <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
+                      <span class="flex items-center gap-1">
+                          <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5"> 
+                          <span class="text-green-500 font-semibold">2.1%</span>
+                      </span>
+                      <span class="text-gray-400">mais que ontem</span>
+                  </div>
+              </div>
+          </p-card>
+      </div>     
+    </div>
+    <div class="w-full h-full">
+        <div class="w-full">
+          <p-toast />
+
+          <div class="flex items-start justify-center px-2 md:px-6 pt-4 sm:pt-8 mt-4 sm:mt-6">
+
+            <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
+
+              <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
+                <h1 class="text-amber-400 font-bold text-2xl text-center xl:text-left whitespace-nowrap">
+                  Movimentações
+                </h1>
+
+                <div class="flex flex-wrap xl:flex-nowrap gap-2 justify-center xl:justify-end items-center">
+                  <p-button styleClass="font-bold rounded-xl! border-[#e2e4e4]! bg-[#fafafa]! text-slate-700! text-sm px-3 py-1">
+                    <i class="pi pi-print mr-1"></i> Imprimir
+                  </p-button>
+
+                  <p-floatlabel class="w-full sm:w-auto mt-2 sm:mt-0">
+                    <p-iconfield>
+                      <p-inputicon class="pi pi-search" />
+                      <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)"
+                        id="buscar" autocomplete="on" class="w-full sm:w-auto rounded-xl" />
+                    </p-iconfield>
+                    <label for="buscar">Buscar</label>
+                  </p-floatlabel>
+                </div>
+              </div>
+              <p-table [value]="transacoesDados" [paginator]="true" [rows]="5"
+              [scrollable]="true" scrollDirection="horizontal" responsiveLayout="scroll"
+              styleClass="p-datatable-sm w-full" [scrollHeight]="'180px'">
+
+                <ng-template pTemplate="header">
+                  <tr>
+                    <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]">
+                      <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                    </th>
+                    <th class="bg-[#F8F8FC]! text-slate-700! min-w-[180px]">Descrição</th>
+                    <th class="bg-[#F8F8FC]! text-slate-700! min-w-[120px]">Valor</th>
+                    <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Membro</th>
+                    <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Data</th>
+                    <th class="bg-[#F8F8FC]! text-slate-700! min-w-[100px]">Tipo</th>
+                    <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Estado</th>
+                    <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Categoria</th>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="body" let-t>
+                  <tr>
+                    <td>
+                      <p-tableCheckbox [value]="t" />
+                    </td>
+                    <td class="whitespace-nowrap">
+                      <span class="pi pi-bookmark-fill mr-2" [style.color]="t.corMarcador"></span>
+                      {{ t.descricao }}
+                    </td>
+                    <td class="font-bold whitespace-nowrap"
+                      [ngClass]="t.tipo === 'RECEITA' ? 'text-green-600' : 'text-red-500'">
+                      {{ t.valor | currency: 'BRL' }}
+                    </td>
+                    <td class="whitespace-nowrap">{{ t.membroUsername || t.membroNome }}</td>
+                    <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                      <p-tag [value]="t.tipo" [style]="{
+                        'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340',
+                        'color': '#ffffff'
+                      }"></p-tag>
+                    </td>
+                    <td>
+                      <p-tag [value]="t.estado" [style]="{
+                        'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1',
+                        'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74'
+                      }"></p-tag>
+                    </td>
+                    <td class="whitespace-nowrap">{{ t.categoria }}</td>
+                  </tr>
+                </ng-template>
+
+                <ng-template pTemplate="paginatorleft"></ng-template>
+              </p-table>
+            </p-card>
+        </div>
+        </div>
+    </div>
+  <div class="w-full flex flex-row justify-center items-center gap-24 flex-wrap pb-8">
+      <p-card class="w-110 min-h-30 hover:scale-105 transition-transform duration-300">
+        <div class="flex flex-col items-start gap-2">
+          <div class="w-full h-full flex flex-row items-center text gap-4">
+            <h1 class="text-[#AA7FFF80] font-bold text-[14px] whitespace-nowrap">
+                Família {{ nomeFamilia }}
+            </h1>
+            <div class="w-full flex flex-row justify-end gap-4">
+                <button (click)="handleModalAdicionarAberto()" class="cursor-pointer hover:text-green-500 transition-colors duration-300">
+                  <i class="pi pi-plus"></i>
+                </button>
+                <button (click)="handleModalRemoverAberto()" class="cursor-pointer hover:text-red-500 transition-colors duration-300">
+                  <i class="pi pi-minus"></i>
+                </button>
+            </div>
+          </div>
+          <div class="flex flex-row justify-center items-center gap-4">
+            <div class="flex flex-wrap justify-start items-start gap-6 w-full max-h-40 overflow-y-auto">
+              @for (membro of membros; track $index) {
+                <div class="flex flex-col items-center gap-2 w-16">
+                  <div class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center shrink-0">
+                    @if (membro.fotoPerfil) {
+                      <img class="h-12 w-12 rounded-full object-cover" [src]="membro.fotoPerfil" alt="Foto do perfil" />
+                    } @else {
+                      <span class="pi pi-user"></span>
+                    }
+                  </div>
+                  <span class="text-xs font-medium text-center wrap-break-words w-full leading-tight">{{ membro.username }}</span>
+                </div>
+              }
+            </div>
+          </div>
+        </div>
+      </p-card>
+      <p-card class="w-90 hover:scale-105 transition-transform duration-300 max-h-60 overflow-hidden">
+        <div class="flex flex-col justify-start items-start gap-2">
+          <h1 class="text-amber-400 font-bold text-lg whitespace-nowrap">
+            Ranking Gastos
+          </h1>
+          <div class="w-full max-h-48 overflow-y-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-[#F8F8FC]">
+                    <th class="text-slate-700! text-sm px-4 py-2 text-left">Membro</th>
+                    <th class="text-slate-700! text-sm px-4 py-2 text-left">Gasto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (membro of membros; track $index) {
+                    <tr class="border-t border-gray-200">
+                      <td class="text-sm px-4 py-2">{{ membro.username }}</td>
+                      <td class="text-sm px-4 py-2">{{ membro.id| currency: 'BRL' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+          </div>
+        </div>
+      </p-card>
+  </div>
+  @if (modalAdicionarAberto) {
+    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
+      <p-card class="bg-white w-100">
+          <div class="w-full flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">Adicionar Membro</h2>
+            <i class="pi pi-times cursor-pointer" (click)="handleModalAdicionarAberto()"></i>
+          </div>
+          <div class="w-full flex flex-col items-start justify-center mb-4 mt-8">
+            <input pInputText [(ngModel)]="valueMembro" placeholder="Digite o nickname do membro" class="w-full" />
+            @if (submitted && message) {
+              <p class="text-red-500 text-sm mt-1 ml-1">{{message}}</p>
+            }
+          </div>
+          <div class="w-full flex items-center justify-center gap-4">
+            <p-button label="Adicionar" (click)="adicionarMembro(valueMembro)" [style]="{'border-radius': '10px', background: '#AA7FFF', 'border-color': '#AA7FFF'}"></p-button>
+          </div>
+      </p-card>
+    </div>
+  }
+  @if (modalRemoverAberto) {
+    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
+      <p-card class="bg-white w-100">
+          <div class="w-full flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold">Remover Membro</h2>
+            <i class="pi pi-times cursor-pointer" (click)="handleModalRemoverAberto()"></i>
+          </div>
+          <div class="w-full flex flex-col items-start justify-center mb-4 mt-8">
+            <input pInputText [(ngModel)]="valueMembro" placeholder="Digite o nickname do membro" class="w-full" />
+            @if (submitted && message) {
+              <p class="text-red-500 text-sm mt-1 ml-1">{{message}}</p>
+            }
+          </div>
+          <div class="w-full flex items-center justify-center gap-4">
+            <p-button label="Remover" (click)="removerMembro(valueMembro)" [style]="{'border-radius': '10px', background: '#FEE2E2', 'border-color': '#FEE2E2', 'color': '#EF4444'}"></p-button>
+          </div>
+      </p-card>
+    </div>
+  }
+</div>
+
+} @else {
+  <div class="w-full h-full flex flex-col items-center rounded-lg py-6">
+    <div id="forms-familia" style="background-color: #f8f8f8"
+      class="grid grid-cols-1 w-240 max-w-240px h-160 mx-auto rounded-4xl">
+      <div>
+        <div id="input-familia" class="w-full h-20 rounded-t-4xl bg-white">
+          <div class="flex w-full h-full items-center px-8 gap-4">
+            <input [(ngModel)]="nomeFamilia"
+              class="flex-1 h-full outline-none bg-transparent text-gray-500 text-lg font-bold border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300"
+              placeholder="Digite o nome da família" />
+            <div (click)="resetNome()"
+              class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer shrink-0">
+              <span class="pi pi-times"></span>
+            </div>
+          </div>
+        </div>
+        @if (submitted && !nomeFamilia.trim()) {
+          <p class="text-red-500 text-sm mt-1 ml-8">O nome da família é obrigatório.</p>
+        }
+      </div>
+
+      <div id="actions-familia" class="flex flex-col items-center gap-16 w-full h-full -mt-4">
+        <div class="convidar-familia w-[90%] h-30 bg-white rounded-2xl mx-auto p-2 flex flex-col justify-center gap-2">
+          <label class="text-md">Convidar pelo nickname</label>
+          <div class="flex justify-start items-center gap-6">
+            <div class="relative">
+              <input class="w-190 h-12" type="text" pInputText [(ngModel)]="value" placeholder="Escreva o nickname..." />
+              <button (click)="limparNomeConvidado()" class="absolute right-3 top-3.5">
+                <span class="pi pi-times"></span>
+              </button>
+            </div>
+            <p-button (click)="adicionarNaListaConvidados(value)" class="right-3"
+              [style]="{'border-radius':'50px', background: '#10B981', 'border-color': '#10B981'}">
+              <app-icon name="plus" class="w-5 h-5" />
+            </p-button>
+          </div>
+          <div class="h-6 w-150">
+            @if (message) {
+              <p class="text-red-500 text-sm">{{ message }}</p>
+            } @else {
+              <p class="text-sm text-gray-500">Convide alguém para a família!</p>
+            }
+          </div>
+        </div>
+
+        <div class="convidados-familia w-[90%] bg-white rounded-2xl mx-auto p-4 flex flex-col justify-center gap-4">
+          <div class="flex justify-end">
+            <button (click)="limparConvidados()">
+              <span class="pi pi-times cursor-pointer"></span>
+            </button>
+          </div>
+          <div class="grid grid-cols-2 min-h-15 max-h-40 justify-center items-center overflow-y-auto gap-2">
+            @if (convidados.length === 0) {
+              <p class="text-sm text-gray-500 col-span-2 text-center">Nenhum convidado adicionado ainda.</p>
+            }
+            @for (convidado of convidados; track convidado) {
+              <div class="flex items-center gap-4 px-4 py-2 bg-gray-100 rounded-lg">
+                <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                  <span>
+                    @if (convidado[1].fotoPerfil) {
+                      <img class="h-8 w-8 rounded-full object-cover" [src]="convidado[1].fotoPerfil" alt="Foto do perfil" />
+                    } @else {
+                      <span class="pi pi-user"></span>
+                    }
+                  </span>
+                </div>
+                <span class="text-gray-700">{{ convidado[0] }}</span>
+                <div class="ml-auto">
+                  <button (click)="removerConvidado(convidado[0])">
+                    <span class="pi pi-times cursor-pointer"></span>
+                  </button>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+    <p-button label="Criar Família" (click)="criarFamilia()" [style]="{
+      'border-radius': '10px',
+      width: '220px',
+      height: '50px',
+      background: '#10B981',
+      'border-color': '#10B981',
+      'margin-top': '16px'
+    }" />
+  </div>
+}

@@ -82,3 +82,8 @@ yarn-debug.log*
 
 # Arquivos de rascunho do SQLTools
 *.session.sql
+
+# Environment variables
+.env
+env
+venv/

@@ -8,6 +8,7 @@ import { MainLayoutComponent } from './layout/main-layout/main-layout.component'
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { authGuard } from './core/guard/auth.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
+import { FamiliaComponent } from './pages/familia/familia.component';
 
 
 export const routes: Routes = [
@@ -18,7 +19,7 @@ export const routes: Routes = [
     },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
-    
+
     // Área interna protegida
     {
         path: 'app',
@@ -29,7 +30,8 @@ export const routes: Routes = [
             { path: 'contas', component: ContasComponent },
             { path: 'metas', component: MetasComponent },
             { path: 'perfil', component: PerfilComponent},
-            { path: '', redirectTo: 'transacoes', pathMatch: 'full' },
+            { path: 'familia', component: FamiliaComponent },
+            { path: '', redirectTo: 'transacoes', pathMatch: 'full' }
         ]
     },
     { path: '**', redirectTo: '' }

@@ -1,13 +1,13 @@
 <div class="w-full">
     <app-card-saldo></app-card-saldo>
-    
+
     <div class="w-full">
         <p-toast />
-        
+
         <div class="flex min-h-[calc(100vh-150px)] items-start justify-center px-2 md:px-6 pt-4 sm:pt-8 mt-4 sm:mt-6">
-            
+
             <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
-                
+
                 <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
 
                     <h1 class="text-amber-400 font-bold text-2xl text-center xl:text-left whitespace-nowrap">
@@ -15,38 +15,41 @@
                     </h1>
 
                     <div class="flex flex-wrap xl:flex-nowrap gap-2 justify-center xl:justify-end items-center">
-                        <p-button styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm sm:text-base px-2 py-1"
-                            (onClick)="abrirDialog()">
+                        <p-button
+                            styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm sm:text-base px-2 py-1"
+                            (onClick)="abrirDialogEscolha()">
                             <i class="pi pi-plus mr-1"></i> Adicionar Transação
                         </p-button>
-                        
-                        <p-button [disabled]="false" styleClass="text-[#6b7280]! !bg-[#fafafa] !text-slate-700 !border-[#e2e4e4] rounded-xl! text-sm sm:text-base px-2 py-1">
+
+                        <p-button [disabled]="false"
+                            styleClass="text-[#6b7280]! !bg-[#fafafa] !text-slate-700 !border-[#e2e4e4] rounded-xl! text-sm sm:text-base px-2 py-1">
                             <i class="pi pi-sliders-h mr-1" pButtonIcon></i> Filtrar
                         </p-button>
-                        
+
                         <p-button
                             styleClass="text-[#1976d2]! !bg-[#fafafa] !text-slate-700 !border-[#1976d2] rounded-xl! text-sm sm:text-base px-2 py-1"
-                            (onClick)="abrirDialog()">
+                            (onClick)="abrirDialogMarcador()">
                             <i class="pi pi-bookmark-fill mr-1" pButtonIcon></i> Marcador
                         </p-button>
-                        
+
                         <p-floatlabel class="w-full sm:w-auto mt-2 sm:mt-0">
                             <p-iconfield>
                                 <p-inputicon class="pi pi-search" />
-                                <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)" id="buscar" autocomplete="on" class="w-full sm:w-auto rounded-xl" />
+                                <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)"
+                                    id="buscar" autocomplete="on" class="w-full sm:w-auto rounded-xl" />
                             </p-iconfield>
                             <label for="buscar">Buscar</label>
                         </p-floatlabel>
                     </div>
                 </div>
 
-                <p-table [value]="transacoesDados" [paginator]="true" [rows]="5"
-                    [scrollable]="true" scrollDirection="horizontal" responsiveLayout="scroll"
-                    styleClass="p-datatable-sm w-full">
-                    
+                <p-table [value]="transacoesDados" [paginator]="true" [rows]="5" [scrollable]="true"
+                    scrollDirection="horizontal" responsiveLayout="scroll" styleClass="p-datatable-sm w-full">
+
                     <ng-template pTemplate="header">
                         <tr>
-                            <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]"><p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]">
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Marcador</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[180px]">Descrição</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Categoria</th>
@@ -58,15 +61,19 @@
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Ações</th>
                         </tr>
                     </ng-template>
-                    
+
                     <ng-template pTemplate="body" let-t>
                         <tr>
                             <td>
                                 <p-tableCheckbox [value]="t" />
                             </td>
                             <td class="whitespace-nowrap">
+                                @if (t.marcador) {
                                 <span class="pi pi-bookmark-fill mr-2" [style.color]="t.marcador.cor"></span>
-                                <span>{{t.marcador.nome }}</span>
+                                <span>{{ t.marcador.nome }}</span>
+                                } @else {
+                                <span class="text-gray-400 italic text-sm">Sem marcador</span>
+                                }
                             </td>
                             <td class="whitespace-nowrap">{{ t.descricao }}</td>
                             <td class="whitespace-nowrap">{{ t.categoria.nome }}</td>
@@ -84,7 +91,7 @@
                                 'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74' 
                                 }"></p-tag>
                             </td>
-                            <td class="font-bold">{{ t.valor | currency: 'BRL'}}</td>
+                            <td class="">{{ t.valor | currency: 'BRL'}}</td>
                             <td>
                                 <div class="flex gap-2">
                                     <p-button icon="pi pi-trash"
@@ -104,20 +111,22 @@
     </div>
 
     <form [formGroup]="formTransacao">
-        <p-dialog header="Transação" [(visible)]="exibirDialog" [modal]="true" 
+        <p-dialog header="Transação" [(visible)]="exibirDialog" [modal]="true"
             [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '50vw' }">
 
             <div class="flex flex-col items-center justify-center gap-2 mt-2">
+
+                <input type="hidden" formControlName="marcadorId">
                 <div class="relative inline-flex cursor-pointer" (click)="toggle($event)">
-                    <i class="pi pi-bookmark-fill text-4xl transition-colors duration-200" 
-                       [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
+                    <i class="pi pi-bookmark-fill text-4xl transition-colors duration-200"
+                        [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
                     </i>
                 </div>
-                
+
                 <button pButton type="button"
                     [label]="marcadorSelecionado ? marcadorSelecionado.nome : 'Selecionar Marcador'"
                     (click)="toggle($event)" class="p-button-link p-0 font-medium"></button>
-                
+
                 <p-popover #op>
                     <div class="flex flex-col gap-4">
                         <div>
@@ -158,7 +167,7 @@
                             formControlName="idContaFinanceira" placeholder="Selecione" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
                     </div>
-                    
+
                     <div class="flex flex-col gap-1">
                         <label class="font-bold text-sm">Categoria</label>
                         <p-select [options]="opcoesCategoria" optionLabel="nome" optionValue="id"
@@ -177,23 +186,145 @@
                     <div class="flex flex-col gap-1">
                         <label class="font-bold text-sm">Estado</label>
                         <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
-                            optionValue="value" placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
+                            optionValue="value" placeholder="Selecione" [appendTo]="'body'"
+                            styleClass="w-full"></p-select>
                     </div>
 
                     <div class="flex flex-col gap-1">
                         <label class="font-bold text-sm">Tipo</label>
-                        <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label"
-                            optionValue="value" placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
+                        <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label" optionValue="value"
+                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
                 </div>
             </div>
 
             <ng-template pTemplate="footer">
                 <div class="flex justify-center w-full mb-2 mt-4">
-                    <p-button styleClass="w-full sm:w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!" label="Salvar"
-                        [disabled]="formTransacao.invalid" severity="success" (onClick)="salvar()"></p-button>
+                    <p-button styleClass="w-full sm:w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!"
+                        label="Salvar" [disabled]="formTransacao.invalid" severity="success"
+                        (onClick)="salvar()"></p-button>
                 </div>
             </ng-template>
         </p-dialog>
     </form>
+
+    <app-marcador-dlg [exibirDialog]="exibirDialogMarcador" (onHide)="aoFecharDialogMarcador()">
+    </app-marcador-dlg>
+
+    <p-dialog header="Como deseja adicionar?" [(visible)]="exibirDialogEscolha" [modal]="true"
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '400px' }">
+        <div class="flex flex-col sm:flex-row gap-4 justify-center py-4">
+            <p-button styleClass="rounded-xl! h-24 w-full sm:w-36 flex flex-col gap-2 border-[#11b981]! bg-[#11b981]!"
+                (onClick)="escolherManual()">
+                <i class="pi pi-pencil text-2xl"></i>
+                <span>Manual</span>
+            </p-button>
+            <p-button styleClass="rounded-xl! h-24 w-full sm:w-36 flex flex-col gap-2 border-[#7843cd]! bg-[#7843cd]!"
+                (onClick)="escolherUpload()">
+                <i class="pi pi-file-pdf text-2xl"></i>
+                <span>Upload PDF</span>
+            </p-button>
+        </div>
+    </p-dialog>
+
+    <p-dialog header="Upload de Fatura" [(visible)]="exibirDialogUpload" [modal]="true"
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '450px' }">
+        <div class="flex flex-col items-center gap-6 py-6 px-2">
+            @if (carregando) {
+                <div class="flex flex-col items-center gap-4">
+                    <p-progressSpinner strokeWidth="4" styleClass="w-12 h-12" />
+                    <span class="text-slate-600">Analisando fatura...</span>
+                </div>
+            } @else if (erroUpload) {
+                <div class="flex flex-col items-center gap-4 p-6 w-full">
+                    <i class="pi pi-exclamation-triangle text-4xl text-red-400"></i>
+                    <span class="text-red-700 text-sm text-center">{{ erroUpload }}</span>
+                    <div class="flex gap-3 mt-2">
+                        <p-button label="Tentar novamente" icon="pi pi-refresh"
+                            styleClass="rounded-xl! border-red-500! text-red-500! bg-white!"
+                            (onClick)="erroUpload = null; arquivoSelecionado = null"></p-button>
+                        <p-button label="Cancelar"
+                            styleClass="rounded-xl! border-slate-300! text-slate-600! bg-white!"
+                            (onClick)="exibirDialogUpload = false"></p-button>
+                    </div>
+                </div>
+            } @else {
+                <div class="flex flex-col items-center gap-4 w-full">
+                    <label for="fileUpload"
+                        class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-[#7843cd] transition-colors">
+                        @if (arquivoSelecionado) {
+                            <i class="pi pi-file-pdf text-4xl text-[#7843cd]"></i>
+                            <span class="mt-2 font-medium text-slate-700">{{ arquivoSelecionado.name }}</span>
+                        } @else {
+                            <i class="pi pi-upload text-4xl text-slate-400"></i>
+                            <span class="mt-2 text-slate-500">Clique para selecionar o PDF</span>
+                        }
+                        <input id="fileUpload" type="file" accept=".pdf" class="hidden" (change)="selecionarArquivo($event)" />
+                    </label>
+                    <p-button styleClass="rounded-xl! w-full border-[#11b981]! bg-[#11b981]!"
+                        label="Enviar" [disabled]="!arquivoSelecionado" (onClick)="enviarFatura()"></p-button>
+                </div>
+            }
+        </div>
+    </p-dialog>
+
+    <p-dialog header="Revisar Transações" [(visible)]="exibirDialogRevisao" [modal]="true"
+        [breakpoints]="{ '960px': '90vw', '640px': '95vw' }" [style]="{ width: '800px' }" [maximizable]="true">
+        <div class="flex flex-col gap-4 py-2">
+            @if (carregando) {
+                <div class="flex flex-col items-center gap-4 py-8">
+                    <p-progressSpinner strokeWidth="4" styleClass="w-12 h-12" />
+                    <span class="text-slate-600">Salvando transações...</span>
+                </div>
+            } @else {
+                <div class="flex flex-col gap-2">
+                    <label class="font-bold text-sm">Selecione a conta</label>
+                    <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
+                        [(ngModel)]="contaSelecionadaRevisao" placeholder="Selecione a conta..." [appendTo]="'body'"
+                        styleClass="w-full"></p-select>
+                </div>
+
+                <div class="flex flex-col gap-3 mt-2 max-h-96 overflow-y-auto">
+                    @for (t of transacoesExtraidas; track $index) {
+                        <div class="flex flex-col gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50">
+                            <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
+                                <div class="sm:col-span-4 flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-500">Descrição</label>
+                                    <input pInputText [(ngModel)]="t.descricao" class="w-full text-sm" />
+                                </div>
+                                <div class="sm:col-span-2 flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-500">Valor</label>
+                                    <p-inputNumber [(ngModel)]="t.valor" mode="currency" currency="BRL" locale="pt-BR"
+                                        styleClass="w-full text-sm" inputStyleClass="w-full" />
+                                </div>
+                                <div class="sm:col-span-3 flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-500">Data</label>
+                                    <p-datePicker [(ngModel)]="t.data" dateFormat="dd/mm/yy" showIcon="true"
+                                        placeholder="Data" [appendTo]="'body'" styleClass="w-full text-sm"></p-datePicker>
+                                </div>
+                                <div class="sm:col-span-2 flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-500">Categoria</label>
+                                    <p-select [options]="opcoesCategoriaNome" [(ngModel)]="t.categoria"
+                                        placeholder="Cat." [appendTo]="'body'" styleClass="w-full text-sm"></p-select>
+                                </div>
+                                <div class="sm:col-span-1 flex items-end justify-center pt-4">
+                                    <p-button icon="pi pi-trash"
+                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
+                                        (onClick)="removerTransacaoExtraida($index)"></p-button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+                @if (transacoesExtraidas.length > 0) {
+                    <div class="flex justify-end mt-4">
+                        <p-button styleClass="rounded-xl! border-[#11b981]! bg-[#11b981]! h-12 px-6"
+                            label="Confirmar Transações" [disabled]="!contaSelecionadaRevisao"
+                            (onClick)="confirmarTransacoes()"></p-button>
+                    </div>
+                }
+            }
+        </div>
+    </p-dialog>
 </div>

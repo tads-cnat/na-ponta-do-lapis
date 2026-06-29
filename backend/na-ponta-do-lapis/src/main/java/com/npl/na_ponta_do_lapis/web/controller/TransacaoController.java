@@ -2,9 +2,14 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.service.TransacaoService;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacoesResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -14,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/transacoes")
@@ -84,5 +90,29 @@ public class TransacaoController {
     public ResponseEntity<Void> remover(@PathVariable Long id) throws AccessDeniedException {
         transacaoService.removerTransacao(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(summary = "Salvar Transações em Lote")
+    @ApiResponses({
+        @ApiResponse(responseCode = "201", description = "Transações salvas com sucesso"),
+        @ApiResponse(responseCode = "400", description = "Dados inválidos ou conta não encontrada", content = @Content(schema = @Schema(example = "{\"error\": \"Conta não encontrada\"}"))),
+        @ApiResponse(responseCode = "500", description = "Erro interno ao salvar transações")
+    })
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PostMapping("/lote")
+    public ResponseEntity<?> salvarTransacoesEmLote(
+            @RequestBody List<TransacaoFaturaDTO> transacoes,
+            @RequestParam("contaId") Long contaId) {
+        
+        if (transacoes == null || transacoes.isEmpty()) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Lista de transações vazia."));
+        }
+        try {
+            transacaoService.salvarFaturaEmLote(transacoes, contaId);
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.badRequest().build();
+        }
     }
 }

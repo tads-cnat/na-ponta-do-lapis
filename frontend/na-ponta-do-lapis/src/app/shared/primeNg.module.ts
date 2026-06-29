@@ -19,6 +19,9 @@ import { PopoverModule } from 'primeng/popover';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ColorPickerModule } from 'primeng/colorpicker';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
 
 
 @NgModule({
@@ -27,6 +30,7 @@ import { CheckboxModule } from 'primeng/checkbox';
     DatePickerModule,
     InputMaskModule,
     InputGroupModule,
+    ColorPickerModule,
     PopoverModule,
      ButtonModule,
       InputTextModule,
@@ -41,7 +45,8 @@ import { CheckboxModule } from 'primeng/checkbox';
       DialogModule,
       InputNumberModule,
       SelectModule,
-      RadioButtonModule
+      RadioButtonModule,
+      ProgressSpinnerModule
   ],
   declarations: [],
   imports: [CommonModule],

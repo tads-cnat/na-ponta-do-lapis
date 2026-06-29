@@ -10,4 +10,4 @@ export const environment = {
 
         return `${protocol}//${hostname}:8080`;
     })(),
-};
+}; 

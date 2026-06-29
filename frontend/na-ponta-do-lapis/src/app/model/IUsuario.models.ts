@@ -9,5 +9,6 @@ export interface Usuario {
     email:string,
     username:string,
     fotoPerfil:string,
-    papel:string
+    papel:string,
+    idFamilia?: number | null,
 } 

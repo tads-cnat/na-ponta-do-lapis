@@ -4,24 +4,34 @@ import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
-import { Categoria, ITransacaoRequest, ITransacoes, Tipo } from '../../model/ITransacoes.model';
+import { Categoria, ITransacaoFatura, ITransacaoRequest, ITransacoes, Tipo } from '../../model/ITransacoes.model';
 import { IContasRequest } from '../../model/IContas.models';
-import { Marcador } from '../../model/IMarcador.models';
+import { Marcador, MarcadorRequest } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
+import { MarcadorDlgComponent } from '../marcador-dlg/marcador-dlg.component';
 
 @Component({
   selector: 'app-transacoes',
-  imports: [CardSaldoComponent ,PrimeNGModuleModule, CommonModule, ReactiveFormsModule],
+  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
 })
 export class TransacoesComponent {
   exibirDialog: boolean = false;
+  exibirDialogMarcador: boolean = false;
+  exibirDialogEscolha: boolean = false;
+  exibirDialogUpload: boolean = false;
+  exibirDialogRevisao: boolean = false;
+  carregando: boolean = false;
+  erroUpload: string | null = null;
+  arquivoSelecionado: File | null = null;
+  transacoesExtraidas: ITransacaoFatura[] = [];
+  contaSelecionadaRevisao: number | null = null;
   private messageService = inject(MessageService)
   private destroyRef = inject(DestroyRef)
   id: number | null = null;
@@ -42,7 +52,7 @@ export class TransacoesComponent {
       dataHora: [[null, Validators.required]],
       estado: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      marcadorId: [null]
+      marcadorId: [null, [Validators.required]]
     })
   }
 
@@ -55,20 +65,34 @@ export class TransacoesComponent {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
-        if (params.get('openDialog') === 'true') {
+        const openDialog = params.get('openDialog');
+        if (openDialog) {
           void this.router.navigate([], {
             relativeTo: this.route,
             queryParams: {},
             replaceUrl: true,
           });
 
-          this.abrirDialog();
+          if (openDialog === 'escolha') {
+            this.abrirDialogEscolha();
+          } else {
+            this.abrirDialog();
+          }
         }
       });
   }
   transacoesDados: ITransacoes[] = [];
 
-  public buscarPorDescricao(descricao:string) :void {
+  public abrirDialogMarcador() {
+    this.exibirDialogMarcador = true
+  }
+
+  public aoFecharDialogMarcador() {
+    this.exibirDialogMarcador = false;
+    this.listarMarcadores();
+  }
+
+  public buscarPorDescricao(descricao: string): void {
     this.transacoesService.listarTransacoesPorDescricao(descricao).subscribe({
       next: (res: ITransacoes[]) => {
         this.transacoesDados = res
@@ -173,6 +197,7 @@ export class TransacoesComponent {
     this.formTransacao.patchValue({
       marcadorId: marcador.id
     })
+    console.log("Marcador selecionado:", marcador)
     this.op.hide();
     this.formTransacao.get('marcadorId')?.markAsDirty();
   }
@@ -235,6 +260,98 @@ export class TransacoesComponent {
     this.exibirDialog = true;
   }
 
+  abrirDialogEscolha() {
+    this.exibirDialogEscolha = true;
+  }
+
+  escolherManual() {
+    this.exibirDialogEscolha = false;
+    this.abrirDialog();
+  }
+
+  escolherUpload() {
+    this.exibirDialogEscolha = false;
+    this.arquivoSelecionado = null;
+    this.erroUpload = null;
+    this.exibirDialogUpload = true;
+  }
+
+  selecionarArquivo(event: any) {
+    this.arquivoSelecionado = event.target.files[0] ?? null;
+  }
+
+  enviarFatura() {
+    if (!this.arquivoSelecionado) return;
+    this.carregando = true;
+    this.erroUpload = null;
+    this.transacoesService.analisarFatura(this.arquivoSelecionado).subscribe({
+      next: (res: ITransacaoFatura[]) => {
+        this.transacoesExtraidas = res.map(t => ({
+          ...t,
+          data: t.data ? new Date(t.data) : new Date()
+        }));
+        this.carregando = false;
+        this.exibirDialogUpload = false;
+        this.contaSelecionadaRevisao = null;
+        this.exibirDialogRevisao = true;
+        this.cdr.detectChanges();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.carregando = false;
+        if (err.status === 503) {
+          this.erroUpload = 'Serviço temporariamente indisponível. Tente novamente em alguns instantes.';
+        } else if (err.status === 504) {
+          this.erroUpload = 'Tempo limite excedido. O PDF pode ser muito grande ou o serviço está lento.';
+        } else if (err.status === 502) {
+          this.erroUpload = 'Erro ao processar a fatura. O PDF pode estar corrompido ou em formato não esperado.';
+        } else if (err.status === 400) {
+          this.erroUpload = 'Arquivo inválido. Envie um PDF de fatura de cartão de crédito.';
+        } else {
+          this.erroUpload = 'Erro ao analisar fatura. Verifique o arquivo e tente novamente.';
+        }
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  removerTransacaoExtraida(index: number) {
+    this.transacoesExtraidas.splice(index, 1);
+  }
+
+  confirmarTransacoes() {
+    if (!this.contaSelecionadaRevisao || this.transacoesExtraidas.length === 0) return;
+    const transacoesParaEnviar: ITransacaoFatura[] = this.transacoesExtraidas.map(t => ({
+      descricao: t.descricao,
+      valor: t.valor,
+      data: t.data instanceof Date ? t.data.toISOString() : t.data,
+      categoria: t.categoria
+    }));
+    this.carregando = true;
+    this.transacoesService.salvarFaturaEmLote(transacoesParaEnviar, this.contaSelecionadaRevisao).subscribe({
+      next: () => {
+        this.carregando = false;
+        this.exibirDialogRevisao = false;
+        this.messageService.add({ severity: 'success', summary: 'Transações salvas com sucesso!', life: 3000 });
+        this.listarTransacoes();
+        this.atualizarSaldo();
+        this.cdr.detectChanges();
+      },
+      error: (err: HttpErrorResponse) => {
+        this.carregando = false;
+        let msg = 'Erro ao salvar transações. Tente novamente.';
+        if (err.status === 400) msg = 'Dados inválidos. Verifique os campos e tente novamente.';
+        else if (err.status === 403) msg = 'Você não tem permissão para salvar transações nesta conta.';
+        else if (err.status === 503) msg = 'Serviço temporariamente indisponível. Tente novamente.';
+        this.messageService.add({ severity: 'error', summary: msg, life: 5000 });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  get opcoesCategoriaNome() {
+    return this.opcoesCategoria.map(c => c.nome);
+  }
+
   public prepararEdicao(transacao: ITransacoes) {
     this.id = transacao.id;
     this.exibirDialog = true;
@@ -248,7 +365,7 @@ export class TransacoesComponent {
       dataHora: new Date(transacao.dataHora),
       estado: transacao.estado,
       tipo: transacao.tipo,
-      marcadorId: transacao.marcador?.id
+      marcadorId: transacao.marcador ? transacao.marcador.id : null
     });
 
     this.marcadorSelecionado = transacao.marcador;
@@ -256,7 +373,8 @@ export class TransacoesComponent {
 
   salvar() {
     if (this.formTransacao.valid) {
-      const dadosParaEnviar:ITransacaoRequest = this.formTransacao.value
+      const dadosParaEnviar: ITransacaoRequest = this.formTransacao.value
+      console.log("Dados para enviar:", dadosParaEnviar)
       this.exibirDialog = false
 
       if (this.id) {

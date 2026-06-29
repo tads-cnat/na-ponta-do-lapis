@@ -11,4 +11,7 @@ public interface ContaFinanceiraRepository extends JpaRepository<ContaFinanceira
 
     @Query("SELECT c FROM ContaFinanceira c WHERE c.usuario.email = :email")
     List<ContaFinanceira> buscarContaFinanceiraUsuarioLogado(String email);
+
+    @Query("SELECT c FROM ContaFinanceira c WHERE c.usuario.familia.id = :familiaId")
+    List<ContaFinanceira> findByFamilia(Long familiaId);
 }

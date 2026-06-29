@@ -35,6 +35,10 @@ public class UsuarioService {
                 );
     }
 
+    public Usuario buscarUsuarioPorUsername(String username) {
+        return usuarioRepository.findByUsername(username);
+    }
+
     public Usuario buscarUsuarioLogado(){
         String email = JwtAuthFilter.getEmailUsuarioLogado();
         return buscarUsuarioPorEmail(email);

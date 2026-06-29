@@ -5,6 +5,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.exception.TransacaoNaoExisteException;
 import jakarta.transaction.Transactional;
@@ -80,6 +81,36 @@ public class TransacaoService {
 
     }
 
+    @Transactional
+    public void salvarFaturaEmLote(List<TransacaoFaturaDTO> dtos, Long contaId) {
+        
+        // 1. Busca a conta financeira (cartão) onde as despesas vão entrar
+        ContaFinanceira conta = contaFinanceiraService.buscarContaPorIdObject(contaId);
+
+        // 2. Converte a lista de DTOs para a lista de Entidades
+        List<Transacao> transacoesParaSalvar = dtos.stream().map(dto -> {
+            Transacao t = new Transacao();
+            t.setDescricao(dto.descricao());
+            t.setValor(dto.valor());
+            
+            // Adiciona a hora zerada para converter a data (YYYY-MM-DD) do DTO em LocalDateTime
+            t.setDataHora(dto.data().atStartOfDay()); 
+            
+            t.setTipo(TipoTransacao.DESPESA); // Regra de negócio: Faturas são despesas
+            t.setEstado(EstadoTransacao.REALIZADA); // Ou "PENDENTE", se preferir que o usuário dê baixa manual depois
+            t.setContaFinanceira(conta);
+            
+            // 3. Resolve a Categoria buscando pelo nome que veio do Angular
+            TipoCategoria categoria = tipoCategoriaService.buscarPorNome(dto.categoria());
+            t.setCategoria(categoria);
+
+            return t;
+        }).toList();
+
+        // 4. Dispara o INSERT em lote 
+        transacaoRepository.saveAll(transacoesParaSalvar);
+    }
+
     public List<Transacao> listarTransacoesUsuarioNaSessao() {
         System.out.println("Usuário na sessão"+getEmailUsuarioLogado());
         return transacaoRepository.buscarTransacoesUsuarioLogado(getEmailUsuarioLogado());
@@ -100,6 +131,7 @@ public class TransacaoService {
         Transacao transacaoExistente = buscarPorId(id);
         // Identifica a conta onde a transação ocorreu originalmente para realizar o estorno.
         ContaFinanceira contaFinanceiraAntiga = transacaoExistente.getContaFinanceira();
+        Marcador marcadorExistente = marcadorService.buscarMarcadorPorIdObject(dto.marcadorId());
 
         String emailUsuarioLogado = getEmailUsuarioLogado();
         if (!contaFinanceiraAntiga.getUsuario().getEmail().equals(emailUsuarioLogado)){
@@ -121,6 +153,7 @@ public class TransacaoService {
         transacaoExistente.setEstado(dto.estado());
         transacaoExistente.setTipo(dto.tipo());
         transacaoExistente.setDataHora(dto.dataHora());
+        transacaoExistente.setMarcador(marcadorExistente);
 
         // Busca a nova Categoria e a nova Conta Financeira (caso o usuario tenha trocado a conta da transação).
         transacaoExistente.setCategoria(tipoCategoriaService.buscarPorId(dto.idCategoria()));

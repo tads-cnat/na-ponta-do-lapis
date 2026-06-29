@@ -11,6 +11,9 @@ import {
   Validators
 } from '@angular/forms';
 
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { ChartModule } from 'primeng/chart';
@@ -26,10 +29,12 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
 @Component({
   selector: 'app-Contas',
   standalone: true,
+  providers: [MessageService],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    ToastModule,
     PrimeNGModuleModule,
     ColorPickerModule,
     ChartModule,
@@ -39,232 +44,235 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
     TransacoesComponent
   ],
   template: `
+
+    <!-- TOAST — deve ficar no nível raiz para sobrepor qualquer conteúdo -->
+    <p-toast position="top-right" [life]="3000" />
+
     <div
-  class="bg-[#F5F6FA]
-         p-6 2xl:p-8
-         h-[calc(100vh-64px)]
-         overflow-y-auto
-         overflow-x-hidden">
+      class="bg-[#F5F6FA]
+             p-6 2xl:p-8
+             h-[calc(100vh-64px)]
+             overflow-y-auto
+             overflow-x-hidden">
 
-  <div class="grid grid-cols-1 2xl:grid-cols-12 gap-6 min-h-full">
+      <div class="grid grid-cols-1 2xl:grid-cols-12 gap-6 min-h-full">
 
-    <!-- COLUNA ESQUERDA -->
-    <div class="2xl:col-span-5 flex flex-col gap-6 min-w-0">
+        <!-- COLUNA ESQUERDA -->
+        <div class="2xl:col-span-5 flex flex-col gap-6 min-w-0">
 
-      <!-- CARTÕES (header + ações + carrossel) -->
-      <app-cartoes-contas
-        [contas]="contaFinanceiraDados"
-        [contaSelecionadaIndex]="contaSelecionadaIndex"
-        [contaAnterior]="contaAnterior"
-        [contaProxima]="contaProxima"
-        [carregando]="carregandoContas"
-        (onAdicionar)="abrirDialog()"
-        (onEditar)="editarConta(contaSelecionada)"
-        (onExcluir)="abrirDialogExcluir(contaSelecionada)"
-        (onContaSelecionada)="selecionarConta($event)"
-        (onAnterior)="selecionarAnterior()"
-        (onProxima)="selecionarProxima()">
-      </app-cartoes-contas>
+          <!-- CARTÕES (header + ações + carrossel) -->
+          <app-cartoes-contas
+            [contas]="contaFinanceiraDados"
+            [contaSelecionadaIndex]="contaSelecionadaIndex"
+            [contaAnterior]="contaAnterior"
+            [contaProxima]="contaProxima"
+            [carregando]="carregandoContas"
+            (onAdicionar)="abrirDialog()"
+            (onEditar)="editarConta(contaSelecionada)"
+            (onExcluir)="abrirDialogExcluir(contaSelecionada)"
+            (onContaSelecionada)="selecionarConta($event)"
+            (onAnterior)="selecionarAnterior()"
+            (onProxima)="selecionarProxima()">
+          </app-cartoes-contas>
 
-      <!-- INFORMAÇÕES DA CONTA SELECIONADA -->
-      <app-informacoes-conta
-        [conta]="contaSelecionada">
-      </app-informacoes-conta>
-
-    </div>
-
-    <!-- COLUNA DIREITA -->
-    <div class="2xl:col-span-7 flex flex-col gap-6 min-w-0 min-h-0">
-
-      <!-- GRÁFICO -->
-      <app-grafico-conta
-        [chartData]="chartData"
-        [chartOptions]="chartOptions"
-        (onPeriodoMudou)="atualizarGraficoSaldo($event)">
-      </app-grafico-conta>
-
-      <!-- TRANSAÇÕES -->
-      <app-transacoes-conta
-        [transacoesPaginadas]="transacoesPaginadas"
-        [ultimasTransacoes]="ultimasTransacoes"
-        [transacoesPorPagina]="transacoesPorPagina"
-        [paginaAtualTransacoes]="paginaAtualTransacoes"
-        (onProximaPagina)="proximaPaginaTransacoes()"
-        (onPaginaAnterior)="paginaAnteriorTransacoes()"
-        (onIrParaTransacoes)="irParaTransacoes()">
-      </app-transacoes-conta>
-
-    </div>
-
-  </div>
-
-  <!--
-    DIALOGS — ficam fora do grid, no nível raiz do componente.
-
-    Motivo: p-dialog é um overlay renderizado como portal no body, não como
-    seção de página. O estado que os controla (exibirDialog, excluirDialog,
-    formContaFinanceira) pertence ao ContasComponent, portanto aqui é o lugar
-    natural. Extrair para um filho exigiria passar o FormGroup por @Input ou
-    duplicar a lógica de CRUD, sem nenhum ganho arquitetural.
-
-    O <form [formGroup]> precisa ser ancestral dos formControlName no template;
-    como p-dialog projeta seu conteúdo no slot do componente (não fora da
-    árvore de componentes Angular), o binding reativo funciona corretamente.
-  -->
-  <form [formGroup]="formContaFinanceira">
-
-    <!-- DIALOG — NOVA CONTA / EDITAR CONTA -->
-    <p-dialog
-      [header]="modoEdicao ? 'Editar Conta' : 'Nova Conta'"
-      [(visible)]="exibirDialog"
-      [modal]="true"
-      [draggable]="false"
-      [resizable]="false"
-      styleClass="rounded-3xl!"
-      [style]="{ width: '42rem' }">
-
-      <div class="flex flex-col gap-8 py-4">
-
-        <!-- NOME -->
-        <div class="flex flex-col gap-2">
-          <label class="font-semibold text-slate-700">Nome da Conta</label>
-          <input
-            pInputText
-            formControlName="nome"
-            placeholder="Ex: Santander"
-            class="w-full" />
-        </div>
-
-        <!-- SALDO -->
-        <div class="flex flex-col gap-2">
-          <label class="font-semibold text-slate-700">Saldo</label>
-          <p-inputNumber
-              formControlName="saldo"
-              locale="pt-BR"
-              mode="decimal"
-              [minFractionDigits]="2"
-              [maxFractionDigits]="2">
-          </p-inputNumber>
-        </div>
-
-        <!-- COR -->
-        <div class="flex flex-col gap-4">
-          <label class="font-semibold text-slate-700">Cor do cartão</label>
-          <p-colorpicker
-            formControlName="cor"
-            [inline]="true">
-          </p-colorpicker>
-        </div>
-
-          <!-- MOEDA -->
-        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
-
-          <span class="text-slate-700 font-bold">
-            Moeda
-          </span>
-
-          <div class="mt-3 flex flex-col">
-            <p-select
-              [options]="moedas"
-              optionLabel="label"
-              optionValue="value"
-              formControlName="moeda"
-              placeholder="Selecione a moeda"
-              [appendTo]="'body'">
-            </p-select>
-          </div>
+          <!-- INFORMAÇÕES DA CONTA SELECIONADA -->
+          <app-informacoes-conta
+            [conta]="contaSelecionada">
+          </app-informacoes-conta>
 
         </div>
 
+        <!-- COLUNA DIREITA -->
+        <div class="2xl:col-span-7 flex flex-col gap-6 min-w-0 min-h-0">
 
+          <!-- GRÁFICO -->
+          <app-grafico-conta
+            [chartData]="chartData"
+            [chartOptions]="chartOptions"
+            (onPeriodoMudou)="atualizarGraficoSaldo($event)">
+          </app-grafico-conta>
 
-      </div>
+          <!-- TRANSAÇÕES -->
+          <app-transacoes-conta
+            [transacoesPaginadas]="transacoesPaginadas"
+            [ultimasTransacoes]="ultimasTransacoes"
+            [transacoesPorPagina]="transacoesPorPagina"
+            [paginaAtualTransacoes]="paginaAtualTransacoes"
+            (onProximaPagina)="proximaPaginaTransacoes()"
+            (onPaginaAnterior)="paginaAnteriorTransacoes()"
+            (onIrParaTransacoes)="irParaTransacoes()">
+          </app-transacoes-conta>
 
-      <ng-template pTemplate="footer">
-        <div class="flex justify-end gap-3 w-full">
-
-          <p-button
-            label="Cancelar"
-            severity="secondary"
-            (click)="exibirDialog = false">
-          </p-button>
-
-          <p-button
-            icon="pi pi-check"
-            severity="success"
-            label="Salvar Conta"
-            (click)="salvarConta()">
-          </p-button>
-
-        </div>
-      </ng-template>
-
-    </p-dialog>
-
-    <!-- DIALOG — CONFIRMAR EXCLUSÃO -->
-    <p-dialog
-      header="Excluir Conta"
-      [(visible)]="excluirDialog"
-      [modal]="true"
-      [draggable]="false"
-      [resizable]="false"
-      styleClass="rounded-3xl!"
-      [style]="{ width: '32rem' }">
-
-      <div class="flex flex-col gap-6 py-4">
-
-        <div class="flex items-center gap-4">
-
-          <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
-            <i class="pi pi-trash text-red-500 text-2xl"></i>
-          </div>
-
-          <div class="flex flex-col">
-            <span class="text-xl font-semibold text-slate-900">
-              Confirmar exclusão
-            </span>
-            <span class="text-slate-500">
-              Esta ação não poderá ser desfeita.
-            </span>
-          </div>
-
-        </div>
-
-        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
-          <span class="text-slate-400 text-sm block mb-2">
-            Conta selecionada
-          </span>
-          <span class="text-2xl font-bold text-slate-900">
-            {{ contaExcluir?.nome }}
-          </span>
         </div>
 
       </div>
 
-      <ng-template pTemplate="footer">
-        <div class="flex justify-end gap-3 w-full">
+      <!--
+        DIALOGS — ficam fora do grid, no nível raiz do componente.
 
-          <p-button
-            label="Cancelar"
-            severity="secondary"
-            (click)="fecharDialogExcluir()">
-          </p-button>
+        Motivo: p-dialog é um overlay renderizado como portal no body, não como
+        seção de página. O estado que os controla (exibirDialog, excluirDialog,
+        formContaFinanceira) pertence ao ContasComponent, portanto aqui é o lugar
+        natural. Extrair para um filho exigiria passar o FormGroup por @Input ou
+        duplicar a lógica de CRUD, sem nenhum ganho arquitetural.
 
-          <p-button
-            label="Confirmar Exclusão"
-            icon="pi pi-trash"
-            severity="danger"
-            (click)="confirmarExcluirConta()">
-          </p-button>
+        O <form [formGroup]> precisa ser ancestral dos formControlName no template;
+        como p-dialog projeta seu conteúdo no slot do componente (não fora da
+        árvore de componentes Angular), o binding reativo funciona corretamente.
+      -->
+      <form [formGroup]="formContaFinanceira">
 
-        </div>
-      </ng-template>
+        <!-- DIALOG — NOVA CONTA / EDITAR CONTA -->
+        <p-dialog
+          [header]="modoEdicao ? 'Editar Conta' : 'Nova Conta'"
+          [(visible)]="exibirDialog"
+          [modal]="true"
+          [draggable]="false"
+          [resizable]="false"
+          styleClass="rounded-3xl!"
+          [style]="{ width: '42rem' }">
 
-    </p-dialog>
+          <div class="flex flex-col gap-8 py-4">
 
-  </form>
+            <!-- NOME -->
+            <div class="flex flex-col gap-2">
+              <label class="font-semibold text-slate-700">Nome da Conta</label>
+              <input
+                pInputText
+                formControlName="nome"
+                placeholder="Ex: Santander"
+                class="w-full" />
+            </div>
 
-</div>
+            <!-- SALDO -->
+            <div class="flex flex-col gap-2">
+              <label class="font-semibold text-slate-700">Saldo</label>
+              <p-inputNumber
+                  formControlName="saldo"
+                  locale="pt-BR"
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2">
+              </p-inputNumber>
+            </div>
+
+            <!-- COR -->
+            <div class="flex flex-col gap-4">
+              <label class="font-semibold text-slate-700">Cor do cartão</label>
+              <p-colorpicker
+                formControlName="cor"
+                >
+              </p-colorpicker>
+            </div>
+
+            <!-- MOEDA -->
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
+
+              <span class="text-slate-700 font-bold">
+                Moeda
+              </span>
+
+              <div class="mt-3 flex flex-col">
+                <p-select
+                  [options]="moedas"
+                  optionLabel="label"
+                  optionValue="value"
+                  formControlName="moeda"
+                  formControlName="moeda"
+                  placeholder="Selecione a moeda"
+                  [appendTo]="'body'">
+                </p-select>
+              </div>
+
+            </div>
+
+          </div>
+
+          <ng-template pTemplate="footer">
+            <div class="flex justify-end gap-3 w-full">
+
+              <p-button
+                label="Cancelar"
+                severity="secondary"
+                (click)="exibirDialog = false">
+              </p-button>
+
+              <p-button
+                icon="pi pi-check"
+                severity="success"
+                label="Salvar Conta"
+                (click)="salvarConta()">
+              </p-button>
+
+            </div>
+          </ng-template>
+
+        </p-dialog>
+
+        <!-- DIALOG — CONFIRMAR EXCLUSÃO -->
+        <p-dialog
+          header="Excluir Conta"
+          [(visible)]="excluirDialog"
+          [modal]="true"
+          [draggable]="false"
+          [resizable]="false"
+          styleClass="rounded-3xl!"
+          [style]="{ width: '32rem' }">
+
+          <div class="flex flex-col gap-6 py-4">
+
+            <div class="flex items-center gap-4">
+
+              <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
+                <i class="pi pi-trash text-red-500 text-2xl"></i>
+              </div>
+
+              <div class="flex flex-col">
+                <span class="text-xl font-semibold text-slate-900">
+                  Confirmar exclusão
+                </span>
+                <span class="text-slate-500">
+                  Esta ação não poderá ser desfeita.
+                </span>
+              </div>
+
+            </div>
+
+            <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+              <span class="text-slate-400 text-sm block mb-2">
+                Conta selecionada
+              </span>
+              <span class="text-2xl font-bold text-slate-900">
+                {{ contaExcluir?.nome }}
+              </span>
+            </div>
+
+          </div>
+
+          <ng-template pTemplate="footer">
+            <div class="flex justify-end gap-3 w-full">
+
+              <p-button
+                label="Cancelar"
+                severity="secondary"
+                (click)="fecharDialogExcluir()">
+              </p-button>
+
+              <p-button
+                label="Confirmar Exclusão"
+                icon="pi pi-trash"
+                severity="danger"
+                (click)="confirmarExcluirConta()">
+              </p-button>
+
+            </div>
+          </ng-template>
+
+        </p-dialog>
+
+      </form>
+
+    </div>
 
   `,
 })
@@ -323,7 +331,8 @@ export class ContasComponent implements OnInit {
     private contaFinanceiraService: ContaFinanceiraService,
     private cdr: ChangeDetectorRef,
     private transacoesService: TransacoesService,
-    private router: Router
+    private router: Router,
+    private messageService: MessageService
   ) {
     this.formContaFinanceira = this.fb.group({
       nome:  ['', [Validators.required, Validators.minLength(3)]],
@@ -363,7 +372,7 @@ export class ContasComponent implements OnInit {
     if (!this.contaFinanceiraDados?.length) return;
     this.contaSelecionadaIndex = index;
     this.atualizarIndicesCarrossel();
-    this.listarUltimasTransacoes(); // atualizarGraficoSaldo é chamado no final deste
+    this.listarUltimasTransacoes();
   }
 
   selecionarAnterior(): void {
@@ -413,50 +422,40 @@ export class ContasComponent implements OnInit {
   }
 
   // =========================================
-  // CRUD
+  // CRUD — OPÇÕES DE MOEDA
   // =========================================
 
-  moedas: any[] = [
-    { label: 'BRL', value: 'BRL' },
-    { label: 'USD', value: 'USD' },
-    { label: 'EUR', value: 'EUR' },
-  ]
+  moedas: { label: string; value: string }[] = [
+    { label: 'R$ — Real brasileiro',  value: 'BRL' },
+    { label: 'US$ — Dólar americano', value: 'USD' },
+    { label: '€ — Euro',             value: 'EUR' },
+  ];
 
   localeDaMoeda(moeda: Moeda): string {
     switch (moeda) {
-      case 'USD':
-        return 'en-US';
-
-      case 'EUR':
-        return 'de-DE';
-
-      default:
-        return 'pt-BR';
+      case 'USD': return 'en-US';
+      case 'EUR': return 'de-DE';
+      default:    return 'pt-BR';
     }
   }
 
   simboloMoeda(moeda: Moeda): string {
-
-    const simbolos: Record<Moeda, string> = {
-      BRL: 'R$',
-      USD: 'US$',
-      EUR: '€'
-    };
+    const simbolos: Record<Moeda, string> = { BRL: 'R$', USD: 'US$', EUR: '€' };
     return simbolos[moeda ?? 'BRL'] ?? moeda ?? '';
   }
 
-
   nomeMoeda(moeda: Moeda): string {
-
     const nomes: Record<Moeda, string> = {
       BRL: 'Real brasileiro',
       USD: 'Dólar americano',
       EUR: 'Euro'
     };
-
     return nomes[moeda ?? 'BRL'] ?? 'Moeda desconhecida';
-
   }
+
+  // =========================================
+  // CRUD — ABERTURA DE DIALOGS
+  // =========================================
 
   abrirDialog(): void {
     this.modoEdicao = false;
@@ -478,8 +477,13 @@ export class ContasComponent implements OnInit {
     this.exibirDialog = true;
   }
 
+  // =========================================
+  // CRUD — SALVAR (CRIAR / EDITAR)
+  // =========================================
+
   salvarConta(): void {
     if (this.formContaFinanceira.invalid) return;
+
     const formValue = this.formContaFinanceira.getRawValue();
     const payload: IContasRequest = {
       nome:  formValue.nome,
@@ -488,25 +492,55 @@ export class ContasComponent implements OnInit {
       moeda: formValue.moeda,
     };
 
+    this.exibirDialog = false;
+
     if (this.modoEdicao && this.idContaEdicao) {
       this.contaFinanceiraService.atualizarConta(payload, this.idContaEdicao).subscribe({
         next: () => {
-          this.exibirDialog = false; this.modoEdicao = false;
-          this.idContaEdicao = null; this.formContaFinanceira.reset();
+          this.messageService.add({
+            severity: 'success',
+            summary:  'Conta atualizada!',
+            detail:   `"${payload.nome}" foi salva com sucesso.`,
+            life:     3000
+          });
+          this.modoEdicao    = false;
+          this.idContaEdicao = null;
+          this.formContaFinanceira.reset();
           this.listarContas();
         },
-        error: (e) => console.error(e)
+        error: (e: Error) => {
+          console.error('Erro ao atualizar conta', e);
+          this.messageService.add({
+            severity: 'error',
+            summary:  'Erro ao atualizar conta',
+            detail:   'Verifique os dados e tente novamente.',
+            life:     4000
+          });
+        }
       });
       return;
     }
 
     this.contaFinanceiraService.adicionarConta(payload).subscribe({
       next: () => {
-        this.exibirDialog = false;
+        this.messageService.add({
+          severity: 'success',
+          summary:  'Conta criada!',
+          detail:   `"${payload.nome}" foi adicionada com sucesso.`,
+          life:     3000
+        });
         this.formContaFinanceira.reset({ nome: '', saldo: 0, cor: '', moeda: 'BRL' });
         this.listarContas();
       },
-      error: (e) => console.error(e)
+      error: (e: Error) => {
+        console.error('Erro ao criar conta', e);
+        this.messageService.add({
+          severity: 'error',
+          summary:  'Erro ao criar conta',
+          detail:   'Verifique os dados e tente novamente.',
+          life:     4000
+        });
+      }
     });
   }
 
@@ -527,9 +561,32 @@ export class ContasComponent implements OnInit {
 
   confirmarExcluirConta(): void {
     if (!this.contaExcluir?.id) return;
-    this.contaFinanceiraService.deletarContaPorId(this.contaExcluir.id).subscribe({
-      next:  () => { this.fecharDialogExcluir(); this.listarContas(); },
-      error: (res: Error) => { console.error('Erro ao deletar Conta', res); alert('Erro ao excluir conta'); }
+
+    // Capturar id e nome ANTES de fecharDialogExcluir(),
+    // pois ela seta this.contaExcluir = null imediatamente.
+    const idExcluir    = this.contaExcluir.id;
+    const nomeExcluida = this.contaExcluir.nome;
+    this.fecharDialogExcluir();
+
+    this.contaFinanceiraService.deletarContaPorId(idExcluir).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary:  'Conta excluída!',
+          detail:   `"${nomeExcluida}" foi removida com sucesso.`,
+          life:     3000
+        });
+        this.listarContas();
+      },
+      error: (e: Error) => {
+        console.error('Erro ao excluir conta', e);
+        this.messageService.add({
+          severity: 'error',
+          summary:  'Erro ao excluir conta',
+          detail:   'Não foi possível remover a conta. Tente novamente.',
+          life:     4000
+        });
+      }
     });
   }
 
@@ -547,8 +604,7 @@ export class ContasComponent implements OnInit {
           this.contaAnterior         = 0;
           this.contaProxima          = 0;
           this.carregandoContas      = false;
-          // Sem conta, limpa chart
-          this.ultimasTransacoes = [];
+          this.ultimasTransacoes     = [];
           this.atualizarGraficoSaldo();
           this.cdr.detectChanges();
           return;
@@ -557,13 +613,18 @@ export class ContasComponent implements OnInit {
         this.contaSelecionadaIndex = 0;
         this.atualizarIndicesCarrossel();
         this.carregandoContas = false;
-        // Carrega transações → ao final, renderiza o gráfico com dados reais
         this.listarUltimasTransacoes();
         this.cdr.detectChanges();
       },
-      error: (error: Error) => {
-        console.error(error);
+      error: (e: Error) => {
+        console.error('Erro ao listar contas', e);
         this.carregandoContas = false;
+        this.messageService.add({
+          severity: 'warn',
+          summary:  'Erro ao carregar contas',
+          detail:   'Não foi possível carregar suas contas. Recarregue a página.',
+          life:     4000
+        });
         this.cdr.detectChanges();
       }
     });
@@ -589,7 +650,7 @@ export class ContasComponent implements OnInit {
     this.transacoesService.listarTransacoes().subscribe({
       next: (res: ITransacoes[]) => {
         if (!res?.length) {
-          this.ultimasTransacoes    = [];
+          this.ultimasTransacoes     = [];
           this.paginaAtualTransacoes = 0;
           this.atualizarGraficoSaldo();
           this.cdr.detectChanges();
@@ -602,16 +663,19 @@ export class ContasComponent implements OnInit {
             .sort((a, b) => new Date(b.dataHora).getTime() - new Date(a.dataHora).getTime());
 
         this.paginaAtualTransacoes = 0;
-
-        // Agora que ultimasTransacoes está pronto, gera o gráfico com dados reais
         this.atualizarGraficoSaldo();
-
         this.cdr.detectChanges();
       },
-      error: (error: Error) => {
-        console.error(error);
+      error: (e: Error) => {
+        console.error('Erro ao listar transações', e);
         this.ultimasTransacoes = [];
         this.atualizarGraficoSaldo();
+        this.messageService.add({
+          severity: 'warn',
+          summary:  'Erro ao carregar transações',
+          detail:   'Não foi possível carregar o histórico desta conta.',
+          life:     3000
+        });
         this.cdr.detectChanges();
       }
     });
@@ -636,18 +700,10 @@ export class ContasComponent implements OnInit {
         ? this.computarSemanal(this.ultimasTransacoes, saldoAtual)
         : this.computarMensal(this.ultimasTransacoes, saldoAtual);
 
-    this.chartData = this.montarChartData(labels, dadosAtuais, dadosAnteriores);
+    this.chartData    = this.montarChartData(labels, dadosAtuais, dadosAnteriores);
     this.chartOptions = this.montarChartOptions();
   }
 
-  /**
-   * Período SEMANAL: agrupa transações nos últimos 14 dias em dois blocos de 7.
-   * - Semana atual: Seg → Dom da semana corrente
-   * - Semana anterior: Seg → Dom da semana passada
-   *
-   * O saldo em cada ponto é calculado regressivamente a partir do saldo atual,
-   * revertendo os movimentos (RECEITA adiciona, DESPESA subtrai ao avançar no tempo).
-   */
   private computarSemanal(
     transacoes: ITransacoes[],
     saldoAtual: number
@@ -656,8 +712,7 @@ export class ContasComponent implements OnInit {
     const labels = ['Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb', 'Dom'];
     const agora  = new Date();
 
-    // Início da semana atual (segunda-feira 00:00:00)
-    const diaJs      = agora.getDay(); // 0=Dom, 1=Seg...
+    const diaJs      = agora.getDay();
     const diasAteSeg = diaJs === 0 ? 6 : diaJs - 1;
     const inicioSemAtual = new Date(agora);
     inicioSemAtual.setDate(agora.getDate() - diasAteSeg);
@@ -682,26 +737,19 @@ export class ContasComponent implements OnInit {
       }
     }
 
-    // saldoAtual = saldo ao final desta semana
     const dadosAtuais     = this.regressivo(netAtual,    saldoAtual);
-    // dadosAtuais[0] = saldo no início desta semana = saldo ao final da anterior
     const dadosAnteriores = this.regressivo(netAnterior, dadosAtuais[0]);
 
     return { labels, dadosAtuais, dadosAnteriores };
   }
 
-  /**
-   * Período MENSAL: agrupa transações por mês, para ano atual e ano anterior.
-   * 12 pontos (Jan–Dez).
-   * Conta sem transações exibe linha plana no valor do saldo atual (correto).
-   */
   private computarMensal(
     transacoes: ITransacoes[],
     saldoAtual: number
   ): { labels: string[]; dadosAtuais: number[]; dadosAnteriores: number[] } {
 
-    const labels     = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
-    const anoAtual   = new Date().getFullYear();
+    const labels      = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    const anoAtual    = new Date().getFullYear();
     const anoAnterior = anoAtual - 1;
 
     const netAtual:    number[] = new Array(12).fill(0);
@@ -710,38 +758,25 @@ export class ContasComponent implements OnInit {
     for (const t of transacoes) {
       const data = new Date(t.dataHora);
       const net  = t.tipo === 'RECEITA' ? t.valor : -t.valor;
-      const mes  = data.getMonth(); // 0–11
+      const mes  = data.getMonth();
       const ano  = data.getFullYear();
 
       if (ano === anoAtual)    netAtual[mes]    += net;
       if (ano === anoAnterior) netAnterior[mes] += net;
     }
 
-    // saldoAtual = saldo após Dez do ano corrente
     const dadosAtuais     = this.regressivo(netAtual,    saldoAtual);
-    // dadosAtuais[0] = saldo antes de Jan do ano corrente = saldo após Dez do ano anterior
     const dadosAnteriores = this.regressivo(netAnterior, dadosAtuais[0]);
 
     return { labels, dadosAtuais, dadosAnteriores };
   }
 
-  /**
-   * Calcula o saldo no INÍCIO de cada bucket retrocedendo a partir de saldoFinal.
-   *
-   * Raciocínio: S[i+1] = S[i] + net[i]  ⟹  S[i] = S[i+1] - net[i]
-   *
-   * Exemplo: net=[+1000, -500, +2000], saldoFinal=5000
-   *   out[2] = 5000 - 2000 = 3000  (início de Mar)
-   *   out[1] = 3000 - (-500) = 3500 (início de Fev)
-   *   out[0] = 3500 - 1000 = 2500  (início de Jan)
-   *   Verificação: 2500 +1000 -500 +2000 = 5000 ✓
-   */
   private regressivo(net: number[], saldoFinal: number): number[] {
     const out = new Array(net.length).fill(0);
     let s = saldoFinal;
     for (let i = net.length - 1; i >= 0; i--) {
       s = s - net[i];
-      out[i] = Math.round(s * 100) / 100; // evita floating-point noise
+      out[i] = Math.round(s * 100) / 100;
     }
     return out;
   }
@@ -794,10 +829,7 @@ export class ContasComponent implements OnInit {
     return {
       responsive: true,
       maintainAspectRatio: false,
-      interaction: {
-        mode:      'index',
-        intersect: false,
-      },
+      interaction: { mode: 'index', intersect: false },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -814,9 +846,7 @@ export class ContasComponent implements OnInit {
             label: (item: any) => {
               const val: number = item.parsed.y;
               const fmt = val.toLocaleString('pt-BR', {
-                style:                'currency',
-                currency:             'BRL',
-                maximumFractionDigits: 0
+                style: 'currency', currency: 'BRL', maximumFractionDigits: 0
               });
               return ` ${item.dataset.label}: ${fmt}`;
             }
@@ -831,10 +861,7 @@ export class ContasComponent implements OnInit {
         },
         y: {
           border: { display: false },
-          grid: {
-            color:       'rgba(226,232,240,0.7)',
-            drawBorder:  false,
-          },
+          grid:   { color: 'rgba(226,232,240,0.7)', drawBorder: false },
           ticks: {
             color: '#94a3b8',
             font:  { size: 12 },

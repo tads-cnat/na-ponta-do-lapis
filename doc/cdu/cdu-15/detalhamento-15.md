@@ -1,8 +1,8 @@
 # CDU 15. Manter Conta de Administrador
 
-- **Ator principal**: Administrador
+- **Ator principal**: Administrador.
 
-- **Atores secundários**: n/a
+- **Atores secundários**: N/A.
 - **Resumo**: O administrador consegue criar contas para outros administradores, listar as contas, editar e excluir a conta de outros administradores.
 - **Pré-condição**: O usuario deverá estar autenticado como administrador do sistema.
 - **Pós-Condição**: Apos a operação ser realizada o estado da conta é atualizado no sistema de acordo com a opção selecionada e atualizada a listagem.
@@ -38,12 +38,3 @@
 | 5.2 - O administrador confirma a exclusão | |
 | | Retorna ao passo 7 do fluxo principal |
 
-> Obs. as seções a seguir apenas serão utilizadas na segunda unidade do PDSWeb (segundo orientações do gerente do projeto).
-
-## Diagrama de Interação (Sequência ou Comunicação)
-
-> Substituir pela imagem correspondente...
-
-## Diagrama de Classes de Projeto
-
-> Substituir pela imagem contendo as classes (modelo, visão e templates) que implementam o respectivo CDU...

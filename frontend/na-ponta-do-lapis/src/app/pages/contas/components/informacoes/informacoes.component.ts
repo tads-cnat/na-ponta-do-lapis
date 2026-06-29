@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { IContas } from '../../../../model/IContas.models';
+import { IContas, Moeda } from '../../../../model/IContas.models';
 
 @Component({
   selector: 'app-informacoes-conta',
@@ -20,44 +20,54 @@ import { IContas } from '../../../../model/IContas.models';
           </div>
         </div>
 
-        <!-- GRID -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- GRID 2 colunas -->
+        <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
 
           <!-- SALDO -->
           <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 min-w-0">
 
-            <span class="text-2xl text-slate-700 font-bold">
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
               Saldo Atual
+            </p>
+
+            <span class="text-2xl font-bold text-slate-900 break-words leading-tight">
+              {{
+                conta.saldo.toLocaleString(
+                  localeDaMoeda(conta.moeda),
+                  { style: 'currency', currency: conta.moeda }
+                )
+              }}
             </span>
-
-            <div class="mt-3">
-              <span class="text-2xl font-bold text-slate-900 break-words leading-tight">
-                {{
-
-                  conta.saldo.toLocaleString(
-                    this.localeDaMoeda(conta.moeda),
-                    {
-                      style: 'currency',
-                      currency: conta.moeda
-                    })
-                }}
-              </span>
-            </div>
 
           </div>
 
-          <!-- COR -->
-          <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
+          <!-- MOEDA -->
+          <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5 min-w-0">
 
-            <span class="text-slate-700 font-bold">
-              Cor da Conta
-            </span>
+            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide mb-3">
+              Moeda
+            </p>
 
-            <div class="mt-4 flex items-center">
-              <div
-                class="w-10 h-10 rounded-full border border-slate-200 shrink-0"
-                [style.background]="conta.cor">
+            <div class="flex items-center gap-3">
+
+              <!-- Badge com símbolo -->
+              <span
+                class="inline-flex items-center justify-center
+                       w-11 h-11 rounded-xl
+                       bg-orange-100 text-orange-600
+                       text-base font-bold shrink-0">
+                {{ simboloMoeda(conta.moeda) }}
+              </span>
+
+              <div class="flex flex-col min-w-0">
+                <span class="text-lg font-bold text-slate-900 truncate">
+                  {{ conta.moeda }}
+                </span>
+                <span class="text-sm text-slate-500 truncate">
+                  {{ nomeMoeda(conta.moeda) }}
+                </span>
               </div>
+
             </div>
 
           </div>
@@ -72,45 +82,26 @@ export class InformacoesComponent {
 
   @Input() conta: IContas | null = null;
 
-
-  localeDaMoeda(moeda: string | null): string {
-
+  localeDaMoeda(moeda: Moeda | null): string {
     switch (moeda) {
-      case 'USD':
-        return 'en-US';
-
-      case 'EUR':
-        return 'de-DE';
-
-      default:
-        return 'pt-BR';
+      case 'USD': return 'en-US';
+      case 'EUR': return 'de-DE';
+      default:    return 'pt-BR';
     }
-
   }
 
-
-  simboloMoeda(moeda: string | null): string {
-
-    const simbolos: Record<string, string> = {
-      BRL: 'R$',
-      USD: 'US$',
-      EUR: '€'
-    };
-
+  simboloMoeda(moeda: Moeda | null): string {
+    const simbolos: Record<string, string> = { BRL: 'R$', USD: 'US$', EUR: '€' };
     return simbolos[moeda ?? 'BRL'] ?? moeda ?? '';
-
   }
 
-
-  nomeMoeda(moeda: string | null): string {
-
+  nomeMoeda(moeda: Moeda | null): string {
     const nomes: Record<string, string> = {
       BRL: 'Real brasileiro',
       USD: 'Dólar americano',
       EUR: 'Euro'
     };
-
     return nomes[moeda ?? 'BRL'] ?? 'Moeda desconhecida';
-
   }
+
 }

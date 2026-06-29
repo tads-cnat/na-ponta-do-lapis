@@ -34,6 +34,14 @@ export interface ITransacaoRequest {
     idCategoria:number;
     idContaFinanceira:number;
     dataHora:string
+    marcador: Marcador | null
+}
+
+export interface ITransacaoFatura {
+  descricao: string;
+  valor: number;
+  data: string | Date;
+  categoria: string;
 }
 
 

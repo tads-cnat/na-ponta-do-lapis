@@ -42,7 +42,7 @@ jobs:
 
       - name: Instalar dependências
         working-directory: frontend/na-ponta-do-lapis
-        run: npm ci
+        run: npm install
 
       - name: Build Angular
         working-directory: frontend/na-ponta-do-lapis

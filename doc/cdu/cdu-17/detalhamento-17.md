@@ -4,7 +4,7 @@
 
 - **Atores secundários**: N/A.
 - **Resumo**: Ao apertar no botão "Meta", é apresentado um quadro com todas as metas ja criadas e seus devidos progressos, sendo possivel a adição, edição e exclusão das mesmas.
-- **Pré-condição**: O cliente deverá está autenticado
+- **Pré-condição**: O cliente deverá estar autenticado.
 - **Pós-Condição**: As açõoes do cliente serão salvas do banco de dados.
 
 ## Fluxo Principal

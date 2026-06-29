@@ -1,24 +1,23 @@
 <div class="text-center">
     <div class="text-xl text-gray-400">Valor total das metas</div>
-    <div class="text-3xl font-bold mb-2.5"><span class="text-npl-verde">R$</span> 245.000</div>
-    <div class="text-lg text-gray-500">+R$3.500 desde que voce começou</div>
+    <div class="text-3xl font-bold mb-2.5"><span class="text-npl-verde">R$</span> {{ totalMetasFormatado() }}</div>
+    <div class="text-lg text-gray-500">+R${{ totalAcumuladoFormatado() }} arrecadados</div>
 </div>
 <div class="mb-8 flex justify-between">
     <h1 class="text-primary font-bold text-3xl ">Metas</h1>
-    <p-button size="small">
+    <p-button size="small" (onClick)="abrirDialog()">
         <i class="pi pi-plus"></i>
        <span>Adicionar meta</span>
     </p-button>
 </div>
-<div class="overflow-y-auto max-h-[500px]">
+<div class="overflow-y-auto max-h-125">
     <ul >
         @for(meta of metas(); track meta.id) {
             <li class="mb-8">
                 <app-meta-item 
-                    [titulo]="meta.nome"
-                    [valorAtual]="meta.valorAtual"
-                    [valorTotal]="meta.valorTotal"
-                    [progressoAtual]="meta.progresso"
+                    [meta]="meta"
+                    (deletarMeta)="deletarMeta($event)"
+                    (editarMeta)="abrirDialog($event)"
                 >
                 </app-meta-item>
             </li>
@@ -30,3 +29,116 @@
     </ul>
 
 </div>
+<p-dialog
+  [header]="metaSelecionada ? 'Editar Meta' : 'Nova Meta'"
+  [(visible)]="exibirDialog"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '42rem' }"
+  [breakpoints]="{ '960px': '85vw', '640px': '95vw' }"> 
+  
+  <form [formGroup]="metaForm" class="flex flex-col gap-6 mt-4">
+    
+    <div class="flex flex-col lg:flex-row gap-4 lg:gap-8">
+        <div class="flex flex-col gap-2 flex-1">
+          <label for="nome">Meta</label>
+          <input pInputText id="nome" formControlName="nome" placeholder="Ex: Viagem, Carro..." fluid />
+          @if (metaForm.get('nome')?.invalid && metaForm.get('nome')?.touched) {
+            @if (metaForm.get('nome')?.errors?.['required']) {
+              <small class="text-red-500">Campo obrigatório</small>
+            }
+            @if (metaForm.get('nome')?.errors?.['minlength']) {
+              <small class="text-red-500">Mínimo de {{ metaForm.get('nome')?.errors?.['minlength'].requiredLength }} caracteres</small>
+            }
+          }
+        </div>
+        
+        <div class="flex flex-col gap-2 flex-1">
+          <label for="valor">Valor</label>
+          <p-inputnumber 
+            formControlName="valor" 
+            inputId="valor" 
+            mode="currency" 
+            currency="BRL" 
+            locale="pt-BR" 
+            fluid>
+          </p-inputnumber>
+          @if (metaForm.get('valor')?.invalid && metaForm.get('valor')?.touched) {
+            @if (metaForm.get('valor')?.errors?.['required']) {
+              <small class="text-red-500">Campo obrigatório</small>
+            }
+            @if (metaForm.get('valor')?.errors?.['min']) {
+              <small class="text-red-500">Valor deve ser positivo</small>
+            }
+          }
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+        <div class="flex flex-col gap-2">
+          <label for="dataLimite">Data Limite</label>
+          <p-datepicker 
+            formControlName="dataLimite" 
+            inputId="dataLimite" 
+            dateFormat="dd/mm/yy" 
+            [showIcon]="true" 
+            [minDate]="today"
+            [appendTo]="'body'"
+            fluid>
+          </p-datepicker>
+          @if (metaForm.get('dataLimite')?.invalid && metaForm.get('dataLimite')?.touched) {
+            <small class="text-red-500">A data limite deve ser futura</small>
+          }
+        </div>
+        
+        <div class="flex flex-col gap-2">
+            <label for="tipoMeta">Tipo de Meta</label>
+            <p-select 
+              formControlName="tipoMeta" 
+              [options]="tiposMeta()" 
+              optionLabel="nome" 
+              optionValue="id" 
+              placeholder="Selecione o tipo" 
+              [appendTo]="'body'"
+              fluid>
+            </p-select>
+            @if (metaForm.get('tipoMeta')?.invalid && metaForm.get('tipoMeta')?.touched) {
+              <small class="text-red-500">Campo obrigatório</small>
+            }
+        </div>
+
+        <div class="flex flex-col gap-2">
+            <label for="contaId">Conta</label>
+            <p-select 
+              formControlName="contaId" 
+              [options]="contas()" 
+              optionLabel="nome" 
+              optionValue="id" 
+              placeholder="Selecione a conta" 
+              [appendTo]="'body'"
+              fluid>
+            </p-select>
+        </div>
+    </div>
+
+    <div class="flex flex-col gap-2">
+      <label for="descricao">Descrição</label>
+      <textarea 
+        pTextarea 
+        id="descricao" 
+        rows="3" 
+        formControlName="descricao" 
+        class="w-full resize-none">
+      </textarea>
+    </div>
+
+  </form>
+
+  <ng-template pTemplate="footer">
+    <div class="mt-16 gap-6 flex justify-end">
+        <p-button label="Cancelar" severity="secondary" (onClick)="fecharDialog()"></p-button>
+        <p-button label="Salvar" icon="pi pi-check" (onClick)="salvarMeta()" [disabled]="metaForm.invalid"></p-button>
+    </div>
+  </ng-template>
+
+</p-dialog>
