@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 import { Categoria, ITransacaoFatura, ITransacaoRequest, ITransacoes,  } from '../../../model/ITransacoes.model';
 import { environment}  from '@env';
 
@@ -13,31 +12,12 @@ export class TransacoesService {
 
   constructor(private http:HttpClient){}
 
-  private parseDateBR(dateStr: string): string {
-    if (!dateStr) return dateStr;
-    const [datePart, timePart] = dateStr.split(' ');
-    const [day, month, year] = datePart.split('/').map(Number);
-    const [hours, minutes] = timePart ? timePart.split(':').map(Number) : [0, 0];
-    return new Date(year, month - 1, day, hours, minutes).toISOString();
-  }
-
-  private normalizeTransacoes(transacoes: ITransacoes[]): ITransacoes[] {
-    return transacoes.map(t => ({
-      ...t,
-      dataHora: this.parseDateBR(t.dataHora),
-    }));
-  }
-
-  public listarTransacoes(): Observable<ITransacoes[]> {
-    return this.http.get<ITransacoes[]>(`${this.BASE_URL}/transacoes/me`).pipe(
-      map(res => this.normalizeTransacoes(res))
-    )
+  public listarTransacoes(): Observable<any> {
+    return this.http.get<any>(`${this.BASE_URL}/transacoes/me`)
   }
 
   public listarTransacoesPorDescricao(descricao:string): Observable<ITransacoes[]> {
-    return this.http.get<ITransacoes[]>(`${this.BASE_URL}/transacoes/buscar?descricao=${descricao}`).pipe(
-      map(res => this.normalizeTransacoes(res))
-    )
+    return this.http.get<ITransacoes[]>(`${this.BASE_URL}/transacoes/buscar?descricao=${descricao}`)
   }
 
     public buscarTransacaoPorId(id:number): Observable<ITransacaoRequest> {
