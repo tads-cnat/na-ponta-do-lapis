@@ -21,7 +21,7 @@ export class SidebarComponent implements OnInit {
       {label: 'Metas', icon: 'meta', routerLink:'/app/metas'},
       {label: 'Familia', icon: 'familia', routerLink:'/app/familia'},
       {label: 'Dashboard', icon:'dashboard', routerLink:'/app/dashboard'},
-      {label: 'Ajustes', icon:'ajuste', routerLink:'/app/ajustes'},
+      {label: 'Perfil', icon:'ajuste', routerLink:'/app/perfil'},
     ]
   }
 
