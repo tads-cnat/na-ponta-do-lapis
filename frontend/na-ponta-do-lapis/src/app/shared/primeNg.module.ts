@@ -20,6 +20,7 @@ import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ColorPickerModule } from 'primeng/colorpicker';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 
 
@@ -44,7 +45,8 @@ import { ColorPickerModule } from 'primeng/colorpicker';
       DialogModule,
       InputNumberModule,
       SelectModule,
-      RadioButtonModule
+      RadioButtonModule,
+      ProgressSpinnerModule
   ],
   declarations: [],
   imports: [CommonModule],

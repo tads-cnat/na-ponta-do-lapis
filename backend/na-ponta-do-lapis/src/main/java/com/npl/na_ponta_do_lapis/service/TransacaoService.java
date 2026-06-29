@@ -94,7 +94,7 @@ public class TransacaoService {
             t.setValor(dto.valor());
             
             // Adiciona a hora zerada para converter a data (YYYY-MM-DD) do DTO em LocalDateTime
-            t.setDataHora(dto.data() ); 
+            t.setDataHora(dto.data().atStartOfDay()); 
             
             t.setTipo(TipoTransacao.DESPESA); // Regra de negócio: Faturas são despesas
             t.setEstado(EstadoTransacao.REALIZADA); // Ou "PENDENTE", se preferir que o usuário dê baixa manual depois
