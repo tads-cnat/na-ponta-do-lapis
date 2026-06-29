@@ -2,7 +2,7 @@
 
 - **Ator principal**: Usuario e Admin.
 
-- **Atores secundários**: NT.
+- **Atores secundários**: N/A.
 - **Resumo**: Usuário clica no botão de logout e encerra sua sessão.
 - **Pré-condição**: Deve estar autenticado.
 - **Pós-Condição**: Sessão encerrada.
