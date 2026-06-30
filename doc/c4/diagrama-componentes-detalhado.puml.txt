@@ -16,7 +16,10 @@ skinparam rectangle<<system>> {
     BorderColor #333333
 }
 
-title Diagrama de Componentes Lado a Lado — Na Ponta do Lápis
+title Diagrama de Componentes — Na Ponta do Lápis
+
+' ─── Componente Externo de Entrada (Extrema Esquerda) ───
+Component(webApp, "Web App", "Navegador", "Acessa o sistema")
 
 ' ─── Grande Container do Sistema Geral (Fundo Branco/Tracejado) ───
 System(sistemaGeral, "Sistema Na Ponta do Lápis", "Plataforma de Gestão de Finanças Pessoais") {
@@ -47,14 +50,14 @@ System(sistemaGeral, "Sistema Na Ponta do Lápis", "Plataforma de Gestão de Fin
 
     ' ─── Container: Aplicação Backend ───
     Container(backend, "Aplicação Backend", "Spring Boot", "Processa as regras de negócio") {
-        Component(usuarioCtrl, "UsuarioController", "Controller REST", "Gerencia cadastro e perfil dos usuários")
-        Component(transacaoCtrl, "TransacaoController", "Controller REST", "Registra transações e converte moedas")
-        Component(contaCtrl, "ContaFinanceiraController", "Controller REST", "Gerencia accounts financeiras dos usuários")
-        Component(familiaCtrl, "FamiliaController", "Controller REST", "Gerencia grupos familiares e membros")
-        Component(conviteCtrl, "ConviteController", "Controller REST", "Envia e aceita convites para grupos")
-        Component(metaCtrl, "MetaController", "Controller REST", "Cria e acompanha metas financeiras")
-        Component(marcadorCtrl, "MarcadorController", "Controller REST", "Gerencia marcadores/tags de transações")
-        Component(tipoCatCtrl, "TipoCategoriaController", "Controller REST", "Gerencia os tipos de categoria")
+        Component(usuarioCtrl, "UsuarioController", "Spring Boot", "Gerencia cadastro e perfil dos usuários")
+        Component(transacaoCtrl, "TransacaoController", "Spring Boot", "Registra transações e converte moedas")
+        Component(contaCtrl, "ContaFinanceiraController", "Spring Boot", "Gerencia contas financeiras dos usuários")
+        Component(familiaCtrl, "FamiliaController", "Spring Boot", "Gerencia grupos familiares e membros")
+        Component(conviteCtrl, "ConviteController", "Spring Boot", "Envia e aceita convites para grupos")
+        Component(metaCtrl, "MetaController", "Spring Boot", "Cria e acompanha metas financeiras")
+        Component(marcadorCtrl, "MarcadorController", "Spring Boot", "Gerencia marcadores/tags de transações")
+        Component(tipoCatCtrl, "TipoCategoriaController", "Spring Boot", "Gerencia os tipos de categoria")
     }
 
     ' Mantém os componentes do Backend empilhados na vertical
@@ -67,13 +70,20 @@ System(sistemaGeral, "Sistema Na Ponta do Lápis", "Plataforma de Gestão de Fin
     marcadorCtrl -[hidden]down-> tipoCatCtrl
 }
 
-' ─── Sistema Externo (FORA do grande container, posicionado à direita de tudo) ───
+' ─── Sistemas Externos (FORA do grande container, posicionados à direita de tudo) ───
 System_Ext(awesomeApi, "AwesomeAPI", "Fornece cotações de moedas em tempo real")
+System_Ext(gemini, "Gemini", "Processa inteligência artificial e leitura de faturas")
+System_Ext(cloudinary, "Cloudinary", "Armazena e gerencia imagens de perfil")
 
-' Empurra a API externa para ficar ao lado do bloco do sistema
+' Empurra as APIs externas para ficarem ao lado direito do bloco do sistema geral
 sistemaGeral -[hidden]right-> awesomeApi
+awesomeApi -[hidden]right-> gemini
+gemini -[hidden]right-> cloudinary
 
-' ─── Relacionamentos / Chamadas de API (Setas apontando para a direita) ───
+' ─── Conexão de Entrada: Usuário acessando o Frontend (Força o Web App para a esquerda) ───
+Rel_R(webApp, usuarioService, "Acessa a interface", "HTTPS")
+
+' ─── Relacionamentos / Chamadas de API internas (Setas apontando para a direita) ───
 Rel_R(usuarioService, usuarioCtrl, "Chamada para a API", "JSON/HTTP")
 Rel_R(transacaoService, transacaoCtrl, "Chamada para a API", "JSON/HTTP")
 Rel_R(contaService, contaCtrl, "Chamada para a API", "JSON/HTTP")
@@ -83,7 +93,9 @@ Rel_R(metaService, metaCtrl, "Chamada para a API", "JSON/HTTP")
 Rel_R(marcadorService, marcadorCtrl, "Chamada para a API", "JSON/HTTP")
 Rel_R(tipoCatService, tipoCatCtrl, "Chamada para a API", "JSON/HTTP")
 
-' ─── Integração Externa (Saindo do TransacaoController para a direita) ───
+' ─── Integração Externa (Saindo dos Controllers para a direita) ───
 Rel_R(transacaoCtrl, awesomeApi, "Consulta cotação", "JSON/HTTPS")
+Rel_R(transacaoCtrl, gemini, "Ler fatura em PDF", "JSON/HTTPS")
+Rel_R(usuarioCtrl, cloudinary, "Envia foto de perfil", "JSON/HTTPS")
 
 @enduml

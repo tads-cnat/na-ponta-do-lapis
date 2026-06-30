@@ -15,19 +15,16 @@ System_Ext(awesomeApi, "AwesomeAPI", "Fornece cotações de moedas em tempo real
 ' ─── Container: Web App ───
 Container(webApp, "Web App", "Angular", "Interface web para acesso ao sistema de finanças")
 
-' ─── Container: API Gateway ───
-Container(gateway, "API Gateway", "Nginx", "Roteia requisições, valida JWT e aplica rate limiting")
 
 ' ─── Container: API ───
-Container(api, "API", "Spring Boot", "Processa as regras de negócio e gerencia o sistema")
+Container(api, "API NPL", "Spring Boot", "Processa as regras de negócio e gerencia o sistema")
 
 ' ─── Banco de dados ───
 ContainerDb(db, "Banco de Dados", "PostgreSQL", "Armazena usuários, contas, transações, metas e configurações")
 
 ' ─── Fluxo de Integração ───
 Rel(user,   webApp,  "Acessa via navegador", "HTTPS")
-Rel(webApp, gateway, "Faz chamadas REST", "JSON/HTTPS")
-Rel(gateway, api, "Roteia requisições", "HTTP/JSON")
+Rel(webApp, api, "Faz chamadas REST", "JSON/HTTPS")
 
 ' Mudado para Rel_R (Relation Right) para forçar o fluxo horizontal em direção ao banco e API externa
 Rel_R(api, db, "Lê e escreve dados", "ORM / JDBC")
