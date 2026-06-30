@@ -1,8 +1,10 @@
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
+' Força o layout a ir da esquerda para a direita (horizontal)
+LAYOUT_LEFT_RIGHT()
 
-title Diagrama de Componentes — Na Ponta do Lápis - v1.0
+title Diagrama de Componentes Horizontal — Na Ponta do Lápis
 
 ' ─── Atores externos ───
 Person(user, "Usuário", "Pessoa que gerencia suas finanças pessoais")
@@ -13,55 +15,22 @@ System_Ext(awesomeApi, "AwesomeAPI", "Fornece cotações de moedas em tempo real
 ' ─── Container: Web App ───
 Container(webApp, "Web App", "Angular", "Interface web para acesso ao sistema de finanças")
 
-' ─── Container: API ───
-Container(api, "API", "Spring Boot") {
-
-    Component(authCtrl, "AuthController", "Controller REST", "Gerencia autenticação e emissão de tokens JWT")
-    Component(usuarioCtrl, "UsuarioController", "Controller REST", "Gerencia cadastro e perfil dos usuários")
-    Component(transacaoCtrl, "TransacaoController", "Controller REST", "Registra e consulta transações financeiras; converte moedas via AwesomeAPI")
-    Component(contaCtrl, "ContaFinanceiraController", "Controller REST", "Gerencia contas financeiras dos usuários")
-    Component(familiaCtrl, "FamiliaController", "Controller REST", "Gerencia grupos familiares e membros")
-    Component(conviteCtrl, "ConviteController", "Controller REST", "Envia e aceita convites para grupos familiares")
-    Component(metaCtrl, "MetaController", "Controller REST", "Cria e acompanha metas financeiras")
-    Component(tipoMetaCtrl, "TipoMetaController", "Controller REST", "Gerencia os tipos de meta disponíveis")
-    Component(marcadorCtrl, "MarcadorController", "Controller REST", "Gerencia marcadores/tags de transações")
-    Component(tipoCatCtrl, "TipoCategoriaController", "Controller REST", "Gerencia os tipos de categoria de transação")
-}
-
 ' ─── Container: API Gateway ───
 Container(gateway, "API Gateway", "Nginx", "Roteia requisições, valida JWT e aplica rate limiting")
+
+' ─── Container: API ───
+Container(api, "API", "Spring Boot", "Processa as regras de negócio e gerencia o sistema")
 
 ' ─── Banco de dados ───
 ContainerDb(db, "Banco de Dados", "PostgreSQL", "Armazena usuários, contas, transações, metas e configurações")
 
-' ─── Relacionamentos externos ───
+' ─── Fluxo de Integração ───
 Rel(user,   webApp,  "Acessa via navegador", "HTTPS")
 Rel(webApp, gateway, "Faz chamadas REST", "JSON/HTTPS")
+Rel(gateway, api, "Roteia requisições", "HTTP/JSON")
 
-' ─── Gateway → Controllers ───
-Rel(gateway, authCtrl,    "Roteia", "/auth")
-Rel(gateway, usuarioCtrl, "Roteia", "/usuarios")
-Rel(gateway, transacaoCtrl, "Roteia", "/transacoes")
-Rel(gateway, contaCtrl,   "Roteia", "/contas")
-Rel(gateway, familiaCtrl, "Roteia", "/familias")
-Rel(gateway, conviteCtrl, "Roteia", "/convites")
-Rel(gateway, metaCtrl,    "Roteia", "/metas")
-Rel(gateway, tipoMetaCtrl,"Roteia", "/tipos-meta")
-Rel(gateway, marcadorCtrl,"Roteia", "/marcadores")
-Rel(gateway, tipoCatCtrl, "Roteia", "/tipos-categoria")
+' Mudado para Rel_R (Relation Right) para forçar o fluxo horizontal em direção ao banco e API externa
+Rel_R(api, db, "Lê e escreve dados", "ORM / JDBC")
+Rel_R(api, awesomeApi, "Consulta cotação de moedas", "JSON/HTTPS")
 
-' ─── Controllers → Banco ───
-Rel_D(authCtrl,     db, "Lê e escreve", "ORM")
-Rel_D(usuarioCtrl,  db, "Lê e escreve", "ORM")
-Rel_D(transacaoCtrl,db, "Lê e escreve", "ORM")
-Rel_D(contaCtrl,    db, "Lê e escreve", "ORM")
-Rel_D(familiaCtrl,  db, "Lê e escreve", "ORM")
-Rel_D(conviteCtrl,  db, "Lê e escreve", "ORM")
-Rel_D(metaCtrl,     db, "Lê e escreve", "ORM")
-Rel_D(tipoMetaCtrl, db, "Lê e escreve", "ORM")
-Rel_D(marcadorCtrl, db, "Lê e escreve", "ORM")
-Rel_D(tipoCatCtrl,  db, "Lê e escreve", "ORM")
-
-' ─── TransacaoController → AwesomeAPI ───
-Rel(transacaoCtrl, awesomeApi, "Consulta cotação de moedas", "JSON/HTTPS")
 @enduml

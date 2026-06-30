@@ -1,0 +1,23 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+' Força o layout a renderizar na horizontal
+LAYOUT_LEFT_RIGHT()
+
+title API Expandida (Componentes) — Na Ponta do Lápis
+
+' ─── Container: API (Apenas os componentes internos) ───
+Container(api, "API", "Spring Boot", "Processa as regras de negócio") {
+    Component(authCtrl, "AuthController", "Controller REST", "Gerencia autenticação e emissão de tokens JWT")
+    Component(usuarioCtrl, "UsuarioController", "Controller REST", "Gerencia cadastro e perfil dos usuários")
+    Component(transacaoCtrl, "TransacaoController", "Controller REST", "Registra e consulta transações financeiras; converte moedas via AwesomeAPI")
+    Component(contaCtrl, "ContaFinanceiraController", "Controller REST", "Gerencia contas financeiras dos usuários")
+    Component(familiaCtrl, "FamiliaController", "Controller REST", "Gerencia grupos familiares e membros")
+    Component(conviteCtrl, "ConviteController", "Controller REST", "Envia e aceita convites para grupos familiares")
+    Component(metaCtrl, "MetaController", "Controller REST", "Cria e acompanha metas financeiras")
+    Component(tipoMetaCtrl, "TipoMetaController", "Controller REST", "Gerencia os tipos de meta disponíveis")
+    Component(marcadorCtrl, "MarcadorController", "Controller REST", "Gerencia marcadores/tags de transações")
+    Component(tipoCatCtrl, "TipoCategoriaController", "Controller REST", "Gerencia os tipos de categoria de transação")
+}
+
+@enduml

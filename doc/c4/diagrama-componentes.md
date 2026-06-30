@@ -1,1 +1,2 @@
-![diagrama-componentes](./diagrama_componentes.png)
+![diagrama-componentes](./diagrama-componentes.png)
+![diagrama-componentes-detalhado](./diagrama-componentes-detalhado.png)
