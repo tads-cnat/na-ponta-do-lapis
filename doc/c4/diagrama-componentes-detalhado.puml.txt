@@ -1,23 +1,78 @@
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
-' Força o layout a renderizar na horizontal
-LAYOUT_LEFT_RIGHT()
-
-title API Expandida (Componentes) — Na Ponta do Lápis
-
-' ─── Container: API (Apenas os componentes internos) ───
-Container(api, "API", "Spring Boot", "Processa as regras de negócio") {
-    Component(authCtrl, "AuthController", "Controller REST", "Gerencia autenticação e emissão de tokens JWT")
-    Component(usuarioCtrl, "UsuarioController", "Controller REST", "Gerencia cadastro e perfil dos usuários")
-    Component(transacaoCtrl, "TransacaoController", "Controller REST", "Registra e consulta transações financeiras; converte moedas via AwesomeAPI")
-    Component(contaCtrl, "ContaFinanceiraController", "Controller REST", "Gerencia contas financeiras dos usuários")
-    Component(familiaCtrl, "FamiliaController", "Controller REST", "Gerencia grupos familiares e membros")
-    Component(conviteCtrl, "ConviteController", "Controller REST", "Envia e aceita convites para grupos familiares")
-    Component(metaCtrl, "MetaController", "Controller REST", "Cria e acompanha metas financeiras")
-    Component(tipoMetaCtrl, "TipoMetaController", "Controller REST", "Gerencia os tipos de meta disponíveis")
-    Component(marcadorCtrl, "MarcadorController", "Controller REST", "Gerencia marcadores/tags de transações")
-    Component(tipoCatCtrl, "TipoCategoriaController", "Controller REST", "Gerencia os tipos de categoria de transação")
+' Força o fundo dos containers a ser branco com bordas tracejadas
+skinparam rectangle<<container>> {
+    BackgroundColor #FFFFFF
+    BorderStyle dashed
+    BorderColor #666666
 }
+skinparam rectangle<<system>> {
+    BackgroundColor #FFFFFF
+    BorderStyle dashed
+    BorderColor #333333
+}
+
+title Diagrama de Componentes — Na Ponta do Lápis
+
+
+System(sistemaGeral, "Sistema Na Ponta do Lápis", "Plataforma de Gestão de Finanças Pessoais") {
+
+    ' ─── Container: Aplicação Frontend ───
+    Container(frontend, "Aplicação Frontend", "Angular", "Interface web do usuário") {
+        Component(usuarioService, "UsuarioService", "Angular Service", "Gerencia o cadastro e dados do perfil")
+        Component(transacaoService, "TransacaoService", "Angular Service", "Cria, edita, exclui e busca movimentações")
+        Component(contaService, "ContaFinanceiraService", "Angular Service", "Gerencia as contas bancárias e carteiras")
+        Component(familiaService, "FamiliaService", "Angular Service", "Gerencia o grupo familiar e lista membros")
+        Component(conviteService, "ConviteService", "Angular Service", "Envia e aceita convites para grupos")
+        Component(marcadorService, "MarcadorService", "Angular Service", "Cria e lista as tags de transações")
+        Component(tipoCatService, "TipoCategoriaService", "Angular Service", "Busca as categorias de transação")
+    }
+
+
+    usuarioService -[hidden]down-> transacaoService
+    transacaoService -[hidden]down-> contaService
+    contaService -[hidden]down-> familiaService
+    familiaService -[hidden]down-> conviteService
+    conviteService -[hidden]down-> marcadorService
+    marcadorService -[hidden]down-> tipoCatService
+
+
+    Container(backend, "Aplicação Backend", "Spring Boot", "Processa as regras de negócio") {
+        Component(usuarioCtrl, "UsuarioController", "Controller REST", "Gerencia cadastro e perfil dos usuários")
+        Component(transacaoCtrl, "TransacaoController", "Controller REST", "Registra transações e converte moedas")
+        Component(contaCtrl, "ContaFinanceiraController", "Controller REST", "Gerencia contas financeiras dos usuários")
+        Component(familiaCtrl, "FamiliaController", "Controller REST", "Gerencia grupos familiares e membros")
+        Component(conviteCtrl, "ConviteController", "Controller REST", "Envia e aceita convites para grupos")
+        Component(marcadorCtrl, "MarcadorController", "Controller REST", "Gerencia marcadores/tags de transações")
+        Component(tipoCatCtrl, "TipoCategoriaController", "Controller REST", "Gerencia os tipos de categoria")
+    }
+
+
+    usuarioCtrl -[hidden]down-> transacaoCtrl
+    transacaoCtrl -[hidden]down-> contaCtrl
+    contaCtrl -[hidden]down-> familiaCtrl
+    familiaCtrl -[hidden]down-> conviteCtrl
+    conviteCtrl -[hidden]down-> marcadorCtrl
+    marcadorCtrl -[hidden]down-> tipoCatCtrl
+}
+
+
+System_Ext(awesomeApi, "AwesomeAPI", "Fornece cotações de moedas em tempo real")
+
+
+sistemaGeral -[hidden]down-> awesomeApi
+
+
+Rel_D(usuarioService, usuarioCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_D(transacaoService, transacaoCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_D(contaService, contaCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_D(familiaService, familiaCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_D(conviteService, conviteCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_D(marcadorService, marcadorCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_D(tipoCatService, tipoCatCtrl, "Chamada para a API", "JSON/HTTP")
+
+
+Rel_D(transacaoCtrl, awesomeApi, "Consulta cotação", "JSON/HTTPS")
 
 @enduml
