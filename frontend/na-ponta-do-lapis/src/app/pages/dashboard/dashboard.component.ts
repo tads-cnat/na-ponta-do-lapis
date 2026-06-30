@@ -15,6 +15,7 @@ import { MetasService } from '../metas/services/metas.service';
 import { TransacoesService } from '../transacoes/service/transacoes.service';
 import { DashboardService } from './service/dashboard.service';
 import { ICotacao } from '../../model/ICotacao.models';
+import { Categoria } from '../../model/ITransacoes.model';
 
 @Component({
   selector: 'app-dashboard',
@@ -75,6 +76,7 @@ import { ICotacao } from '../../model/ICotacao.models';
         <app-gastos-categoria
         class="block"
         [transacoes]="transacoes"
+        [categorias_disponiveis]="categorias"
         >
         </app-gastos-categoria>
 
@@ -119,11 +121,14 @@ export class DashboardComponent implements OnInit {
 
   metas: MetaResponse[] = [];
 
+  categorias: Categoria[] = [];
+
   ngOnInit(): void {
     this.buscarContas();
     this.buscarTransacoes();
     this.buscarCotacoes();
     this.buscarMetas();
+    this.buscarCategorias();
   }
 
   buscarContas(): void {
@@ -133,6 +138,7 @@ export class DashboardComponent implements OnInit {
         console.log(this.contas);
         this.saldoAtual = this.contas.reduce( (total, conta) =>
                             total + conta.saldo, 0);
+        this.cdr.detectChanges();
       },
       error: (err:Error) => {
         console.log(err)
@@ -152,6 +158,7 @@ export class DashboardComponent implements OnInit {
       next: (res: ITransacoes[]) => {
         this.transacoes = res;
         console.log(this.transacoes);
+        this.cdr.detectChanges();
       },
       error: (err: Error) => {
           console.log(err)
@@ -184,6 +191,24 @@ export class DashboardComponent implements OnInit {
       error: (err) => {
         console.error("Erro ao buscar euro", err);
 
+      }
+    });
+  }
+
+  buscarCategorias(): void {
+    this.transacaoService.listarCategorias().subscribe({
+      next: (res: Categoria[]) => {
+        this.categorias = res;
+        this.cdr.detectChanges();
+      },
+      error: (err: Error) => {
+        console.error('Erro ao buscar categorias', err);
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Erro ao carregar categorias',
+          detail: '',
+          life: 2000
+        });
       }
     });
   }

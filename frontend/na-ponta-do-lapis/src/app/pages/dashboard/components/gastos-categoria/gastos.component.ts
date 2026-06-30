@@ -1,35 +1,21 @@
 import { Component, Input, OnChanges } from "@angular/core";
 import { ChartModule } from "primeng/chart";
-import { ITransacoes } from "../../../../model/ITransacoes.model";
+import { Categoria, ITransacoes } from "../../../../model/ITransacoes.model";
 
-// ─── Paleta fixa: 20 categorias com cores únicas permanentes ─────────────────
-// A ORDEM aqui é a mesma que será usada no chart e na legenda.
-// Categorias sem transações aparecem na legenda com 0% mas NÃO geram fatia visual
-// no doughnut (Chart.js ignora segmentos com valor 0 — comportamento correto).
-const CATEGORIAS: { nome: string; cor: string }[] = [
-  { nome: 'Supermercado',           cor: '#E74C3C' },
-  { nome: 'Restaurantes',           cor: '#E67E22' },
-  { nome: 'Academia',               cor: '#F1C40F' },
-  { nome: 'Assinaturas Streaming',  cor: '#2ECC71' },
-  { nome: 'Combustível',            cor: '#3498DB' },
-  { nome: 'Manutenção Carro',       cor: '#9B59B6' },
-  { nome: 'Estacionamento',         cor: '#1ABC9C' },
-  { nome: 'Pedágio',                cor: '#95A5A6' },
-  { nome: 'Cinema',                 cor: '#E91E63' },
-  { nome: 'Jogos Online',           cor: '#FF5722' },
-  { nome: 'Viagens',                cor: '#00BCD4' },
-  { nome: 'Hospedagem',             cor: '#8BC34A' },
-  { nome: 'Farmácia',               cor: '#673AB7' },
-  { nome: 'Consultas Médicas',      cor: '#FF9800' },
-  { nome: 'Exames',                 cor: '#009688' },
-  { nome: 'Suplementos',            cor: '#F06292' },
-  { nome: 'Cursos Online',          cor: '#26C6DA' },
-  { nome: 'Livros',                 cor: '#FFA726' },
-  { nome: 'Material Escolar',       cor: '#AB47BC' },
-  { nome: 'Mensalidade Faculdade',  cor: '#5C6BC0' },
+// ─── Paleta de cores ──────────────────────────────────────────────────────────
+// Não há mais nomes fixos: as categorias são as que vêm de GET /categorias
+// (CRUD do usuário, ex.: Alimentação, Transporte, Saúde...). A cor de cada
+// categoria é atribuída pela posição (id ou índice) dentro desta paleta,
+// repetindo em ciclo caso existam mais categorias do que cores aqui.
+const PALETA_CORES: string[] = [
+  '#E74C3C', '#E67E22', '#F1C40F', '#2ECC71', '#3498DB',
+  '#9B59B6', '#1ABC9C', '#95A5A6', '#E91E63', '#FF5722',
+  '#00BCD4', '#8BC34A', '#673AB7', '#FF9800', '#009688',
+  '#F06292', '#26C6DA', '#FFA726', '#AB47BC', '#5C6BC0',
 ];
 
 interface CategoriaVM {
+  id:         number | null;
   nome:       string;
   cor:        string;
   valor:      number;
@@ -74,8 +60,8 @@ interface CategoriaVM {
         </div>
 
         <!--
-          Legenda scrollável — exibe TODAS as 20 categorias SEMPRE,
-          independentemente de haver transações nelas.
+          Legenda scrollável — exibe TODAS as categorias do usuário (vindas de
+          GET /categorias) SEMPRE, independentemente de haver transações nelas.
           Categorias sem dados mostram "0%" para preservar a cor/rótulo.
         -->
         <div class="flex-1 overflow-y-auto min-w-0 pr-0.5" style="max-height: 185px;">
@@ -101,10 +87,11 @@ interface CategoriaVM {
 export class GastosCategoriaComponent implements OnChanges {
 
   @Input() transacoes: ITransacoes[] = [];
+  @Input() categorias_disponiveis: Categoria[] = [];
 
   chartData:    any;
   chartOptions: any;
-  categorias:   CategoriaVM[] = CATEGORIAS.map(c => ({ ...c, valor: 0, percentual: '0%' }));
+  categorias:   CategoriaVM[] = [];
   temDados:     boolean = false;
 
   ngOnChanges(): void {
@@ -115,24 +102,33 @@ export class GastosCategoriaComponent implements OnChanges {
   // ─── Cálculo ─────────────────────────────────────────────────────────────────
 
   private calcularGastos(): void {
-    // Soma despesas REALIZADAS por nome de categoria
-    const totalPorNome: Record<string, number> = {};
+    // Soma despesas REALIZADAS por id de categoria (id é a identidade estável;
+    // nome é só exibição, então nunca deve ser usado como chave de agregação).
+    const totalPorId: Record<number, number> = {};
 
     this.transacoes
       .filter(t => t.tipo === 'DESPESA' && t.estado !== 'PENDENTE' && t.categoria != null)
       .forEach(t => {
-        const nome = t.categoria!.nome;
-        totalPorNome[nome] = (totalPorNome[nome] ?? 0) + t.valor;
+        const id = t.categoria!.id;
+        totalPorId[id] = (totalPorId[id] ?? 0) + t.valor;
       });
 
-    const totalGeral = Object.values(totalPorNome).reduce((a, b) => a + b, 0);
+    const totalGeral = Object.values(totalPorId).reduce((a, b) => a + b, 0);
     this.temDados    = totalGeral > 0;
 
-    // Reconstrói lista sempre com TODAS as 20 categorias (valor 0 se sem dados)
-    this.categorias = CATEGORIAS.map(cat => {
-      const valor = totalPorNome[cat.nome] ?? 0;
+    // Base de categorias: usa a lista real vinda de GET /categorias quando
+    // disponível; se ainda não tiver chegado, cai de volta para as categorias
+    // que aparecem nas próprias transações (evita tela vazia por timing).
+    const baseCategorias: Categoria[] = this.categorias_disponiveis.length
+      ? this.categorias_disponiveis
+      : this.extrairCategoriasDasTransacoes();
+
+    this.categorias = baseCategorias.map((cat, index) => {
+      const valor = totalPorId[cat.id] ?? 0;
       return {
-        ...cat,
+        id:   cat.id,
+        nome: cat.nome,
+        cor:  PALETA_CORES[index % PALETA_CORES.length],
         valor,
         percentual: totalGeral > 0
           ? (valor / totalGeral * 100).toFixed(1) + '%'
@@ -155,6 +151,17 @@ export class GastosCategoriaComponent implements OnChanges {
     } else {
       this.chartData = null;
     }
+  }
+
+  /** Fallback: se a lista de categorias do backend ainda não chegou via
+   *  @Input(), reconstrói a partir das próprias transações para não deixar
+   *  a legenda vazia enquanto isso. */
+  private extrairCategoriasDasTransacoes(): Categoria[] {
+    const vistos = new Map<number, Categoria>();
+    this.transacoes
+      .filter(t => t.categoria != null)
+      .forEach(t => vistos.set(t.categoria!.id, t.categoria!));
+    return [...vistos.values()];
   }
 
   // ─── Opções Chart.js ─────────────────────────────────────────────────────────
