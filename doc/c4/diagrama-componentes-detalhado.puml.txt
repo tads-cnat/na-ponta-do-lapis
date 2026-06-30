@@ -1,6 +1,9 @@
 @startuml
 !include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
 
+' Força o layout global a alinhar os contêineres principais lado a lado
+LAYOUT_LEFT_RIGHT()
+
 ' Força o fundo dos containers a ser branco com bordas tracejadas
 skinparam rectangle<<container>> {
     BackgroundColor #FFFFFF
@@ -13,9 +16,9 @@ skinparam rectangle<<system>> {
     BorderColor #333333
 }
 
-title Diagrama de Componentes — Na Ponta do Lápis
+title Diagrama de Componentes Lado a Lado — Na Ponta do Lápis
 
-
+' ─── Grande Container do Sistema Geral (Fundo Branco/Tracejado) ───
 System(sistemaGeral, "Sistema Na Ponta do Lápis", "Plataforma de Gestão de Finanças Pessoais") {
 
     ' ─── Container: Aplicação Frontend ───
@@ -25,54 +28,62 @@ System(sistemaGeral, "Sistema Na Ponta do Lápis", "Plataforma de Gestão de Fin
         Component(contaService, "ContaFinanceiraService", "Angular Service", "Gerencia as contas bancárias e carteiras")
         Component(familiaService, "FamiliaService", "Angular Service", "Gerencia o grupo familiar e lista membros")
         Component(conviteService, "ConviteService", "Angular Service", "Envia e aceita convites para grupos")
+        Component(metaService, "MetaService", "Angular Service", "Cria e acompanha metas financeiras")
         Component(marcadorService, "MarcadorService", "Angular Service", "Cria e lista as tags de transações")
         Component(tipoCatService, "TipoCategoriaService", "Angular Service", "Busca as categorias de transação")
     }
 
-
+    ' Mantém os componentes do Frontend empilhados na vertical
     usuarioService -[hidden]down-> transacaoService
     transacaoService -[hidden]down-> contaService
     contaService -[hidden]down-> familiaService
     familiaService -[hidden]down-> conviteService
-    conviteService -[hidden]down-> marcadorService
+    conviteService -[hidden]down-> metaService
+    metaService -[hidden]down-> marcadorService
     marcadorService -[hidden]down-> tipoCatService
 
+    ' ─── TRAVA DE ALTURA: Força o Backend a ficar no mesmo nível, à direita do Frontend ───
+    frontend -[hidden]right-> backend
 
+    ' ─── Container: Aplicação Backend ───
     Container(backend, "Aplicação Backend", "Spring Boot", "Processa as regras de negócio") {
         Component(usuarioCtrl, "UsuarioController", "Controller REST", "Gerencia cadastro e perfil dos usuários")
         Component(transacaoCtrl, "TransacaoController", "Controller REST", "Registra transações e converte moedas")
-        Component(contaCtrl, "ContaFinanceiraController", "Controller REST", "Gerencia contas financeiras dos usuários")
+        Component(contaCtrl, "ContaFinanceiraController", "Controller REST", "Gerencia accounts financeiras dos usuários")
         Component(familiaCtrl, "FamiliaController", "Controller REST", "Gerencia grupos familiares e membros")
         Component(conviteCtrl, "ConviteController", "Controller REST", "Envia e aceita convites para grupos")
+        Component(metaCtrl, "MetaController", "Controller REST", "Cria e acompanha metas financeiras")
         Component(marcadorCtrl, "MarcadorController", "Controller REST", "Gerencia marcadores/tags de transações")
         Component(tipoCatCtrl, "TipoCategoriaController", "Controller REST", "Gerencia os tipos de categoria")
     }
 
-
+    ' Mantém os componentes do Backend empilhados na vertical
     usuarioCtrl -[hidden]down-> transacaoCtrl
     transacaoCtrl -[hidden]down-> contaCtrl
     contaCtrl -[hidden]down-> familiaCtrl
     familiaCtrl -[hidden]down-> conviteCtrl
-    conviteCtrl -[hidden]down-> marcadorCtrl
+    conviteCtrl -[hidden]down-> metaCtrl
+    metaCtrl -[hidden]down-> marcadorCtrl
     marcadorCtrl -[hidden]down-> tipoCatCtrl
 }
 
-
+' ─── Sistema Externo (FORA do grande container, posicionado à direita de tudo) ───
 System_Ext(awesomeApi, "AwesomeAPI", "Fornece cotações de moedas em tempo real")
 
+' Empurra a API externa para ficar ao lado do bloco do sistema
+sistemaGeral -[hidden]right-> awesomeApi
 
-sistemaGeral -[hidden]down-> awesomeApi
+' ─── Relacionamentos / Chamadas de API (Setas apontando para a direita) ───
+Rel_R(usuarioService, usuarioCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_R(transacaoService, transacaoCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_R(contaService, contaCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_R(familiaService, familiaCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_R(conviteService, conviteCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_R(metaService, metaCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_R(marcadorService, marcadorCtrl, "Chamada para a API", "JSON/HTTP")
+Rel_R(tipoCatService, tipoCatCtrl, "Chamada para a API", "JSON/HTTP")
 
-
-Rel_D(usuarioService, usuarioCtrl, "Chamada para a API", "JSON/HTTP")
-Rel_D(transacaoService, transacaoCtrl, "Chamada para a API", "JSON/HTTP")
-Rel_D(contaService, contaCtrl, "Chamada para a API", "JSON/HTTP")
-Rel_D(familiaService, familiaCtrl, "Chamada para a API", "JSON/HTTP")
-Rel_D(conviteService, conviteCtrl, "Chamada para a API", "JSON/HTTP")
-Rel_D(marcadorService, marcadorCtrl, "Chamada para a API", "JSON/HTTP")
-Rel_D(tipoCatService, tipoCatCtrl, "Chamada para a API", "JSON/HTTP")
-
-
-Rel_D(transacaoCtrl, awesomeApi, "Consulta cotação", "JSON/HTTPS")
+' ─── Integração Externa (Saindo do TransacaoController para a direita) ───
+Rel_R(transacaoCtrl, awesomeApi, "Consulta cotação", "JSON/HTTPS")
 
 @enduml
