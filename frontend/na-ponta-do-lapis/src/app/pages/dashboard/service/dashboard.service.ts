@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../../../environments/environment.development';
+import { ICotacao } from '../../../model/ICotacao.models';
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
@@ -10,7 +11,8 @@ export class DashboardService {
   constructor(private http: HttpClient){
   }
 
-  public listarCotacoes(moeda: string): Observable<any> {
+  public listarCotacoes(moeda: string): Observable<ICotacao> {
     return this.http.get<any>(`${this.BASE_URL}/cotacoes/${moeda}`)
   }
+
 }

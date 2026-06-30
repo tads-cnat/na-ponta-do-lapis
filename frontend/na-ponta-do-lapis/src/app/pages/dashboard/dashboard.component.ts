@@ -13,6 +13,8 @@ import { ContaFinanceiraService } from '../contas/service/contas.service';
 import { MessageService } from 'primeng/api';
 import { MetasService } from '../metas/services/metas.service';
 import { TransacoesService } from '../transacoes/service/transacoes.service';
+import { DashboardService } from './service/dashboard.service';
+import { ICotacao } from '../../model/ICotacao.models';
 
 @Component({
   selector: 'app-dashboard',
@@ -52,6 +54,8 @@ import { TransacoesService } from '../transacoes/service/transacoes.service';
         class="block w-full"
         [contas]="contas"
         [transacoes]="transacoes"
+        [cotacaoDolar]="cotacaoDolar"
+        [cotacaoEuro]="cotacaoEuro"
         >
         </app-cards-resumo>
 
@@ -91,15 +95,17 @@ export class DashboardComponent implements OnInit {
 
   }
 
-  contaService = inject(ContaFinanceiraService)
+  contaService = inject(ContaFinanceiraService);
 
-  transacaoService = inject(TransacoesService)
+  transacaoService = inject(TransacoesService);
 
-  private messageService = inject(MessageService)
+  dashboardService = inject(DashboardService);
+
+  private messageService = inject(MessageService);
 
   private cdr = inject(ChangeDetectorRef);
 
-  private metaService = inject(MetasService)
+  private metaService = inject(MetasService);
 
   contas: IContas[] = [];
 
@@ -107,11 +113,16 @@ export class DashboardComponent implements OnInit {
 
   saldoAtual: number = 0;
 
+  cotacaoDolar?: ICotacao;
+
+  cotacaoEuro?: ICotacao;
+
   metas: MetaResponse[] = [];
 
   ngOnInit(): void {
     this.buscarContas();
     this.buscarTransacoes();
+    this.buscarCotacoes();
     this.buscarMetas();
   }
 
@@ -151,6 +162,28 @@ export class DashboardComponent implements OnInit {
             life: 2000
           });
           this.cdr.detectChanges();
+      }
+    });
+  }
+
+  buscarCotacoes(): void {
+    this.dashboardService.listarCotacoes('USD-BRL').subscribe({
+      next: (res) => {
+        this.cotacaoDolar = res;
+      },
+      error: (err) => {
+        console.error("Erro ao buscar dólar", err);
+
+      }
+    });
+
+    this.dashboardService.listarCotacoes('EUR-BRL').subscribe({
+      next: (res) =>  {
+        this.cotacaoEuro = res;
+      },
+      error: (err) => {
+        console.error("Erro ao buscar euro", err);
+
       }
     });
   }
