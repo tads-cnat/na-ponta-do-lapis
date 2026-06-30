@@ -1,3 +1,4 @@
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { Routes } from '@angular/router';
 import { LoginComponent } from './auth/components/login/login.component';
 import { SignupComponent } from './auth/components/signup/signup.component';
@@ -12,10 +13,10 @@ import { FamiliaComponent } from './pages/familia/familia.component';
 
 
 export const routes: Routes = [
-    { 
-        path: '', 
-        component: LandingPageComponent, 
-        pathMatch: 'full' 
+    {
+        path: '',
+        component: LandingPageComponent,
+        pathMatch: 'full'
     },
     { path: 'login', component: LoginComponent },
     { path: 'signup', component: SignupComponent },
@@ -26,12 +27,13 @@ export const routes: Routes = [
         component: MainLayoutComponent,
         canActivate: [authGuard],
         children: [
+            { path: 'dashboard', component: DashboardComponent },
             { path: 'transacoes', component: TransacoesComponent },
             { path: 'contas', component: ContasComponent },
             { path: 'metas', component: MetasComponent },
             { path: 'perfil', component: PerfilComponent},
             { path: 'familia', component: FamiliaComponent },
-            { path: '', redirectTo: 'transacoes', pathMatch: 'full' }
+            { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
     { path: '**', redirectTo: '' }
