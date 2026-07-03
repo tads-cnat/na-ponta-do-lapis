@@ -4,7 +4,7 @@
 
 LAYOUT_LANDSCAPE()
 
-title Diagrama de Containers Lucas Henrique, Pedro Ricardo, Eduardo Medeiros
+title Diagrama de Containers 
 
 Person(user, "Cliente", "Cliente do sistema que interage via browser")
 Person(admin_site, "Admin Site", "Administrador que gerencia o sistema quando nescessario por ex: publica posts")
@@ -16,14 +16,16 @@ System_Boundary(system, "Sistema de Gerenciamento Financeiro") {
   Container(backend, "Aplicação Backend", "Spring boot 3.5; Apache tomcat 11; Java 21", "API que fornece os serviços para autenticação de Usuário, cadastro de transação, criação de contas, metas, familia etc.")
   ContainerDb(database, "Banco de Dados", "PostgreSQL 17", "Armazena dados dos usuários")
 }
-System_Ext(api_externa, "AwesomeAPI ", "Api para visualizar cotação de moedas em tempo real")
-
+System_Ext(awesome, "AwesomeAPI ", "Api para visualizar cotação de moedas em tempo real")
+System_Ext(cloudinary, "Cloudinary", "Api para guardar mídia na nuvem")
+System_Ext(gemini, "Gemini", "Api da inteligência artificial Google Gemini")
 
 Rel(user, frontend, "Acessa o sistema de gestão financeira")
 Rel(admin_site, frontend, "Acessa o sistema de gestão financeira")
 Rel(Admin_familia, frontend, "Acessa o sistema de gestão financeira")
 Rel(frontend, backend, "Chamada para a API (JSON/HTTP)")
 Rel(backend, database, "Acessa e escreve informações no banco")
-Rel(backend, api_externa, "Chamada para a API (JSON/HTTP)")
-
+Rel(backend, awesome, "Chamada para a API (JSON/HTTP)")
+Rel(backend, cloudinary, "Chamada para a API (JSON/HTTP)")
+Rel(backend, gemini, "Chamada para a API (JSON/HTTP)")
 @enduml
