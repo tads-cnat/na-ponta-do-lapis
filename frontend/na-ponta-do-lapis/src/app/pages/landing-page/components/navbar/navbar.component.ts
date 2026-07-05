@@ -8,4 +8,12 @@ import { RouterLink } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.css',
 })
-export class NavbarComponent {}
+export class NavbarComponent {
+  isMobile: boolean = false;
+
+  ngOnInit(): void {
+    if (window.innerWidth < 769) {
+      this.isMobile = true;
+    }
+  }
+}

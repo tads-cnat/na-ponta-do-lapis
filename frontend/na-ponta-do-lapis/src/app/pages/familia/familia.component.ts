@@ -125,7 +125,7 @@ export class FamiliaComponent {
       return;
     }
 
-    if (this.convidados.includes(nickname)) {
+    if (this.convidados.some(convidado => convidado[0] === nickname)) {
       this.message = "Este usuário já foi adicionado à lista de convidados.";
       this.cdr.detectChanges();
       return;

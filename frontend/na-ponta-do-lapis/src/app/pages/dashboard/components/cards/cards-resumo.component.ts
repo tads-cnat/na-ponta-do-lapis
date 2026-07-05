@@ -13,7 +13,7 @@ import { ICotacao } from "../../../../model/ICotacao.models";
   selector: 'app-cards-resumo',
   imports: [CurrencyPipe, DecimalPipe],
   template: `
-    <section class="grid grid-cols-4 gap-4">
+    <section class="grid grid-cols-1 lg:grid-cols-4 gap-4">
 
       <!-- Card: Saldo atual -->
       <div class="

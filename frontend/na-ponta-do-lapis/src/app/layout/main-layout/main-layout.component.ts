@@ -11,5 +11,5 @@ import { PrimeNGModuleModule } from '../../shared/primeNg.module';
   styleUrl: './main-layout.component.css',
 })
 export class MainLayoutComponent {
-
+  
 }

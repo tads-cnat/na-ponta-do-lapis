@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { RouterLink, RouterLinkActive } from '@angular/router'
 import { IconComponent } from '../../shared/components/icon/icon.component';
+import { SidebarService } from '../../service/sidebar-service.service';
 
 
 @Component({
@@ -13,6 +14,8 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 export class SidebarComponent implements OnInit {
   aberto: boolean = true;
   items: MenuItem[] | undefined ;
+  sidebarService: SidebarService = inject(SidebarService);
+  isMobile: boolean = false;
 
   ngOnInit(): void {
     this.items = [
@@ -23,6 +26,9 @@ export class SidebarComponent implements OnInit {
       {label: 'Familia', icon: 'familia', routerLink:'/app/familia'},
       {label: 'Perfil', icon:'ajuste', routerLink:'/app/perfil'},
     ]
+    if (window.innerWidth < 769) {
+      this.isMobile = true;
+    }
   }
 
   toggleSidebar(){
