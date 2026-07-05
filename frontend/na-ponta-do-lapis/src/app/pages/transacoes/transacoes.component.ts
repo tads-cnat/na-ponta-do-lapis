@@ -52,7 +52,7 @@ export class TransacoesComponent {
       dataHora: [[null, Validators.required]],
       estado: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      marcadorId: [null, [Validators.required]]
+      marcadorId: [null]
     })
   }
 
@@ -220,12 +220,12 @@ export class TransacoesComponent {
   }
 
   opcoesEstado: any[] = [
-    { label: 'Pendente', value: 'PENDENTE' },
-    { label: 'Realizada', value: 'REALIZADA' }
+    { label: 'Realizada', value: 'REALIZADA' },
+    { label: 'Pendente', value: 'PENDENTE' }
   ]
   opcoesTipo: any[] = [
-    { label: 'Receita', value: 'RECEITA' },
-    { label: 'Despesa', value: 'DESPESA' }
+    { label: 'Despesa', value: 'DESPESA' },
+    { label: 'Receita', value: 'RECEITA' }
   ];
 
 
@@ -236,7 +236,7 @@ export class TransacoesComponent {
       categoria: null,
       conta: null,
       tipo: null,
-      estado: 'PENDENTE',
+      estado: 'REALIZADA',
       valor: 0,
       dataHora: new Date().toISOString().slice(0, 19),
       marcador: null
