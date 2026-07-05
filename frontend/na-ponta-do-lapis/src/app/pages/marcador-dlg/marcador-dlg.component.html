@@ -1,6 +1,6 @@
 <form [formGroup]="formMarcador">
     <p-dialog header="Marcadores" [(visible)]="exibirDialog" [modal]="true" (onHide)="fecharModal()"
-        [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '20vw' }">
+        [breakpoints]="{ '960px': '75vw', '640px': '80vw' }" [style]="{ width: '25vw' }" [blockScroll]="true">
 
         @if (!exibirFormulario) {
             
@@ -16,8 +16,8 @@
                 
                 <ng-template pTemplate="header">
                     <tr>
-                        <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Marcador</th>
-                        <th class="bg-[#F8F8FC]! text-slate-700! min-w-[180px]">Ações</th>
+                        <th class="bg-[#F8F8FC]! text-slate-700! ">Marcador</th>
+                        <th class="bg-[#F8F8FC]! text-slate-700! ">Ações</th>
                     </tr>
                 </ng-template>
 
