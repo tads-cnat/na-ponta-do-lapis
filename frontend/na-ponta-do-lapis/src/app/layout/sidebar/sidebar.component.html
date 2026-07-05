@@ -1,10 +1,10 @@
 <aside class="sidebar flex flex-col h-full bg-white" [class.aberta]="sidebarService.aberto()">
-    <div class="flex menu-header">
-        <img src="logo.svg" alt="logomarca" class="logo">
-        <button (click)="sidebarService.toggleSidebar()" class="menu-btn">
-            <app-icon name="menu" class="text-black"/>
-        </button>
-    </div>
+        <div class="flex menu-header">
+            <img src="logo.svg" alt="logomarca" class="logo">
+            <button (click)="sidebarService.toggleSidebar()" class="menu-btn">
+                <app-icon [name]="sidebarService.aberto() ? 'close' : 'menu'" class="text-black"/>
+            </button>
+        </div>
     @if(isMobile) {
         <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" 
         (click)="isMobile ? sidebarService.fecharSidebar() : null" 
