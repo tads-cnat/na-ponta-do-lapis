@@ -112,7 +112,6 @@ public class TransacaoService {
     }
 
     public List<Transacao> listarTransacoesUsuarioNaSessao() {
-        System.out.println("Usuário na sessão"+getEmailUsuarioLogado());
         return transacaoRepository.buscarTransacoesUsuarioLogado(getEmailUsuarioLogado());
     }
 
