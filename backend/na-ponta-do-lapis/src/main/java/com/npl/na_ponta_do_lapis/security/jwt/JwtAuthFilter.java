@@ -22,10 +22,12 @@ import java.io.IOException;
 @Component
 public class JwtAuthFilter extends OncePerRequestFilter {
 
+    private JwtUtil jwtUtil;
     private UsuarioRepository usuarioRepository;
     private UserDetailsServiceImpl userDetailsService;
 
-    public JwtAuthFilter(UsuarioRepository usuarioRepository, UserDetailsServiceImpl userDetailsService) {
+    public JwtAuthFilter(JwtUtil jwtUtil, UsuarioRepository usuarioRepository, UserDetailsServiceImpl userDetailsService) {
+        this.jwtUtil = jwtUtil;
         this.usuarioRepository = usuarioRepository;
         this.userDetailsService = userDetailsService;
     }
@@ -84,14 +86,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String token = authorizationHeader.substring(JwtUtil.JWT_BEARER.length());
 
-        if (!JwtUtil.validateToken(token)) {
+        if (!jwtUtil.validateToken(token)) {
             logger.warn("JWT Token está inválido ou expirado.");
 
             filterChain.doFilter(request, response);
             return;
         }
 
-        String email = JwtUtil.extractEmail(token);
+        String email = jwtUtil.extractEmail(token);
 
         toAuthentication(request, email);
         filterChain.doFilter(request, response);
