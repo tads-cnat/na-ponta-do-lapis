@@ -1,8 +1,12 @@
 <aside class="sidebar flex flex-col h-full bg-white" [class.aberta]="sidebarService.aberto()">
     <div class="flex menu-header">
         <img src="logo.svg" alt="logomarca" class="logo">
-        <button (click)="sidebarService.toggleSidebar()" class="menu-btn">
-            <app-icon name="menu" class="text-black"/>
+        <button (click)="sidebarService.toggleSidebar()" class="menu-btn w-11 h-11 flex items-center justify-center">
+            @if (sidebarService.aberto()) {
+                <app-icon name="x" class="text-black w-full h-full"/>
+            } @else {
+                <app-icon name="menu" class="text-black w-full h-full"/>
+            }
         </button>
     </div>
     @if(isMobile) {
@@ -22,7 +26,7 @@
         <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" (click)="isMobile ? sidebarService.fecharSidebar() : null" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem flex  gap-2.5 text-white! bg-[#10b981]!">
             <app-icon name="plus" class="w-5 h-5" />
             <span class="menulabel">
-                Adicionar
+                Nova transação
             </span>
         </a>
     }

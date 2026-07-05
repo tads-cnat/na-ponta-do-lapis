@@ -4,6 +4,10 @@
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
 
+:root {
+  color-scheme: light;
+}
+
 @theme {
   --color-npl-amarelo: #EEC046;
   --color-npl-verde:#46B171;

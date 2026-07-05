@@ -1,25 +1,28 @@
 <nav class="sticky z-50 w-full border-b border-gray-300">
-  <div class=" mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16">
-        
-        <div class="flex items-center gap-5 ">
+
+        <div class="flex items-center gap-2 sm:gap-5">
             @if(isMobile) {
-                <div class="flex gap-2.5">
-                    <button (click)="sidebarService.toggleSidebar()" class="menu-btn w-5">
+                <button (click)="sidebarService.toggleSidebar()" class="menu-btn w-11 h-11 flex items-center justify-center">
+                    @if (sidebarService.aberto()) {
+                        <app-icon name="x" class="text-black"/>
+                    } @else {
                         <app-icon name="menu" class="text-black"/>
-                    </button>
-                </div>
+                    }
+                </button>
+                <img src="logoReduzida.png" alt="Na Ponta do Lápis" class="h-8 object-contain" />
             }
         </div>
-        <div class="flex items-center gap-5 ">
-          <i class="pi pi-bell"></i>
-            <div><img class="h-12 w-12 rounded-full border-4 border-[#f9db70]  object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}"></div>
-            <div><p class="nomeUser font-medium">{{ nomeUsuario }}</p></div>
-            <div>
-                <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]!" (onClick)="logout()">Sair<i class="pi pi-sign-out "></i></p-button>
+        <div class="flex items-center gap-2 sm:gap-5 min-w-0">
+          <i class="pi pi-bell shrink-0"></i>
+            <div class="shrink-0"><img class="h-12 w-12 rounded-full border-4 border-[#f9db70] object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}"></div>
+            <div class="hidden sm:block truncate"><p class="nomeUser font-medium truncate">{{ nomeUsuario }}</p></div>
+            <div class="shrink-0">
+                <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]!" (onClick)="logout()"><span class="hidden sm:inline">Sair</span><i class="pi pi-sign-out"></i></p-button>
             </div>
         </div>
-    
+
     </div>
   </div>
 </nav>
