@@ -177,6 +177,7 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.listarCotacoes('USD-BRL').subscribe({
       next: (res) => {
         this.cotacaoDolar = res;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error("Erro ao buscar dólar", err);
@@ -187,6 +188,7 @@ export class DashboardComponent implements OnInit {
     this.dashboardService.listarCotacoes('EUR-BRL').subscribe({
       next: (res) =>  {
         this.cotacaoEuro = res;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error("Erro ao buscar euro", err);
