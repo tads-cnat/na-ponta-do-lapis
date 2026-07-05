@@ -71,7 +71,7 @@ import { Categoria } from '../../model/ITransacoes.model';
       <!-- Seção 3: Gastos por categoria + Metas (grid 2 colunas)
            FIX 3: Removido h-[320px] — a altura fixa era insuficiente para 5 metas
            com gap-5 (~440px necessários vs 320px disponíveis). Conteúdo auto-dimensiona. -->
-      <section class="grid grid-cols-2 gap-4">
+      <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
         <app-gastos-categoria
         class="block"

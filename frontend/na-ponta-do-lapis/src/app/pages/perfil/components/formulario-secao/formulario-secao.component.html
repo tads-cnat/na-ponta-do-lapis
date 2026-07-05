@@ -1,7 +1,7 @@
 <div [formGroup]="formGroupPai" class="flex flex-col gap-4">
   <h2 class="text-[#000000] font-semibold text-lg">{{ titulo }}</h2>
   
-  <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+  <div class="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-x-6 gap-y-4">
     <div *ngFor="let campo of campos" class="flex flex-col gap-2">
       <label class="text-[#000000] text-sm font-medium min-h-[20px]">
         {{ campo.label ? campo.label : '&nbsp;' }}

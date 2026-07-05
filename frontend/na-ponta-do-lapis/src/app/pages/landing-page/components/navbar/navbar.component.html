@@ -1,9 +1,9 @@
-<nav class="w-full h-30 bg-[#FAFAFA] px-6 md:px-20 py-8 flex justify-between items-center border-b border-gray-100">
-  
-  <div class="flex items-center justify-center">
-    <img src="logo.svg" alt="Na Ponta do Lápis" class="h-12 md:h-14 object-contain" />
-  </div>
-
+<nav class="w-full h-30 bg-[#FAFAFA] px-6 md:px-20 py-8 flex justify-center lg:justify-between items-center border-b border-gray-100">
+  @if (!isMobile) {
+    <div class="flex items-center justify-center">
+      <img src="logo.svg" alt="Na Ponta do Lápis" class="h-12 md:h-14 object-contain" />
+    </div>
+  }
   <div class="hidden md:flex items-center gap-8" style="margin-left: 120px; margin-top: 12px;">
     <a href="#" (click)="$event.preventDefault(); $any($event.target).ownerDocument.defaultView.scrollTo({top: 0, behavior: 'smooth'})"
        class="transition-colors" 
@@ -22,7 +22,7 @@
     </a>
   </div>
 
-  <div class="flex items-center gap-4">
+  <div class="flex items-center justify-center gap-4">
     <a routerLink="/login" class="w-32.5 h-12 border-2 border-[#7843CD] text-[#7843CD] font-semibold flex items-center justify-center rounded-xl hover:bg-purple-50 transition-all">
       Entrar
     </a>

@@ -30,6 +30,14 @@
     height: 55px;
 }
 
+.adicionar {
+    border-radius: 9px;
+    padding: 14px 0;
+    justify-content: center;
+    align-items: center;
+    height: 52px;
+    width: 100%;
+}
 
 .menuitem {
     border-radius: 9px;
@@ -44,8 +52,8 @@
 }
 
 .menuitem.ativo {
-    color: white;
-    background: #7843CD;
+    color: #7843CD;
+    font-weight:bold;
 }
 .menulabel{
     display: none;
@@ -62,4 +70,32 @@
 .sidebar.aberta .menuitem {
     padding: 14px 36px;
     justify-content: start;
+}
+
+.botao-adicionar {
+    width: 44px;
+    height: 44px;
+    transition: width 0.3s ease, padding 0.3s ease;
+}
+
+.sidebar.aberta .botao-adicionar {
+    width: 100%;
+    height: auto;
+    padding: 10px 16px;
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        width: 0;
+        position: fixed;
+        z-index: 1100;
+        padding: 28px 0;
+        overflow: hidden;
+    }
+    .sidebar.aberta {
+        width: 100dvw;
+        position: fixed;
+        z-index: 1100;
+        overflow: visible;
+    }
 }

@@ -1,14 +1,14 @@
 @if(temFamilia) {
   <div class="w-full flex flex-col gap-6 p-4 overflow-y-auto h-[calc(100vh-64px)]">
-    <div class="flex flex-row justify-center items-center gap-24 flex-wrap">
+    <div class="flex flex-row justify-center items-stretch gap-4 sm:gap-6 lg:gap-8 flex-wrap">
       <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
           <p-card header="Saldo inicial" styleClass="w-full relative">
-              <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+              <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
               
-              <div class="flex flex-col gap-2 mt-1 pr-16"> 
+              <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16"> 
                   <div>
                       <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
-                      <span class="font-bold text-3xl tracking-tight text-gray-800">R$ 4.010,00</span>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">R$ 4.010,00</span>
                   </div> 
                   
                   <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
@@ -24,12 +24,12 @@
 
       <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
           <p-card header="Gastos" styleClass="w-full relative">
-              <img src="Icon_Gastos.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+              <img src="Icon_Gastos.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
               
-              <div class="flex flex-col gap-2 mt-1 pr-16"> 
+              <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16"> 
                   <div>
                       <p class="text-xs text-gray-500 mb-0.5">Referente aos gastos do mês</p>
-                      <span class="font-bold text-3xl tracking-tight text-gray-800">R$ 860,00</span>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">R$ 860,00</span>
                   </div> 
                   
                   <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
@@ -45,12 +45,12 @@
 
       <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
           <p-card header="Saldo atual" styleClass="w-full relative">
-              <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+              <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
               
-              <div class="flex flex-col gap-2 mt-1 pr-16"> 
+              <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16"> 
                   <div>
                       <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
-                      <span class="font-bold text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
                   </div>
                   
                   <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
@@ -68,12 +68,12 @@
         <div class="w-full">
           <p-toast />
 
-          <div class="flex items-start justify-center px-2 md:px-6 pt-4 sm:pt-8 mt-4 sm:mt-6">
+          <div class="flex items-start justify-center px-0 sm:px-2 md:px-6 pt-4 sm:pt-8 mt-4 sm:mt-6">
 
             <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
 
               <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
-                <h1 class="text-amber-400 font-bold text-2xl text-center xl:text-left whitespace-nowrap">
+                <h1 class="text-amber-400 font-bold text-xl sm:text-2xl text-center xl:text-left whitespace-nowrap">
                   Movimentações
                 </h1>
 
@@ -147,8 +147,8 @@
         </div>
         </div>
     </div>
-  <div class="w-full flex flex-row justify-center items-center gap-24 flex-wrap pb-8">
-      <p-card class="w-110 min-h-30 hover:scale-105 transition-transform duration-300">
+  <div class="w-full flex flex-col lg:flex-row justify-center items-stretch gap-4 sm:gap-6 lg:gap-8 flex-wrap pb-8">
+      <p-card class="w-full lg:max-w-[440px] min-h-30 hover:scale-105 transition-transform duration-300">
         <div class="flex flex-col items-start gap-2">
           <div class="w-full h-full flex flex-row items-center text gap-4">
             <h1 class="text-[#AA7FFF80] font-bold text-[14px] whitespace-nowrap">
@@ -163,8 +163,8 @@
                 </button>
             </div>
           </div>
-          <div class="flex flex-row justify-center items-center gap-4">
-            <div class="flex flex-wrap justify-start items-start gap-6 w-full max-h-40 overflow-y-auto">
+          <div class="flex flex-row justify-center items-center gap-4 w-full">
+            <div class="flex flex-wrap justify-start items-start gap-4 sm:gap-6 w-full max-h-40 overflow-y-auto">
               @for (membro of membros; track $index) {
                 <div class="flex flex-col items-center gap-2 w-16">
                   <div class="w-12 h-12 rounded-full bg-gray-300 flex items-center justify-center shrink-0">
@@ -181,12 +181,12 @@
           </div>
         </div>
       </p-card>
-      <p-card class="w-90 hover:scale-105 transition-transform duration-300 max-h-60 overflow-hidden">
-        <div class="flex flex-col justify-start items-start gap-2">
+      <p-card class="w-full lg:max-w-[380px] hover:scale-105 transition-transform duration-300 max-h-60 overflow-hidden">
+        <div class="flex flex-col justify-start items-start gap-2 w-full">
           <h1 class="text-amber-400 font-bold text-lg whitespace-nowrap">
             Ranking Gastos
           </h1>
-          <div class="w-full max-h-48 overflow-y-auto">
+          <div class="w-full max-h-48 overflow-y-auto overflow-x-auto">
               <table class="w-full">
                 <thead>
                   <tr class="bg-[#F8F8FC]">
@@ -208,8 +208,8 @@
       </p-card>
   </div>
   @if (modalAdicionarAberto) {
-    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
-      <p-card class="bg-white w-100">
+    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/30 px-4">
+      <p-card class="bg-white w-full max-w-[400px]">
           <div class="w-full flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold">Adicionar Membro</h2>
             <i class="pi pi-times cursor-pointer" (click)="handleModalAdicionarAberto()"></i>
@@ -227,8 +227,8 @@
     </div>
   }
   @if (modalRemoverAberto) {
-    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/30">
-      <p-card class="bg-white w-100">
+    <div class="fixed inset-0 flex items-center justify-center z-50 bg-black/30 px-4">
+      <p-card class="bg-white w-full max-w-[400px]">
           <div class="w-full flex items-center justify-between mb-4">
             <h2 class="text-xl font-bold">Remover Membro</h2>
             <i class="pi pi-times cursor-pointer" (click)="handleModalRemoverAberto()"></i>
@@ -248,14 +248,14 @@
 </div>
 
 } @else {
-  <div class="w-full h-full flex flex-col items-center rounded-lg py-6">
+  <div class="w-full h-full flex flex-col items-center rounded-lg py-6 px-4">
     <div id="forms-familia" style="background-color: #f8f8f8"
-      class="grid grid-cols-1 w-240 max-w-240px h-160 mx-auto rounded-4xl">
+      class="grid grid-cols-1 w-full max-w-[960px] h-auto mx-auto rounded-4xl">
       <div>
         <div id="input-familia" class="w-full h-20 rounded-t-4xl bg-white">
-          <div class="flex w-full h-full items-center px-8 gap-4">
+          <div class="flex w-full h-full items-center px-4 sm:px-8 gap-4">
             <input [(ngModel)]="nomeFamilia"
-              class="flex-1 h-full outline-none bg-transparent text-gray-500 text-lg font-bold border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300"
+              class="flex-1 w-full h-full outline-none bg-transparent text-gray-500 text-lg font-bold border-b-2 border-gray-300 focus:border-green-500 transition-colors duration-300 "
               placeholder="Digite o nome da família" />
             <div (click)="resetNome()"
               class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center cursor-pointer shrink-0">
@@ -264,26 +264,26 @@
           </div>
         </div>
         @if (submitted && !nomeFamilia.trim()) {
-          <p class="text-red-500 text-sm mt-1 ml-8">O nome da família é obrigatório.</p>
+          <p class="text-red-500 text-sm mt-1 ml-4 sm:ml-8">O nome da família é obrigatório.</p>
         }
       </div>
 
-      <div id="actions-familia" class="flex flex-col items-center gap-16 w-full h-full -mt-4">
-        <div class="convidar-familia w-[90%] h-30 bg-white rounded-2xl mx-auto p-2 flex flex-col justify-center gap-2">
+      <div id="actions-familia" class="flex flex-col items-center gap-8 sm:gap-16 w-full h-full mt-4 px-0 lg:px-2">
+        <div class="convidar-familia w-full sm:w-[90%] h-auto bg-white rounded-2xl mx-auto p-4 flex flex-col justify-center gap-2">
           <label class="text-md">Convidar pelo nickname</label>
-          <div class="flex justify-start items-center gap-6">
-            <div class="relative">
-              <input class="w-190 h-12" type="text" pInputText [(ngModel)]="value" placeholder="Escreva o nickname..." />
+          <div class="flex flex-col sm:flex-row justify-start items-stretch sm:items-center gap-3 sm:gap-6">
+            <div class="relative w-full">
+              <input class="w-full h-12 pr-10" type="text" pInputText [(ngModel)]="value" placeholder="Escreva o nickname..." />
               <button (click)="limparNomeConvidado()" class="absolute right-3 top-3.5">
                 <span class="pi pi-times"></span>
               </button>
             </div>
-            <p-button (click)="adicionarNaListaConvidados(value)" class="right-3"
+            <p-button (click)="adicionarNaListaConvidados(value)" class="w-full sm:w-auto shrink-0 sm:w-12 h-12 flex items-center justify-center"
               [style]="{'border-radius':'50px', background: '#10B981', 'border-color': '#10B981'}">
               <app-icon name="plus" class="w-5 h-5" />
             </p-button>
           </div>
-          <div class="h-6 w-150">
+          <div class="h-6 w-full flex items-center justify-center lg:justify-start">
             @if (message) {
               <p class="text-red-500 text-sm">{{ message }}</p>
             } @else {
@@ -292,19 +292,19 @@
           </div>
         </div>
 
-        <div class="convidados-familia w-[90%] bg-white rounded-2xl mx-auto p-4 flex flex-col justify-center gap-4">
+        <div class="convidados-familia w-full sm:w-[90%] bg-white rounded-2xl mx-auto p-4 flex flex-col justify-center gap-4">
           <div class="flex justify-end">
             <button (click)="limparConvidados()">
               <span class="pi pi-times cursor-pointer"></span>
             </button>
           </div>
-          <div class="grid grid-cols-2 min-h-15 max-h-40 justify-center items-center overflow-y-auto gap-2">
+          <div class="grid grid-cols-1 sm:grid-cols-2 min-h-15 max-h-40 justify-center items-center overflow-y-auto gap-2">
             @if (convidados.length === 0) {
-              <p class="text-sm text-gray-500 col-span-2 text-center">Nenhum convidado adicionado ainda.</p>
+              <p class="text-sm text-gray-500 col-span-1 sm:col-span-2 text-center">Nenhum convidado adicionado ainda.</p>
             }
             @for (convidado of convidados; track convidado) {
               <div class="flex items-center gap-4 px-4 py-2 bg-gray-100 rounded-lg">
-                <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center">
+                <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center shrink-0">
                   <span>
                     @if (convidado[1].fotoPerfil) {
                       <img class="h-8 w-8 rounded-full object-cover" [src]="convidado[1].fotoPerfil" alt="Foto do perfil" />
@@ -313,7 +313,7 @@
                     }
                   </span>
                 </div>
-                <span class="text-gray-700">{{ convidado[0] }}</span>
+                <span class="text-gray-700 truncate">{{ convidado[0] }}</span>
                 <div class="ml-auto">
                   <button (click)="removerConvidado(convidado[0])">
                     <span class="pi pi-times cursor-pointer"></span>

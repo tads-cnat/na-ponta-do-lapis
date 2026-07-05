@@ -1,18 +1,33 @@
-<aside class="sidebar flex flex-col h-full bg-white" [class.aberta]="aberto">
+<aside class="sidebar flex flex-col h-full bg-white" [class.aberta]="sidebarService.aberto()">
     <div class="flex menu-header">
         <img src="logo.svg" alt="logomarca" class="logo">
-        <button (click)="toggleSidebar()" class="menu-btn">
+        <button (click)="sidebarService.toggleSidebar()" class="menu-btn">
             <app-icon name="menu" class="text-black"/>
         </button>
     </div>
-    <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem flex  gap-2.5 bg-[#10b981]! text-white!">
+    @if(isMobile) {
+        <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" 
+        (click)="isMobile ? sidebarService.fecharSidebar() : null" 
+        routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" 
+        class="menuitem flex items-center justify-center">
+            <div class="botao-adicionar flex items-center justify-center gap-2.5 bg-[#10b981]! text-white! rounded-xl">
+                <app-icon name="plus" class="w-5 h-5 shrink-0" />
+                <span class="menulabel">
+                    Adicionar
+                </span>
+            </div>
+        </a>
+    }
+    @else {
+        <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" (click)="isMobile ? sidebarService.fecharSidebar() : null" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem flex  gap-2.5 text-white! bg-[#10b981]!">
             <app-icon name="plus" class="w-5 h-5" />
             <span class="menulabel">
                 Adicionar
             </span>
         </a>
+    }
     @for (item of items; track item.label){
-        <a [routerLink]="item.routerLink" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem flex  text-gray-900 gap-2.5 ">
+        <a [routerLink]="item.routerLink" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" (click)="isMobile ? sidebarService.fecharSidebar() : null" class="menuitem flex  text-gray-900 gap-2.5 ">
             <app-icon [name]="item.icon" class="w-5.5" /> 
             <span class="menulabel">
                 {{ item.label }}
