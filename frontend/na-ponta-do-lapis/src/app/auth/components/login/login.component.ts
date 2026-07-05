@@ -16,26 +16,29 @@ import { MessageService } from 'primeng/api';
 })
 export class LoginComponent {
 
-  loginForm:FormGroup;
+  loginForm: FormGroup;
+  loading = false;
 
-  constructor(private fb:FormBuilder, private authService:AuthService, private router:Router, private messageService: MessageService){
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router, private messageService: MessageService) {
     this.loginForm = this.fb.group({
       email: [null, [Validators.required, Validators.email]],
       password: [null, [Validators.required]]
     })
   }
 
-  public login(){
-    const loginSucesso = true;
+  public login() {
+    if (this.loading) return;
+    this.loading = true;
+
     this.authService.login(this.loginForm.value).subscribe({
       next: (res: Token) => {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Login Realizado!',
-            detail: 'Bem-vindo ao Na Ponta do Lápis',
-            life:2000
-          })
-
+        this.loading = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Login Realizado!',
+          detail: 'Bem-vindo ao Na Ponta do Lápis',
+          life: 2000
+        })
 
         StorageService.salvarToken(res.token)
         const usuario = StorageService.getUsuarioDecodificado()
@@ -44,14 +47,15 @@ export class LoginComponent {
           this.router.navigateByUrl("app/dashboard")
         }, 1200)
       },
-      error: (erro:Error) => {
+      error: (erro: Error) => {
+        this.loading = false;
         console.error(erro)
-         this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Email ou senha inválido.',
-            life: 3000
-          })
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Email ou senha inválido.',
+          life: 3000
+        })
       }
     })
   }

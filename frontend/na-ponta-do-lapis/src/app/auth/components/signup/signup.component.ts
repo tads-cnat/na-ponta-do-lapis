@@ -16,6 +16,8 @@ import { Router, RouterLink } from '@angular/router';
 export class SignupComponent {
   registerForm: FormGroup;
   termos: any = null;
+  loading = false;
+
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
@@ -30,9 +32,14 @@ export class SignupComponent {
       passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]]
     })
   }
+
   public register() {
+    if (this.loading) return;
+    this.loading = true;
+
     this.authService.register(this.registerForm.value).subscribe({
       next: (res: any) => {
+        this.loading = false;
         this.messageService.add({
           severity: 'success',
           summary: 'Registro Realizado com sucesso!',
@@ -43,6 +50,7 @@ export class SignupComponent {
         }, 2000);
       },
       error: (error: Error) => {
+        this.loading = false;
         this.messageService.add({
           severity: 'warn',
           summary: 'Erro ao registrar usuário',

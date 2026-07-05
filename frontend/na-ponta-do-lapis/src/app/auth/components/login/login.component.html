@@ -48,7 +48,7 @@
 
             <div class="flex flex-col gap-2 mt-2">
                 <p-button type="submit" label="Entrar" styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
-                    [disabled]="loginForm.invalid" />
+                    [disabled]="loginForm.invalid || loading" [loading]="loading" />
             </div>
 
             <div class="flex flex-col gap-2 mt-2">

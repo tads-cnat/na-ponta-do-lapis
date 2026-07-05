@@ -76,7 +76,8 @@
         <p-button type="submit" label="Criar Conta" 
                   styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
                   type="submit" 
-                  [disabled]="registerForm.invalid || !termos"></p-button>
+                  [disabled]="registerForm.invalid || !termos || loading"
+                  [loading]="loading"></p-button>
       </div>
     </div>
   </form>
