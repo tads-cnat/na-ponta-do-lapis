@@ -56,6 +56,7 @@ As portas `8080` (Spring), `4200` (Angular) e `5432` (PostgreSQL) são encaminha
 3. No terminal do container, entre na pasta do frontend e rode tudo de uma vez:
    ```bash
    cd frontend/na-ponta-do-lapis
+   npm install (somente na primeira vez)
    npm run dev
    ```
    Esse comando sobe o frontend e o backend em paralelo.
