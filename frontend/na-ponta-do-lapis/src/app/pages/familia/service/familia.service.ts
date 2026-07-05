@@ -5,7 +5,7 @@ import { map, catchError } from 'rxjs/operators';
 import { Usuario } from '../../../model/IUsuario.models';
 import { ITransacoes } from '../../../model/ITransacoes.model';
 import { IContas } from '../../../model/IContas.models';
-import { environment } from '../../../../environments/environment.development';
+import { environment } from '@env';
 @Injectable({
   providedIn: 'root',
 })
