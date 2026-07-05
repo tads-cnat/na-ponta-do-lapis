@@ -34,7 +34,7 @@ public record TransacaoRequestDTO(
         Long marcadorId,
 
         @Schema(description = "Data da transação em formato ISO 8601", example = "2026-05-09T19:41:49")
-        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+        @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
         LocalDateTime dataHora
 ) {
 }
