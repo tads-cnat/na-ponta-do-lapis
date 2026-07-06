@@ -36,6 +36,7 @@ public record TransacoesResponseDTO(
                                transacao.getContaFinanceira().getNome()
                        ),
                        transacao.getMarcador() != null ? new MarcadorResumeDTO(
+                               transacao.getMarcador().getId(),
                                transacao.getMarcador().getNome(),
                                transacao.getMarcador().getCor()
                        ): null

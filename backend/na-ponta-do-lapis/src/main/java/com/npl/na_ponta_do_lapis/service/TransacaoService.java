@@ -130,7 +130,10 @@ public class TransacaoService {
         Transacao transacaoExistente = buscarPorId(id);
         // Identifica a conta onde a transação ocorreu originalmente para realizar o estorno.
         ContaFinanceira contaFinanceiraAntiga = transacaoExistente.getContaFinanceira();
-        Marcador marcadorExistente = marcadorService.buscarMarcadorPorIdObject(dto.marcadorId());
+        Marcador marcadorExistente = null;
+        if (dto.marcadorId() != null) {
+            marcadorExistente = marcadorService.buscarMarcadorPorIdObject(dto.marcadorId());
+        }
 
         String emailUsuarioLogado = getEmailUsuarioLogado();
         if (!contaFinanceiraAntiga.getUsuario().getEmail().equals(emailUsuarioLogado)){

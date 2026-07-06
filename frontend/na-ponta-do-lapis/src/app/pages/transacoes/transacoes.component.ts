@@ -49,10 +49,10 @@ export class TransacoesComponent {
       idCategoria: ['', [Validators.required]],
       valor: [0, [Validators.required, Validators.min(0.01)]],
       idContaFinanceira: ['', [Validators.required]],
-      dataHora: [[null, Validators.required]],
+      dataHora: ['', [Validators.required]],
       estado: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      marcadorId: [null]
+      marcadorId: ['']
     })
   }
 
@@ -362,24 +362,26 @@ export class TransacoesComponent {
       valor: transacao.valor,
       idCategoria: transacao.categoria?.id,
       idContaFinanceira: transacao.conta?.id,
-      dataHora: new Date(transacao.dataHora).toISOString().slice(0, 19),
+      dataHora: new Date(transacao.dataHora),
       estado: transacao.estado,
       tipo: transacao.tipo,
-      marcadorId: transacao.marcador ? transacao.marcador.id : null
+      marcadorId: transacao.marcador?.id 
     });
+    console.log(this.formTransacao.value);
 
     this.marcadorSelecionado = transacao.marcador;
   }
 
   salvar() {
     if (this.formTransacao.valid) {
-      const dadosParaEnviar: ITransacaoRequest = this.formTransacao.value
+      const dadosParaEnviar: any = this.formTransacao.value
       console.log("Dados para enviar:", dadosParaEnviar)
       this.exibirDialog = false
 
       if (this.id) {
+        console.log("Editando transação com ID:", this.id, "Dados:", dadosParaEnviar)
         this.transacoesService.editarTransacao(this.id, dadosParaEnviar).subscribe({
-          next: () => this.sucessoAoSalvar('Transação atualizada'),
+          next: () => this.sucessoAoSalvar('Transação atualizada') ,
           error: (err: Error) => this.erroAoSalvar('Erro ao editar', err)
         })
       } else {
