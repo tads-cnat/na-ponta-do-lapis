@@ -22,7 +22,7 @@
     </div>
   </div>
 
-  <div class="flex-1 flex flex-col items-start w-full md:hero-container-max z-40 mt-8 md:mt-12">
+  <div class="flex-1 flex flex-col items-start w-full md:hero-container-max z-40 mt-8 md:mt-12 md:-ml-4 lg:-ml-6">
     <div class="relative w-full">
       <h1 class="w-full font-['Urbanist'] font-bold text-5xl md:text-[64px] text-[#1A1A1A] tracking-[-1.92px] leading-tight mb-4">
         Nunca foi tão fácil <br class="hidden md:inline"><span class="md:whitespace-nowrap">administrar suas finanças</span>
@@ -113,8 +113,8 @@
 
 <!-- SEÇÃO O QUE FAZEMOS -->
 <section id="o-que-fazemos" class="w-full bg-white relative px-6 md:px-20 pt-16 pb-20 flex flex-col gap-20 overflow-hidden">
-  <div class="w-full flex flex-col md:flex-row justify-between items-start gap-8 relative z-10">
-    <div class="flex-1 flex flex-col gap-3">
+  <div class="w-full flex flex-col md:flex-row justify-between items-start gap-10 md:gap-16 lg:gap-20 relative z-10 mb-12 md:mb-16">
+    <div class="flex-1 flex flex-col gap-3 md:pr-6 lg:pr-8">
       <span class="font-['Lexend_Deca'] font-medium text-lg text-[#7843CD]">O que fazemos</span>
       <h2 class="font-['Urbanist'] font-bold text-4xl md:text-[56px] text-[#1A1A1A] tracking-[-1.68px] leading-[110%] max-w-2xl">
         A sua jornada rumo à liberdade financeira <span class="relative inline-block">começa aqui.
@@ -125,12 +125,14 @@
       </h2>
     </div>
 
-    <div class="flex-1 font-['Lexend_Deca'] font-light text-base text-[#808080] leading-7 tracking-[-0.32px] md:max-w-2xl md:mt-10">
-      Criamos um ambiente onde jovens aprendem a gerir cada centavo com confiança. Nossa tecnologia de gestão pavimentam o caminho para o crescimento dos seus sonhos.
+    <div class="flex-1 flex justify-start items-start md:mt-12 lg:mt-14">
+      <div class="font-['Lexend_Deca'] font-light text-base text-[#808080] leading-7 tracking-[-0.32px] md:max-w-2xl text-left">
+        Criamos um ambiente onde jovens aprendem a gerir cada centavo com confiança. Nossa tecnologia de gestão pavimentam o caminho para o crescimento dos seus sonhos.
+      </div>
     </div>
   </div>
 
-  <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-20 relative z-10">
+  <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-x-16 gap-y-24 md:gap-y-28 mt-2 md:mt-4 relative z-10">
     <div class="flex flex-col items-start gap-6 w-full">
       <div class="w-full flex justify-start items-center bg-transparent min-h-[260px] md:min-h-[300px]">
         <img src="/landing-page/frame.png" class="w-full max-w-[420px] h-auto object-contain transition-transform duration-300 hover:scale-105" alt="Evolução Patrimonial" />
@@ -142,11 +144,11 @@
       </div>
     </div>
 
-    <div class="flex flex-col items-start gap-6 w-full">
+    <div class="flex flex-col items-start gap-6 w-full md:pl-6 lg:pl-10">
       <div class="w-full flex justify-start items-center bg-transparent min-h-[260px] md:min-h-[300px]">
         <img src="/landing-page/frame-1.png" class="w-full max-w-[420px] h-auto object-contain transition-transform duration-300 hover:scale-105" alt="Apoio ao Jovem Adulto" />
       </div>
-      <div class="flex flex-col gap-3 w-full">
+      <div class="flex flex-col gap-3 w-full md:pl-2 lg:pl-4">
         <h3 class="font-['Urbanist'] font-bold text-3xl text-[#1A1A1A] tracking-[-0.6px]">Apoio ao Jovem Adulto</h3>
         <p class="font-['Lexend_Deca'] font-light text-base text-[#808080] leading-7">Um ambiente acolhedor projetado para ajudar você a navegar pelos seus primeiros passos.</p>
         <a routerLink="/signup" class="inline-flex items-center gap-2 text-[#7843CD] font-['Lexend_Deca'] font-medium text-base hover:text-[#6533b3] hover:translate-x-1 transition-all duration-200 group mt-1">Saiba mais →</a>
@@ -180,7 +182,7 @@
 <!-- SEÇÃO BANNER INSCREVA-SE -->
 <section class="w-full bg-[#1A0E05] flex justify-center items-center overflow-hidden">
   <div class="w-full max-w-7xl relative">
-    <img src="/landing-page/subscribe-banner.png" class="w-full h-auto block" alt="" />
+    <img src="/landing-page/subscribe-banner.png" class="w-full h-auto block object-contain" alt="" />
     <!-- LINK BANNER: Adicionado feedback tátil de clique -->
     <a routerLink="/signup" class="absolute bottom-[13%] right-[3.5%] w-[15%] h-[15%] bg-transparent z-20 active:scale-95 transition-transform duration-100 cursor-pointer" title="Inscreva-se"></a>
   </div>
@@ -190,8 +192,8 @@
 <footer class="relative z-10 flex justify-center items-center overflow-hidden" style="background-color: #D1C4FF;">
   <div class="absolute inset-0 bg-[#D1C4FF]" style="width: 200vw; left: -50vw; z-index: 0;"></div>
 
-  <div class="w-full max-w-7xl px-6 md:px-20 py-16 flex flex-col md:flex-row justify-between items-start gap-12 relative z-10">
-    <div class="flex flex-col gap-6 max-w-sm">
+  <div class="w-full max-w-7xl px-6 md:px-10 lg:px-16 xl:px-20 py-20 md:py-24 flex flex-col md:flex-row justify-between items-start gap-20 md:gap-24 lg:gap-32 xl:gap-40 relative z-10">
+    <div class="flex flex-col gap-6 flex-none max-w-[320px] md:min-w-[320px]">
       <div class="flex items-center gap-3">
         <img src="logo.svg" class="h-12 w-auto object-contain" alt="Logo Na Ponta do Lápis" />
       </div>
@@ -208,7 +210,7 @@
       </div>
     </div>
 
-    <div class="flex gap-16 md:gap-24">
+    <div class="flex flex-col sm:flex-row gap-14 md:gap-20 lg:gap-28 xl:gap-36 justify-end">
       <div class="flex flex-col gap-4">
         <a href="#" (click)="$event.preventDefault(); $any($event.target).ownerDocument.defaultView.scrollTo({top: 0, behavior: 'smooth'})" class="font-['Urbanist'] font-medium text-2xl text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Home</a>
         <a href="#o-que-fazemos" class="font-['Urbanist'] font-medium text-2xl text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Produto</a>
