@@ -79,13 +79,13 @@ As portas `8080` (Spring), `4200` (Angular) e `5432` (PostgreSQL) são encaminha
 
 | Nome |  |
 |---|---|
-| Bruno Dias |  |
+| Bruno Dias | [Linkedin](https://www.linkedin.com/in/bruno-diasz/) |
 | Eduardo Aguiar | |
-| Erick Carlos | |
+| Erick Carlos | [Linkedin](https://www.linkedin.com/in/erick003/)|
 | Lucas Medeiros | |
-| Pedro Gomes | |
+| Pedro Gomes | [Linkedin](https://www.linkedin.com/in/pedro-ricardo-gomes/) |
 | Vinicius Vasconcelos | |
-| Wagner Souza | |
+| Wagner Souza | [Linkedin](https://www.linkedin.com/in/wagner-alves-de-souza-922433272/?skipRedirect=true)|
 
 ## Horário de Reuniões
 
