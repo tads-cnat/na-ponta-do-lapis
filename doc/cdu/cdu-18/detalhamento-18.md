@@ -1,7 +1,7 @@
 # CDU 18. Manter Transação 
 
-- **Ator principal**: Cliente
-- **Atores secundários**: Sistema de Banco de Dados
+- **Ator principal**: Cliente.
+- **Atores secundários**: Sistema de Banco de Dados.
 - **Resumo**: O sistema exibe um formulário com os campos necessários (*descrição, *valor, categoria, *status de pagamento/recebimento, *data, marcador, *conta) para criar e editar, ja para excluir, uma janela de confirmação é exibida transação. O Cliente preenche todos os campos obrigatórios e confirma a operação.
 - **Pré-condição**: O Cliente deve estar autenticado no sistema para registrar uma transação.
 - **Pós-condição**: O sistema persiste os dados da transação no banco de dados e exibe uma mensagem de confirmação.

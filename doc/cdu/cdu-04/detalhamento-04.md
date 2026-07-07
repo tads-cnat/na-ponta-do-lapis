@@ -1,9 +1,9 @@
 # CDU 04. Recuperar senha
 
-- **Ator principal**: Usuario
+- **Ator principal**: Cliente.
 
 - **Atores secundários**: Sistema de envio de e-mail
-- **Resumo**: caso de uso Recuperação de Senha permite que um usuário que esqueceu sua senha consiga redefini-la. O processo começa quando o usuário, na tela de login, clica em "Esqueceu a senha" e informa seu e-mail de recuperação. O sistema envia um link para o e-mail fornecido, que redireciona o usuário para uma página onde ele poderá criar uma nova senha. Após a atualização, a nova senha poderá ser utilizada para acessar o sistema.
+- **Resumo**: Recuperação de Senha permite que um usuário que esqueceu sua senha consiga redefini-la. O processo começa quando o usuário, na tela de login, clica em "Esqueceu a senha" e informa seu e-mail de recuperação. O sistema envia um link para o e-mail fornecido, que redireciona o usuário para uma página onde ele poderá criar uma nova senha. Após a atualização, a nova senha poderá ser utilizada para acessar o sistema.
 - **Pré-condição**: Usuario com acesso a internet e conta existente
 - **Pós-Condição**: Um link de atualização de senha é gerado com determinado prazo.
 
