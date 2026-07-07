@@ -8,6 +8,7 @@
 | 21/11/2025 | 2.0 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
 | 25/01/2025 | 2.1 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
 | 10/05/2026 | 3.0 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Erick Carlos, Lucas Henrique, Pedro Ricardo, Vinicius Soares, Wagner Souza |
+| 05/07/2026 | 3.1 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Erick Carlos, Lucas Henrique, Pedro Ricardo, Vinicius Soares, Wagner Souza |
 
 ## 1. Diagrama de Casos de Uso
 
@@ -40,13 +41,13 @@
 | [CDU-21 - Remover Membro da Família](./cdu-21/detalhamento-21.md) | ✅ | ✅ | ✅ |
 | [CDU-22 - Convidar Membro à Família](./cdu-22/detalhamento-22.md) | ✅ | ✅ | ✅ |
 | [CDU-23 - Tornar Administrador da Fámilia](./cdu-23/detalhamento-23.md) | ✅ | ✅ | ✅ |
-| [CDU-24 - Visualizar Relatório da Família](./cdu-24/detalhamento-24.md) | ✅ | - | - |
-| [CDU-25 - Tour Funcionalidades](./cdu-25/detalhamento-25.md) | - | - | - |
-| [CDU-26 - Adicionar Transação (Fatura)](./cdu-26/detalhamento-26.md) | - | ✅ | ✅ |
+| [CDU-24 - Visualizar Relatório da Família](./cdu-24/detalh'amento-24.md) | ✅ | - | - |
+| [CDU-25 - Tour Funcionalidades](./cdu-25/detalhamento-25.md) | ✅ | - | - |
+| [CDU-26 - Adicionar Transação (Fatura)](./cdu-26/detalhamento-26.md) | ✅ | ✅ | ✅ |
 | [CDU-27 - Aceitar Convite](./cdu-27/detalhamento-27.md) | - | - | - |
 | [CDU-28 - Alterar Senha](./cdu-28/detalhamento-28.md) | ✅ | ✅ | ✅ |
-| [CDU-29 - Manter Tipo de Categoria](./cdu-29/detalhamento-29.md) | - | - | - |
-| [CDU-30 - Excluir Família](./cdu-30/detalhamento-30.md) | - | - | - |
-| [CDU-31 - Alterar Foto da Família](./cdu-31/detalhamento-31.md) | - | - | - |
-| [CDU-32 - Alterar Nome da Família](./cdu-32/detalhamento-32.md) | - | - | - |
-| [CDU-33 - Auto Exclusão de Conta](./cdu-33/detalhamento-33.md) | - | - | - |
+| [CDU-29 - Manter Tipo de Categoria](./cdu-29/detalhamento-29.md) | ✅ | - | - |
+| [CDU-30 - Excluir Família](./cdu-30/detalhamento-30.md) | ✅ | - | - |
+| [CDU-31 - Alterar Foto da Família](./cdu-31/detalhamento-31.md) | ✅ | - | - |
+| [CDU-32 - Alterar Nome da Família](./cdu-32/detalhamento-32.md) | ✅ | - | - |
+| [CDU-33 - Auto Exclusão de Conta](./cdu-33/detalhamento-33.md) | ✅ | - | - |
