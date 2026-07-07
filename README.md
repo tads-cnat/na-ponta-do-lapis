@@ -87,11 +87,7 @@ As portas `8080` (Spring), `4200` (Angular) e `5432` (PostgreSQL) são encaminha
 | Vinicius Vasconcelos | |
 | Wagner Souza | [Linkedin](https://www.linkedin.com/in/wagner-alves-de-souza-922433272/?skipRedirect=true)|
 
-## Horário de Reuniões
 
-- **Terça-Feira:** 14:30 às 16:00 — Presencial com o Orientador
-- **Quarta-Feira:** 20:30 às 21:30 — Discord
-- **Sábado:** 19:30 às 20:00 — Discord
 
 ## Documentação
 
