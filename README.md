@@ -80,7 +80,7 @@ As portas `8080` (Spring), `4200` (Angular) e `5432` (PostgreSQL) são encaminha
 | Nome |  |
 |---|---|
 | Bruno Dias | [Linkedin](https://www.linkedin.com/in/bruno-diasz/) |
-| Eduardo Aguiar | |
+| Eduardo Aguiar | [Linkedin](https://www.linkedin.com/in/eduardo-medeiros-62b97a335/)|
 | Erick Carlos | [Linkedin](https://www.linkedin.com/in/erick003/)|
 | Lucas Medeiros | |
 | Pedro Gomes | [Linkedin](https://www.linkedin.com/in/pedro-ricardo-gomes/) |
