@@ -1,0 +1,1 @@
+![](ciclo_vida.png)
