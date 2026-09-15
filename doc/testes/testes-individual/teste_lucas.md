@@ -1,59 +1,71 @@
-# Documento Geral de Casos de Teste - Pedro
+# Teste CDU 16 - Manter Marcador (Temporário)
 
-## Introdução
-Neste documento reúnem-se casos de testes elaborados para os principais casos de uso da aplicação Na Ponta do Lápis. Os testes buscam assegurar a coerência das funcionalidades, assim, atendendo os requisitos estabelecidos.
+Este documento especifica os testes que devem ser realizados para o caso de uso 16 - Manter Marcador (Temporário). Ele contém as informações necessárias para a construção dos scripts de teste, como preparação do ambiente, dados de entrada, classes de equivalência e resultados esperados, seguindo o padrão da documentação do projeto.
 
-Cada caso de teste inclui informações detalhadas sobre o cenário a ser avaliado, os dados de entrada necessários e resultados esperados.
-
-## CDU 02 - Logout
-
-### Fluxo principal
-
-#### Objetivo: 
-Deslogar do sistema
-
-#### Variáveis de Entrada:
-- Variável 1: Access Token
-
-#### Condições de Negócio:
-- Condição 1: O token é alfanumérico
-
-#### Classes de Equivalência
-| Classes Válidas             | Classes Inválidas           |
-|-----------------------------|-----------------------------|
-| Possui `access token` | Não possui `access token` |
-
-#### Testes funcionais
-| Access token | Resultado esperado | Resultado obitido | Situação | 
-| :-----: | :-----: | :-----: | :-------------------: |
-| "ASDFDGFGHSD67688GFGDSFGDKJ..." | Local Storage limpo | ---- | ---- |
-| *vazio* | erro(token não encontrado) | ---- | ---- |
+## Especificação do CDU
+- **Ator principal:** Visitante (Usuário anônimo).
+- **Atores secundários:** N/A.
+- **Resumo:** O visitante pode criar, atualizar e remover marcadores para separar em grupos os seus gastos de forma temporária na sessão, sem reflexo no banco de dados.
+- **Pré-condição:** Usuário acessando a aplicação como visitante (sessão anônima ativa).
+- **Pós-condição:** Alterações refletidas apenas na sessão/armazenamento temporário do navegador do usuário, mantendo o banco de dados inalterado.
 
 ---
 
-## CDU 12 - Alterar tema
+## Casos Essenciais derivados da Partição de Equivalência
+Abaixo estão os casos de teste estruturados para a funcionalidade de gerenciamento temporário de marcadores, cobrindo criação, restrição de duplicidade, edição e remoção (com verificação de itens vinculados).
 
-### Fluxo principal
+### Gestão de Marcadores Temporários
+| Ação Executada | Estado Inicial / Contexto | Dados de Entrada / Ação | Resultado Esperado | Situação |
+| :--- | :--- | :--- | :--- | :--- |
+| **Criação Válida** | Sessão anônima sem marcadores pré-existentes | Informar nome inédito para o marcador (ex: "Lazer") e confirmar | Marcador criado com sucesso na sessão, sem persistência no DB, feedback visual exibido | Não executado |
+| **Criação Inválida (Duplicado)** | Sessão anônima com o marcador "Lazer" já criado | Tentar criar um novo marcador com o mesmo nome exato ("Lazer") | Ação rejeitada pelo sistema, alerta exibido solicitando um novo nome, retorno ao fluxo de criação | Não executado |
+| **Edição de Marcador** | Sessão anônima com o marcador "Lazer" existente | Alterar o nome do marcador para "Entretenimento" | Sistema valida o novo nome e atualiza o marcador na sessão com sucesso | Não executado |
+| **Remoção (Marcador Vazio)** | Sessão anônima com marcador criado, mas sem gastos associados | Acionar a exclusão do marcador vazio | Marcador apagado imediatamente da sessão do usuário | Não executado |
+| **Remoção (Marcador com Dados - Cascata)** | Sessão anônima com marcador contendo gastos/lançamentos associados | Iniciar e confirmar a exclusão do marcador preenchido | Sistema remove o marcador e executa a remoção em cascata dos dados associados na sessão | Não executado |
 
-#### Objetivo: 
-Mudar o tema do sistema entre claro e escuro
+---
 
-#### Variáveis de Entrada:
-- Variável 1: Tema
+## Classes de Equivalência
+- **Variáveis de Decisão:** `nome_marcador_criacao`, `nome_marcador_edicao`, `estado_vinculo_marcador_remocao`.
 
-#### Condições de Negócio:
-- Condição 1: O tema é uma string
-- Condição 2: O tema dever ser "escuro" ou "claro"
+| Variável | Condições | Classes válidas | Classes inválidas | Resultado esperado |
+| :--- | :--- | :--- | :--- | :--- |
+| **nome_marcador_criacao** | Verifica unicidade do nome do marcador na sessão | Nome de marcador inédito (não cadastrado na sessão atual) | Nome de marcador já existente na sessão ativa | Se válido, cria o marcador; se inválido, exibe alerta de nome duplicado e solicita novo nome |
+| **nome_marcador_edicao** | Valida a alteração de um marcador existente | Novo nome válido e não duplicado para o marcador | Nome em branco ou duplicado de outro marcador na sessão | Atualiza com sucesso ou rejeita a alteração mantendo o estado anterior |
+| **estado_vinculo_marcador_remocao** | Verifica dependências antes de excluir o marcador | Marcador sem registros vinculados ou marcador com registros para limpeza em cascata | N/A (Regra cobre ambos os estados previstos no CDU) | Apaga imediatamente se vazio, ou remove em cascata os dados dependentes se possuir registros |
 
-#### Classes de Equivalência
-| Classes Válidas             | Classes Inválidas           |
-|-----------------------------|-----------------------------|
-| Possui `tema` | Não possui `tema` |
-| `tema` válido | `tema` inválido |
+---
 
-#### Testes funcionais
-| Tema | Resultado esperado | Resultado obitido | Situação | 
-| :-----: | :-----: | :-----: | :-------------------: |
-| "escuro" | Tema escuro aplicado | ---- | ---- |
-| *vazio* | erro(tema não encontrado) | ---- | ---- |
-| "vermelho" | erro(tema inválido) | ---- | ---- |
+## Fluxo Principal e Alternativos (Validação de Execução)
+
+### 1. Fluxo Principal - Criação de Marcador
+Passo a passo para chegar ao resultado:
+1. O visitante tenta criar um novo marcador informando o nome desejado.
+2. O sistema valida se não existe outro marcador com o mesmo nome na sessão.
+3. Após a validação bem-sucedida, o novo marcador é criado de forma temporária.
+
+- **Resultado Esperado:** Marcador adicionado à sessão do usuário anônimo sem afetar a base de dados.
+
+### 2. Fluxo de Exceção - Nome de Marcador Duplicado
+Passo a passo para chegar ao resultado:
+1. O visitante tenta criar um marcador com um nome que já existe na sessão.
+2. O sistema identifica a duplicidade e rejeita a criação.
+3. Um alerta é exibido para o visitante informar um novo nome, retornando ao passo de validação.
+
+- **Resultado Esperado:** Bloqueio da duplicidade e exibição correta do alerta visual.
+
+### 3. Fluxo Alternativo I - Editar Marcador
+Passo a passo para chegar ao resultado:
+1. O visitante tenta editar um marcador existente na sessão.
+2. O sistema valida o novo nome informado para o marcador.
+3. O marcador é atualizado com o novo valor de forma temporária.
+
+- **Resultado Esperado:** Informações do marcador atualizadas com sucesso na sessão.
+
+### 4. Fluxo Alternativo II - Remover Marcador
+Passo a passo para chegar ao resultado:
+1. O visitante inicia a exclusão de um marcador na sessão.
+2. O sistema verifica se o marcador está vazio ou contém dados vinculados.
+3. Se estiver vazio, é apagado imediatamente; caso contrário, o sistema remove em cascata os dados daquele marcador.
+
+- **Resultado Esperado:** Exclusão limpa do marcador e dos elementos dependentes estritamente no escopo da sessão temporária.
