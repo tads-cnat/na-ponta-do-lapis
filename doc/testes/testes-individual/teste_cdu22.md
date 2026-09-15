@@ -5,27 +5,28 @@
 Neste documento reúne-se casos de testes elaborados para o fluxo principal do caso de uso. Os testes buscam assegurar a coerência das funcionalidades, assim, atendendo os requisitos estabelecidos.
 Cada caso de teste inclui informações sobre o cenário a ser avaliado, os dados de entrada necessários e resultados esperados.
 
-### Fluxo principal
+## Fluxo principal
 
-#### Objetivo
+### Objetivo
 
 Deslogar do sistema
 
-#### Variáveis de Entrada
+### Variáveis de Entrada
 
-- Variável 1: Access Token
+- Variável 1: Username
+- Variável 2: Email
 
-#### Condições de Negócio
+### Condições de Negócio
 
-- Condição 1: O token é alfanumérico
+- O Username e/ou email precisam ser de usuários válidos
 
-#### Classes de Equivalência
+### Classes de Equivalência
 
 | Classes Válidas             | Classes Inválidas           |
 |-----------------------------|-----------------------------|
 |                             |                             |
 
-#### Testes funcionais
+### Testes funcionais
 
 | :-----: | Resultado esperado | Resultado obitido | Situação |
 | :-----: | :-----: | :-----: | :-------------------: |
