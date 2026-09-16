@@ -27,27 +27,29 @@ Preencher um formulário para enviar um convite de entrada a um grupo familiar p
 ### Condições de Negócio
 
 - Pelo menos um dos campos (Username ou Email) deve ser preenchido, o sistema deve validar se ambos estão vazios.
+
 - O Username ou Email informado deve pertencer a um usuário válido e já cadastrado no sistema.
+- O Email deve estar no formato válido para emails (#@#.#)
 - O usuário convidado não pode fazer parte da família atual do administrador.
+- Caso ambos os campos sejam preenchidos corretamente, o sistema primeiramente irá tentar convidar pelo Username antes do Email
 
 ### Classes de Equivalência
 
 | Variável | Classes Válidas | Classes Inválidas |
 | -------- | --------------- | ----------------- |
-| **Username** | 1. Preenchido; 2. menos de 100 caracteres; 3. Usuário existe; 4. Usuário não é membro da família. 5. Vazio (apenas se o Email estiver preenchido). | 6. Vazio (se o Email também estiver vazio); 7. Mais de 100 caracteres; 8. Usuário inexistente; 9. Usuário já é membro da família atual. |
-| **Email** | 10. Preenchido; 11. Formato correto (#@#.#); 12. Menos de 254 caracteres 13. Usuário existe; 14. Usuário não é membro da família; 15. Vazio (apenas se o Username estiver preenchido). | 16. Vazio (se o Username também estiver vazio); 17. Não estar no formato; 18. Mais de 254 caracteres 19. Usuário inexistente. 20. Usuário já é membro da família atual. |
+| **Username** | 1. Preenchido; 2. Usuário existe; 3. Usuário não é membro da família. 4. Vazio (apenas se o Email estiver preenchido). | 5. Vazio (se o Email também estiver vazio); 6. Usuário inexistente; 7. Usuário já é membro da família atual. |
+| **Email** | 8. Preenchido; 9. Formato correto; 10. Usuário existe; 11. Usuário não é membro da família; | 12. Vazio (se o Username também estiver vazio); 13. Não estar no formato; 14. Usuário inexistente. 15. Usuário já é membro da família atual. |
 
 ### Testes Funcionais
 
 | ID | Username | Email | Resultado Esperado | Situação | Classe(s) Coberta(s) |
 | -- | -------- | ----- | ------------------ | -------- | -------------------- |
-| **CT01** | @ClariceAMaiorDeTodasElaQuerDescobrirOsLimitesDeCaracteresDesseSiteElaEhDoidaDemaisNãoAguentaMaisIsso | *vazio* | Convite enviado com sucesso. Família criada | Pendente | 1, 2, 3, 4, 15 |
-| **CT02** | *vazio* | clariceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm | Convite enviado com sucesso. Família criada | Pendente | 5, 10, 11, 12, 13, 14 |
-| **CT03** | *vazio* | *vazio* | Erro: "Preencha o Username ou o Email para convidar". Convite não enviado. | Pendente | 6, 16 |
-| **CT04** | @ClariceAMaiorDeTodasElaQuerDescobrirOsLimitesDeCaracteresDesseSiteElaEhDoidaDemaisNãoAguentaMaisIssoXD | *vazio* | Erro: "Username de tamanho inválido". Convite não enviado. | Pendente | 7 |
-| **CT05** | @123 | *vazio* | Usuário inválido. Convite não enviado. | Pendente | 8 |
-| **CT06** | @C | *vazio* | Erro: "Este usuário já pertence à sua família." | Pendente | 9 |
-| **CT07** | *vazio* | testeemail | Erro de validação de formato de e-mail. Convite não enviado. | Pendente | 17 |
-| **CT08** | *vazio* | clariceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccooommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm | Erro: "Email de tamanho inválido". Convite não enviado. | Pendente | 18 |
-| **CT9** | *vazio* | JogosEGames@gmail.com | Usuário inválido. Convite não enviado. | Pendente | 19 |
-| **CT10** | *vazio* | clariceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm | Erro: "Este usuário já pertence à sua família." | Pendente | 20 |
+| **CT01** | @Clarice | *vazio* | Convite enviado com sucesso. Família criada | Pendente | 1, 2, 3 |
+| **CT02** | *vazio* | clarice@gmail.com | Convite enviado com sucesso. Família criada | Pendente | 4, 8, 9, 10, 11 |
+| **CT03** | @Clarice | clarice@gmail.com | Convite enviado com sucesso. Família criada | Pendente | 1, 2, 3 |
+| **CT04** | *vazio* | *vazio* | Erro: "Preencha o Username ou o Email para convidar". Convite não enviado. | Pendente | 5, 12 |
+| **CT05** | @123 | *vazio* | Usuário inexistente. Convite não enviado. | Pendente | 6 |
+| **CT06** | @Clarice | *vazio* | Erro: "Este usuário já pertence à sua família." | Pendente | 7 |
+| **CT07** | *vazio* | testeemail | Erro de validação de formato de e-mail. Convite não enviado. | Pendente | 13 |
+| **CT08** | *vazio* | JogosEGames@gmail.com | Usuário inválido. Convite não enviado. | Pendente | 14 |
+| **CT09** | *vazio* | clarice@gmail.com | Erro: "Este usuário já pertence à sua família." | Pendente | 15 |
