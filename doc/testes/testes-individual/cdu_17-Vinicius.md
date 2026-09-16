@@ -1,4 +1,4 @@
-### 2.1. CDU 17 - Manter Meta
+### Test CDU 17 - Manter Meta
 Este documento especifica os testes que devem ser realizados para o caso de uso 17 - Manter Meta. Ele contém as informações necessárias para a construção dos scripts de teste, como preparação do ambiente, dados de entrada, classes de equivalência e resultados esperados, seguindo o padrão da documentação do projeto Na ponta do Lápis.
 
 #### Especificação do CDU
