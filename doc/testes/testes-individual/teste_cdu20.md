@@ -40,7 +40,7 @@ Atualizar informações básicas do perfil do cliente autenticado
 | -------- | --------------- | ----------------- |
 | **Nome** | 1. Preenchido; 2. Mais que três caracteres e menos de 100 caracteres. | 3. Vazio; 4. 3 > Nome ou Nome > 100. |
 | **Username** | 5. Preenchido; 6. Menos de 100 caracteres. | 7. Vazio; 8. Username > 100. |
-| **Email** | 9. Preenchido; 10. Formato correto. | 11. Vazio; 12. Não estar no formato; |
+| **Email** | 9. Preenchido; 10. Formato correto. | 11. Vazio; 12. Não estar no formato; 13. Email > 254. |
 
 ### Testes funcionais
 
@@ -71,3 +71,4 @@ Atualizar informações básicas do perfil do cliente autenticado
 | **CT12** | Clarice Lispector | **@ClariceAMaiorDeTodasElaQuerDescobrirOsLimitesDeCaracteresDesseSiteElaEhDoidaDemaisNãoAguentaMaisIssoX** | clarice@gmail.com | Erro: Username deve ter menos de 100 caracteres | Pendente | 8 |
 | **CT13** | Clarice Lispector | @Clarice | *vazio* | Erro: Email não pode ser vazio | Pendente | 11 |
 | **CT14** | Clarice Lispector | @Clarice | claricegmailcom | Erro: Email fora de formato | Pendente | 12 |
+| **CT15** | Clarice Lispector | @Clarice | **clariceaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa@bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb.cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccoommmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm**| Erro: O Email deve ter menos de 254 caracteres| Pendente | 12 |
