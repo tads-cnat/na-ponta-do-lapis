@@ -15,6 +15,10 @@ Neste documento reúnem-se os casos de testes elaborados para o fluxo principal 
 
 ## Fluxo Principal
 
+### Objetivo
+
+Preencher um formulário para enviar um convite de entrada a um grupo familiar para um usuário do sistema
+
 ### Variáveis de Entrada
 
 - Variável 1: Username
