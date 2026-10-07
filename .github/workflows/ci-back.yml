@@ -43,6 +43,7 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: ./backend/na-ponta-do-lapis
+          dockerfile: ./backend/na-ponta-do-lapis/Dockerfile
           push: true
           tags: |
             npl2026/backend:latest
