@@ -25,25 +25,27 @@ jobs:
         working-directory: backend/na-ponta-do-lapis
         run: ./mvnw package -DskipTests --no-transfer-progress
 
-  frontend:
-    name: Build Frontend (Angular)
+  dockerhub:
+    name: Build e Push Docker Hub Backend
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Login no DockerHub
+        uses: actions/login-action@v3
         with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: frontend/na-ponta-do-lapis/package-lock.json
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Instalar dependências
-        working-directory: frontend/na-ponta-do-lapis
-        run: npm install
+      - name: Build e Push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            npl2026/backend:latest
+            npl2026/backend:${{ github.sha }}
 
-      - name: Build Angular
-        working-directory: frontend/na-ponta-do-lapis
-        run: npm run build
+ 
