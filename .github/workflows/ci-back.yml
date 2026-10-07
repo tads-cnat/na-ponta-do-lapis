@@ -28,6 +28,7 @@ jobs:
   dockerhub:
     name: Build e Push Docker Hub Backend
     runs-on: ubuntu-latest
+    needs: backend 
 
     steps:
       - name: Checkout
