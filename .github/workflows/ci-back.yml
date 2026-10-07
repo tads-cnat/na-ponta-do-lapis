@@ -42,7 +42,7 @@ jobs:
       - name: Build e Push
         uses: docker/build-push-action@v6
         with:
-          context: .
+          context: ./backend/na-ponta-do-lapis
           push: true
           tags: |
             npl2026/backend:latest
