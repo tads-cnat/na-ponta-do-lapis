@@ -1,0 +1,7 @@
+target/
+.git
+.gitignore
+.env
+.idea
+.vscode
+*.log
