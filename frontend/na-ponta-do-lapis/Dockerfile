@@ -7,7 +7,7 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Copy source code
 COPY . .
@@ -22,7 +22,7 @@ FROM nginx:alpine
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # Copy built application from builder stage
-COPY --from=builder /app/dist/na-ponta-do-lapis /usr/share/nginx/html
+COPY --from=builder /app/dist/na-ponta-do-lapis/browser /usr/share/nginx/html
 
 # Expose port
 EXPOSE 80

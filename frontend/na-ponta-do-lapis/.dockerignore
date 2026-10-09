@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.angular/
+.git
+.gitignore
+.env
+.idea
+.vscode
+npm-debug.log*

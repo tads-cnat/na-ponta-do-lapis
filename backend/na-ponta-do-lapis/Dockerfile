@@ -3,30 +3,28 @@ FROM maven:3.9.8-eclipse-temurin-21 AS builder
 
 WORKDIR /app
 
-# Copy pom.xml and download dependencies
+# Cache de dependencias
 COPY pom.xml .
-RUN mvn dependency:go-offline
+RUN mvn dependency:go-offline -B
 
-# Copy source code
+# Compilacao do codigo fonte
 COPY src ./src
-
-# Build the application
 RUN mvn package -DskipTests --no-transfer-progress
 
-# Runtime stage
-FROM eclipse-temurin:21-jdk-alpine
+# Runtime stage (JRE alpine e significativamente mais leve e seguro)
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-# Copy the built JAR from builder stage
-COPY --from=builder /app/target/na-ponta-do-lapis-0.0.1-SNAPSHOT.jar app.jar
+# Seguranca: usuario nao-root
+RUN addgroup -S appgroup && adduser -S appuser -G appgroup
 
-# Expose the port Spring Boot runs on
+# Copia do JAR gerado (com wildcard para nao quebrar em mudancas de versao)
+COPY --from=builder /app/target/*.jar app.jar
+RUN chown -R appuser:appgroup /app
+
+USER appuser
+
 EXPOSE 8080
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-  CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health || exit 1
-
-# Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]
