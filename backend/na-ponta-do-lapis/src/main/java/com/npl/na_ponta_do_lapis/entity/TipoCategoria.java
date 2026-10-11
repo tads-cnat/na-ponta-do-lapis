@@ -23,7 +23,7 @@ public class TipoCategoria {
     public String toString() {
         return "TipoCategoria{" +
                 "id=" + id +
-                ", nome='" + nome +"}";
+            ", nome='" + nome + "'}";
     }
 
 
