@@ -73,43 +73,104 @@ public class Meta {
     public Meta(BigDecimal valor, String nome, TipoMeta tipoMeta, Usuario usuario) {
         this.valor = valor;
         this.nome = nome;
+        this.tipoMeta = tipoMeta;
         this.usuario = usuario;
         this.valorAtual = BigDecimal.ZERO;
     }
 
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-    public String getNome() { return nome; }
-    public void setNome(String nome) { this.nome = nome; }
+    public Long getId() {
+        return id;
+    }
+    
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    
+    public String getNome() {
+        return nome;
+    }
 
-    public String getDescricao() { return descricao; }
-    public void setDescricao(String descricao) { this.descricao = descricao; }
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
 
-    public BigDecimal getValor() { return valor; }
-    public void setValor(BigDecimal valor) { this.valor = valor; }
+    public String getDescricao() {
+        return descricao;
+    }
 
-    public BigDecimal getValorAtual() { return valorAtual; }
-    public void setValorAtual(BigDecimal valorAtual) { this.valorAtual = valorAtual; }
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
+    }
+    
+    public BigDecimal getValor() {
+        return valor;
+    }
 
-    public String getFotoUrl() { return fotoUrl; }
-    public void setFotoUrl(String fotoUrl) { this.fotoUrl = fotoUrl; }
+    public void setValorAtual(BigDecimal valorAtual) {
+        this.valorAtual = valorAtual;
+    }
+    
+    public BigDecimal getValorAtual() {
+        return valorAtual;
+    }
+    
+    public void setFotoUrl(String fotoUrl) {
+        this.fotoUrl = fotoUrl;
+    }
 
-    public LocalDate getDataInicio() { return dataInicio; }
-    public void setDataInicio(LocalDate dataInicio) { this.dataInicio = dataInicio; }
+    public String getFotoUrl() {
+        return fotoUrl;
+    }
 
-    public LocalDate getDataLimite() { return dataLimite; }
-    public void setDataLimite(LocalDate dataLimite) { this.dataLimite = dataLimite; }
+    public void setDataInicio(LocalDate dataInicio) {
+        this.dataInicio = dataInicio;
+    }
 
-    public LocalDate getDataEncerramento() { return dataEncerramento; }
-    public void setDataEncerramento(LocalDate dataEncerramento) { this.dataEncerramento = dataEncerramento; }
+    public LocalDate getDataInicio() {
+        return dataInicio;
+    }
 
-    public TipoMeta getTipoMeta() { return tipoMeta; }
-    public void setTipoMeta(TipoMeta tipoMeta) { this.tipoMeta = tipoMeta; }
+    public void setDataLimite(LocalDate dataLimite) {
+        this.dataLimite = dataLimite;
+    }
 
-    public Usuario getUsuario() { return usuario; }
-    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
+    public LocalDate getDataLimite() {
+        return dataLimite;
+    }
 
-    public ContaFinanceira getConta() { return conta; }
-    public void setConta(ContaFinanceira conta) { this.conta = conta; }
+    public void setDataEncerramento(LocalDate dataEncerramento) {
+        this.dataEncerramento = dataEncerramento;
+    }
+
+    public LocalDate getDataEncerramento() {
+        return dataEncerramento;
+    }
+
+    public void setTipoMeta(TipoMeta tipoMeta) {
+        this.tipoMeta = tipoMeta;
+    }
+
+    public TipoMeta getTipoMeta() {
+        return tipoMeta;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setConta(ContaFinanceira conta) {
+        this.conta = conta;
+    }
+    
+    public ContaFinanceira getConta() {
+        return conta;
+    }
 }
