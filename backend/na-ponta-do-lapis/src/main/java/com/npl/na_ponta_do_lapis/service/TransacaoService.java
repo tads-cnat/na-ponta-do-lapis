@@ -1,10 +1,12 @@
 package com.npl.na_ponta_do_lapis.service;
 
-import com.npl.na_ponta_do_lapis.entity.*;
+import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
+import com.npl.na_ponta_do_lapis.entity.Marcador;
+import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
+import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
-import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.exception.TransacaoNaoExisteException;
@@ -24,9 +26,9 @@ public class TransacaoService {
     private final UsuarioService usuarioService;
     private final MarcadorService marcadorService;
 
-    private TipoCategoraService tipoCategoriaService;
+    private final TipoCategoraService tipoCategoriaService;
 
-    private ContaFinanceiraService contaFinanceiraService;
+    private final ContaFinanceiraService contaFinanceiraService;
 
     public TransacaoService(TransacaoRepository transacaoRepository, TipoCategoraService tipoCategoriaService, ContaFinanceiraService contaFinanceiraService, UsuarioService usuarioService, MarcadorService marcadorService) {
         this.transacaoRepository = transacaoRepository;
