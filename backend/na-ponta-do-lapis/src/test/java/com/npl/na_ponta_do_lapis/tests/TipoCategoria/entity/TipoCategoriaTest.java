@@ -1,6 +1,8 @@
-package com.npl.na_ponta_do_lapis.entity;
+package com.npl.na_ponta_do_lapis.tests.TipoCategoria.entity;
 
 import org.junit.jupiter.api.Test;
+
+import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
