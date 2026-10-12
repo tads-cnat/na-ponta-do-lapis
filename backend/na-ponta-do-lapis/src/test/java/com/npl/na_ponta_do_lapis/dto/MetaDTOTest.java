@@ -161,14 +161,14 @@ class MetaDTOTest {
                 assertThat(mensagens(comValor(null), "valor")).containsExactly(MSG_VALOR_OBRIGATORIO);
             }
 
-            @ParameterizedTest(name = "{valor} é rejeitado")
+            @ParameterizedTest(name = "{0} é rejeitado")
             @ValueSource(strings = {"0", "-0.01"})
             void deveRejeitarZeroENegativos(String valor) {
                 assertThat(mensagens(comValor(new BigDecimal(valor)), "valor"))
                         .containsExactly(MSG_VALOR_POSITIVO);
             }
 
-            @ParameterizedTest(name = "{valor} é aceito")
+            @ParameterizedTest(name = "{0} é aceito")
             @ValueSource(strings = {"0.01"})
             void deveAceitarPositivos(String valor) {
                 assertThat(mensagens(comValor(new BigDecimal(valor)), "valor")).isEmpty();
