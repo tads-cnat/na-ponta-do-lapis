@@ -1,4 +1,4 @@
-package com.npl.na_ponta_do_lapis.tests.Meta.entity;
+package com.npl.na_ponta_do_lapis.entity;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

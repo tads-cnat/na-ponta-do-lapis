@@ -24,7 +24,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @DataJpaTest
 @ActiveProfiles("h2")
 @TestPropertySource(properties = "spring.sql.init.mode=never")
-class TransacaoEntityTest {
+class TransacaoTest {
 
     private static final LocalDateTime DATA_HORA = LocalDateTime.of(2026, 10, 1, 14, 30);
 
