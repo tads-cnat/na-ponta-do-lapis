@@ -1,4 +1,4 @@
-package com.npl.na_ponta_do_lapis.web.dto;
+package com.npl.na_ponta_do_lapis.dto;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +10,7 @@ import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
+import com.npl.na_ponta_do_lapis.web.dto.TransacoesResponseDTO;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

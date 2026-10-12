@@ -1,7 +1,11 @@
-package com.npl.na_ponta_do_lapis.web.dto;
+package com.npl.na_ponta_do_lapis.dto;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
+import com.npl.na_ponta_do_lapis.web.dto.CategoriaDTO;
+import com.npl.na_ponta_do_lapis.web.dto.CategoriaResumoDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TipoCategoriaDTO;
+
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import org.junit.jupiter.api.Test;

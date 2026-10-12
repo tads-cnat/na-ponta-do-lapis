@@ -1,4 +1,4 @@
-package com.npl.na_ponta_do_lapis.tests.Meta.web.dto;
+package com.npl.na_ponta_do_lapis.dto;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;

@@ -1,4 +1,4 @@
-package com.npl.na_ponta_do_lapis.web.dto;
+package com.npl.na_ponta_do_lapis.dto;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
