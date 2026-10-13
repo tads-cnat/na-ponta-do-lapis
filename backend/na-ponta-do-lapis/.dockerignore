@@ -1,5 +1,4 @@
-target/*
-!target/na-ponta-do-lapis-*.jar
+target/
 .git
 .gitignore
 .env
