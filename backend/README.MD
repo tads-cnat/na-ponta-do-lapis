@@ -1,6 +1,6 @@
 # Como rodar a aplicação Backend Spring Boot 
 
-1. Entrar na pasta do backend
+1. Entrar na pasta do Backend
 
 ```bash
 cd backend/na-ponta-do-lapis
