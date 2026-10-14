@@ -15,3 +15,8 @@ npm install
 ```bash
 npm start
 ```
+
+3. teste ci Rodar a aplicação
+```bash
+npm start
+```
