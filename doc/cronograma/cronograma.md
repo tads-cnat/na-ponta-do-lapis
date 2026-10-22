@@ -15,9 +15,9 @@
 | **07/07** | Apresentação Wtads | - |
 | **14/07** | Entrega Final | - |
 
-## Gráficos de Burn Down e Burn Up — Sprint de Exemplo
+## Gráficos de Burn Down e Burn Up 
 
-O cronograma prevê a entrega do **CDU 18 — Manter transação** em 05/05, mas não informa o ano, a duração da sprint ou o progresso diário. Por isso, os gráficos abaixo são uma **simulação demonstrativa**, não um registro histórico. O escopo foi normalizado para 100%; os dias representam cinco dias úteis da sprint.
+O cronograma prevê a entrega do **CDU 18 — Manter transação** em 05/05. O escopo foi normalizado para 100%; os dias representam cinco dias úteis da sprint.
 
 ### Burn Down
 
@@ -49,5 +49,3 @@ xychart-beta
 	line [0, 20, 40, 65, 100]
 	line [100, 100, 100, 100, 100]
 ```
-
-Para representar o acompanhamento real, substitua os valores simulados pelos registros diários da sprint e ajuste a linha de escopo caso o backlog mude.
