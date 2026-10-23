@@ -1,6 +1,6 @@
 # Na Ponta do Lápis
 
-<img src="logo.png" width="200" height="200" />
+<img src="logo.png" width="200" height="200"/>
 
 Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma oferece ferramentas de controle financeiro, planejamento de gastos e educação financeira personalizada — ajudando o usuário a desenvolver hábitos saudáveis de gestão do dinheiro e construir uma base sólida para o crescimento pessoal e profissional.
 
