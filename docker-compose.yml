@@ -1,0 +1,33 @@
+name: npl
+services:
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-npl_db}
+      POSTGRES_USER: ${POSTGRES_USER:-npl}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-troque_esta_senha}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      retries: 5
+
+  backend:
+    build: ./backend/na-ponta-do-lapis
+    env_file: .env
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-npl_db}
+      DB_USER: ${POSTGRES_USER:-npl}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:-troque_esta_senha}
+    depends_on:
+      db: { condition: service_healthy }
+
+  frontend:
+    build: ./frontend/na-ponta-do-lapis
+    ports: ["8081:80"]      # só localmente
+    depends_on:
+      backend: { condition: service_healthy }
+
+volumes:
+  pgdata:
