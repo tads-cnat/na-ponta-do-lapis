@@ -1,5 +1,5 @@
 # ---------- build ----------
-FROM eclipse-temurin:21-jdk-alpine AS build
+FROM --platform=$BUILDPLATFORM eclipse-temurin:21-jdk-alpine AS build
 
 WORKDIR /workspace
 
@@ -23,6 +23,9 @@ COPY --from=build /workspace/target/na-ponta-do-lapis-*.jar app.jar
 # Documenta que a porta 8080 está em uso
 EXPOSE 8080
 
+# Healthcheck (busybox wget existe no alpine)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=60s --retries=5 \
+  CMD wget -qO- http://localhost:8080/api/actuator/health | grep -q UP || exit 1
 
 # Inicia a aplicação (MaxRAMPercentage faz a JVM respeitar o limite de memória do container)
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=75", "-jar", "app.jar"]
