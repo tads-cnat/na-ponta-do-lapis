@@ -63,7 +63,7 @@ jobs:
     steps:
       - name: Disparar deploy no Coolify
         run: |
-          curl --fail-with-body -sS \
+          curl --fail-with-body -sS -X POST \
             -H "Authorization: Bearer ${{ secrets.COOLIFY_TOKEN }}" \
             "${{ secrets.COOLIFY_WEBHOOK_HOMOLOG }}"
 
