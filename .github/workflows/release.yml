@@ -15,7 +15,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    environment: production          # exige aprovação se configurado
     steps:
       - uses: actions/checkout@v4
         with: { fetch-depth: 0 }

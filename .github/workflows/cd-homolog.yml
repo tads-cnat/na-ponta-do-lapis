@@ -60,9 +60,6 @@ jobs:
   deploy:
     needs: build
     runs-on: ubuntu-latest
-    environment:
-      name: homolog
-      url: ${{ vars.HOMOLOG_URL }}
     steps:
       - name: Disparar deploy no Coolify
         run: |
