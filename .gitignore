@@ -71,7 +71,9 @@ yarn-debug.log*
 *.iws
 
 # Visual Studio Code
-.vscode/
+.vscode/*
+!.vscode/tasks.json
+!.vscode/launch.json
 *.code-workspace
 
 # Eclipse

@@ -11,4 +11,5 @@ Clique em cada um dos links abaixo para acessar o artefato específico.
 1. [Glossario de termos](glossario/doc-glossario.md)
 1. [Documento de risco](risco/risco.md)
 1. [Termos de Privacidade](termos/termos_privacidade.md)
+1. [Arquitetura de Deploy e Pipeline CI/CD](../deploy/README.md)
 
