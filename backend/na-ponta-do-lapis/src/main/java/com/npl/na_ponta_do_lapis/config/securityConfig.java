@@ -42,7 +42,7 @@ public class securityConfig {
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("", "/", "/v1/auth/login", "/v1/auth/register").permitAll()
+                                .requestMatchers("/", "/v1/auth/login", "/v1/auth/register").permitAll()
                                 .requestMatchers(DOCUMENTATION_API).permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .requestMatchers("/actuator/health/**").permitAll()
