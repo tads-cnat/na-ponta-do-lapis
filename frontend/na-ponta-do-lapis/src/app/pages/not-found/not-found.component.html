@@ -1,17 +1,17 @@
 <div class="min-h-screen bg-slate-950 flex items-center justify-center p-6 relative overflow-hidden">
   <!-- Efeitos de iluminação de fundo -->
-  <div class="absolute -top-32 -left-32 w-96 h-96 bg-[#46B171]/20 rounded-full blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-[#EEC046]/15 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -top-32 -left-32 w-96 h-96 bg-[#7843CD]/20 rounded-full blur-3xl pointer-events-none"></div>
+  <div class="absolute -bottom-32 -right-32 w-96 h-96 bg-[#FFDE59]/15 rounded-full blur-3xl pointer-events-none"></div>
 
-  <div class="max-w-lg w-full text-center relative z-10 bg-slate-900/80 border border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl backdrop-blur-xl">
+  <div class="max-w-lg w-full text-center relative z-10 bg-slate-900/85 border border-slate-800 rounded-3xl p-8 md:p-12 shadow-2xl backdrop-blur-xl">
     <!-- Badge -->
-    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#46B171]/10 border border-[#46B171]/30 text-[#46B171] text-xs font-bold tracking-wider uppercase mb-6">
-      <span class="w-2 h-2 rounded-full bg-[#46B171] animate-pulse"></span>
+    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#7843CD]/15 border border-[#FFDE59]/40 text-[#FFDE59] text-xs font-bold tracking-wider uppercase mb-6">
+      <span class="w-2 h-2 rounded-full bg-[#FFDE59] animate-pulse"></span>
       Erro 404
     </div>
 
     <!-- 404 Estilizado -->
-    <h1 class="text-7xl md:text-8xl font-black tracking-tight mb-2 bg-gradient-to-r from-[#46B171] via-[#EEC046] to-[#46B171] bg-clip-text text-transparent">
+    <h1 class="text-7xl md:text-8xl font-black tracking-tight mb-2 bg-gradient-to-r from-[#7843CD] via-[#FFDE59] to-[#7843CD] bg-clip-text text-transparent">
       404
     </h1>
 
@@ -20,27 +20,25 @@
     </h2>
 
     <p class="text-slate-400 text-sm md:text-base leading-relaxed mb-8">
-      Ops! A página que você tentou acessar não existe, foi movida ou o endereço foi digitado incorretamente.
+      A página que você tentou acessar não existe, foi movida ou o endereço foi digitado incorretamente.
     </p>
 
     <!-- Botões de Ação -->
     <div class="flex flex-col sm:flex-row items-center justify-center gap-3">
       <a routerLink="/"
-         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#46B171] hover:bg-[#3ca064] text-slate-950 font-bold text-sm transition-all shadow-lg shadow-[#46B171]/20 hover:-translate-y-0.5">
-        <i class="pi pi-home"></i>
+         class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-[#7843CD] hover:bg-[#6533b3] text-white font-bold text-sm transition-all shadow-lg shadow-[#7843CD]/20 hover:-translate-y-0.5">
         Voltar para o Início
       </a>
 
       <a routerLink="/app/dashboard"
          class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 font-bold text-sm transition-all hover:-translate-y-0.5">
-        <i class="pi pi-th-large"></i>
         Ir para o Painel
       </a>
     </div>
 
     <!-- Rodapé da Marca -->
     <div class="mt-8 pt-6 border-t border-slate-800/80 text-xs text-slate-500">
-      Na Ponta do Lápis • Controle Financeiro Inteligente
+      Na Ponta do Lápis | Controle Financeiro Inteligente
     </div>
   </div>
 </div>

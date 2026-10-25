@@ -24,10 +24,14 @@ import java.util.List;
 public class securityConfig {
 
     String[] DOCUMENTATION_API = {
+            "/v3/api-docs",
             "/v3/api-docs/**",
+            "/swagger-ui",
             "/swagger-ui/**",
             "/swagger-ui.html",
+            "/docs",
             "/docs/**",
+            "/api-docs",
             "/api-docs/**"
     };
 
