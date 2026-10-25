@@ -6,8 +6,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class ApiRootController {
 
-    @GetMapping("/")
+    @GetMapping(value = {"", "/"})
     public String redirectToSwagger() {
-        return "redirect:/api/docs";
+        // Com context-path=/api, o redirecionamento relativo ao contexto resulta em /api/docs
+        return "redirect:/docs";
     }
 }

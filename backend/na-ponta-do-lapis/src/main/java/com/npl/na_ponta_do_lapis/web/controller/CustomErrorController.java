@@ -27,10 +27,18 @@ public class CustomErrorController implements ErrorController {
             requestedUri = request.getRequestURI();
         }
 
-        String title = (status == 404) ? "Rota não encontrada" : "Erro no servidor";
-        String subtitle = (status == 404)
-                ? "O endpoint solicitado não existe nesta versão da API."
-                : "Ocorreu uma instabilidade temporária ao processar sua solicitação.";
+        String title;
+        String subtitle;
+        if (status == 404) {
+            title = "Rota não encontrada";
+            subtitle = "O endpoint solicitado não existe nesta versão da API.";
+        } else if (status == 403) {
+            title = "Acesso não autorizado";
+            subtitle = "Você não possui permissão para acessar este recurso da API.";
+        } else {
+            title = "Erro no servidor";
+            subtitle = "Ocorreu uma instabilidade temporária ao processar sua solicitação.";
+        }
 
         return """
             <!DOCTYPE html>
@@ -46,7 +54,7 @@ public class CustomErrorController implements ErrorController {
                     * { margin: 0; padding: 0; box-sizing: border-box; }
                     body {
                         font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, sans-serif;
-                        background: radial-gradient(circle at top, #1e293b 0%%, #0f172a 100%%);
+                        background: radial-gradient(circle at top, #1e1638 0%%, #0f0c20 100%%);
                         color: #f8fafc;
                         min-height: 100vh;
                         display: flex;
@@ -55,23 +63,23 @@ public class CustomErrorController implements ErrorController {
                         padding: 1.5rem;
                     }
                     .card {
-                        background: rgba(30, 41, 59, 0.7);
+                        background: rgba(30, 24, 56, 0.85);
                         backdrop-filter: blur(16px);
-                        border: 1px solid rgba(255, 255, 255, 0.1);
+                        border: 1px solid rgba(120, 67, 205, 0.25);
                         border-radius: 1.5rem;
                         padding: 2.5rem 2rem;
                         max-width: 520px;
                         width: 100%%;
                         text-align: center;
-                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+                        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
                     }
                     .badge {
                         display: inline-block;
-                        background: rgba(70, 177, 113, 0.15);
-                        color: #46B171;
-                        border: 1px solid rgba(70, 177, 113, 0.3);
+                        background: rgba(120, 67, 205, 0.2);
+                        color: #FFDE59;
+                        border: 1px solid rgba(255, 222, 89, 0.35);
                         font-weight: 700;
-                        font-size: 0.875rem;
+                        font-size: 0.8rem;
                         padding: 0.35rem 1rem;
                         border-radius: 9999px;
                         margin-bottom: 1.5rem;
@@ -81,7 +89,7 @@ public class CustomErrorController implements ErrorController {
                         font-size: 5rem;
                         font-weight: 800;
                         line-height: 1;
-                        background: linear-gradient(135deg, #46B171 0%%, #EEC046 100%%);
+                        background: linear-gradient(135deg, #7843CD 0%%, #FFDE59 100%%);
                         -webkit-background-clip: text;
                         -webkit-text-fill-color: transparent;
                         margin-bottom: 1rem;
@@ -93,19 +101,19 @@ public class CustomErrorController implements ErrorController {
                         margin-bottom: 0.75rem;
                     }
                     p {
-                        color: #94a3b8;
+                        color: #cbd5e1;
                         font-size: 1rem;
                         line-height: 1.6;
                         margin-bottom: 1.5rem;
                     }
                     .path-box {
-                        background: #0f172a;
-                        border: 1px dashed rgba(255, 255, 255, 0.15);
+                        background: #0d0a1c;
+                        border: 1px dashed rgba(255, 222, 89, 0.25);
                         padding: 0.6rem 1rem;
                         border-radius: 0.5rem;
                         font-family: monospace;
                         font-size: 0.85rem;
-                        color: #cbd5e1;
+                        color: #e2e8f0;
                         margin-bottom: 2rem;
                         word-break: break-all;
                     }
@@ -118,7 +126,6 @@ public class CustomErrorController implements ErrorController {
                         display: inline-flex;
                         align-items: center;
                         justify-content: center;
-                        gap: 0.5rem;
                         padding: 0.85rem 1.5rem;
                         border-radius: 0.75rem;
                         font-weight: 700;
@@ -127,18 +134,18 @@ public class CustomErrorController implements ErrorController {
                         transition: all 0.2s ease;
                     }
                     .btn-primary {
-                        background: #46B171;
-                        color: #0f172a;
+                        background: #7843CD;
+                        color: #ffffff;
                     }
                     .btn-primary:hover {
-                        background: #3da164;
+                        background: #6533b3;
                         transform: translateY(-2px);
-                        box-shadow: 0 10px 20px -5px rgba(70, 177, 113, 0.4);
+                        box-shadow: 0 10px 20px -5px rgba(120, 67, 205, 0.5);
                     }
                     .btn-secondary {
                         background: rgba(255, 255, 255, 0.05);
                         color: #f8fafc;
-                        border: 1px solid rgba(255, 255, 255, 0.15);
+                        border: 1px solid rgba(255, 255, 255, 0.2);
                     }
                     .btn-secondary:hover {
                         background: rgba(255, 255, 255, 0.1);
@@ -147,23 +154,23 @@ public class CustomErrorController implements ErrorController {
                     .footer {
                         margin-top: 2rem;
                         font-size: 0.8rem;
-                        color: #64748b;
+                        color: #94a3b8;
                     }
                 </style>
             </head>
             <body>
                 <div class="card">
-                    <span class="badge">NA PONTA DO LÁPIS • API</span>
+                    <span class="badge">NA PONTA DO LÁPIS | API</span>
                     <div class="code">%d</div>
                     <h1>%s</h1>
                     <p>%s</p>
                     <div class="path-box">Rota: %s</div>
                     <div class="actions">
-                        <a href="/api/docs" class="btn btn-primary">📖 Acessar Documentação Swagger</a>
-                        <a href="https://napontadolapis.app" class="btn btn-secondary">🌐 Ir para a Aplicação Web</a>
+                        <a href="/api/docs" class="btn btn-primary">Acessar Documentação Swagger</a>
+                        <a href="https://napontadolapis.app" class="btn btn-secondary">Ir para a Aplicação Web</a>
                     </div>
                     <div class="footer">
-                        Na Ponta do Lápis API • Versão 1.0.0
+                        Na Ponta do Lápis API | Versão 1.0.0
                     </div>
                 </div>
             </body>
@@ -188,11 +195,20 @@ public class CustomErrorController implements ErrorController {
             httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
+        String message;
+        if (status == 404) {
+            message = "Endpoint não encontrado na API.";
+        } else if (status == 403) {
+            message = "Acesso não autorizado ao recurso solicitado.";
+        } else {
+            message = "Ocorreu um erro interno no servidor.";
+        }
+
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", Instant.now().toString());
         body.put("status", status);
         body.put("error", httpStatus.getReasonPhrase());
-        body.put("message", (status == 404) ? "Endpoint não encontrado na API." : "Ocorreu um erro interno no servidor.");
+        body.put("message", message);
         body.put("path", requestedUri);
 
         return ResponseEntity.status(httpStatus).body(body);
