@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import jakarta.servlet.RequestDispatcher;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -16,6 +17,12 @@ import java.util.Map;
 
 @Controller
 public class CustomErrorController implements ErrorController {
+
+    @Value("${springdoc.swagger-ui.enabled:true}")
+    private boolean swaggerEnabled;
+
+    @Value("${app.web-url:https://napontadolapis.app}")
+    private String webUrl;
 
     @RequestMapping(value = "/error", produces = MediaType.TEXT_HTML_VALUE)
     @ResponseBody
@@ -38,6 +45,18 @@ public class CustomErrorController implements ErrorController {
         } else {
             title = "Erro no servidor";
             subtitle = "Ocorreu uma instabilidade temporária ao processar sua solicitação.";
+        }
+
+        String actionsHtml;
+        if (swaggerEnabled) {
+            actionsHtml = """
+                <a href="/api/docs" class="btn btn-primary">Acessar Documentação Swagger</a>
+                <a href="%s" class="btn btn-secondary">Ir para a Aplicação Web</a>
+                """.formatted(webUrl);
+        } else {
+            actionsHtml = """
+                <a href="%s" class="btn btn-primary">Ir para a Aplicação Web</a>
+                """.formatted(webUrl);
         }
 
         return """
@@ -166,8 +185,7 @@ public class CustomErrorController implements ErrorController {
                     <p>%s</p>
                     <div class="path-box">Rota: %s</div>
                     <div class="actions">
-                        <a href="/api/docs" class="btn btn-primary">Acessar Documentação Swagger</a>
-                        <a href="https://napontadolapis.app" class="btn btn-secondary">Ir para a Aplicação Web</a>
+                        %s
                     </div>
                     <div class="footer">
                         Na Ponta do Lápis API | Versão 1.0.0
@@ -175,7 +193,7 @@ public class CustomErrorController implements ErrorController {
                 </div>
             </body>
             </html>
-            """.formatted(status, status, title, subtitle, requestedUri);
+            """.formatted(status, status, title, subtitle, requestedUri, actionsHtml);
     }
 
     @RequestMapping(value = "/error")
