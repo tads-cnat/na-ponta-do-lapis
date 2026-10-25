@@ -20,6 +20,7 @@ body:
         - "Mobile"
         - "Relatórios & IA (Gemini / Métricas)"
         - "Infra / DevOps"
+        - "Documentação (Guias / Especificações)"
         - "Geral"
     validations:
       required: true
