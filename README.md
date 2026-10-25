@@ -103,7 +103,7 @@ O ambiente sobe automaticamente:
    ```bash
    npm run dev      # inicia frontend e backend simultaneamente da raiz
    ```
-   > 💡 **No VS Code:** Você também pode pressionar `Ctrl+Shift+B` (ou abrir o menu *Terminal > Run Task...* e escolher **Start All (Dev)**) para rodar frontend e backend em terminais dedicados com logs separados.
+   > **No VS Code:** Você também pode pressionar `Ctrl+Shift+B` (ou abrir o menu *Terminal > Run Task...* e escolher **Start All (Dev)**) para rodar frontend e backend em terminais dedicados com logs separados.
 
 > **Nota (Codespaces):** Se a porta `4200` não abrir automaticamente, certifique-se de marcá-la como **Public** na aba *Ports*.
 
@@ -113,7 +113,7 @@ O ambiente sobe automaticamente:
 
 Ideal para desenvolvedores que preferem rodar e debugar cada serviço nativamente no host.
 
-#### 💡 Atalho Rápido (Direto da Raiz)
+#### Atalho Rápido (Direto da Raiz)
 Se você já tem Java 21 e Node instalados, não precisa navegar entre pastas para rodar o projeto:
 ```bash
 npm run dev           # Sobe frontend (Angular) e backend (Spring Boot) em paralelo
