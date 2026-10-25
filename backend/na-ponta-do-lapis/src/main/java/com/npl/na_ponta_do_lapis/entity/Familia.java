@@ -34,7 +34,7 @@ public class Familia {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Familia familia = (Familia) o;
-        return id.equals(familia.id);
+        return Objects.equals(id, familia.id);
     }
 
     @Override

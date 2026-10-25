@@ -132,7 +132,7 @@ class UsuarioTest {
         Usuario usuario1 = new Usuario();
         usuario1.setId(1L);
 
-        assertNotEquals(null, usuario1);
+        assertNotEquals(usuario1, null);
     }
 
     @Test
