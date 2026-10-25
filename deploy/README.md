@@ -6,12 +6,14 @@ Documentação prática de como a nossa infraestrutura e a esteira de CI/CD fora
 
 ## 1. Como a nossa infraestrutura tá montada
 
-A aplicação roda em uma **VPS na Oracle Cloud** utilizando o **Coolify** (que funciona como nosso PaaS self-hosted, estilo Heroku/Render). A gestão de domínios e certificados SSL/HTTPS automáticos fica por conta do **Traefik**, e cada serviço roda dentro de containers via **Docker Compose**.
+A aplicação roda em uma **VPS na Oracle Cloud** utilizando o **Coolify** como orquestrador, com o **Cloudflare** na borda (CDN, WAF, proxy reverso e proteção de IP) e o **Traefik** gerenciando o roteamento interno com certificados SSL/HTTPS automáticos. Cada serviço roda isolado via **Docker Compose**.
 
 ```mermaid
 flowchart LR
-    U["Navegador Web (HTTPS)"] --> T["Traefik do Coolify :443"]
-    M["App Mobile (HTTPS)"] --> T
+    U["Navegador Web"] --> CF["Cloudflare (CDN / WAF / Proxy)"]
+    M["App Mobile"] --> CF
+
+    CF -->|"HTTPS (Proxy Protegido)"| T["Traefik do Coolify :443"]
 
     subgraph VPS["VPS Oracle Cloud"]
       T -->|"napontadolapis.app"| FP["frontend (Nginx) :80 - PROD"]
@@ -36,6 +38,8 @@ flowchart LR
 ```
 
 ### Cuidados de segurança que tomamos:
+- **Proteção de Borda com Cloudflare:** O IP público real da VPS Oracle fica 100% oculto atrás da rede Anycast da Cloudflare, com proteção contra DDoS, WAF e aceleração de cache CDN para o frontend.
+- **Rastreabilidade e IP Real:** O Traefik do Coolify está configurado com `trustedIPs` oficiais da Cloudflare, garantindo que o cabeçalho `CF-Connecting-IP` repasse o IP verdadeiro de cada visitante para os logs e para o Spring Boot.
 - **Portas fechadas no host:** A gente não usa `ports:` aberta no servidor. Apenas o Traefik escuta as portas públicas `80` e `443`.
 - **Banco de dados blindado:** O container do PostgreSQL só usa `expose: ["5432"]` na rede interna dos containers. Ele **nunca** tem domínio público nem fica exposto pra internet. Só o nosso próprio backend consegue falar com ele.
 - **Homologação e Produção separados:** Cada ambiente tem sua própria rede interna e seu próprio volume de dados (`pgdata`). O que a gente testa ou quebra em homologação não afeta em nada a produção.
