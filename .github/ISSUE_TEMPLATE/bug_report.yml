@@ -1,0 +1,91 @@
+name: "🐛 Reportar um Bug"
+description: "Informe um erro ou comportamento inesperado no Na Ponta do Lápis"
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por ajudar a melhorar o **Na Ponta do Lápis**!  
+        Preencha os campos abaixo com o máximo de detalhes para facilitar a reprodução e correção pelo time.
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: "Módulo Afetado"
+      description: "Em qual parte do sistema o problema aconteceu?"
+      options:
+        - "Frontend (Interface / Angular)"
+        - "Backend (API REST / Spring Boot)"
+        - "Banco de Dados (PostgreSQL / Migrations)"
+        - "Deploy & Infraestrutura (Coolify / Docker / VPS)"
+        - "Mobile"
+        - "Outro / Não sei identificar"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "Ambiente"
+      description: "Onde o erro foi observado?"
+      options:
+        - "Homologação (homolog.napontadolapis.app)"
+        - "Produção (napontadolapis.app)"
+        - "Desenvolvimento Local (localhost / DevContainer)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Descrição do Problema"
+      description: "Uma explicação clara e objetiva do que deu errado."
+      placeholder: "Ex: Ao tentar cadastrar uma nova fatura com comprovante em anexo, a tela congela e não exibe feedback."
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: "Passos para Reproduzir o Erro"
+      description: "Descreva a sequência de ações para que outro desenvolvedor consiga ver o mesmo erro."
+      placeholder: |
+        1. Fazer login com o usuário '...'
+        2. Acessar a tela de 'Transações'
+        3. Clicar em 'Nova Despesa'
+        4. Preencher os campos e clicar em 'Salvar'
+        5. Observar o comportamento inesperado
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: "Comportamento Esperado"
+      description: "O que deveria ter acontecido se tudo estivesse funcionando perfeitamente?"
+      placeholder: "Ex: A despesa deveria ser salva com sucesso e aparecer na lista de transações com toast de confirmação."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: "Comportamento Obtido"
+      description: "O que realmente aconteceu na tela ou no sistema?"
+      placeholder: "Ex: Retornou erro 500 no console do navegador e a transação não foi persistida."
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: "Logs ou Mensagens de Erro"
+      description: "Cole aqui respostas de erro da API, logs do Spring Boot ou erros do Console do navegador (F12)."
+      render: shell
+
+  - type: textarea
+    id: media
+    attributes:
+      label: "Evidências (Screenshots / Vídeos)"
+      description: "Arraste e solte prints ou vídeos da tela mostrando o momento do erro."

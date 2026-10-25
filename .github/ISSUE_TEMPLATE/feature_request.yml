@@ -1,0 +1,61 @@
+name: "💡 Sugerir Funcionalidade"
+description: "Proponha uma nova funcionalidade, melhoria ou ideia para o Na Ponta do Lápis"
+title: "[FEATURE]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Tem uma ideia para tornar o **Na Ponta do Lápis** ainda melhor?  
+        Descreva sua sugestão abaixo para discutirmos no planejamento da equipe.
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: "Módulo Relacionado"
+      description: "Qual área do projeto essa funcionalidade impacta?"
+      options:
+        - "Frontend (Interface / UX / Telas)"
+        - "Backend (Regra de Negócio / Endpoints)"
+        - "Mobile"
+        - "Relatórios & IA (Gemini / Métricas)"
+        - "Infra / DevOps"
+        - "Geral"
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: "Qual problema essa funcionalidade resolve?"
+      description: "Explique a dor do usuário ou a oportunidade de melhoria que motivou essa ideia."
+      placeholder: "Ex: Hoje o jovem usuário não consegue visualizar rapidamente quanto sobrou do orçamento no mês sem entrar no extrato."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: "Descrição da Solução Proposta"
+      description: "Como você imagina essa funcionalidade funcionando na prática?"
+      placeholder: "Ex: Criar um card de destaque no topo da Dashboard com barra de progresso do orçamento disponível."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: "Critérios de Aceitação (O que precisa ter para ser considerada pronta?)"
+      description: "Checklist com os requisitos mínimos para aprovação."
+      placeholder: |
+        - [ ] Usuário consegue visualizar o card na Dashboard
+        - [ ] O cálculo desconta despesas fixas e variáveis
+        - [ ] Se o orçamento estourar, a barra muda para vermelho com alerta
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: "Alternativas Consideradas"
+      description: "Você pensou em alguma outra forma de resolver isso?"

@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentação do Projeto
+    url: https://github.com/tads-cnat/na-ponta-do-lapis/tree/main/doc
+    about: Consulte a documentação de engenharia e regras de negócio antes de relatar um problema.
+  - name: Arquitetura e Deploy (Coolify)
+    url: https://github.com/tads-cnat/na-ponta-do-lapis/tree/main/deploy
+    about: Consulte o guia de infraestrutura e fluxo de CI/CD.
