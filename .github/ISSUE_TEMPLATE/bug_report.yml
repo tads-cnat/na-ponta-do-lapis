@@ -19,6 +19,7 @@ body:
         - "Backend (API REST / Spring Boot)"
         - "Banco de Dados (PostgreSQL / Migrations)"
         - "Deploy & Infraestrutura (Coolify / Docker / VPS)"
+        - "Documentação (Manuais / README / Diagramas)"
         - "Mobile"
         - "Outro / Não sei identificar"
     validations:

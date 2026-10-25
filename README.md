@@ -197,7 +197,23 @@ Você pode rodar os testes diretamente da raiz ou em cada módulo:
 
 
 
-## Documentação
+## Contribuindo e Reportando Problemas
 
-- [Documentos de Engenharia de Software e Requisitos](doc/documentacao.md)
-- [Arquitetura de Nuvem, Deploy e Pipelines CI/CD](deploy/README.md)
+Encontrou algum bug, inconsistência ou tem uma sugestão de nova funcionalidade?
+
+- Acesse a aba de **[Issues](https://github.com/tads-cnat/na-ponta-do-lapis/issues)** do repositório.
+- Clique em **New Issue** e selecione o formulário correspondente (**Reportar um Bug** ou **Sugerir Funcionalidade**).
+- Preencha os campos solicitados para que o time possa reproduzir ou priorizar a tarefa.
+
+---
+
+## Módulos de Documentação
+
+A documentação do projeto está dividida por áreas de interesse:
+
+| Módulo | Descrição | Link |
+|---|---|---|
+| **Engenharia de Software** | Documento de visão, protótipos, modelo de domínio, casos de uso e riscos | [doc/documentacao.md](doc/documentacao.md) |
+| **Arquitetura & Deploy** | Topologia em nuvem (Oracle/Coolify), proxy Nginx, CI/CD e rollback | [deploy/README.md](deploy/README.md) |
+| **Backend (Spring Boot)** | Guia do servidor Java 21, profiles (Postgres/H2), testes e endpoints | [backend/README.MD](backend/README.MD) |
+| **Frontend (Angular)** | Guia da aplicação SPA, scripts, temas PrimeNG e testes com Vitest | [frontend/README.MD](frontend/README.MD) |
