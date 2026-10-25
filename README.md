@@ -35,43 +35,151 @@ Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma
 
 ---
 
-## Modo de Execução
+## Modos de Execução
 
+Você pode executar o projeto de três formas diferentes:
+1. **[Docker Compose (Recomendado)](#1-docker-compose-stack-completa)** — sobe banco de dados, backend e frontend com proxy Nginx em containers isolados.
+2. **[DevContainer / GitHub Codespaces](#2-devcontainer--github-codespaces)** — ambiente de desenvolvimento pronto no VS Code ou navegador sem instalar dependências no host.
+3. **[Execução Local Manual (Bare Metal)](#3-execução-local-manual-bare-metal)** — roda cada serviço diretamente na sua máquina para ciclo ágil de desenvolvimento.
 
-###  DevContainer 
+---
 
-> Funciona no **VS Code** com a extensão *Dev Containers* instalada, ou direto no **GitHub Codespaces** sem instalar nada.
+### Configuração Inicial: Variáveis de Ambiente
 
-O DevContainer sobe automaticamente:
-- Container Java 21 + Maven (backend)
-- Container PostgreSQL 16 (banco `npl_db`, usuário/senha `postgres`)
-- Node.js 24 com Angular CLI 21 (frontend)
+Antes de iniciar, crie o arquivo `.env` na raiz do projeto a partir do exemplo fornecido:
 
-As portas `8080` (Spring), `4200` (Angular) e `5432` (PostgreSQL) são encaminhadas automaticamente.
+```bash
+cp .env.example .env
+```
+
+Edite o arquivo `.env` caso precise customizar credenciais de banco de dados (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`) ou segredos de autenticação (`JWT_SECRET`). Para integrações adicionais (upload de fotos e IA), preencha `CLOUDINARY_*` e `GEMINI_API_KEY`.
+
+---
+
+### 1. Docker Compose (Stack Completa)
+
+Ideal para rodar toda a aplicação localmente de maneira idêntica à produção.
+
+**Pré-requisitos:** [Docker](https://docs.docker.com/get-docker/) e [Docker Compose](https://docs.docker.com/compose/) instalados.
+
+1. Garanta que o arquivo `.env` foi criado na raiz:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Suba todos os containers (PostgreSQL, Backend e Frontend):
+   ```bash
+   docker compose -f docker-compose.local.yml up --build
+   ```
+   > Adicione `-d` no final se quiser liberar o terminal e rodar em segundo plano.
+
+3. Para encerrar os serviços:
+   ```bash
+   docker compose -f docker-compose.local.yml down
+   ```
+
+Acessos nesta modalidade:
+- **Frontend (Web):** [http://localhost:8081](http://localhost:8081) *(o Nginx redireciona `/api` internamente para o backend)*
+- **Backend direto:** [http://localhost:8080/api](http://localhost:8080/api)
+- **Documentação Swagger UI:** [http://localhost:8080/api/docs](http://localhost:8080/api/docs)
+
+---
+
+### 2. DevContainer / GitHub Codespaces
+
+Perfeito para desenvolver sem poluir sua máquina local.
+
+> Funciona no **VS Code** com a extensão *Dev Containers* instalada ou direto no **GitHub Codespaces**.
+
+O ambiente sobe automaticamente:
+- Container Java 21 + Maven
+- Container PostgreSQL 16 (banco `npl_db`, usuário `postgres`)
+- Node.js 22+ com Angular CLI 21
 
 **Passos:**
-
-1. Abra o repositório no VS Code e clique em **"Reopen in Container"** — ou abra no GitHub Codespaces.
-2. Aguarde o container construir (primeira vez demora alguns minutos).
-3. No terminal do container, entre na pasta do frontend e rode tudo de uma vez:
+1. Abra o repositório no VS Code e clique em **"Reopen in Container"** (ou crie um Codespace no GitHub).
+2. Aguarde o término do build inicial do container.
+3. No terminal integrado (já aberto na raiz do projeto), execute:
    ```bash
-   cd frontend/na-ponta-do-lapis
-   npm install (somente na primeira vez)
-   npm run dev
+   npm run dev      # inicia frontend e backend simultaneamente da raiz
    ```
-   Esse comando sobe o frontend e o backend em paralelo.
+   > 💡 **No VS Code:** Você também pode pressionar `Ctrl+Shift+B` (ou abrir o menu *Terminal > Run Task...* e escolher **Start All (Dev)**) para rodar frontend e backend em terminais dedicados com logs separados.
 
-> **Observação (Codespaces):** A porta `4200` (Angular) tem que estar pública no codespace.
+> **Nota (Codespaces):** Se a porta `4200` não abrir automaticamente, certifique-se de marcá-la como **Public** na aba *Ports*.
 
+---
 
+### 3. Execução Local Manual (Bare Metal)
 
-## URLs Úteis 
+Ideal para desenvolvedores que preferem rodar e debugar cada serviço nativamente no host.
 
-| Serviço | URL |
-|---|---|
-| Frontend Angular | http://localhost:4200 |
-| Backend Spring | http://localhost:8080/api |
-| Swagger UI | http://localhost:8080/api/docs |
+#### 💡 Atalho Rápido (Direto da Raiz)
+Se você já tem Java 21 e Node instalados, não precisa navegar entre pastas para rodar o projeto:
+```bash
+npm run dev           # Sobe frontend (Angular) e backend (Spring Boot) em paralelo
+npm run dev:front     # Sobe apenas o frontend
+npm run dev:back      # Sobe apenas o backend com PostgreSQL
+npm run dev:back:h2   # Sobe apenas o backend com banco em memória H2
+```
+
+---
+
+#### Ou execute cada serviço individualmente:
+
+##### Passo 1: Banco de Dados
+- **Opção A (PostgreSQL Local):** Certifique-se de que o Postgres está ativo na porta `5432` com o banco `npl_db`.
+- **Opção B (H2 em memória - sem banco instalado):** Use o profile `h2`.
+
+##### Passo 2: Backend (Spring Boot)
+```bash
+cd backend/na-ponta-do-lapis
+chmod +x mvnw          # se Linux/macOS
+./mvnw spring-boot:run # ou: ./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
+```
+Backend ativo em: [http://localhost:8080/api](http://localhost:8080/api).
+
+##### Passo 3: Frontend (Angular)
+```bash
+cd frontend/na-ponta-do-lapis
+npm install
+npm start
+```
+Frontend ativo em: [http://localhost:4200](http://localhost:4200).
+
+---
+
+### Executando Testes Automatizados
+
+Você pode rodar os testes diretamente da raiz ou em cada módulo:
+
+- **Pela Raiz do Projeto:**
+  ```bash
+  npm test             # Executa a suíte de testes de ambos (front + back)
+  npm run test:front   # Apenas testes do Angular
+  npm run test:back    # Apenas testes do Spring Boot
+  ```
+
+- **Nos Subdiretórios:**
+  ```bash
+  # Backend
+  cd backend/na-ponta-do-lapis && ./mvnw test
+
+  # Frontend
+  cd frontend/na-ponta-do-lapis && npm test
+  ```
+
+---
+
+## URLs e Endpoints Úteis
+
+| Recurso / Serviço | URL no Dev Local | URL no Docker Compose |
+|---|---|---|
+| **Frontend Web** | [http://localhost:4200](http://localhost:4200) | [http://localhost:8081](http://localhost:8081) |
+| **API Base** | [http://localhost:8080/api](http://localhost:8080/api) | [http://localhost:8080/api](http://localhost:8080/api) ou `/api` via Nginx |
+| **Documentação Interativa (Swagger UI)** | [http://localhost:8080/api/docs](http://localhost:8080/api/docs) | [http://localhost:8080/api/docs](http://localhost:8080/api/docs) |
+| **Especificação OpenAPI (JSON)** | [http://localhost:8080/api/api-docs](http://localhost:8080/api/api-docs) | [http://localhost:8080/api/api-docs](http://localhost:8080/api/api-docs) |
+| **Health Check (Actuator)** | [http://localhost:8080/api/actuator/health](http://localhost:8080/api/actuator/health) | [http://localhost:8080/api/actuator/health](http://localhost:8080/api/actuator/health) |
+| **Console H2** *(somente se profile `h2` ativo)* | [http://localhost:8080/api/h2-console](http://localhost:8080/api/h2-console) | — |
 
 ---
 
@@ -91,4 +199,5 @@ As portas `8080` (Spring), `4200` (Angular) e `5432` (PostgreSQL) são encaminha
 
 ## Documentação
 
-[Link para os documentos do projeto](doc/documentacao.md)
+- [Documentos de Engenharia de Software e Requisitos](doc/documentacao.md)
+- [Arquitetura de Nuvem, Deploy e Pipelines CI/CD](deploy/README.md)

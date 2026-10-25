@@ -1,0 +1,19 @@
+{
+  "name": "na-ponta-do-lapis-root",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Scripts globais de orquestração e desenvolvimento do Na Ponta do Lápis",
+  "scripts": {
+    "dev": "trap \"kill 0\" INT TERM EXIT; (npm --prefix frontend/na-ponta-do-lapis start) & (cd backend/na-ponta-do-lapis && ./mvnw spring-boot:run) && wait",
+    "dev:front": "npm --prefix frontend/na-ponta-do-lapis start",
+    "dev:back": "cd backend/na-ponta-do-lapis && ./mvnw spring-boot:run",
+    "dev:back:h2": "cd backend/na-ponta-do-lapis && ./mvnw spring-boot:run -Dspring-boot.run.profiles=h2",
+    "install:all": "npm --prefix frontend/na-ponta-do-lapis install && cd backend/na-ponta-do-lapis && ./mvnw clean install -DskipTests",
+    "build": "npm --prefix frontend/na-ponta-do-lapis run build && cd backend/na-ponta-do-lapis && ./mvnw clean package -DskipTests",
+    "test": "npm --prefix frontend/na-ponta-do-lapis test && cd backend/na-ponta-do-lapis && ./mvnw test",
+    "test:front": "npm --prefix frontend/na-ponta-do-lapis test",
+    "test:back": "cd backend/na-ponta-do-lapis && ./mvnw test",
+    "compose:up": "docker compose -f docker-compose.local.yml up --build",
+    "compose:down": "docker compose -f docker-compose.local.yml down"
+  }
+}
