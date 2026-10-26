@@ -1,5 +1,5 @@
 # ---------- build ----------
-FROM --platform=$BUILDPLATFORM eclipse-temurin:21-jdk-alpine AS build
+FROM --platform=$BUILDPLATFORM eclipse-temurin:25-jdk-alpine AS build
 
 WORKDIR /workspace
 
@@ -13,7 +13,7 @@ COPY src src
 RUN ./mvnw -B --no-transfer-progress package -DskipTests
 
 # ---------- runtime ----------
-FROM eclipse-temurin:21-jre-alpine
+FROM eclipse-temurin:25-jre-alpine
 
 WORKDIR /app
 
