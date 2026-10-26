@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/devcontainers/java:3-21-trixie
+FROM mcr.microsoft.com/devcontainers/java:3-25-trixie
 
 ARG INSTALL_MAVEN="true"
 ARG MAVEN_VERSION=""
