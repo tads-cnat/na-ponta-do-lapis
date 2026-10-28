@@ -2,21 +2,24 @@
 	"name": "Java, Angular & PostgreSQL",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "app",
-	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"workspaceFolder": "/workspace",
+
 	"features": {
-		"ghcr.io/roul/devcontainer-features/mise-node:1": {
+		// Feature oficial do Node (mais estável que a do mise)
+		"ghcr.io/devcontainers/features/node:1": {
 			"version": "24"
 		}
 	},
 
-	"forwardPorts": [8080, 4200, 5432],
+	// "db:5432" encaminha a porta do container do banco (e não do container app)
+	"forwardPorts": [8080, 4200, "db:5432"],
 	"portsAttributes": {
 		"8080": {"label": "Spring Server"},
 		"4200": {"label": "Angular Server"},
-		"5432": {"label": "PostgreSQL"}
+		"db:5432": {"label": "PostgreSQL"}
 	},
 
-	"postCreateCommand": "npm install -g @angular/cli@21",
+	"postCreateCommand": "npm install -g @angular/cli@21 && git config --global --add safe.directory '*'",
 
 	"customizations": {
 		"vscode": {
@@ -27,11 +30,11 @@
 				// Extensões de Java e Spring
 				"vscjava.vscode-java-pack",
 				"vmware.vscode-boot-dev-pack",
-				
+
 				// Extensões de Angular
 				"Angular.ng-template",
 
-				//Tailwind
+				// Tailwind
 				"bradlc.vscode-tailwindcss",
 
 				// Cliente de Banco de Dados
@@ -40,5 +43,4 @@
 			]
 		}
 	}
-
 }
