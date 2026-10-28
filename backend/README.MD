@@ -4,7 +4,7 @@ API RESTful construída com **Java 21** e **Spring Boot 3.5**, responsável pela
 
 ---
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 
 - **Java JDK 21** instalado e configurado no `PATH` (`java -version`).
 - **Maven 3.9+** *(opcional, o wrapper `./mvnw` incluso no projeto já supre a necessidade)*.
@@ -12,24 +12,27 @@ API RESTful construída com **Java 21** e **Spring Boot 3.5**, responsável pela
 
 ---
 
-## ⚙️ Configuração de Ambiente
+## Configuração de Ambiente
 
-Na pasta `backend/na-ponta-do-lapis/`, copie o arquivo de variáveis de ambiente:
+O projeto utiliza um arquivo `.env` **centralizado na raiz do repositório**. Todas as variáveis necessárias para o backend (JWT, banco de dados, Cloudinary, Gemini e CORS) são lidas automaticamente a partir de lá:
 
 ```bash
+# Na raiz do repositório:
 cp .env.example .env
 ```
 
-Principais variáveis:
-- `DB_URL`, `DB_USER`, `DB_PASSWORD`: Credenciais do banco de dados PostgreSQL.
-- `JWT_SECRET`: Chave secreta de no mínimo 32 caracteres (recomendado 64+) para assinatura dos tokens JWT.
-- `CORS_ALLOWED_ORIGINS`: Origens autorizadas para consumo da API (padrão local: `http://localhost:4200`).
-- `CLOUDINARY_*`: Credenciais para upload de imagens de comprovantes e perfis.
-- `GEMINI_API_KEY`: Chave da API do Google Gemini para categorização inteligente de gastos.
+> **Detecção Automática:** A classe principal da aplicação (`NaPontaDoLapisApplication`) detecta e carrega o arquivo `.env` da raiz mesmo quando você estiver executando comandos de dentro da pasta `backend/na-ponta-do-lapis/`. Não é necessário duplicar o arquivo aqui.
+
+Principais variáveis gerenciadas no `.env`:
+- `POSTGRES_*` / `DB_*`: Credenciais de banco de dados (local ou externo).
+- `JWT_SECRET`: Chave secreta de no mínimo 32 caracteres para assinatura dos tokens JWT.
+- `CORS_ALLOWED_ORIGINS`: Origens autorizadas para consumo da API (padrão: `http://localhost:4200`).
+- `CLOUDINARY_*`: Credenciais para upload de imagens e comprovantes (opcional).
+- `GEMINI_API_KEY`: Chave da API do Google Gemini para categorização inteligente de faturas (opcional).
 
 ---
 
-## 🚀 Como Executar
+## Como Executar
 
 ### Atalho Rápido (Direto da Raiz)
 Se preferir gerenciar pela raiz do repositório:
@@ -78,7 +81,7 @@ O console do H2 estará disponível em: [http://localhost:8080/api/h2-console](h
 
 ---
 
-## 🧪 Testes Automatizados
+## Testes Automatizados
 
 Para rodar os testes unitários e de integração:
 
@@ -92,7 +95,7 @@ Para rodar os testes unitários e de integração:
 
 ---
 
-## 📦 Gerando o Pacote JAR
+## Gerando o Pacote JAR
 
 Para gerar o arquivo executável otimizado para produção:
 
@@ -108,7 +111,7 @@ java -jar target/na-ponta-do-lapis-0.0.1-SNAPSHOT.jar
 
 ---
 
-## 🐳 Build da Imagem Docker
+## Build da Imagem Docker
 
 Para construir a imagem Docker do backend localmente:
 
@@ -123,7 +126,7 @@ docker run -p 8080:8080 --env-file .env npl2026/backend:local
 
 ---
 
-## 📌 Endpoints Principais
+## Endpoints Principais
 
 A API responde sob o context-path `/api`:
 
