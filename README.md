@@ -54,10 +54,7 @@ cp .env.example .env
 
 Edite o arquivo `.env` caso precise customizar credenciais de banco de dados (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`) ou segredos de autenticação (`JWT_SECRET`). Para integrações adicionais (upload de fotos e IA), preencha `CLOUDINARY_*` e `GEMINI_API_KEY`.
 
-> **Para execução local (Bare Metal) do backend:** O Spring Boot carrega as variáveis do arquivo `.env` situado no diretório de trabalho do backend. Copie também o arquivo de configuração para a subpasta do serviço:
-> ```bash
-> cp backend/na-ponta-do-lapis/.env.example backend/na-ponta-do-lapis/.env
-> ```
+> **Arquivo único centralizado:** O backend foi configurado para detectar automaticamente o arquivo `.env` na raiz do projeto (ou no subdiretório se existir). Basta criar um único `.env` na raiz!
 
 ---
 
@@ -141,7 +138,7 @@ npm run dev:back      # Sobe apenas o backend com PostgreSQL
 npm run dev:back:h2   # Sobe apenas o backend com banco em memória H2 (sem precisar instalar PostgreSQL)
 ```
 
-> 💡 **Dica para usuários Windows:**
+> **Dica para usuários Windows:**
 > - O script composto `npm run dev` utiliza comandos Unix (`trap` e `&`). No Windows nativo, execute através do **Git Bash**, **WSL** ou pressione `Ctrl+Shift+B` no VS Code para iniciar a task **Start All (Dev)**.
 > - Se preferir rodar via PowerShell/CMD, abra dois terminais e execute `npm run dev:front` em um e `npm run dev:back` (ou `npm run dev:back:h2`) no outro.
 
@@ -157,10 +154,7 @@ npm run dev:back:h2   # Sobe apenas o backend com banco em memória H2 (sem prec
 ```bash
 cd backend/na-ponta-do-lapis
 
-# Copie o arquivo .env se ainda não o fez:
-cp .env.example .env
-
-# No Linux/macOS ou Git Bash:
+# No Linux/macOS ou Git Bash (ele lerá automaticamente o .env da raiz):
 chmod +x mvnw
 ./mvnw spring-boot:run # ou: ./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
 

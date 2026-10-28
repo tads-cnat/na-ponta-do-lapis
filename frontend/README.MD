@@ -4,7 +4,7 @@ Interface web Single Page Application (SPA) desenvolvida com **Angular 21**, **P
 
 ---
 
-## 📋 Pré-requisitos
+## Pré-requisitos
 
 - **Node.js 22+** instalado (`node -v`).
 - **npm 11+** (`npm -v`).
@@ -12,7 +12,7 @@ Interface web Single Page Application (SPA) desenvolvida com **Angular 21**, **P
 
 ---
 
-## 🚀 Como Executar
+## Como Executar
 
 Acesse a pasta do projeto frontend:
 
@@ -36,11 +36,11 @@ npm start
 ```
 
 O servidor iniciará com escuta em `0.0.0.0` e abrirá a aplicação em seu navegador padrão:  
-🌐 [http://localhost:4200](http://localhost:4200)
+[http://localhost:4200](http://localhost:4200)
 
 ---
 
-## ⚡ Desenvolvimento Paralelo (Front + Back)
+## Desenvolvimento Paralelo (Front + Back)
 
 Para rodar frontend e backend simultaneamente com recarregamento automático (hot-reload):
 - Execute diretamente na **raiz do repositório**:
@@ -52,7 +52,7 @@ Para rodar frontend e backend simultaneamente com recarregamento automático (ho
 
 ---
 
-## 🌐 Comunicação com a API
+## Comunicação com a API
 
 A URL base da API é gerenciada dinamicamente pelos arquivos de ambiente em `src/environments/`:
 
@@ -63,7 +63,7 @@ A URL base da API é gerenciada dinamicamente pelos arquivos de ambiente em `src
 
 ---
 
-## 📜 Scripts do Frontend (`package.json`)
+## Scripts do Frontend (`package.json`)
 
 | Script | Descrição |
 |---|---|
@@ -74,7 +74,7 @@ A URL base da API é gerenciada dinamicamente pelos arquivos de ambiente em `src
 
 ---
 
-## 🧪 Testes Automatizados
+## Testes Automatizados
 
 Para executar os testes unitários da aplicação com Vitest:
 
@@ -84,7 +84,7 @@ npm test
 
 ---
 
-## 🐳 Build da Imagem Docker
+## Build da Imagem Docker
 
 A aplicação utiliza um `Dockerfile` multi-stage: o build do Angular é feito em Node.js e os arquivos estáticos compilados são servidos via **Nginx** com proxy reverso embutido:
 
