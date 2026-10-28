@@ -45,7 +45,8 @@ O servidor iniciará com escuta em `0.0.0.0` e abrirá a aplicação em seu nave
 Para rodar frontend e backend simultaneamente com recarregamento automático (hot-reload):
 - Execute diretamente na **raiz do repositório**:
   ```bash
-  npm run dev
+  npm run install:all   # Instala dependências do front e back (necessário na 1ª vez)
+  npm run dev           # Inicia ambos os servidores
   ```
 - Ou no **VS Code**, pressione `Ctrl+Shift+B` para executar a task **Start All (Dev)** com terminais dedicados.
 

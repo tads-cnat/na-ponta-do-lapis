@@ -54,6 +54,11 @@ cp .env.example .env
 
 Edite o arquivo `.env` caso precise customizar credenciais de banco de dados (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`) ou segredos de autenticação (`JWT_SECRET`). Para integrações adicionais (upload de fotos e IA), preencha `CLOUDINARY_*` e `GEMINI_API_KEY`.
 
+> **Para execução local (Bare Metal) do backend:** O Spring Boot carrega as variáveis do arquivo `.env` situado no diretório de trabalho do backend. Copie também o arquivo de configuração para a subpasta do serviço:
+> ```bash
+> cp backend/na-ponta-do-lapis/.env.example backend/na-ponta-do-lapis/.env
+> ```
+
 ---
 
 ### 1. Docker Compose (Stack Completa)
@@ -99,7 +104,12 @@ O ambiente sobe automaticamente:
 **Passos:**
 1. Abra o repositório no VS Code e clique em **"Reopen in Container"** (ou crie um Codespace no GitHub).
 2. Aguarde o término do build inicial do container.
-3. No terminal integrado (já aberto na raiz do projeto), execute:
+3. No terminal integrado (já aberto na raiz do projeto), **instale as dependências de ambos os projetos**:
+   ```bash
+   npm run install:all
+   ```
+   *(Este comando executa o `npm install` no frontend e o `./mvnw clean install` no backend de uma só vez)*.
+4. Inicie o frontend e o backend simultaneamente:
    ```bash
    npm run dev      # inicia frontend e backend simultaneamente da raiz
    ```
@@ -113,28 +123,49 @@ O ambiente sobe automaticamente:
 
 Ideal para desenvolvedores que preferem rodar e debugar cada serviço nativamente no host.
 
-#### Atalho Rápido (Direto da Raiz)
+#### Passo 1: Instalação das Dependências (Front + Back)
+Antes de executar qualquer serviço pela primeira vez, instale todas as dependências direto da raiz do repositório:
+```bash
+npm run install:all
+```
+> Esse atalho instala as dependências do Angular (`npm install`) e faz o build inicial das dependências Maven do Spring Boot (`mvnw clean install -DskipTests`).
+
+---
+
+#### Passo 2: Execução Rápida (Direto da Raiz)
 Se você já tem Java 21 e Node instalados, não precisa navegar entre pastas para rodar o projeto:
 ```bash
 npm run dev           # Sobe frontend (Angular) e backend (Spring Boot) em paralelo
 npm run dev:front     # Sobe apenas o frontend
 npm run dev:back      # Sobe apenas o backend com PostgreSQL
-npm run dev:back:h2   # Sobe apenas o backend com banco em memória H2
+npm run dev:back:h2   # Sobe apenas o backend com banco em memória H2 (sem precisar instalar PostgreSQL)
 ```
+
+> 💡 **Dica para usuários Windows:**
+> - O script composto `npm run dev` utiliza comandos Unix (`trap` e `&`). No Windows nativo, execute através do **Git Bash**, **WSL** ou pressione `Ctrl+Shift+B` no VS Code para iniciar a task **Start All (Dev)**.
+> - Se preferir rodar via PowerShell/CMD, abra dois terminais e execute `npm run dev:front` em um e `npm run dev:back` (ou `npm run dev:back:h2`) no outro.
 
 ---
 
-#### Ou execute cada serviço individualmente:
+#### Ou execute cada serviço individualmente nos subdiretórios:
 
 ##### Passo 1: Banco de Dados
 - **Opção A (PostgreSQL Local):** Certifique-se de que o Postgres está ativo na porta `5432` com o banco `npl_db`.
-- **Opção B (H2 em memória - sem banco instalado):** Use o profile `h2`.
+- **Opção B (H2 em memória - sem banco instalado):** Use o profile `h2` para rodar sem banco externo.
 
 ##### Passo 2: Backend (Spring Boot)
 ```bash
 cd backend/na-ponta-do-lapis
-chmod +x mvnw          # se Linux/macOS
+
+# Copie o arquivo .env se ainda não o fez:
+cp .env.example .env
+
+# No Linux/macOS ou Git Bash:
+chmod +x mvnw
 ./mvnw spring-boot:run # ou: ./mvnw spring-boot:run -Dspring-boot.run.profiles=h2
+
+# No Windows (CMD / PowerShell):
+.\mvnw.cmd spring-boot:run # ou: .\mvnw.cmd spring-boot:run -Dspring-boot.run.profiles=h2
 ```
 Backend ativo em: [http://localhost:8080/api](http://localhost:8080/api).
 
@@ -145,6 +176,26 @@ npm install
 npm start
 ```
 Frontend ativo em: [http://localhost:4200](http://localhost:4200).
+
+---
+
+### Scripts Disponíveis na Raiz (`package.json`)
+
+Para facilitar o fluxo de desenvolvimento, utilize os comandos orquestrados a partir da raiz:
+
+| Script | O que faz |
+|---|---|
+| `npm run install:all` | Instala todas as dependências do frontend (`npm install`) e backend (`mvnw clean install`) |
+| `npm run dev` | Executa frontend (Angular) e backend (Spring Boot) em paralelo |
+| `npm run dev:front` | Inicia apenas o frontend Angular na porta 4200 |
+| `npm run dev:back` | Inicia apenas o backend com perfil PostgreSQL padrão |
+| `npm run dev:back:h2` | Inicia o backend com banco em memória H2 (não precisa de Postgres) |
+| `npm run build` | Compila o build de produção do frontend e gera o arquivo JAR do backend |
+| `npm test` | Executa toda a suíte de testes (Frontend + Backend) |
+| `npm run test:front` | Executa apenas os testes unitários do frontend (Vitest) |
+| `npm run test:back` | Executa apenas os testes unitários do backend (Spring Boot / JUnit) |
+| `npm run compose:up` | Constrói e sobe toda a stack via Docker Compose |
+| `npm run compose:down` | Para e desfaz a infraestrutura do Docker Compose |
 
 ---
 

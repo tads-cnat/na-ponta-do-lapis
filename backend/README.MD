@@ -31,6 +31,18 @@ Principais variáveis:
 
 ## 🚀 Como Executar
 
+### Atalho Rápido (Direto da Raiz)
+Se preferir gerenciar pela raiz do repositório:
+```bash
+npm run install:all     # Baixa e compila dependências (1ª vez)
+npm run dev:back        # Inicia backend com PostgreSQL
+npm run dev:back:h2     # Inicia backend com H2 em memória
+```
+
+---
+
+### Executando no Diretório do Backend
+
 Acesse o diretório do backend:
 
 ```bash
@@ -41,6 +53,7 @@ Antes do primeiro uso no Linux/macOS, garanta permissão de execução ao wrappe
 ```bash
 chmod +x mvnw
 ```
+*(No Windows, utilize `mvnw.cmd` em vez de `./mvnw`)*.
 
 ### Opção 1: Com Banco PostgreSQL (Padrão)
 
