@@ -19,7 +19,7 @@
 		"db:5432": {"label": "PostgreSQL"}
 	},
 
-	"postCreateCommand": "npm install -g @angular/cli@21 && git config --global --add safe.directory '*'",
+	"postCreateCommand": "npm install -g @angular/cli@21 && ng config -g cli.completion.prompted true && ng config -g cli.analytics false && git config --global --add safe.directory '*'",
 
 	"customizations": {
 		"vscode": {
