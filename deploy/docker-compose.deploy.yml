@@ -26,6 +26,8 @@ services:
       SPRING_JPA_HIBERNATE_DDLAUTO: ${SPRING_JPA_HIBERNATE_DDLAUTO:-validate}
       # Homolog: true | Produção: false (evita criar usuários de teste em banco vazio)
       APP_SEED_ENABLED: ${APP_SEED_ENABLED:-false}
+      # URL pública do frontend (usada em redirects e na página de erro da API)
+      APP_WEB_URL: ${APP_WEB_URL:-https://napontadolapis.app}
       DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}

@@ -152,6 +152,7 @@ O **mesmo** `docker-compose.deploy.yml` é usado nos dois ambientes. O Coolify s
 | `SPRING_PROFILES_ACTIVE` | `prod` | `prod` | Profile do backend deployado (o nome `prod` vale para os dois ambientes) |
 | `SPRING_JPA_HIBERNATE_DDLAUTO` | `update` | `validate` | Homolog cria/atualiza o schema; produção só valida |
 | `APP_SEED_ENABLED` | `true` | `false` | Popula dados de demonstração no primeiro start (banco vazio) |
+| `APP_WEB_URL` | `https://homolog.napontadolapis.app` | `https://napontadolapis.app` | URL usada nos redirects e na página de erro da API |
 | `SWAGGER_ENABLED` | `true` | `false` | Expõe (ou não) o Swagger UI |
 | `CORS_ALLOWED_ORIGINS` | `https://homolog.napontadolapis.app` | `https://napontadolapis.app,https://www.napontadolapis.app` | Origens liberadas no navegador |
 | `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | valores do stack | valores do stack | Credenciais do Postgres interno |
