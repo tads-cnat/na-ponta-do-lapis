@@ -141,3 +141,24 @@ O arquivo [docker-compose.deploy.yml](file:///home/diasz/Projects/na-ponta-do-la
 - **`db` (Postgres 16):** Configurado com volume nomeado `pgdata` pra nunca perder dados quando o container reiniciar.
 - **`backend` (Spring Boot):** Puxa a imagem `npl2026/backend:${APP_VERSION}` e tem um healthcheck configurado no endpoint do Spring Actuator (`/api/actuator/health`). O Coolify só direciona o tráfego quando o healthcheck retornar status `UP`.
 - **`frontend` (Angular + Nginx):** Puxa `npl2026/frontend:${APP_VERSION}` e cuida de entregar os arquivos estáticos compilados do Angular e redirecionar as chamadas de `/api` pro backend.
+
+### Variáveis de ambiente no Coolify (homologação x produção)
+
+O **mesmo** `docker-compose.deploy.yml` é usado nos dois ambientes. O Coolify só entrega ao container as variáveis que aparecem no bloco `environment:` do compose, então configure esta matriz no painel de cada recurso:
+
+| Variável | Homologação | Produção | Para que serve |
+|---|---|---|---|
+| `APP_VERSION` | `homolog` | `1.0.1`, `1.0.2`... | Tag da imagem no Docker Hub |
+| `SPRING_PROFILES_ACTIVE` | `prod` | `prod` | Profile do backend deployado (o nome `prod` vale para os dois ambientes) |
+| `SPRING_JPA_HIBERNATE_DDLAUTO` | `update` | `validate` | Homolog cria/atualiza o schema; produção só valida |
+| `APP_SEED_ENABLED` | `true` | `false` | Popula dados de demonstração no primeiro start (banco vazio) |
+| `SWAGGER_ENABLED` | `true` | `false` | Expõe (ou não) o Swagger UI |
+| `CORS_ALLOWED_ORIGINS` | `https://homolog.napontadolapis.app` | `https://napontadolapis.app,https://www.napontadolapis.app` | Origens liberadas no navegador |
+| `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | valores do stack | valores do stack | Credenciais do Postgres interno |
+| `JWT_SECRET` | segredo próprio | segredo próprio | Assinatura dos tokens |
+| `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | credenciais | credenciais | Upload de imagens/comprovantes |
+| `GEMINI_API_KEY` | chave | chave | Leitura de faturas por IA |
+
+> **Importante:** o `docker-compose.deploy.yml` já define defaults seguros (`SPRING_PROFILES_ACTIVE:-prod`, `SPRING_JPA_HIBERNATE_DDLAUTO:-validate` e `APP_SEED_ENABLED:-false`). Se alguma variável ficar vazia no Coolify, o backend **não** cai no profile local e **não** popula dados de teste.
+>
+> **Primeiro deploy com banco vazio:** como o projeto ainda não usa Flyway/Liquibase, o schema é criado pelo Hibernate. Use `SPRING_JPA_HIBERNATE_DDLAUTO=update` no primeiro start (homologação e, se necessário, produção) e depois volte para `validate` em produção.
