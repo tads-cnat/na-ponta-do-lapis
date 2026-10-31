@@ -29,6 +29,7 @@ Principais variáveis gerenciadas no `.env`:
 - `CORS_ALLOWED_ORIGINS`: Origens autorizadas para consumo da API (padrão: `http://localhost:4200`).
 - `CLOUDINARY_*`: Credenciais para upload de imagens e comprovantes (opcional).
 - `GEMINI_API_KEY`: Chave da API do Google Gemini para categorização inteligente de faturas (opcional).
+- `APP_SEED_ENABLED`: Liga/desliga a carga inicial de dados de demonstração (padrão `true` em dev; use `false` em produção).
 
 ---
 

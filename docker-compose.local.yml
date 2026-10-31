@@ -20,6 +20,7 @@ services:
       DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-npl_db}
       DB_USER: ${POSTGRES_USER:-npl}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-troque_esta_senha}
+      APP_SEED_ENABLED: ${APP_SEED_ENABLED:-true}
     depends_on:
       db: { condition: service_healthy }
 
