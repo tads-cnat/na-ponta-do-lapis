@@ -138,7 +138,12 @@ public class FaturaAnaliseService {
 
         PadraoFatura padraoSalvo = null;
         if (resultadoIa.padrao() != null) {
-            padraoSalvo = padraoFaturaService.salvarNovaVersao(resultadoIa.padrao());
+            // O regex foi validado no texto sanitizado, mas será aplicado ao texto original.
+            if (regexService.validarPadrao(resultadoIa.padrao(), texto)) {
+                padraoSalvo = padraoFaturaService.salvarNovaVersao(resultadoIa.padrao());
+            } else {
+                log.warn("Padrão da IA não funciona no texto original da fatura (difere do sanitizado); não foi salvo.");
+            }
         }
 
         return montarResposta(resultadoIa.transacoes(), resultadoIa.valorTotalFatura(), "IA",

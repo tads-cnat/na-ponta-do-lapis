@@ -435,7 +435,9 @@ public class FaturaRegexService {
             return criarData(ano, mes, dia);
         }
 
-        Matcher mes = DATA_MES.matcher(data);
+        // Aceita datas por extenso como "12 de out. 2025" ou "12 de outubro de 2025".
+        String dataSemPreposicao = data.replaceAll("(?i)\\s+de\\s+", " ");
+        Matcher mes = DATA_MES.matcher(dataSemPreposicao);
         if (mes.matches()) {
             int dia = Integer.parseInt(mes.group(1));
             String nomeMes = normalizar(mes.group(2)).toUpperCase(Locale.ROOT).replace(".", "");

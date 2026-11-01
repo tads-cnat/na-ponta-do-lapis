@@ -72,6 +72,9 @@ public class FaturaIaService {
                 - Categorias permitidas: %s. Se não souber, use "Outros".
                 - Se a descrição tiver algo como (02/10) ou 02/10, preencha numeroParcela=2 e totalParcelas=10 e remova esse trecho da descrição.
                 - O regexTransacao deve funcionar linha a linha e usar os grupos nomeados descricao, data e valor.
+                - O regexTransacao deve ser GENÉRICO e reutilizável em outras faturas do mesmo emissor: nunca inclua nomes de lojas, valores ou datas específicas deste texto.
+                - O regexTransacao deve casar com cada transação do texto (inclusive as com parcelas), usar sintaxe Java e ser tolerante a espaços (\\s+).
+                - O campo "padrao" é obrigatório na resposta.
                 - O regexIdentificacao deve ser um regex simples que encontre o nome do emissor.
                 - O regexTotal deve ter exatamente um grupo de captura com o valor total.
                 - Não invente transações. Extraia apenas o que estiver no texto.

@@ -3,7 +3,6 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import {
   Categoria,
-  CompraParceladaRequest,
   FaturaAnaliseOpcoes,
   FaturaAnaliseResponse,
   ITransacaoFatura,
@@ -40,8 +39,8 @@ export class TransacoesService {
     return this.http.put<ITransacoes>(`${this.BASE_URL}/transacoes/${id}`, transacao)
   }
 
-  public adicionarTransacao(transacao:ITransacaoRequest): Observable<ITransacoes> {
-    return this.http.post<ITransacoes>(`${this.BASE_URL}/transacoes`, transacao)
+  public adicionarTransacao(transacao:ITransacaoRequest): Observable<ITransacoes[]> {
+    return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes`, transacao)
   }
 
   public listarContasUsuarioLogado(): Observable<any>{
@@ -83,10 +82,6 @@ export class TransacoesService {
 
   public salvarFaturaEmLote(transacoes: ITransacaoFatura[], contaId: number): Observable<ITransacoes[]> {
     return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes/lote?contaId=${contaId}`, transacoes);
-  }
-
-  public criarCompraParcelada(dto: CompraParceladaRequest): Observable<ITransacoes[]> {
-    return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes/parcelada`, dto);
   }
 
   public listarParcelamento(grupoId: string): Observable<ITransacoes[]> {

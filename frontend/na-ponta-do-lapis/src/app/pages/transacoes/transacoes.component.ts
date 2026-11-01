@@ -6,7 +6,6 @@ import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } 
 import { TransacoesService } from './service/transacoes.service';
 import {
   Categoria,
-  CompraParceladaRequest,
   FaturaAnaliseOpcoes,
   FaturaAnaliseResponse,
   FaturaErro,
@@ -47,12 +46,12 @@ export class TransacoesComponent {
   exibirDialogUpload: boolean = false;
   exibirDialogRevisao: boolean = false;
   exibirDialogConsentimento: boolean = false;
-  exibirDialogParcelada: boolean = false;
   exibirDialogParcelasFuturas: boolean = false;
   exibirDialogGrupo: boolean = false;
   carregando: boolean = false;
   carregandoConsentimento: boolean = false;
   carregandoGrupo: boolean = false;
+  editandoParcelada: boolean = false;
   erroUpload: string | null = null;
   erroConsentimento: string | null = null;
   arquivoSelecionado: File | null = null;
@@ -78,7 +77,6 @@ export class TransacoesComponent {
   id: number | null = null;
   @ViewChild(CardSaldoComponent) cardSaldo?: CardSaldoComponent;
   formTransacao: FormGroup;
-  formParcelada: FormGroup;
   constructor(
     private fb: FormBuilder,
     private transacoesService: TransacoesService,
@@ -94,18 +92,30 @@ export class TransacoesComponent {
       dataHora: ['', [Validators.required]],
       estado: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      marcadorId: ['']
+      marcadorId: [''],
+      parcelado: [false],
+      totalParcelas: [2],
+      numeroParcela: [1],
+      valorTotalCompra: [null],
+      criarParcelasAnteriores: [true]
     })
 
-    this.formParcelada = this.fb.group({
-      descricao: ['', [Validators.required, Validators.minLength(3)]],
-      valorTotal: [0, [Validators.required, Validators.min(0.01)]],
-      totalParcelas: [2, [Validators.required, Validators.min(2), Validators.max(60)]],
-      dataPrimeiraParcela: [new Date(), [Validators.required]],
-      idContaFinanceira: ['', [Validators.required]],
-      idCategoria: ['', [Validators.required]],
-      marcadorId: [null]
-    })
+    this.formTransacao.get('parcelado')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((parcelado: boolean) => this.ajustarValidacaoParcelas(parcelado));
+  }
+
+  /** Parcelas só são obrigatórias quando a transação é parcelada. */
+  private ajustarValidacaoParcelas(parcelado: boolean) {
+    const total = this.formTransacao.get('totalParcelas');
+    const atual = this.formTransacao.get('numeroParcela');
+    if (!total || !atual) return;
+    total.setValidators(parcelado
+      ? [Validators.required, Validators.min(2), Validators.max(60)]
+      : []);
+    atual.setValidators(parcelado ? [Validators.required, Validators.min(1)] : []);
+    total.updateValueAndValidity({ emitEvent: false });
+    atual.updateValueAndValidity({ emitEvent: false });
   }
 
   ngOnInit(): void {
@@ -325,7 +335,14 @@ export class TransacoesComponent {
       estado: 'REALIZADA',
       tipo: '',
       marcadorId: null,
+      parcelado: false,
+      totalParcelas: 2,
+      numeroParcela: 1,
+      valorTotalCompra: null,
+      criarParcelasAnteriores: true,
     });
+    this.editandoParcelada = false;
+    this.ajustarValidacaoParcelas(false);
     this.novaTransacao = this.resetForm();
     this.exibirDialog = true;
   }
@@ -337,20 +354,6 @@ export class TransacoesComponent {
   escolherManual() {
     this.exibirDialogEscolha = false;
     this.abrirDialog();
-  }
-
-  escolherParcelada() {
-    this.exibirDialogEscolha = false;
-    this.formParcelada.reset({
-      descricao: '',
-      valorTotal: 0,
-      totalParcelas: 2,
-      dataPrimeiraParcela: new Date(),
-      idContaFinanceira: '',
-      idCategoria: '',
-      marcadorId: null,
-    });
-    this.exibirDialogParcelada = true;
   }
 
   escolherUpload() {
@@ -742,47 +745,6 @@ export class TransacoesComponent {
     });
   }
 
-  salvarParcelada() {
-    if (this.formParcelada.invalid) return;
-
-    const valor = this.formParcelada.value;
-    const dto: CompraParceladaRequest = {
-      descricao: valor.descricao.trim(),
-      valorTotal: Number(valor.valorTotal),
-      totalParcelas: Number(valor.totalParcelas),
-      dataPrimeiraParcela: this.dataParaIso(valor.dataPrimeiraParcela),
-      idContaFinanceira: Number(valor.idContaFinanceira),
-      idCategoria: Number(valor.idCategoria),
-      marcadorId: valor.marcadorId ? Number(valor.marcadorId) : null
-    };
-
-    this.carregando = true;
-    this.transacoesService.criarCompraParcelada(dto).subscribe({
-      next: (parcelas: ITransacoes[]) => {
-        this.carregando = false;
-        this.exibirDialogParcelada = false;
-        this.messageService.add({
-          severity: 'success',
-          summary: `Compra parcelada em ${parcelas.length} vez(es)`,
-          life: 3000
-        });
-        this.listarTransacoes();
-        this.atualizarSaldo();
-        this.cdr.detectChanges();
-      },
-      error: (err: HttpErrorResponse) => {
-        this.carregando = false;
-        const corpo = err.error as FaturaErro | null;
-        this.messageService.add({
-          severity: 'error',
-          summary: corpo?.error || 'Erro ao criar a compra parcelada',
-          life: 4000
-        });
-        this.cdr.detectChanges();
-      }
-    });
-  }
-
   get opcoesCategoriaNome() {
     return this.opcoesCategoria.map(c => c.nome);
   }
@@ -800,8 +762,15 @@ export class TransacoesComponent {
       dataHora: new Date(transacao.dataHora),
       estado: transacao.estado,
       tipo: transacao.tipo,
-      marcadorId: transacao.marcador?.id 
+      marcadorId: transacao.marcador?.id,
+      parcelado: false,
+      totalParcelas: transacao.totalParcelas ?? 2,
+      numeroParcela: transacao.numeroParcela ?? 1,
+      valorTotalCompra: null,
+      criarParcelasAnteriores: true
     });
+    this.editandoParcelada = !!transacao.grupoParcelamento;
+    this.ajustarValidacaoParcelas(false);
     console.log(this.formTransacao.value);
 
     this.marcadorSelecionado = transacao.marcador;
@@ -809,24 +778,53 @@ export class TransacoesComponent {
 
   salvar() {
     if (this.formTransacao.valid) {
-      const dadosParaEnviar: any = this.formTransacao.value
-      console.log("Dados para enviar:", dadosParaEnviar)
+      const dadosParaEnviar: any = { ...this.formTransacao.value }
       this.exibirDialog = false
 
       if (this.id) {
-        console.log("Editando transação com ID:", this.id, "Dados:", dadosParaEnviar)
+        // Transação já parcelada: edição altera só esta parcela. Avulsa: pode virar parcelada.
+        if (this.editandoParcelada || !dadosParaEnviar.parcelado) {
+          delete dadosParaEnviar.parcelado
+          delete dadosParaEnviar.totalParcelas
+          delete dadosParaEnviar.numeroParcela
+          delete dadosParaEnviar.valorTotalCompra
+          delete dadosParaEnviar.criarParcelasAnteriores
+        } else {
+          dadosParaEnviar.totalParcelas = Number(dadosParaEnviar.totalParcelas)
+          dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela)
+          dadosParaEnviar.valorTotalCompra = dadosParaEnviar.valorTotalCompra
+            ? Number(dadosParaEnviar.valorTotalCompra)
+            : null
+          dadosParaEnviar.criarParcelasAnteriores =
+            !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1
+        }
         this.transacoesService.editarTransacao(this.id, dadosParaEnviar).subscribe({
           next: () => this.sucessoAoSalvar('Transação atualizada') ,
           error: (err: Error) => this.erroAoSalvar('Erro ao editar', err)
         })
       } else {
+        const parcelado = !!dadosParaEnviar.parcelado
+        dadosParaEnviar.parcelado = parcelado
+        delete dadosParaEnviar.valorTotalCompra
+        if (parcelado) {
+          dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela)
+          dadosParaEnviar.criarParcelasAnteriores =
+            !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1
+        } else {
+          delete dadosParaEnviar.numeroParcela
+          delete dadosParaEnviar.criarParcelasAnteriores
+        }
+        dadosParaEnviar.totalParcelas = parcelado ? Number(dadosParaEnviar.totalParcelas) : null
+
         this.transacoesService.adicionarTransacao(dadosParaEnviar).subscribe({
-          next: (res: ITransacoes) => {
-            this.sucessoAoSalvar('Transação criada!')
+          next: (res: ITransacoes[]) => {
+            this.sucessoAoSalvar(parcelado
+              ? `Compra parcelada em ${res.length} vez(es)`
+              : 'Transação criada!')
           },
-          error: (error: Error) => {
-            this.erroAoSalvar('Error ao salvar', error)
-            console.error(error)
+          error: (error: HttpErrorResponse) => {
+            const corpo = error.error as FaturaErro | null
+            this.erroAoSalvar(corpo?.error || 'Error ao salvar', error)
           }
         })
       }

@@ -2,7 +2,6 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.service.TransacaoService;
-import com.npl.na_ponta_do_lapis.web.dto.CompraParceladaRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacoesResponseDTO;
@@ -33,13 +32,14 @@ public class TransacaoController {
         this.transacaoService = transacaoService;
     }
 
-    @Operation(summary = "Criar Transacao")
+    @Operation(summary = "Criar Transacao (simples ou parcelada)",
+            description = "Com parcelado=true, 'valor' é o total e são geradas 'totalParcelas' transações.")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @PostMapping
-    public ResponseEntity<TransacoesResponseDTO> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) throws AccessDeniedException {
-        Transacao novaTransacao = transacaoService.criarTransacao(transacao);
-        TransacoesResponseDTO responseDTO = new TransacoesResponseDTO(novaTransacao);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    public ResponseEntity<List<TransacoesResponseDTO>> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) throws AccessDeniedException {
+        List<Transacao> criadas = transacaoService.criarTransacao(transacao);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(criadas.stream().map(TransacoesResponseDTO::new).toList());
     }
 
     @Operation(summary = "Listar Transacoe do Usuário Logado")
@@ -119,21 +119,6 @@ public class TransacaoController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
-    }
-
-    @Operation(summary = "Criar compra parcelada")
-    @ApiResponses({
-        @ApiResponse(responseCode = "201", description = "Parcelas criadas com sucesso"),
-        @ApiResponse(responseCode = "400", description = "Dados inválidos"),
-        @ApiResponse(responseCode = "403", description = "Sem permissão na conta ou marcador")
-    })
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
-    @PostMapping("/parcelada")
-    public ResponseEntity<List<TransacoesResponseDTO>> criarCompraParcelada(
-            @Valid @RequestBody CompraParceladaRequestDTO dto) throws AccessDeniedException {
-        List<Transacao> parcelas = transacaoService.criarCompraParcelada(dto);
-        return ResponseEntity.status(HttpStatus.CREATED)
-                .body(parcelas.stream().map(TransacoesResponseDTO::new).toList());
     }
 
     @Operation(summary = "Listar parcelas de um grupo")

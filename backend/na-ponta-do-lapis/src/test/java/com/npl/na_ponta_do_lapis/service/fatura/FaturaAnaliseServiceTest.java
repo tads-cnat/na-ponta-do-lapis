@@ -148,6 +148,7 @@ class FaturaAnaliseServiceTest {
         );
         when(iaService.analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList()))
                 .thenReturn(resultadoIa);
+        when(regexService.validarPadrao(eq(padrao), any())).thenReturn(true);
         when(padraoFaturaService.salvarNovaVersao(padrao)).thenReturn(padrao);
 
         FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", false, false, false);

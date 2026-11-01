@@ -39,6 +39,11 @@ export interface ITransacaoRequest {
     idContaFinanceira:number;
     dataHora:string
     marcador: Marcador | null
+    parcelado?: boolean
+    totalParcelas?: number | null
+    numeroParcela?: number | null
+    valorTotalCompra?: number | null
+    criarParcelasAnteriores?: boolean
 }
 
 export interface ITransacaoFatura {
@@ -86,12 +91,3 @@ export interface FaturaAnaliseOpcoes {
   consentimentoLgpd?: boolean;
 }
 
-export interface CompraParceladaRequest {
-  descricao: string;
-  valorTotal: number;
-  totalParcelas: number;
-  dataPrimeiraParcela: string;
-  idContaFinanceira: number;
-  idCategoria: number;
-  marcadorId: number | null;
-}

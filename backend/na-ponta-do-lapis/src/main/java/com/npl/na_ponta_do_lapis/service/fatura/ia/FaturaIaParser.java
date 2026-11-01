@@ -19,6 +19,8 @@ import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 @Service
 public class FaturaIaParser {
 
+    private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FaturaIaParser.class);
+
     private final ObjectMapper objectMapper;
     private final FaturaRegexService faturaRegexService;
 
@@ -107,6 +109,7 @@ public class FaturaIaParser {
 
     private PadraoFatura parsePadrao(JsonNode node, String textoSanitizado) {
         if (!node.isObject()) {
+            log.warn("IA não retornou o objeto 'padrao'; regex não será salvo.");
             return null;
         }
         String emissor = node.path("emissor").asText(null);
@@ -118,6 +121,7 @@ public class FaturaIaParser {
         if (emissor == null || emissor.isBlank()
                 || identificacao == null || identificacao.isBlank()
                 || transacao == null || transacao.isBlank()) {
+            log.warn("Padrão da IA incompleto (emissor/regexIdentificacao/regexTransacao); não será salvo.");
             return null;
         }
 
@@ -129,7 +133,12 @@ public class FaturaIaParser {
         padrao.setFormatoData(formatoData == null || formatoData.isBlank() ? "dd/MM/yyyy" : formatoData);
         padrao.setOrigem("IA");
 
-        return faturaRegexService.validarPadrao(padrao, textoSanitizado) ? padrao : null;
+        if (!faturaRegexService.validarPadrao(padrao, textoSanitizado)) {
+            log.warn("Padrão da IA descartado: não reproduz transações no texto. identificacao='{}' transacao='{}'",
+                    identificacao, transacao);
+            return null;
+        }
+        return padrao;
     }
 
     private String escolherCategoria(String categoria, List<String> categoriasPermitidas) {

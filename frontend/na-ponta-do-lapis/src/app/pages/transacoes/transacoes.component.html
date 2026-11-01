@@ -214,6 +214,58 @@
                             placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
                 </div>
+
+                @if (!editandoParcelada) {
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-2">
+                        <p-checkbox formControlName="parcelado" [binary]="true" inputId="parcelado"></p-checkbox>
+                        <label for="parcelado" class="font-bold text-sm cursor-pointer">Compra parcelada</label>
+                    </div>
+
+                    @if (formTransacao.get('parcelado')?.value) {
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-1">
+                            <label class="font-bold text-sm">Parcela atual</label>
+                            <p-inputNumber formControlName="numeroParcela" [min]="1" [max]="60" [showButtons]="true"
+                                styleClass="w-full" inputStyleClass="w-full" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="font-bold text-sm">Número de parcelas</label>
+                            <p-inputNumber formControlName="totalParcelas" [min]="2" [max]="60" [showButtons]="true"
+                                styleClass="w-full" inputStyleClass="w-full" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @if (id) {
+                        <div class="flex flex-col gap-1">
+                            <label class="font-bold text-sm">Valor total da compra (opcional)</label>
+                            <p-inputNumber formControlName="valorTotalCompra" mode="currency" currency="BRL"
+                                locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+                        </div>
+                        }
+                        @if ((formTransacao.get('numeroParcela')?.value ?? 1) > 1) {
+                        <div class="flex items-center gap-2 sm:mt-6">
+                            <p-checkbox formControlName="criarParcelasAnteriores" [binary]="true"
+                                inputId="criarParcelasAnteriores"></p-checkbox>
+                            <label for="criarParcelasAnteriores" class="text-sm cursor-pointer">
+                                Criar parcelas anteriores (realizadas, sem alterar o saldo)
+                            </label>
+                        </div>
+                        }
+                    </div>
+                    <p class="text-xs text-slate-500 m-0">
+                        @if (id) {
+                        Esta transação será a <strong>parcela atual</strong> (o valor informado é o da parcela) e as seguintes
+                        serão geradas como <strong>pendentes</strong>, uma por mês.
+                        } @else {
+                        O valor informado é o <strong>total</strong> e a data é a da <strong>parcela atual</strong>
+                        (a primeira, se for 1). Parcelas com data futura entram como <strong>pendentes</strong> e não
+                        alteram o saldo até serem realizadas.
+                        }
+                    </p>
+                    }
+                </div>
+                }
             </div>
 
             <ng-template pTemplate="footer">
@@ -221,77 +273,6 @@
                     <p-button styleClass="w-full sm:w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!"
                         label="Salvar" [disabled]="formTransacao.invalid" severity="success"
                         (onClick)="salvar()"></p-button>
-                </div>
-            </ng-template>
-        </p-dialog>
-    </form>
-
-    <form [formGroup]="formParcelada">
-        <p-dialog header="Compra parcelada" [(visible)]="exibirDialogParcelada" [modal]="true"
-            [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '600px' }">
-
-            <div class="flex flex-col gap-4 mt-2 px-1 sm:px-3">
-                <div class="flex flex-col gap-1">
-                    <label class="font-bold text-sm">Descrição</label>
-                    <input pInputText formControlName="descricao" placeholder="Ex: Notebook" class="w-full" />
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Valor total da compra</label>
-                        <p-inputNumber formControlName="valorTotal" mode="currency" currency="BRL" locale="pt-BR"
-                            styleClass="w-full" inputStyleClass="w-full" />
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Número de parcelas</label>
-                        <p-inputNumber formControlName="totalParcelas" [min]="2" [max]="60" [showButtons]="true"
-                            styleClass="w-full" inputStyleClass="w-full" />
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Data da primeira parcela</label>
-                        <p-datePicker formControlName="dataPrimeiraParcela" dateFormat="dd/mm/yy" showIcon="true"
-                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-datePicker>
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Conta</label>
-                        <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
-                            formControlName="idContaFinanceira" placeholder="Selecione" [appendTo]="'body'"
-                            styleClass="w-full"></p-select>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Categoria</label>
-                        <p-select [options]="opcoesCategoria" optionLabel="nome" optionValue="id"
-                            formControlName="idCategoria" placeholder="Selecione" [appendTo]="'body'"
-                            styleClass="w-full"></p-select>
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Marcador (opcional)</label>
-                        <p-select [options]="opcoesMarcador" optionLabel="nome" optionValue="id"
-                            formControlName="marcadorId" placeholder="Sem marcador" [showClear]="true"
-                            [appendTo]="'body'" styleClass="w-full"></p-select>
-                    </div>
-                </div>
-
-                <p class="text-xs text-slate-500 m-0">
-                    As parcelas com data futura entram como <strong>pendentes</strong> e não alteram o saldo até serem realizadas.
-                </p>
-            </div>
-
-            <ng-template pTemplate="footer">
-                <div class="flex justify-center w-full mb-2 mt-4">
-                    <p-button styleClass="w-full sm:w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!"
-                        label="Criar parcelas" [disabled]="formParcelada.invalid || carregando"
-                        [loading]="carregando" severity="success"
-                        (onClick)="salvarParcelada()"></p-button>
                 </div>
             </ng-template>
         </p-dialog>
@@ -307,11 +288,6 @@
                 (onClick)="escolherManual()">
                 <i class="pi pi-pencil text-2xl"></i>
                 <span>Manual</span>
-            </p-button>
-            <p-button styleClass="rounded-xl! h-24 w-full sm:w-32 flex flex-col gap-2 border-[#1976d2]! bg-[#1976d2]!"
-                (onClick)="escolherParcelada()">
-                <i class="pi pi-clone text-2xl"></i>
-                <span>Parcelada</span>
             </p-button>
             <p-button styleClass="rounded-xl! h-24 w-full sm:w-32 flex flex-col gap-2 border-[#7843cd]! bg-[#7843cd]!"
                 (onClick)="escolherUpload()">

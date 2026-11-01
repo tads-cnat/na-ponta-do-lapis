@@ -8,7 +8,6 @@ import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
 import com.npl.na_ponta_do_lapis.service.fatura.parcelamento.ParcelamentoCalculator;
-import com.npl.na_ponta_do_lapis.web.dto.CompraParceladaRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.exception.NotFoundException;
@@ -44,11 +43,19 @@ public class TransacaoService {
         this.marcadorService = marcadorService;
     }
 
+    /**
+     * Cria uma transação. Quando {@code parcelado} é true, gera uma transação por parcela
+     * (o valor informado é o total e a data é a da primeira parcela); caso contrário, gera uma única.
+     */
     @Transactional
-    public Transacao criarTransacao(TransacaoRequestDTO transacao) throws AccessDeniedException {
+    public List<Transacao> criarTransacao(TransacaoRequestDTO transacao) throws AccessDeniedException {
         ContaFinanceira conta = contaFinanceiraService.buscarContaPorIdObject(transacao.idContaFinanceira());
         String email = getEmailUsuarioLogado();
         validarDono(conta, email);
+
+        if (transacao.isCompraParcelada()) {
+            return criarParcelas(transacao, conta, email);
+        }
 
         Transacao novaTransacao = new Transacao();
         novaTransacao.setDescricao(transacao.descricao());
@@ -74,7 +81,7 @@ public class TransacaoService {
         }
 
         aplicarImpactoSaldo(novaTransacao);
-        return transacaoRepository.save(novaTransacao);
+        return List.of(transacaoRepository.save(novaTransacao));
     }
 
     @Transactional
@@ -168,7 +175,70 @@ public class TransacaoService {
         // Aplica o novo impacto somente se o novo estado for REALIZADA.
         aplicarImpactoSaldo(transacaoExistente);
 
-        return transacaoRepository.save(transacaoExistente);
+        Transacao salva = transacaoRepository.save(transacaoExistente);
+
+        // Transação avulsa marcada como parcelada: vira a parcela atual e gera as futuras.
+        if (dto.isCompraParcelada() && salva.getGrupoParcelamento() == null) {
+            converterEmParcelada(salva, dto);
+            if (dto.isCriarAnteriores()) {
+                criarParcelasAnteriores(salva);
+            }
+            gerarParcelasFuturas(salva.getGrupoParcelamento());
+        }
+        return salva;
+    }
+
+    private void converterEmParcelada(Transacao transacao, TransacaoRequestDTO dto) {
+        Integer total = dto.totalParcelas();
+        Integer numero = dto.numeroParcela();
+        if (total == null || total < 2 || total > 60) {
+            throw new IllegalArgumentException("Informe um número de parcelas entre 2 e 60.");
+        }
+        if (numero == null || numero < 1 || numero > total) {
+            throw new IllegalArgumentException("A parcela atual deve estar entre 1 e o total de parcelas.");
+        }
+
+        BigDecimal valorTotal = dto.valorTotalCompra() != null
+                ? dto.valorTotalCompra()
+                : transacao.getValor().multiply(BigDecimal.valueOf(total));
+
+        transacao.setGrupoParcelamento(UUID.randomUUID().toString());
+        transacao.setNumeroParcela(numero);
+        transacao.setTotalParcelas(total);
+        transacao.setValorTotalCompra(valorTotal);
+        transacaoRepository.save(transacao);
+    }
+
+    /**
+     * Cria as parcelas 1..(atual-1) como REALIZADA, sem alterar o saldo: elas representam
+     * pagamentos que já aconteceram antes desta transação existir no sistema.
+     */
+    private void criarParcelasAnteriores(Transacao atual) {
+        int numeroAtual = atual.getNumeroParcela();
+        if (numeroAtual <= 1) {
+            return;
+        }
+        List<BigDecimal> valores = ParcelamentoCalculator.calcularValores(
+                atual.getValorTotalCompra(), atual.getTotalParcelas());
+
+        List<Transacao> anteriores = new ArrayList<>();
+        for (int numero = 1; numero < numeroAtual; numero++) {
+            Transacao parcela = new Transacao();
+            parcela.setDescricao(atual.getDescricao());
+            parcela.setValor(valores.get(numero - 1));
+            parcela.setCategoria(atual.getCategoria());
+            parcela.setTipo(atual.getTipo());
+            parcela.setEstado(EstadoTransacao.REALIZADA);
+            parcela.setDataHora(atual.getDataHora().minusMonths(numeroAtual - numero));
+            parcela.setContaFinanceira(atual.getContaFinanceira());
+            parcela.setMarcador(atual.getMarcador());
+            parcela.setGrupoParcelamento(atual.getGrupoParcelamento());
+            parcela.setNumeroParcela(numero);
+            parcela.setTotalParcelas(atual.getTotalParcelas());
+            parcela.setValorTotalCompra(atual.getValorTotalCompra());
+            anteriores.add(parcela);
+        }
+        transacaoRepository.saveAll(anteriores);
     }
 
     @Transactional
@@ -186,11 +256,12 @@ public class TransacaoService {
     // Parcelamento
     // -------------------------------------------------------------------------
 
-    @Transactional
-    public List<Transacao> criarCompraParcelada(CompraParceladaRequestDTO dto) throws AccessDeniedException {
-        ContaFinanceira conta = contaFinanceiraService.buscarContaPorIdObject(dto.idContaFinanceira());
-        String email = getEmailUsuarioLogado();
-        validarDono(conta, email);
+    private List<Transacao> criarParcelas(TransacaoRequestDTO dto, ContaFinanceira conta, String email)
+            throws AccessDeniedException {
+        Integer totalParcelas = dto.totalParcelas();
+        if (totalParcelas == null || totalParcelas < 2 || totalParcelas > 60) {
+            throw new IllegalArgumentException("Informe um número de parcelas entre 2 e 60.");
+        }
 
         TipoCategoria categoria = tipoCategoriaService.buscarPorId(dto.idCategoria());
 
@@ -200,19 +271,30 @@ public class TransacaoService {
             validarDono(marcador, email);
         }
 
+        int numeroAtual = dto.numeroParcela() != null ? dto.numeroParcela() : 1;
+        if (numeroAtual < 1 || numeroAtual > totalParcelas) {
+            throw new IllegalArgumentException("A parcela atual deve estar entre 1 e o total de parcelas.");
+        }
+
         String grupo = UUID.randomUUID().toString();
-        List<BigDecimal> valores = ParcelamentoCalculator.calcularValores(dto.valorTotal(), dto.totalParcelas());
-        LocalDateTime primeira = dto.dataPrimeiraParcela().atStartOfDay();
-        List<LocalDateTime> datas = ParcelamentoCalculator.calcularDatas(primeira, dto.totalParcelas());
+        List<BigDecimal> valores = ParcelamentoCalculator.calcularValores(dto.valor(), totalParcelas);
+        // A data informada é a da parcela atual; as anteriores recuam um mês cada.
+        LocalDateTime primeira = dto.dataHora().toLocalDate().atStartOfDay().minusMonths(numeroAtual - 1L);
+        List<LocalDateTime> datas = ParcelamentoCalculator.calcularDatas(primeira, totalParcelas);
         LocalDateTime agora = LocalDateTime.now();
 
         List<Transacao> parcelas = new ArrayList<>();
         for (int indice = 0; indice < datas.size(); indice++) {
+            boolean anterior = indice + 1 < numeroAtual;
+            if (anterior && !dto.isCriarAnteriores()) {
+                continue;
+            }
+
             Transacao transacao = new Transacao();
             transacao.setDescricao(dto.descricao().trim());
             transacao.setValor(valores.get(indice));
             transacao.setCategoria(categoria);
-            transacao.setTipo(TipoTransacao.DESPESA);
+            transacao.setTipo(dto.tipo());
             transacao.setContaFinanceira(conta);
             transacao.setMarcador(marcador);
             transacao.setDataHora(datas.get(indice));
@@ -221,12 +303,16 @@ public class TransacaoService {
                     : EstadoTransacao.REALIZADA);
             transacao.setGrupoParcelamento(grupo);
             transacao.setNumeroParcela(indice + 1);
-            transacao.setTotalParcelas(dto.totalParcelas());
-            transacao.setValorTotalCompra(dto.valorTotal());
+            transacao.setTotalParcelas(totalParcelas);
+            transacao.setValorTotalCompra(dto.valor());
             parcelas.add(transacao);
+
+            // Parcelas anteriores já foram pagas antes: entram no histórico sem alterar o saldo.
+            if (!anterior) {
+                aplicarImpactoSaldo(transacao);
+            }
         }
 
-        parcelas.forEach(this::aplicarImpactoSaldo);
         return transacaoRepository.saveAll(parcelas);
     }
 
@@ -269,7 +355,7 @@ public class TransacaoService {
             transacao.setValor(valores.get(numero - 1));
             transacao.setCategoria(referencia.getCategoria());
             transacao.setEstado(EstadoTransacao.PENDENTE);
-            transacao.setTipo(TipoTransacao.DESPESA);
+            transacao.setTipo(referencia.getTipo());
             transacao.setDataHora(referencia.getDataHora().plusMonths(numero - numeroAtual));
             transacao.setContaFinanceira(referencia.getContaFinanceira());
             transacao.setMarcador(referencia.getMarcador());
