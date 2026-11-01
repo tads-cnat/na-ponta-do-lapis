@@ -24,4 +24,6 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
             "AND LOWER(t.descricao) LIKE LOWER(CONCAT('%', :descricao, '%')) " +
             "ORDER BY t.dataHora DESC")
     List<Transacao> buscarTransacoesDaFamiliaPorDescricao(@Param("familiaId") Long familiaId, @Param("descricao") String descricao);
+
+    List<Transacao> findByGrupoParcelamentoOrderByNumeroParcelaAsc(String grupoParcelamento);
 }

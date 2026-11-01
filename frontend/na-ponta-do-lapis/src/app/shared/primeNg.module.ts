@@ -21,6 +21,7 @@ import { InputMaskModule } from 'primeng/inputmask';
 import { CheckboxModule } from 'primeng/checkbox';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TooltipModule } from 'primeng/tooltip';
 
 
 
@@ -46,7 +47,8 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
       InputNumberModule,
       SelectModule,
       RadioButtonModule,
-      ProgressSpinnerModule
+      ProgressSpinnerModule,
+      TooltipModule
   ],
   declarations: [],
   imports: [CommonModule],
