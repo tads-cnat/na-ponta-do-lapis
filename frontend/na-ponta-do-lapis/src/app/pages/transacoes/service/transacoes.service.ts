@@ -1,8 +1,15 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { Categoria, ITransacaoFatura, ITransacaoRequest, ITransacoes,  } from '../../../model/ITransacoes.model';
-import { environment}  from '@env';
+import {
+  Categoria,
+  FaturaAnaliseOpcoes,
+  FaturaAnaliseResponse,
+  ITransacaoFatura,
+  ITransacaoRequest,
+  ITransacoes,
+} from '../../../model/ITransacoes.model';
+import { environment }  from '@env';
 
 @Injectable({
   providedIn: 'root',
@@ -32,8 +39,8 @@ export class TransacoesService {
     return this.http.put<ITransacoes>(`${this.BASE_URL}/transacoes/${id}`, transacao)
   }
 
-  public adicionarTransacao(transacao:ITransacaoRequest): Observable<ITransacoes> {
-    return this.http.post<ITransacoes>(`${this.BASE_URL}/transacoes`, transacao)
+  public adicionarTransacao(transacao:ITransacaoRequest): Observable<ITransacoes[]> {
+    return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes`, transacao)
   }
 
   public listarContasUsuarioLogado(): Observable<any>{
@@ -48,14 +55,46 @@ export class TransacoesService {
     return this.http.get<any>(`${this.BASE_URL}/marcadores/me`)
   }
 
-  public analisarFatura(arquivo: File): Observable<ITransacaoFatura[]> {
+  public analisarFatura(
+    arquivo: File,
+    opcoes: FaturaAnaliseOpcoes = {}
+  ): Observable<FaturaAnaliseResponse> {
     const formData = new FormData();
     formData.append('arquivo', arquivo);
-    return this.http.post<ITransacaoFatura[]>(`${this.BASE_URL}/faturas/analise`, formData);
+
+    if (opcoes.provedor) formData.append('provedor', opcoes.provedor);
+    if (opcoes.apiKey) formData.append('apiKey', opcoes.apiKey);
+    formData.append('manterNaSessao', String(opcoes.manterNaSessao ?? false));
+    formData.append('forceAiAnalysis', String(opcoes.forceAiAnalysis ?? false));
+    formData.append('enviarPdfParaIa', String(opcoes.enviarPdfParaIa ?? false));
+    formData.append('consentimentoLgpd', String(opcoes.consentimentoLgpd ?? false));
+
+    return this.http.post<FaturaAnaliseResponse>(
+      `${this.BASE_URL}/faturas/analise`,
+      formData,
+      { withCredentials: true }
+    );
   }
 
-  public salvarFaturaEmLote(transacoes: ITransacaoFatura[], contaId: number): Observable<void> {
-    return this.http.post<void>(`${this.BASE_URL}/transacoes/lote?contaId=${contaId}`, transacoes);
+  public esquecerChaveIa(): Observable<void> {
+    return this.http.delete<void>(`${this.BASE_URL}/faturas/sessao`, { withCredentials: true });
   }
 
+  public salvarFaturaEmLote(transacoes: ITransacaoFatura[], contaId: number): Observable<ITransacoes[]> {
+    return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes/lote?contaId=${contaId}`, transacoes);
+  }
+
+  public listarParcelamento(grupoId: string): Observable<ITransacoes[]> {
+    return this.http.get<ITransacoes[]>(`${this.BASE_URL}/transacoes/parcelamento/${grupoId}`);
+  }
+
+  public gerarParcelasFuturas(grupoId: string): Observable<ITransacoes[]> {
+    return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes/parcelamento/${grupoId}/futuras`, {});
+  }
+
+  public excluirParcelamento(grupoId: string, apenasFuturas: boolean): Observable<void> {
+    return this.http.delete<void>(
+      `${this.BASE_URL}/transacoes/parcelamento/${grupoId}?apenasFuturas=${apenasFuturas}`
+    );
+  }
 }

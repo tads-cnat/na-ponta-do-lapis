@@ -52,7 +52,7 @@ Antes de iniciar, crie o arquivo `.env` na raiz do projeto a partir do exemplo f
 cp .env.example .env
 ```
 
-Edite o arquivo `.env` caso precise customizar credenciais de banco de dados (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`) ou segredos de autenticação (`JWT_SECRET`). Para integrações adicionais (upload de fotos e IA), preencha `CLOUDINARY_*` e `GEMINI_API_KEY`.
+Edite o arquivo `.env` caso precise customizar credenciais de banco de dados (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`) ou segredos de autenticação (`JWT_SECRET`). Para o upload de fotos, preencha `CLOUDINARY_*`. A chave de IA para leitura de faturas não fica no `.env`: cada usuário a informa na tela de importação.
 
 > **Arquivo único centralizado:** O backend foi configurado para detectar automaticamente o arquivo `.env` na raiz do projeto (ou no subdiretório se existir). Basta criar um único `.env` na raiz!
 

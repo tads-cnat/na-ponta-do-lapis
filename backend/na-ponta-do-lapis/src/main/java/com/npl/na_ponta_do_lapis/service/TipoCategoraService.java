@@ -50,6 +50,37 @@ public class TipoCategoraService {
         );
     }
 
+    /**
+     * Busca tolerante a acentos, maiúsculas/minúsculas e espaços.
+     * Se não encontrar, tenta "Outros"; se ainda não existir, falha.
+     */
+    @Transactional(readOnly = true)
+    public TipoCategoria buscarPorNomeFlexivel(String nome) {
+        String alvo = normalizar(nome);
+        List<TipoCategoria> categorias = tipoCategoriaRepository.findAll();
+
+        return categorias.stream()
+                .filter(categoria -> normalizar(categoria.getNome()).equals(alvo))
+                .findFirst()
+                .or(() -> categorias.stream()
+                        .filter(categoria -> normalizar(categoria.getNome()).equals("outros"))
+                        .findFirst())
+                .or(() -> categorias.stream()
+                        .filter(categoria -> normalizar(categoria.getNome()).equals("outras"))
+                        .findFirst())
+                .orElseThrow(() -> new TipoCategoriaIdNaoExisteException(
+                        "Categoria de Nome:" + nome + " não encontrado!"));
+    }
+
+    private String normalizar(String texto) {
+        if (texto == null) {
+            return "";
+        }
+        String semAcento = java.text.Normalizer.normalize(texto, java.text.Normalizer.Form.NFD)
+                .replaceAll("\\p{M}", "");
+        return semAcento.toLowerCase(java.util.Locale.ROOT).trim().replaceAll("\\s+", " ");
+    }
+
     @Transactional
     public TipoCategoria criarCategoria(TipoCategoria categoria){
         log.debug("Criando categoria: {}", categoria.getNome());

@@ -1,4 +1,5 @@
 package com.npl.na_ponta_do_lapis.web.dto;
+
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
@@ -17,7 +18,11 @@ public record TransacoesResponseDTO(
         LocalDateTime dataHora,
         CategoriaResumoDTO categoria,
         ContaResumoDTO conta,
-        MarcadorResumeDTO marcador
+        MarcadorResumeDTO marcador,
+        String grupoParcelamento,
+        Integer numeroParcela,
+        Integer totalParcelas,
+        BigDecimal valorTotalCompra
 ) {
        public TransacoesResponseDTO(Transacao transacao){
                this(
@@ -39,8 +44,11 @@ public record TransacoesResponseDTO(
                                transacao.getMarcador().getId(),
                                transacao.getMarcador().getNome(),
                                transacao.getMarcador().getCor()
-                       ): null
+                       ): null,
+                       transacao.getGrupoParcelamento(),
+                       transacao.getNumeroParcela(),
+                       transacao.getTotalParcelas(),
+                       transacao.getValorTotalCompra()
                );
        };
 }
-

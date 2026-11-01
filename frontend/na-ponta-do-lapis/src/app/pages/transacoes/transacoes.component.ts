@@ -4,7 +4,17 @@ import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
-import { Categoria, ITransacaoFatura, ITransacaoRequest, ITransacoes, Tipo } from '../../model/ITransacoes.model';
+import {
+  Categoria,
+  FaturaAnaliseOpcoes,
+  FaturaAnaliseResponse,
+  FaturaErro,
+  ITransacaoFatura,
+  ITransacaoRequest,
+  ITransacoes,
+  ProvedorIa,
+  Tipo,
+} from '../../model/ITransacoes.model';
 import { IContasRequest } from '../../model/IContas.models';
 import { Marcador, MarcadorRequest } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
@@ -13,6 +23,14 @@ import { CardSaldoComponent } from '../../shared/components/card-saldo/card-sald
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MarcadorDlgComponent } from '../marcador-dlg/marcador-dlg.component';
+
+interface GrupoParcelamentoResumo {
+  grupoId: string;
+  descricao: string;
+  numeroParcela: number;
+  totalParcelas: number;
+  valorTotalCompra: number | null;
+}
 
 @Component({
   selector: 'app-transacoes',
@@ -27,11 +45,33 @@ export class TransacoesComponent {
   exibirDialogEscolha: boolean = false;
   exibirDialogUpload: boolean = false;
   exibirDialogRevisao: boolean = false;
+  exibirDialogConsentimento: boolean = false;
+  exibirDialogParcelasFuturas: boolean = false;
+  exibirDialogGrupo: boolean = false;
   carregando: boolean = false;
+  carregandoConsentimento: boolean = false;
+  carregandoGrupo: boolean = false;
+  editandoParcelada: boolean = false;
   erroUpload: string | null = null;
+  erroConsentimento: string | null = null;
   arquivoSelecionado: File | null = null;
   transacoesExtraidas: ITransacaoFatura[] = [];
   contaSelecionadaRevisao: number | null = null;
+  faturaAnalise: FaturaAnaliseResponse | null = null;
+  faturaPendenteConsentimento: FaturaAnaliseResponse | null = null;
+
+  provedorSelecionado: ProvedorIa = 'GEMINI';
+  apiKeyIa: string = '';
+  manterNaSessao: boolean = false;
+  forceAiAnalysis: boolean = false;
+  consentimentoLgpd: boolean = false;
+
+  gruposParcelamentoCriados: GrupoParcelamentoResumo[] = [];
+  gruposGerados = new Set<string>();
+
+  grupoSelecionado: string | null = null;
+  parcelasGrupo: ITransacoes[] = [];
+
   private messageService = inject(MessageService)
   private destroyRef = inject(DestroyRef)
   id: number | null = null;
@@ -52,8 +92,30 @@ export class TransacoesComponent {
       dataHora: ['', [Validators.required]],
       estado: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      marcadorId: ['']
+      marcadorId: [''],
+      parcelado: [false],
+      totalParcelas: [2],
+      numeroParcela: [1],
+      valorTotalCompra: [null],
+      criarParcelasAnteriores: [true]
     })
+
+    this.formTransacao.get('parcelado')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((parcelado: boolean) => this.ajustarValidacaoParcelas(parcelado));
+  }
+
+  /** Parcelas só são obrigatórias quando a transação é parcelada. */
+  private ajustarValidacaoParcelas(parcelado: boolean) {
+    const total = this.formTransacao.get('totalParcelas');
+    const atual = this.formTransacao.get('numeroParcela');
+    if (!total || !atual) return;
+    total.setValidators(parcelado
+      ? [Validators.required, Validators.min(2), Validators.max(60)]
+      : []);
+    atual.setValidators(parcelado ? [Validators.required, Validators.min(1)] : []);
+    total.updateValueAndValidity({ emitEvent: false });
+    atual.updateValueAndValidity({ emitEvent: false });
   }
 
   ngOnInit(): void {
@@ -112,7 +174,6 @@ export class TransacoesComponent {
         this.cdr.detectChanges()
       },
       error: (erro: Error) => {
-        console.log(erro)
         this.messageService.add({
           severity: 'warn',
           summary: 'Erro ao carregar transação',
@@ -197,7 +258,6 @@ export class TransacoesComponent {
     this.formTransacao.patchValue({
       marcadorId: marcador.id
     })
-    console.log("Marcador selecionado:", marcador)
     this.op.hide();
     this.formTransacao.get('marcadorId')?.markAsDirty();
   }
@@ -228,6 +288,21 @@ export class TransacoesComponent {
     { label: 'Receita', value: 'RECEITA' }
   ];
 
+  opcoesProvedorIa: { label: string; value: ProvedorIa; suportaPdf: boolean }[] = [
+    { label: 'Gemini', value: 'GEMINI', suportaPdf: true },
+    { label: 'Claude', value: 'CLAUDE', suportaPdf: true },
+    { label: 'OpenAI', value: 'OPENAI', suportaPdf: false },
+    { label: 'DeepSeek', value: 'DEEPSEEK', suportaPdf: false },
+    { label: 'Groq', value: 'GROQ', suportaPdf: false },
+  ];
+
+  get opcoesProvedorPdf() {
+    return this.opcoesProvedorIa.filter(p => p.suportaPdf);
+  }
+
+  get provedorSelecionadoSuportaPdf(): boolean {
+    return this.opcoesProvedorIa.find(p => p.value === this.provedorSelecionado)?.suportaPdf ?? false;
+  }
 
   resetForm(): ITransacoes {
     return {
@@ -239,7 +314,11 @@ export class TransacoesComponent {
       estado: 'REALIZADA',
       valor: 0,
       dataHora: new Date().toISOString().slice(0, 19),
-      marcador: null
+      marcador: null,
+      grupoParcelamento: null,
+      numeroParcela: null,
+      totalParcelas: null,
+      valorTotalCompra: null
     };
   }
 
@@ -255,7 +334,14 @@ export class TransacoesComponent {
       estado: 'REALIZADA',
       tipo: '',
       marcadorId: null,
+      parcelado: false,
+      totalParcelas: 2,
+      numeroParcela: 1,
+      valorTotalCompra: null,
+      criarParcelasAnteriores: true,
     });
+    this.editandoParcelada = false;
+    this.ajustarValidacaoParcelas(false);
     this.novaTransacao = this.resetForm();
     this.exibirDialog = true;
   }
@@ -273,43 +359,183 @@ export class TransacoesComponent {
     this.exibirDialogEscolha = false;
     this.arquivoSelecionado = null;
     this.erroUpload = null;
+    this.faturaAnalise = null;
     this.exibirDialogUpload = true;
   }
 
   selecionarArquivo(event: any) {
     this.arquivoSelecionado = event.target.files[0] ?? null;
+    this.erroUpload = null;
   }
 
   enviarFatura() {
     if (!this.arquivoSelecionado) return;
+    this.analisarFatura({});
+  }
+
+  private analisarFatura(extras: FaturaAnaliseOpcoes) {
+    if (!this.arquivoSelecionado) return;
+
+    const opcoes: FaturaAnaliseOpcoes = {
+      provedor: this.provedorSelecionado,
+      apiKey: this.apiKeyIa?.trim() || undefined,
+      manterNaSessao: this.manterNaSessao,
+      forceAiAnalysis: this.forceAiAnalysis,
+      ...extras,
+    };
+
     this.carregando = true;
     this.erroUpload = null;
-    this.transacoesService.analisarFatura(this.arquivoSelecionado).subscribe({
-      next: (res: ITransacaoFatura[]) => {
-        this.transacoesExtraidas = res.map(t => ({
-          ...t,
-          data: t.data ? new Date(t.data) : new Date()
-        }));
+    this.erroConsentimento = null;
+
+    this.transacoesService.analisarFatura(this.arquivoSelecionado, opcoes).subscribe({
+      next: (res: FaturaAnaliseResponse) => {
         this.carregando = false;
-        this.exibirDialogUpload = false;
-        this.contaSelecionadaRevisao = null;
-        this.exibirDialogRevisao = true;
-        this.cdr.detectChanges();
+
+        if (res.precisaConsentimentoPdf) {
+          this.carregandoConsentimento = false;
+          this.faturaPendenteConsentimento = res;
+          this.consentimentoLgpd = false;
+          this.ajustarProvedorParaPdf();
+          this.exibirDialogUpload = false;
+          this.exibirDialogConsentimento = true;
+          this.cdr.detectChanges();
+          return;
+        }
+
+        this.aplicarResultadoAnalise(res);
       },
       error: (err: HttpErrorResponse) => {
         this.carregando = false;
-        if (err.status === 503) {
-          this.erroUpload = 'Serviço temporariamente indisponível. Tente novamente em alguns instantes.';
-        } else if (err.status === 504) {
-          this.erroUpload = 'Tempo limite excedido. O PDF pode ser muito grande ou o serviço está lento.';
-        } else if (err.status === 502) {
-          this.erroUpload = 'Erro ao processar a fatura. O PDF pode estar corrompido ou em formato não esperado.';
-        } else if (err.status === 400) {
-          this.erroUpload = 'Arquivo inválido. Envie um PDF de fatura de cartão de crédito.';
+        const mensagem = this.mensagemErroFatura(err);
+        if (this.exibirDialogConsentimento) {
+          this.carregandoConsentimento = false;
+          this.erroConsentimento = mensagem;
         } else {
-          this.erroUpload = 'Erro ao analisar fatura. Verifique o arquivo e tente novamente.';
+          this.erroUpload = mensagem;
         }
         this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private aplicarResultadoAnalise(res: FaturaAnaliseResponse) {
+    this.carregandoConsentimento = false;
+    this.faturaAnalise = res;
+    this.transacoesExtraidas = res.transacoes.map(t => ({
+      ...t,
+      data: this.paraDataLocal(t.data)
+    }));
+    this.exibirDialogUpload = false;
+    this.exibirDialogConsentimento = false;
+    this.faturaPendenteConsentimento = null;
+    this.contaSelecionadaRevisao = null;
+    this.exibirDialogRevisao = true;
+
+    if (res.consentimentoPdfIa) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'PDF enviado à IA com a sua autorização',
+        life: 3500
+      });
+    } else if (res.ocrUtilizado) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Fatura lida a partir da imagem',
+        detail: 'Nenhum dado saiu do nosso servidor.',
+        life: 3500
+      });
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  enviarFaturaComConsentimento() {
+    if (!this.consentimentoLgpd) {
+      this.erroConsentimento = 'Marque a autorização para enviar o PDF ao provedor de IA.';
+      return;
+    }
+    if (!this.arquivoSelecionado) {
+      this.erroConsentimento = 'Selecione novamente o arquivo PDF.';
+      return;
+    }
+
+    this.carregandoConsentimento = true;
+    this.erroConsentimento = null;
+    this.analisarFatura({
+      enviarPdfParaIa: true,
+      consentimentoLgpd: true,
+      provedor: this.provedorSelecionado,
+    });
+  }
+
+  cancelarConsentimento() {
+    this.carregandoConsentimento = false;
+    this.exibirDialogConsentimento = false;
+    this.faturaPendenteConsentimento = null;
+    this.erroConsentimento = null;
+    this.consentimentoLgpd = false;
+    this.exibirDialogUpload = true;
+  }
+
+  private ajustarProvedorParaPdf() {
+    if (!this.provedorSelecionadoSuportaPdf) {
+      this.provedorSelecionado = 'GEMINI';
+    }
+  }
+
+  private mensagemErroFatura(err: HttpErrorResponse): string {
+    const corpo = err.error as FaturaErro | null;
+    const detalhe = corpo?.error;
+
+    switch (err.status) {
+      case 428:
+        return detalhe || 'Não conseguimos ler esta fatura automaticamente. Informe uma chave de acesso de IA para continuar.';
+      case 422:
+        if (corpo?.codigo === 'CONSENTIMENTO_OBRIGATORIO') {
+          return 'Marque a autorização para enviar o PDF à IA.';
+        }
+        if (corpo?.codigo === 'PROVEDOR_SEM_SUPORTE_PDF') {
+          return 'Escolha Gemini ou Claude para enviar o PDF à IA.';
+        }
+        if (corpo?.codigo === 'CHAVE_INVALIDA') {
+          return 'A chave de acesso foi recusada. Confira se copiou corretamente e tente de novo.';
+        }
+        return detalhe || 'Não foi possível processar a fatura.';
+      case 429:
+        return 'O serviço de IA atingiu o limite de uso. Aguarde alguns instantes e tente novamente.';
+      case 413:
+        return 'O arquivo é maior que o limite permitido de 10 MB.';
+      case 400:
+        return detalhe || 'Arquivo inválido. Envie um PDF de fatura de cartão de crédito.';
+      case 502:
+        return 'O serviço de IA não respondeu como esperado. Tente novamente.';
+      case 503:
+        return 'Serviço temporariamente indisponível. Tente novamente em alguns instantes.';
+      case 504:
+        return 'Tempo limite excedido. O PDF pode ser muito grande ou o serviço está lento.';
+      default:
+        return detalhe || 'Erro ao analisar fatura. Verifique o arquivo e tente novamente.';
+    }
+  }
+
+  esquecerChaveIa() {
+    this.transacoesService.esquecerChaveIa().subscribe({
+      next: () => {
+        this.apiKeyIa = '';
+        this.manterNaSessao = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Chave apagada',
+          life: 2500
+        });
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Não foi possível apagar a chave salva',
+          life: 2500
+        });
       }
     });
   }
@@ -320,20 +546,36 @@ export class TransacoesComponent {
 
   confirmarTransacoes() {
     if (!this.contaSelecionadaRevisao || this.transacoesExtraidas.length === 0) return;
+
+    if (this.parcelamentoInvalido()) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Parcelamento inválido',
+        detail: 'Preencha a parcela atual e o total, com a parcela entre 1 e o total (máximo 60).',
+        life: 4500
+      });
+      return;
+    }
+
     const transacoesParaEnviar: ITransacaoFatura[] = this.transacoesExtraidas.map(t => ({
-      descricao: t.descricao,
-      valor: t.valor,
-      data: t.data instanceof Date ? t.data.toISOString() : t.data,
-      categoria: t.categoria
+      descricao: t.descricao.trim(),
+      valor: Number(t.valor),
+      data: this.dataParaIso(t.data),
+      categoria: t.categoria,
+      numeroParcela: t.numeroParcela ?? null,
+      totalParcelas: t.totalParcelas ?? null,
+      valorTotalCompra: t.valorTotalCompra ?? null
     }));
+
     this.carregando = true;
     this.transacoesService.salvarFaturaEmLote(transacoesParaEnviar, this.contaSelecionadaRevisao).subscribe({
-      next: () => {
+      next: (salvas: ITransacoes[]) => {
         this.carregando = false;
         this.exibirDialogRevisao = false;
         this.messageService.add({ severity: 'success', summary: 'Transações salvas com sucesso!', life: 3000 });
         this.listarTransacoes();
         this.atualizarSaldo();
+        this.prepararParcelasFuturas(salvas);
         this.cdr.detectChanges();
       },
       error: (err: HttpErrorResponse) => {
@@ -344,6 +586,160 @@ export class TransacoesComponent {
         else if (err.status === 503) msg = 'Serviço temporariamente indisponível. Tente novamente.';
         this.messageService.add({ severity: 'error', summary: msg, life: 5000 });
         this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private parcelamentoInvalido(): boolean {
+    return this.transacoesExtraidas.some(t => {
+      const numero = t.numeroParcela ?? null;
+      const total = t.totalParcelas ?? null;
+      if (numero === null && total === null) return false;
+      return numero === null || total === null || numero < 1 || total < 2 || numero > total || total > 60;
+    });
+  }
+
+  private prepararParcelasFuturas(salvas: ITransacoes[]) {
+    const grupos = new Map<string, GrupoParcelamentoResumo>();
+
+    salvas.forEach(t => {
+      if (!t.grupoParcelamento || !t.numeroParcela || !t.totalParcelas) return;
+      if (t.numeroParcela >= t.totalParcelas) return;
+
+      const atual = grupos.get(t.grupoParcelamento);
+      if (!atual || t.numeroParcela > atual.numeroParcela) {
+        grupos.set(t.grupoParcelamento, {
+          grupoId: t.grupoParcelamento,
+          descricao: t.descricao,
+          numeroParcela: t.numeroParcela,
+          totalParcelas: t.totalParcelas,
+          valorTotalCompra: t.valorTotalCompra
+        });
+      }
+    });
+
+    this.gruposParcelamentoCriados = [...grupos.values()];
+    this.gruposGerados.clear();
+
+    if (this.gruposParcelamentoCriados.length > 0) {
+      this.exibirDialogParcelasFuturas = true;
+    }
+  }
+
+  gerarFuturasDoGrupo(grupoId: string) {
+    this.transacoesService.gerarParcelasFuturas(grupoId).subscribe({
+      next: (novas: ITransacoes[]) => {
+        this.gruposGerados.add(grupoId);
+        this.messageService.add({
+          severity: 'success',
+          summary: novas.length > 0
+            ? `${novas.length} parcela(s) futura(s) gerada(s)`
+            : 'Não há parcelas futuras para gerar',
+          life: 3000
+        });
+        this.listarTransacoes();
+        this.atualizarSaldo();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao gerar parcelas futuras',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  fecharDialogParcelasFuturas() {
+    this.exibirDialogParcelasFuturas = false;
+  }
+
+  abrirGrupoParcelamento(transacao: ITransacoes) {
+    if (!transacao.grupoParcelamento) return;
+
+    this.grupoSelecionado = transacao.grupoParcelamento;
+    this.parcelasGrupo = [];
+    this.exibirDialogGrupo = true;
+    this.carregarGrupo();
+  }
+
+  private carregarGrupo() {
+    if (!this.grupoSelecionado) return;
+
+    this.carregandoGrupo = true;
+    this.transacoesService.listarParcelamento(this.grupoSelecionado).subscribe({
+      next: (parcelas: ITransacoes[]) => {
+        this.parcelasGrupo = parcelas;
+        this.carregandoGrupo = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregandoGrupo = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao carregar o parcelamento',
+          life: 3000
+        });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  gerarFuturasGrupoAtual() {
+    if (!this.grupoSelecionado) return;
+
+    this.transacoesService.gerarParcelasFuturas(this.grupoSelecionado).subscribe({
+      next: (novas: ITransacoes[]) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: novas.length > 0
+            ? `${novas.length} parcela(s) futura(s) gerada(s)`
+            : 'Não há parcelas futuras para gerar',
+          life: 3000
+        });
+        this.carregarGrupo();
+        this.listarTransacoes();
+        this.atualizarSaldo();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao gerar parcelas futuras',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  excluirGrupoParcelamento(apenasFuturas: boolean) {
+    if (!this.grupoSelecionado) return;
+
+    const mensagem = apenasFuturas
+      ? 'Excluir somente as parcelas pendentes deste parcelamento?'
+      : 'Excluir TODAS as parcelas deste parcelamento?';
+    if (!window.confirm(mensagem)) return;
+
+    this.transacoesService.excluirParcelamento(this.grupoSelecionado, apenasFuturas).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: apenasFuturas ? 'Parcelas futuras excluídas' : 'Parcelamento excluído',
+          life: 3000
+        });
+        this.exibirDialogGrupo = false;
+        this.grupoSelecionado = null;
+        this.parcelasGrupo = [];
+        this.listarTransacoes();
+        this.atualizarSaldo();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao excluir o parcelamento',
+          life: 3000
+        });
       }
     });
   }
@@ -365,33 +761,68 @@ export class TransacoesComponent {
       dataHora: new Date(transacao.dataHora),
       estado: transacao.estado,
       tipo: transacao.tipo,
-      marcadorId: transacao.marcador?.id 
+      marcadorId: transacao.marcador?.id,
+      parcelado: false,
+      totalParcelas: transacao.totalParcelas ?? 2,
+      numeroParcela: transacao.numeroParcela ?? 1,
+      valorTotalCompra: null,
+      criarParcelasAnteriores: true
     });
-    console.log(this.formTransacao.value);
+    this.editandoParcelada = !!transacao.grupoParcelamento;
+    this.ajustarValidacaoParcelas(false);
 
     this.marcadorSelecionado = transacao.marcador;
   }
 
   salvar() {
     if (this.formTransacao.valid) {
-      const dadosParaEnviar: any = this.formTransacao.value
-      console.log("Dados para enviar:", dadosParaEnviar)
+      const dadosParaEnviar: any = { ...this.formTransacao.value }
       this.exibirDialog = false
 
       if (this.id) {
-        console.log("Editando transação com ID:", this.id, "Dados:", dadosParaEnviar)
+        // Transação já parcelada: edição altera só esta parcela. Avulsa: pode virar parcelada.
+        if (this.editandoParcelada || !dadosParaEnviar.parcelado) {
+          delete dadosParaEnviar.parcelado
+          delete dadosParaEnviar.totalParcelas
+          delete dadosParaEnviar.numeroParcela
+          delete dadosParaEnviar.valorTotalCompra
+          delete dadosParaEnviar.criarParcelasAnteriores
+        } else {
+          dadosParaEnviar.totalParcelas = Number(dadosParaEnviar.totalParcelas)
+          dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela)
+          dadosParaEnviar.valorTotalCompra = dadosParaEnviar.valorTotalCompra
+            ? Number(dadosParaEnviar.valorTotalCompra)
+            : null
+          dadosParaEnviar.criarParcelasAnteriores =
+            !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1
+        }
         this.transacoesService.editarTransacao(this.id, dadosParaEnviar).subscribe({
           next: () => this.sucessoAoSalvar('Transação atualizada') ,
           error: (err: Error) => this.erroAoSalvar('Erro ao editar', err)
         })
       } else {
+        const parcelado = !!dadosParaEnviar.parcelado
+        dadosParaEnviar.parcelado = parcelado
+        delete dadosParaEnviar.valorTotalCompra
+        if (parcelado) {
+          dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela)
+          dadosParaEnviar.criarParcelasAnteriores =
+            !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1
+        } else {
+          delete dadosParaEnviar.numeroParcela
+          delete dadosParaEnviar.criarParcelasAnteriores
+        }
+        dadosParaEnviar.totalParcelas = parcelado ? Number(dadosParaEnviar.totalParcelas) : null
+
         this.transacoesService.adicionarTransacao(dadosParaEnviar).subscribe({
-          next: (res: ITransacoes) => {
-            this.sucessoAoSalvar('Transação criada!')
+          next: (res: ITransacoes[]) => {
+            this.sucessoAoSalvar(parcelado
+              ? `Compra parcelada em ${res.length} vez(es)`
+              : 'Transação criada!')
           },
-          error: (error: Error) => {
-            this.erroAoSalvar('Error ao salvar', error)
-            console.error(error)
+          error: (error: HttpErrorResponse) => {
+            const corpo = error.error as FaturaErro | null
+            this.erroAoSalvar(corpo?.error || 'Error ao salvar', error)
           }
         })
       }
@@ -414,7 +845,23 @@ export class TransacoesComponent {
     this.messageService.add({ severity: 'error', summary: mensagem, life: 2000 });
   }
 
+  private paraDataLocal(data: string | Date): Date {
+    if (data instanceof Date) return data;
 
+    const somenteData = /^(\d{4})-(\d{2})-(\d{2})/.exec(data);
+    if (somenteData) {
+      return new Date(Number(somenteData[1]), Number(somenteData[2]) - 1, Number(somenteData[3]));
+    }
+    return new Date(data);
+  }
+
+  private dataParaIso(data: string | Date): string {
+    const d = data instanceof Date ? data : this.paraDataLocal(data);
+    const ano = d.getFullYear();
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${ano}-${mes}-${dia}`;
+  }
 
   getSeverity(status: string) {
     if (status == 'RECEITA') {

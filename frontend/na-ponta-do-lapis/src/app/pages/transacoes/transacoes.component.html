@@ -51,14 +51,14 @@
                             <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]">
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Marcador</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[180px]">Descrição</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[220px]">Descrição</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Categoria</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Conta</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Data</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[100px]">Tipo</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Estado</th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[120px]">Valor</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Ações</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Ações</th>
                         </tr>
                     </ng-template>
 
@@ -75,7 +75,18 @@
                                 <span class="text-gray-400 italic text-sm">Sem marcador</span>
                                 }
                             </td>
-                            <td class="whitespace-nowrap">{{ t.descricao }}</td>
+                            <td>
+                                <div class="flex items-center gap-2 whitespace-nowrap">
+                                    <span>{{ t.descricao }}</span>
+                                    @if (t.numeroParcela && t.totalParcelas) {
+                                        <p-tag
+                                            [value]="t.numeroParcela + '/' + t.totalParcelas"
+                                            severity="warn"
+                                            [rounded]="true"
+                                            styleClass="text-xs"></p-tag>
+                                    }
+                                </div>
+                            </td>
                             <td class="whitespace-nowrap">{{ t.categoria.nome }}</td>
                             <td class="whitespace-nowrap">{{ t.conta.nome }}</td>
                             <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
@@ -94,6 +105,13 @@
                             <td class="">{{ t.valor | currency: 'BRL'}}</td>
                             <td>
                                 <div class="flex gap-2">
+                                    @if (t.grupoParcelamento) {
+                                        <p-button icon="pi pi-clone"
+                                            pTooltip="Ver parcelamento"
+                                            tooltipPosition="top"
+                                            styleClass="text-[#1976d2]! bg-[#e3f2fd]! border-[#e3f2fd]! h-8 w-8"
+                                            (onClick)="abrirGrupoParcelamento(t)"></p-button>
+                                    }
                                     <p-button icon="pi pi-trash"
                                         styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
                                         (onClick)="excluir(t.id)"></p-button>
@@ -196,6 +214,58 @@
                             placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
                 </div>
+
+                @if (!editandoParcelada) {
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center gap-2">
+                        <p-checkbox formControlName="parcelado" [binary]="true" inputId="parcelado"></p-checkbox>
+                        <label for="parcelado" class="font-bold text-sm cursor-pointer">Compra parcelada</label>
+                    </div>
+
+                    @if (formTransacao.get('parcelado')?.value) {
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="flex flex-col gap-1">
+                            <label class="font-bold text-sm">Parcela atual</label>
+                            <p-inputNumber formControlName="numeroParcela" [min]="1" [max]="60" [showButtons]="true"
+                                styleClass="w-full" inputStyleClass="w-full" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="font-bold text-sm">Número de parcelas</label>
+                            <p-inputNumber formControlName="totalParcelas" [min]="2" [max]="60" [showButtons]="true"
+                                styleClass="w-full" inputStyleClass="w-full" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        @if (id) {
+                        <div class="flex flex-col gap-1">
+                            <label class="font-bold text-sm">Valor total da compra (opcional)</label>
+                            <p-inputNumber formControlName="valorTotalCompra" mode="currency" currency="BRL"
+                                locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+                        </div>
+                        }
+                        @if ((formTransacao.get('numeroParcela')?.value ?? 1) > 1) {
+                        <div class="flex items-center gap-2 sm:mt-6">
+                            <p-checkbox formControlName="criarParcelasAnteriores" [binary]="true"
+                                inputId="criarParcelasAnteriores"></p-checkbox>
+                            <label for="criarParcelasAnteriores" class="text-sm cursor-pointer">
+                                Criar parcelas anteriores (realizadas, sem alterar o saldo)
+                            </label>
+                        </div>
+                        }
+                    </div>
+                    <p class="text-xs text-slate-500 m-0">
+                        @if (id) {
+                        Esta transação será a <strong>parcela atual</strong> (o valor informado é o da parcela) e as seguintes
+                        serão geradas como <strong>pendentes</strong>, uma por mês.
+                        } @else {
+                        O valor informado é o <strong>total</strong> e a data é a da <strong>parcela atual</strong>
+                        (a primeira, se for 1). Parcelas com data futura entram como <strong>pendentes</strong> e não
+                        alteram o saldo até serem realizadas.
+                        }
+                    </p>
+                    }
+                </div>
+                }
             </div>
 
             <ng-template pTemplate="footer">
@@ -212,14 +282,14 @@
     </app-marcador-dlg>
 
     <p-dialog header="Como deseja adicionar?" [(visible)]="exibirDialogEscolha" [modal]="true"
-        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '400px' }">
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '520px' }">
         <div class="flex flex-col sm:flex-row gap-4 justify-center py-4">
-            <p-button styleClass="rounded-xl! h-24 w-full sm:w-36 flex flex-col gap-2 border-[#11b981]! bg-[#11b981]!"
+            <p-button styleClass="rounded-xl! h-24 w-full sm:w-32 flex flex-col gap-2 border-[#11b981]! bg-[#11b981]!"
                 (onClick)="escolherManual()">
                 <i class="pi pi-pencil text-2xl"></i>
                 <span>Manual</span>
             </p-button>
-            <p-button styleClass="rounded-xl! h-24 w-full sm:w-36 flex flex-col gap-2 border-[#7843cd]! bg-[#7843cd]!"
+            <p-button styleClass="rounded-xl! h-24 w-full sm:w-32 flex flex-col gap-2 border-[#7843cd]! bg-[#7843cd]!"
                 (onClick)="escolherUpload()">
                 <i class="pi pi-file-pdf text-2xl"></i>
                 <span>Upload PDF</span>
@@ -227,49 +297,172 @@
         </div>
     </p-dialog>
 
-    <p-dialog header="Upload de Fatura" [(visible)]="exibirDialogUpload" [modal]="true"
-        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '450px' }">
-        <div class="flex flex-col items-center gap-6 py-6 px-2">
-            @if (carregando) {
-                <div class="flex flex-col items-center gap-4">
-                    <p-progressSpinner strokeWidth="4" styleClass="w-12 h-12" />
-                    <span class="text-slate-600">Analisando fatura...</span>
+    <p-dialog header="Importar fatura" [(visible)]="exibirDialogUpload" [modal]="true"
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '520px' }">
+        <div class="flex flex-col items-center gap-4 py-2 px-1 sm:px-3">
+
+            <label for="fileUpload"
+                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-[#7843cd] transition-colors">
+                @if (arquivoSelecionado) {
+                    <i class="pi pi-file-pdf text-4xl text-[#7843cd]"></i>
+                    <span class="mt-2 font-medium text-slate-700 text-center px-2 break-all">{{ arquivoSelecionado.name }}</span>
+                } @else {
+                    <i class="pi pi-upload text-4xl text-slate-400"></i>
+                    <span class="mt-2 text-slate-500">Clique para escolher o PDF da fatura</span>
+                }
+                <input id="fileUpload" type="file" accept=".pdf,application/pdf" class="hidden" (change)="selecionarArquivo($event)" />
+            </label>
+
+            <div class="w-full border border-slate-200 rounded-xl p-3 bg-slate-50 flex flex-col gap-3">
+                <div class="flex items-center gap-2">
+                    <i class="pi pi-sparkles text-[#7843cd]"></i>
+                    <span class="font-semibold text-slate-700 text-sm">Ajuda da inteligência artificial (opcional)</span>
+                    <i class="pi pi-question-circle text-slate-400 cursor-help"
+                        pTooltip="Primeiro tentamos ler a fatura automaticamente, sem enviar nada para fora. Só se isso não funcionar é que a IA entra em ação, usando a chave que você informar. Antes do envio, dados pessoais do texto são mascarados."
+                        tooltipPosition="top"></i>
                 </div>
-            } @else if (erroUpload) {
-                <div class="flex flex-col items-center gap-4 p-6 w-full">
-                    <i class="pi pi-exclamation-triangle text-4xl text-red-400"></i>
-                    <span class="text-red-700 text-sm text-center">{{ erroUpload }}</span>
-                    <div class="flex gap-3 mt-2">
-                        <p-button label="Tentar novamente" icon="pi pi-refresh"
-                            styleClass="rounded-xl! border-red-500! text-red-500! bg-white!"
-                            (onClick)="erroUpload = null; arquivoSelecionado = null"></p-button>
-                        <p-button label="Cancelar"
-                            styleClass="rounded-xl! border-slate-300! text-slate-600! bg-white!"
-                            (onClick)="exibirDialogUpload = false"></p-button>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                            Serviço de IA
+                            <i class="pi pi-question-circle text-slate-400 cursor-help"
+                                pTooltip="Empresa que fornece a IA. Use aquela em que você tem uma conta e uma chave de acesso."
+                                tooltipPosition="top"></i>
+                        </label>
+                        <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
+                            [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
+                    </div>
+
+                    <div class="flex flex-col gap-1">
+                        <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                            Chave de acesso
+                            <i class="pi pi-question-circle text-slate-400 cursor-help"
+                                pTooltip="Também chamada de chave de API. É como uma senha que você gera no site do serviço de IA escolhido. Ela só é usada para ler a sua fatura e nunca fica salva no banco de dados."
+                                tooltipPosition="top"></i>
+                        </label>
+                        <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
+                            placeholder="Deixe vazio para usar a chave já salva"
+                            styleClass="w-full" inputStyleClass="w-full"></p-password>
                     </div>
                 </div>
-            } @else {
-                <div class="flex flex-col items-center gap-4 w-full">
-                    <label for="fileUpload"
-                        class="flex flex-col items-center justify-center w-full h-36 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-[#7843cd] transition-colors">
-                        @if (arquivoSelecionado) {
-                            <i class="pi pi-file-pdf text-4xl text-[#7843cd]"></i>
-                            <span class="mt-2 font-medium text-slate-700">{{ arquivoSelecionado.name }}</span>
-                        } @else {
-                            <i class="pi pi-upload text-4xl text-slate-400"></i>
-                            <span class="mt-2 text-slate-500">Clique para selecionar o PDF</span>
-                        }
-                        <input id="fileUpload" type="file" accept=".pdf" class="hidden" (change)="selecionarArquivo($event)" />
-                    </label>
-                    <p-button styleClass="rounded-xl! w-full border-[#11b981]! bg-[#11b981]!"
-                        label="Enviar" [disabled]="!arquivoSelecionado" (onClick)="enviarFatura()"></p-button>
+
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"></p-checkbox>
+                        <label for="manterSessao" class="text-xs text-slate-600 cursor-pointer">
+                            Lembrar minha chave por um tempo
+                        </label>
+                        <i class="pi pi-question-circle text-slate-400 cursor-help"
+                            pTooltip="A chave fica guardada de forma criptografada em um cookie do navegador e expira em cerca de 1 hora. Assim você não precisa digitá-la a cada fatura."
+                            tooltipPosition="top"></i>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <p-checkbox [(ngModel)]="forceAiAnalysis" [binary]="true" inputId="forcarIa"></p-checkbox>
+                        <label for="forcarIa" class="text-xs text-slate-600 cursor-pointer">
+                            Usar a IA mesmo se a leitura automática funcionar
+                        </label>
+                        <i class="pi pi-question-circle text-slate-400 cursor-help"
+                            pTooltip="Por padrão, usamos primeiro um modelo de leitura (regex) já conhecido para o seu banco. Marque esta opção se o resultado vier incompleto ou errado e você quiser que a IA refaça a leitura."
+                            tooltipPosition="top"></i>
+                    </div>
+                </div>
+
+                <p-button label="Apagar chave salva" icon="pi pi-trash" [text]="true" severity="secondary"
+                    styleClass="text-xs self-start p-0" (onClick)="esquecerChaveIa()"></p-button>
+            </div>
+
+            @if (erroUpload) {
+                <div class="w-full flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-200">
+                    <i class="pi pi-exclamation-triangle text-red-500 mt-0.5"></i>
+                    <span class="text-red-700 text-sm">{{ erroUpload }}</span>
                 </div>
             }
+
+            <div class="flex flex-col sm:flex-row gap-3 w-full justify-end mt-1">
+                <p-button label="Cancelar" severity="secondary" [outlined]="true"
+                    styleClass="rounded-xl! w-full sm:w-auto"
+                    (onClick)="exibirDialogUpload = false"></p-button>
+                <p-button label="Analisar fatura" icon="pi pi-search"
+                    styleClass="rounded-xl! w-full sm:w-auto border-[#11b981]! bg-[#11b981]!"
+                    [disabled]="!arquivoSelecionado || carregando" [loading]="carregando"
+                    (onClick)="enviarFatura()"></p-button>
+            </div>
         </div>
     </p-dialog>
 
+    <p-dialog header="Fatura em imagem — autorizar envio à IA" [(visible)]="exibirDialogConsentimento" [modal]="true"
+        [closable]="false" [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '560px' }">
+        <div class="flex flex-col gap-4 py-2 px-1 sm:px-3">
+            <div class="flex items-start gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                <i class="pi pi-exclamation-triangle text-amber-500 text-xl mt-0.5"></i>
+                <div class="flex flex-col gap-1">
+                    <span class="font-semibold text-amber-800">Não conseguimos ler o texto deste PDF</span>
+                    <span class="text-sm text-amber-700">
+                        Parece que a fatura é uma imagem. Para continuar, o arquivo será enviado a um serviço
+                        de IA externo. Ele pode conter seu nome, CPF e endereço, e esses dados não podem ser
+                        escondidos nesse tipo de envio. O sistema não guarda o arquivo.
+                        <i class="pi pi-question-circle cursor-help"
+                            pTooltip="Tentamos reconhecer o texto da imagem (OCR) no próprio servidor, sem sucesso. Por isso o PDF original precisa ser analisado por uma IA que entenda imagens (Gemini ou Claude)."
+                            tooltipPosition="top"></i>
+                    </span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-500">Serviço de IA (Gemini ou Claude)</label>
+                    <p-select [options]="opcoesProvedorPdf" optionLabel="label" optionValue="value"
+                        [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
+                </div>
+
+                <div class="flex flex-col gap-1">
+                    <label class="text-xs font-semibold text-slate-500">Chave de acesso</label>
+                    <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
+                        placeholder="Ou use a chave já salva"
+                        styleClass="w-full" inputStyleClass="w-full"></p-password>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessaoPdf"></p-checkbox>
+                <label for="manterSessaoPdf" class="text-xs text-slate-600 cursor-pointer">
+                    Lembrar minha chave por um tempo
+                </label>
+            </div>
+
+            <div class="flex items-start gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
+                <p-checkbox [(ngModel)]="consentimentoLgpd" [binary]="true" inputId="consentimentoLgpd"></p-checkbox>
+                <label for="consentimentoLgpd" class="text-sm text-slate-700 cursor-pointer">
+                    Autorizo o envio deste PDF ao serviço de IA escolhido para ler as transações,
+                    ciente de que ele contém dados pessoais.
+                </label>
+            </div>
+
+            @if (erroConsentimento) {
+                <div class="w-full flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-200">
+                    <i class="pi pi-exclamation-triangle text-red-500 mt-0.5"></i>
+                    <span class="text-red-700 text-sm">{{ erroConsentimento }}</span>
+                </div>
+            }
+        </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex flex-col sm:flex-row gap-3 w-full justify-end">
+                <p-button label="Cancelar" severity="secondary" [outlined]="true"
+                    styleClass="rounded-xl! w-full sm:w-auto" [disabled]="carregandoConsentimento"
+                    (onClick)="cancelarConsentimento()"></p-button>
+                <p-button label="Autorizar e enviar" icon="pi pi-send"
+                    styleClass="rounded-xl! w-full sm:w-auto border-[#7843cd]! bg-[#7843cd]!"
+                    [disabled]="!consentimentoLgpd || carregandoConsentimento"
+                    [loading]="carregandoConsentimento"
+                    (onClick)="enviarFaturaComConsentimento()"></p-button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
     <p-dialog header="Revisar Transações" [(visible)]="exibirDialogRevisao" [modal]="true"
-        [breakpoints]="{ '960px': '90vw', '640px': '95vw' }" [style]="{ width: '800px' }" [maximizable]="true">
+        [breakpoints]="{ '960px': '90vw', '640px': '95vw' }" [style]="{ width: '900px' }" [maximizable]="true">
         <div class="flex flex-col gap-4 py-2">
             @if (carregando) {
                 <div class="flex flex-col items-center gap-4 py-8">
@@ -277,6 +470,58 @@
                     <span class="text-slate-600">Salvando transações...</span>
                 </div>
             } @else {
+                @if (faturaAnalise) {
+                    <div class="flex flex-wrap items-center gap-2">
+                        <p-tag
+                            [value]="faturaAnalise.fonte === 'REGEX' ? 'Leitura automática' : (faturaAnalise.fonte === 'IA' ? 'Leitura com IA' : 'Origem desconhecida')"
+                            [severity]="faturaAnalise.fonte === 'REGEX' ? 'success' : 'info'"></p-tag>
+                        <i class="pi pi-question-circle text-slate-400 cursor-help"
+                            [pTooltip]="faturaAnalise.fonte === 'REGEX'
+                                ? 'A fatura foi lida por um modelo de leitura (regex) já conhecido, sem enviar nada para fora do sistema.'
+                                : 'A fatura foi lida por uma IA. Se o modelo de leitura gerado funcionar, ele fica salvo e as próximas faturas do mesmo banco serão lidas automaticamente.'"
+                            tooltipPosition="top"></i>
+                        @if (faturaAnalise.emissor) {
+                            <p-tag [value]="faturaAnalise.emissor" severity="secondary"></p-tag>
+                        }
+                        @if (faturaAnalise.ocrUtilizado) {
+                            <p-tag value="Texto reconhecido da imagem" severity="warn"></p-tag>
+                            <i class="pi pi-question-circle text-slate-400 cursor-help"
+                                pTooltip="O PDF era uma imagem, então o texto foi reconhecido por OCR no próprio servidor. Confira os valores com atenção, pois esse reconhecimento pode errar."
+                                tooltipPosition="top"></i>
+                        }
+                        @if (faturaAnalise.padraoVersao) {
+                            <span class="text-xs text-slate-500">Modelo de leitura v{{ faturaAnalise.padraoVersao }}</span>
+                        }
+                        <span class="text-xs text-slate-500 ml-auto">
+                            {{ transacoesExtraidas.length }} transação(ões) encontrada(s)
+                        </span>
+                    </div>
+
+                    @if (faturaAnalise.alertaSoma) {
+                        <div class="flex items-start gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                            <i class="pi pi-exclamation-triangle text-amber-500 mt-0.5"></i>
+                            <div class="flex flex-col gap-1 text-sm text-amber-800">
+                                <span class="font-semibold">A soma das transações não bate com o total da fatura.</span>
+                                <span>
+                                    Soma calculada: {{ faturaAnalise.somaCalculada | currency:'BRL' }}
+                                    @if (faturaAnalise.valorTotalFatura !== null) {
+                                        · Total da fatura: {{ faturaAnalise.valorTotalFatura | currency:'BRL' }}
+                                    }
+                                    @if (faturaAnalise.diferenca !== null) {
+                                        · Diferença: {{ faturaAnalise.diferenca | currency:'BRL' }}
+                                    }
+                                </span>
+                                <span class="text-xs">Confira se alguma transação ficou de fora antes de salvar.</span>
+                            </div>
+                        </div>
+                    }
+
+                    <p class="text-xs text-slate-500 m-0">
+                        A importação salva somente a parcela atual de cada compra parcelada.
+                        As parcelas futuras podem ser geradas depois, com sua confirmação.
+                    </p>
+                }
+
                 <div class="flex flex-col gap-2">
                     <label class="font-bold text-sm">Selecione a conta</label>
                     <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
@@ -284,7 +529,7 @@
                         styleClass="w-full"></p-select>
                 </div>
 
-                <div class="flex flex-col gap-3 mt-2 max-h-96 overflow-y-auto">
+                <div class="flex flex-col gap-3 mt-2 max-h-[26rem] overflow-y-auto">
                     @for (t of transacoesExtraidas; track $index) {
                         <div class="flex flex-col gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50">
                             <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
@@ -313,6 +558,24 @@
                                         (onClick)="removerTransacaoExtraida($index)"></p-button>
                                 </div>
                             </div>
+
+                            <div class="flex flex-wrap items-center gap-2 pl-1">
+                                <span class="text-xs font-semibold text-slate-500">Parcelamento</span>
+                                <p-inputNumber [(ngModel)]="t.numeroParcela" [min]="1" [max]="60"
+                                    [showButtons]="true" placeholder="Parcela" styleClass="w-28"
+                                    inputStyleClass="w-full text-sm"></p-inputNumber>
+                                <span class="text-xs text-slate-400">de</span>
+                                <p-inputNumber [(ngModel)]="t.totalParcelas" [min]="2" [max]="60"
+                                    [showButtons]="true" placeholder="Total" styleClass="w-28"
+                                    inputStyleClass="w-full text-sm"></p-inputNumber>
+                                @if (t.numeroParcela && t.totalParcelas) {
+                                    <p-tag [value]="t.numeroParcela + ' de ' + t.totalParcelas" severity="warn"
+                                        [rounded]="true" styleClass="text-xs"></p-tag>
+                                }
+                                <span class="text-xs text-slate-400">
+                                    (deixe em branco se não for compra parcelada)
+                                </span>
+                            </div>
                         </div>
                     }
                 </div>
@@ -326,5 +589,110 @@
                 }
             }
         </div>
+    </p-dialog>
+
+    <p-dialog header="Parcelas futuras" [(visible)]="exibirDialogParcelasFuturas" [modal]="true"
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '560px' }">
+        <div class="flex flex-col gap-4 py-1">
+            <p class="text-sm text-slate-600 m-0">
+                As compras abaixo foram importadas somente com a parcela atual.
+                Você pode gerar agora as parcelas futuras, ou fazer isso depois pela coluna de ações.
+            </p>
+
+            <div class="flex flex-col gap-2">
+                @for (grupo of gruposParcelamentoCriados; track grupo.grupoId) {
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50">
+                        <div class="flex flex-col flex-1">
+                            <span class="font-medium text-slate-700">{{ grupo.descricao }}</span>
+                            <span class="text-xs text-slate-500">
+                                Parcela {{ grupo.numeroParcela }} de {{ grupo.totalParcelas }}
+                                @if (grupo.valorTotalCompra) {
+                                    · Compra de {{ grupo.valorTotalCompra | currency:'BRL' }}
+                                }
+                            </span>
+                        </div>
+                        <p-button [label]="gruposGerados.has(grupo.grupoId) ? 'Geradas' : 'Gerar futuras'"
+                            icon="pi pi-clone" severity="info"
+                            [outlined]="true" [disabled]="gruposGerados.has(grupo.grupoId)"
+                            styleClass="rounded-xl! w-full sm:w-auto"
+                            (onClick)="gerarFuturasDoGrupo(grupo.grupoId)"></p-button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex justify-end w-full">
+                <p-button label="Agora não" severity="secondary" [text]="true"
+                    (onClick)="fecharDialogParcelasFuturas()"></p-button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog header="Parcelamento" [(visible)]="exibirDialogGrupo" [modal]="true"
+        [breakpoints]="{ '640px': '95vw' }" [style]="{ width: '640px' }">
+        <div class="flex flex-col gap-3 py-1">
+            @if (carregandoGrupo) {
+                <div class="flex flex-col items-center gap-3 py-8">
+                    <p-progressSpinner strokeWidth="4" styleClass="w-10 h-10" />
+                    <span class="text-slate-600">Carregando parcelas...</span>
+                </div>
+            } @else {
+                @if (parcelasGrupo.length > 0) {
+                    <div class="flex flex-wrap items-center gap-2">
+                        <span class="font-semibold text-slate-700">{{ parcelasGrupo[0].descricao }}</span>
+                        <p-tag [value]="parcelasGrupo.length + ' parcela(s)'" severity="warn"></p-tag>
+                        @if (parcelasGrupo[0].valorTotalCompra) {
+                            <span class="text-xs text-slate-500">
+                                Compra de {{ parcelasGrupo[0].valorTotalCompra | currency:'BRL' }}
+                            </span>
+                        }
+                    </div>
+
+                    <p-table [value]="parcelasGrupo" styleClass="p-datatable-sm" [paginator]="parcelasGrupo.length > 8"
+                        [rows]="8">
+                        <ng-template pTemplate="header">
+                            <tr>
+                                <th>Parcela</th>
+                                <th>Data</th>
+                                <th>Valor</th>
+                                <th>Estado</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-p>
+                            <tr>
+                                <td>{{ p.numeroParcela }} de {{ p.totalParcelas }}</td>
+                                <td>{{ p.dataHora | date:'dd/MM/yyyy' }}</td>
+                                <td>{{ p.valor | currency:'BRL' }}</td>
+                                <td>
+                                    <p-tag [value]="p.estado" [style]="{
+                                        'background': p.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1',
+                                        'color': p.estado === 'PENDENTE' ? '#FFB016' : '#14ca74'
+                                    }"></p-tag>
+                                </td>
+                            </tr>
+                        </ng-template>
+                    </p-table>
+                } @else {
+                    <div class="flex flex-col items-center gap-2 py-8">
+                        <i class="pi pi-info-circle text-2xl text-slate-400"></i>
+                        <span class="text-slate-500">Nenhuma parcela encontrada.</span>
+                    </div>
+                }
+            }
+        </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex flex-col sm:flex-row gap-2 w-full justify-between">
+                <div class="flex flex-col sm:flex-row gap-2">
+                    <p-button label="Gerar futuras" icon="pi pi-clone" severity="info" [outlined]="true"
+                        styleClass="rounded-xl!" (onClick)="gerarFuturasGrupoAtual()"></p-button>
+                    <p-button label="Excluir futuras" icon="pi pi-calendar-times" severity="warn" [outlined]="true"
+                        styleClass="rounded-xl!" (onClick)="excluirGrupoParcelamento(true)"></p-button>
+                </div>
+                <p-button label="Excluir todas" icon="pi pi-trash" severity="danger" [outlined]="true"
+                    styleClass="rounded-xl!" (onClick)="excluirGrupoParcelamento(false)"></p-button>
+            </div>
+        </ng-template>
     </p-dialog>
 </div>

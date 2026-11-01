@@ -38,7 +38,6 @@ services:
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
     depends_on:
       db: { condition: service_healthy }
     healthcheck:

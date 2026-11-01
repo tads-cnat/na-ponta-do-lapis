@@ -32,13 +32,14 @@ public class TransacaoController {
         this.transacaoService = transacaoService;
     }
 
-    @Operation(summary = "Criar Transacao")
+    @Operation(summary = "Criar Transacao (simples ou parcelada)",
+            description = "Com parcelado=true, 'valor' é o total e são geradas 'totalParcelas' transações.")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @PostMapping
-    public ResponseEntity<TransacoesResponseDTO> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) throws AccessDeniedException {
-        Transacao novaTransacao = transacaoService.criarTransacao(transacao);
-        TransacoesResponseDTO responseDTO = new TransacoesResponseDTO(novaTransacao);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    public ResponseEntity<List<TransacoesResponseDTO>> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) throws AccessDeniedException {
+        List<Transacao> criadas = transacaoService.criarTransacao(transacao);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(criadas.stream().map(TransacoesResponseDTO::new).toList());
     }
 
     @Operation(summary = "Listar Transacoe do Usuário Logado")
@@ -103,16 +104,50 @@ public class TransacaoController {
     public ResponseEntity<?> salvarTransacoesEmLote(
             @RequestBody List<TransacaoFaturaDTO> transacoes,
             @RequestParam("contaId") Long contaId) {
-        
+
         if (transacoes == null || transacoes.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Lista de transações vazia."));
         }
         try {
-            transacaoService.salvarFaturaEmLote(transacoes, contaId);
-            return ResponseEntity.status(HttpStatus.CREATED).build();
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.badRequest().build();
+            List<Transacao> salvas = transacaoService.salvarFaturaEmLote(transacoes, contaId);
+            List<TransacoesResponseDTO> response = salvas.stream()
+                    .map(TransacoesResponseDTO::new)
+                    .toList();
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (AccessDeniedException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of("error", e.getMessage()));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
+    }
+
+    @Operation(summary = "Listar parcelas de um grupo")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @GetMapping("/parcelamento/{grupoId}")
+    public ResponseEntity<List<TransacoesResponseDTO>> listarParcelamento(
+            @PathVariable String grupoId) throws AccessDeniedException {
+        List<Transacao> parcelas = transacaoService.listarParcelamento(grupoId);
+        return ResponseEntity.ok(parcelas.stream().map(TransacoesResponseDTO::new).toList());
+    }
+
+    @Operation(summary = "Gerar as parcelas futuras de um grupo")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PostMapping("/parcelamento/{grupoId}/futuras")
+    public ResponseEntity<List<TransacoesResponseDTO>> gerarParcelasFuturas(
+            @PathVariable String grupoId) throws AccessDeniedException {
+        List<Transacao> parcelas = transacaoService.gerarParcelasFuturas(grupoId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(parcelas.stream().map(TransacoesResponseDTO::new).toList());
+    }
+
+    @Operation(summary = "Excluir um grupo de parcelamento")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @DeleteMapping("/parcelamento/{grupoId}")
+    public ResponseEntity<Void> excluirParcelamento(
+            @PathVariable String grupoId,
+            @RequestParam(value = "apenasFuturas", defaultValue = "false") boolean apenasFuturas)
+            throws AccessDeniedException {
+        transacaoService.excluirParcelamento(grupoId, apenasFuturas);
+        return ResponseEntity.noContent().build();
     }
 }
