@@ -297,7 +297,7 @@
         </div>
     </p-dialog>
 
-    <p-dialog header="Upload de Fatura" [(visible)]="exibirDialogUpload" [modal]="true"
+    <p-dialog header="Importar fatura" [(visible)]="exibirDialogUpload" [modal]="true"
         [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '520px' }">
         <div class="flex flex-col items-center gap-4 py-2 px-1 sm:px-3">
 
@@ -308,7 +308,7 @@
                     <span class="mt-2 font-medium text-slate-700 text-center px-2 break-all">{{ arquivoSelecionado.name }}</span>
                 } @else {
                     <i class="pi pi-upload text-4xl text-slate-400"></i>
-                    <span class="mt-2 text-slate-500">Clique para selecionar o PDF</span>
+                    <span class="mt-2 text-slate-500">Clique para escolher o PDF da fatura</span>
                 }
                 <input id="fileUpload" type="file" accept=".pdf,application/pdf" class="hidden" (change)="selecionarArquivo($event)" />
             </label>
@@ -316,20 +316,33 @@
             <div class="w-full border border-slate-200 rounded-xl p-3 bg-slate-50 flex flex-col gap-3">
                 <div class="flex items-center gap-2">
                     <i class="pi pi-sparkles text-[#7843cd]"></i>
-                    <span class="font-semibold text-slate-700 text-sm">Análise com IA (opcional)</span>
+                    <span class="font-semibold text-slate-700 text-sm">Ajuda da inteligência artificial (opcional)</span>
+                    <i class="pi pi-question-circle text-slate-400 cursor-help"
+                        pTooltip="Primeiro tentamos ler a fatura automaticamente, sem enviar nada para fora. Só se isso não funcionar é que a IA entra em ação, usando a chave que você informar. Antes do envio, dados pessoais do texto são mascarados."
+                        tooltipPosition="top"></i>
                 </div>
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="flex flex-col gap-1">
-                        <label class="text-xs font-semibold text-slate-500">Provedor</label>
+                        <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                            Serviço de IA
+                            <i class="pi pi-question-circle text-slate-400 cursor-help"
+                                pTooltip="Empresa que fornece a IA. Use aquela em que você tem uma conta e uma chave de acesso."
+                                tooltipPosition="top"></i>
+                        </label>
                         <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
                             [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="text-xs font-semibold text-slate-500">Chave de API</label>
+                        <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                            Chave de acesso
+                            <i class="pi pi-question-circle text-slate-400 cursor-help"
+                                pTooltip="Também chamada de chave de API. É como uma senha que você gera no site do serviço de IA escolhido. Ela só é usada para ler a sua fatura e nunca fica salva no banco de dados."
+                                tooltipPosition="top"></i>
+                        </label>
                         <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                            placeholder="Deixe vazio para usar a chave da sessão"
+                            placeholder="Deixe vazio para usar a chave já salva"
                             styleClass="w-full" inputStyleClass="w-full"></p-password>
                     </div>
                 </div>
@@ -338,18 +351,24 @@
                     <div class="flex items-center gap-2">
                         <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"></p-checkbox>
                         <label for="manterSessao" class="text-xs text-slate-600 cursor-pointer">
-                            Manter a chave nesta sessão (cookie criptografado)
+                            Lembrar minha chave por um tempo
                         </label>
+                        <i class="pi pi-question-circle text-slate-400 cursor-help"
+                            pTooltip="A chave fica guardada de forma criptografada em um cookie do navegador e expira em cerca de 1 hora. Assim você não precisa digitá-la a cada fatura."
+                            tooltipPosition="top"></i>
                     </div>
                     <div class="flex items-center gap-2">
                         <p-checkbox [(ngModel)]="forceAiAnalysis" [binary]="true" inputId="forcarIa"></p-checkbox>
                         <label for="forcarIa" class="text-xs text-slate-600 cursor-pointer">
-                            Usar IA mesmo que o regex local encontre as transações
+                            Usar a IA mesmo se a leitura automática funcionar
                         </label>
+                        <i class="pi pi-question-circle text-slate-400 cursor-help"
+                            pTooltip="Por padrão, usamos primeiro um modelo de leitura (regex) já conhecido para o seu banco. Marque esta opção se o resultado vier incompleto ou errado e você quiser que a IA refaça a leitura."
+                            tooltipPosition="top"></i>
                     </div>
                 </div>
 
-                <p-button label="Esquecer chave salva" icon="pi pi-trash" [text]="true" severity="secondary"
+                <p-button label="Apagar chave salva" icon="pi pi-trash" [text]="true" severity="secondary"
                     styleClass="text-xs self-start p-0" (onClick)="esquecerChaveIa()"></p-button>
             </div>
 
@@ -372,32 +391,35 @@
         </div>
     </p-dialog>
 
-    <p-dialog header="PDF escaneado — autorizar envio à IA" [(visible)]="exibirDialogConsentimento" [modal]="true"
+    <p-dialog header="Fatura em imagem — autorizar envio à IA" [(visible)]="exibirDialogConsentimento" [modal]="true"
         [closable]="false" [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '560px' }">
         <div class="flex flex-col gap-4 py-2 px-1 sm:px-3">
             <div class="flex items-start gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
                 <i class="pi pi-exclamation-triangle text-amber-500 text-xl mt-0.5"></i>
                 <div class="flex flex-col gap-1">
-                    <span class="font-semibold text-amber-800">O OCR local não conseguiu ler este PDF</span>
+                    <span class="font-semibold text-amber-800">Não conseguimos ler o texto deste PDF</span>
                     <span class="text-sm text-amber-700">
-                        Para continuar, o arquivo original será enviado a um provedor externo de IA.
-                        Diferente do texto, o PDF não pode ser mascarado: ele pode conter nome, CPF,
-                        endereço e outros dados pessoais. O arquivo não é armazenado pelo sistema.
+                        Parece que a fatura é uma imagem. Para continuar, o arquivo será enviado a um serviço
+                        de IA externo. Ele pode conter seu nome, CPF e endereço, e esses dados não podem ser
+                        escondidos nesse tipo de envio. O sistema não guarda o arquivo.
+                        <i class="pi pi-question-circle cursor-help"
+                            pTooltip="Tentamos reconhecer o texto da imagem (OCR) no próprio servidor, sem sucesso. Por isso o PDF original precisa ser analisado por uma IA que entenda imagens (Gemini ou Claude)."
+                            tooltipPosition="top"></i>
                     </span>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div class="flex flex-col gap-1">
-                    <label class="text-xs font-semibold text-slate-500">Provedor (somente Gemini ou Claude)</label>
+                    <label class="text-xs font-semibold text-slate-500">Serviço de IA (Gemini ou Claude)</label>
                     <p-select [options]="opcoesProvedorPdf" optionLabel="label" optionValue="value"
                         [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
                 </div>
 
                 <div class="flex flex-col gap-1">
-                    <label class="text-xs font-semibold text-slate-500">Chave de API</label>
+                    <label class="text-xs font-semibold text-slate-500">Chave de acesso</label>
                     <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                        placeholder="Ou use a chave da sessão"
+                        placeholder="Ou use a chave já salva"
                         styleClass="w-full" inputStyleClass="w-full"></p-password>
                 </div>
             </div>
@@ -405,14 +427,14 @@
             <div class="flex items-center gap-2">
                 <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessaoPdf"></p-checkbox>
                 <label for="manterSessaoPdf" class="text-xs text-slate-600 cursor-pointer">
-                    Manter a chave nesta sessão
+                    Lembrar minha chave por um tempo
                 </label>
             </div>
 
             <div class="flex items-start gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
                 <p-checkbox [(ngModel)]="consentimentoLgpd" [binary]="true" inputId="consentimentoLgpd"></p-checkbox>
                 <label for="consentimentoLgpd" class="text-sm text-slate-700 cursor-pointer">
-                    Autorizo o envio deste PDF ao provedor de IA selecionado para extrair as transações,
+                    Autorizo o envio deste PDF ao serviço de IA escolhido para ler as transações,
                     ciente de que ele contém dados pessoais.
                 </label>
             </div>
@@ -451,16 +473,24 @@
                 @if (faturaAnalise) {
                     <div class="flex flex-wrap items-center gap-2">
                         <p-tag
-                            [value]="faturaAnalise.fonte === 'REGEX' ? 'Regex local' : (faturaAnalise.fonte === 'IA' ? 'IA' : 'Sem fonte')"
+                            [value]="faturaAnalise.fonte === 'REGEX' ? 'Leitura automática' : (faturaAnalise.fonte === 'IA' ? 'Leitura com IA' : 'Origem desconhecida')"
                             [severity]="faturaAnalise.fonte === 'REGEX' ? 'success' : 'info'"></p-tag>
+                        <i class="pi pi-question-circle text-slate-400 cursor-help"
+                            [pTooltip]="faturaAnalise.fonte === 'REGEX'
+                                ? 'A fatura foi lida por um modelo de leitura (regex) já conhecido, sem enviar nada para fora do sistema.'
+                                : 'A fatura foi lida por uma IA. Se o modelo de leitura gerado funcionar, ele fica salvo e as próximas faturas do mesmo banco serão lidas automaticamente.'"
+                            tooltipPosition="top"></i>
                         @if (faturaAnalise.emissor) {
                             <p-tag [value]="faturaAnalise.emissor" severity="secondary"></p-tag>
                         }
                         @if (faturaAnalise.ocrUtilizado) {
-                            <p-tag value="OCR local" severity="warn"></p-tag>
+                            <p-tag value="Texto reconhecido da imagem" severity="warn"></p-tag>
+                            <i class="pi pi-question-circle text-slate-400 cursor-help"
+                                pTooltip="O PDF era uma imagem, então o texto foi reconhecido por OCR no próprio servidor. Confira os valores com atenção, pois esse reconhecimento pode errar."
+                                tooltipPosition="top"></i>
                         }
                         @if (faturaAnalise.padraoVersao) {
-                            <span class="text-xs text-slate-500">Padrão v{{ faturaAnalise.padraoVersao }}</span>
+                            <span class="text-xs text-slate-500">Modelo de leitura v{{ faturaAnalise.padraoVersao }}</span>
                         }
                         <span class="text-xs text-slate-500 ml-auto">
                             {{ transacoesExtraidas.length }} transação(ões) encontrada(s)

@@ -174,7 +174,6 @@ export class TransacoesComponent {
         this.cdr.detectChanges()
       },
       error: (erro: Error) => {
-        console.log(erro)
         this.messageService.add({
           severity: 'warn',
           summary: 'Erro ao carregar transação',
@@ -436,14 +435,14 @@ export class TransacoesComponent {
     if (res.consentimentoPdfIa) {
       this.messageService.add({
         severity: 'info',
-        summary: 'PDF enviado à IA com seu consentimento',
+        summary: 'PDF enviado à IA com a sua autorização',
         life: 3500
       });
     } else if (res.ocrUtilizado) {
       this.messageService.add({
         severity: 'info',
-        summary: 'PDF lido por OCR local',
-        detail: 'Nenhum dado foi enviado para fora do servidor.',
+        summary: 'Fatura lida a partir da imagem',
+        detail: 'Nenhum dado saiu do nosso servidor.',
         life: 3500
       });
     }
@@ -491,26 +490,26 @@ export class TransacoesComponent {
 
     switch (err.status) {
       case 428:
-        return detalhe || 'O regex não conseguiu ler esta fatura. Informe uma chave de IA para continuar.';
+        return detalhe || 'Não conseguimos ler esta fatura automaticamente. Informe uma chave de acesso de IA para continuar.';
       case 422:
         if (corpo?.codigo === 'CONSENTIMENTO_OBRIGATORIO') {
-          return 'É necessário autorizar o envio do PDF para a IA.';
+          return 'Marque a autorização para enviar o PDF à IA.';
         }
         if (corpo?.codigo === 'PROVEDOR_SEM_SUPORTE_PDF') {
           return 'Escolha Gemini ou Claude para enviar o PDF à IA.';
         }
         if (corpo?.codigo === 'CHAVE_INVALIDA') {
-          return 'A chave de IA foi recusada. Confira a chave e tente novamente.';
+          return 'A chave de acesso foi recusada. Confira se copiou corretamente e tente de novo.';
         }
         return detalhe || 'Não foi possível processar a fatura.';
       case 429:
-        return 'O provedor de IA atingiu o limite de uso. Aguarde alguns instantes e tente novamente.';
+        return 'O serviço de IA atingiu o limite de uso. Aguarde alguns instantes e tente novamente.';
       case 413:
         return 'O arquivo é maior que o limite permitido de 10 MB.';
       case 400:
         return detalhe || 'Arquivo inválido. Envie um PDF de fatura de cartão de crédito.';
       case 502:
-        return 'O provedor de IA retornou uma resposta inválida. Tente novamente.';
+        return 'O serviço de IA não respondeu como esperado. Tente novamente.';
       case 503:
         return 'Serviço temporariamente indisponível. Tente novamente em alguns instantes.';
       case 504:
@@ -527,14 +526,14 @@ export class TransacoesComponent {
         this.manterNaSessao = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Chave de IA removida da sessão',
+          summary: 'Chave apagada',
           life: 2500
         });
       },
       error: () => {
         this.messageService.add({
           severity: 'warn',
-          summary: 'Não foi possível remover a chave da sessão',
+          summary: 'Não foi possível apagar a chave salva',
           life: 2500
         });
       }
@@ -771,7 +770,6 @@ export class TransacoesComponent {
     });
     this.editandoParcelada = !!transacao.grupoParcelamento;
     this.ajustarValidacaoParcelas(false);
-    console.log(this.formTransacao.value);
 
     this.marcadorSelecionado = transacao.marcador;
   }

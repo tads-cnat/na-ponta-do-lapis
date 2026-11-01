@@ -159,7 +159,6 @@ O **mesmo** `docker-compose.deploy.yml` é usado nos dois ambientes. O Coolify s
 | `JWT_SECRET` | segredo próprio | segredo próprio | Assinatura dos tokens |
 | `FATURA_COOKIE_SECRET` | segredo próprio | segredo próprio | Criptografia (AES-GCM) da chave de IA guardada no cookie de sessão; se ausente, cai no `JWT_SECRET` |
 | `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | credenciais | credenciais | Upload de imagens/comprovantes |
-| `GEMINI_API_KEY` | chave | chave | Leitura de faturas por IA |
 
 > **Importante:** o `docker-compose.deploy.yml` já define defaults seguros (`SPRING_PROFILES_ACTIVE:-prod`, `SPRING_JPA_HIBERNATE_DDLAUTO:-validate` e `APP_SEED_ENABLED:-false`). Se alguma variável ficar vazia no Coolify, o backend **não** cai no profile local e **não** popula dados de teste.
 >

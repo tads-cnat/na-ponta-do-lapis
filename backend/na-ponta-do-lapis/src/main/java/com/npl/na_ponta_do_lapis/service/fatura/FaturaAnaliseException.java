@@ -47,39 +47,39 @@ public class FaturaAnaliseException extends RuntimeException {
                 .map(Enum::name)
                 .toList();
         return new FaturaAnaliseException(HttpStatus.PRECONDITION_REQUIRED, "IA_NECESSARIA",
-                "Não foi possível extrair as transações por regex. Informe uma chave de IA para continuar.",
+                "Não conseguimos ler esta fatura automaticamente. Informe uma chave de acesso de IA para continuar.",
                 false, provedores);
     }
 
     public static FaturaAnaliseException chaveInvalida() {
         return new FaturaAnaliseException(HttpStatus.UNPROCESSABLE_ENTITY, "CHAVE_INVALIDA",
-                "A chave de IA informada foi recusada pelo provedor. Verifique a chave e tente novamente.",
+                "A chave de acesso informada foi recusada pelo serviço de IA. Confira se copiou corretamente e tente de novo.",
                 true, List.of());
     }
 
     public static FaturaAnaliseException limiteIa() {
         return new FaturaAnaliseException(HttpStatus.TOO_MANY_REQUESTS, "LIMITE_IA",
-                "O provedor de IA informou limite de uso. Aguarde alguns instantes e tente novamente.");
+                "O serviço de IA informou limite de uso. Aguarde alguns instantes e tente novamente.");
     }
 
     public static FaturaAnaliseException respostaIaInvalida(String detalhe) {
         return new FaturaAnaliseException(HttpStatus.BAD_GATEWAY, "RESPOSTA_IA_INVALIDA",
-                "O provedor de IA retornou uma resposta que não pôde ser interpretada. " + detalhe);
+                "O serviço de IA retornou uma resposta que não pôde ser interpretada. " + detalhe);
     }
 
     public static FaturaAnaliseException provedorIndisponivel() {
         return new FaturaAnaliseException(HttpStatus.SERVICE_UNAVAILABLE, "PROVEDOR_INDISPONIVEL",
-                "O provedor de IA está temporariamente indisponível. Tente novamente em alguns instantes.");
+                "O serviço de IA está temporariamente indisponível. Tente novamente em alguns instantes.");
     }
 
     public static FaturaAnaliseException timeout() {
         return new FaturaAnaliseException(HttpStatus.GATEWAY_TIMEOUT, "TIMEOUT_IA",
-                "O provedor de IA demorou demais para responder. Tente novamente.");
+                "O serviço de IA demorou demais para responder. Tente novamente.");
     }
 
     public static FaturaAnaliseException pdfSemTexto() {
         return new FaturaAnaliseException(HttpStatus.UNPROCESSABLE_ENTITY, "PDF_SEM_TEXTO",
-                "Não foi possível extrair texto do PDF, nem por OCR local.");
+                "Não conseguimos ler o texto deste PDF, nem a partir da imagem.");
     }
 
     public static FaturaAnaliseException consentimentoObrigatorio() {
@@ -89,7 +89,7 @@ public class FaturaAnaliseException extends RuntimeException {
 
     public static FaturaAnaliseException provedorSemSuportePdf() {
         return new FaturaAnaliseException(HttpStatus.UNPROCESSABLE_ENTITY, "PROVEDOR_SEM_SUPORTE_PDF",
-                "Este provedor não aceita PDF diretamente. Use Gemini ou Claude para o envio multimodal.");
+                "Este serviço de IA não aceita o envio do PDF. Escolha Gemini ou Claude.");
     }
 
     public HttpStatus getStatus() {
