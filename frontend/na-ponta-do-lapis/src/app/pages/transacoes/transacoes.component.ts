@@ -59,11 +59,12 @@ export class TransacoesComponent {
   contaSelecionadaRevisao: number | null = null;
   faturaAnalise: FaturaAnaliseResponse | null = null;
   faturaPendenteConsentimento: FaturaAnaliseResponse | null = null;
+  precisaAtivarIa: boolean = false;
 
   provedorSelecionado: ProvedorIa = 'GEMINI';
   apiKeyIa: string = '';
   manterNaSessao: boolean = false;
-  forceAiAnalysis: boolean = false;
+  usarIa: boolean = false;
   consentimentoLgpd: boolean = false;
 
   gruposParcelamentoCriados: GrupoParcelamentoResumo[] = [];
@@ -359,6 +360,7 @@ export class TransacoesComponent {
     this.exibirDialogEscolha = false;
     this.arquivoSelecionado = null;
     this.erroUpload = null;
+    this.precisaAtivarIa = false;
     this.faturaAnalise = null;
     this.exibirDialogUpload = true;
   }
@@ -366,11 +368,19 @@ export class TransacoesComponent {
   selecionarArquivo(event: any) {
     this.arquivoSelecionado = event.target.files[0] ?? null;
     this.erroUpload = null;
+    this.precisaAtivarIa = false;
   }
 
   enviarFatura() {
     if (!this.arquivoSelecionado) return;
     this.analisarFatura({});
+  }
+
+  ativarIaETentarNovamente() {
+    this.usarIa = true;
+    this.precisaAtivarIa = false;
+    this.erroUpload = null;
+    this.enviarFatura();
   }
 
   private analisarFatura(extras: FaturaAnaliseOpcoes) {
@@ -380,17 +390,25 @@ export class TransacoesComponent {
       provedor: this.provedorSelecionado,
       apiKey: this.apiKeyIa?.trim() || undefined,
       manterNaSessao: this.manterNaSessao,
-      forceAiAnalysis: this.forceAiAnalysis,
+      usarIa: this.usarIa,
       ...extras,
     };
 
     this.carregando = true;
     this.erroUpload = null;
+    this.precisaAtivarIa = false;
     this.erroConsentimento = null;
 
     this.transacoesService.analisarFatura(this.arquivoSelecionado, opcoes).subscribe({
       next: (res: FaturaAnaliseResponse) => {
         this.carregando = false;
+
+        if (res.precisaHabilitarIa) {
+          this.precisaAtivarIa = true;
+          this.erroUpload = res.mensagem ?? 'Não conseguimos ler esta fatura sem IA. Ative o uso de IA para continuar.';
+          this.cdr.detectChanges();
+          return;
+        }
 
         if (res.precisaConsentimentoPdf) {
           this.carregandoConsentimento = false;
@@ -421,9 +439,11 @@ export class TransacoesComponent {
 
   private aplicarResultadoAnalise(res: FaturaAnaliseResponse) {
     this.carregandoConsentimento = false;
+    this.precisaAtivarIa = false;
     this.faturaAnalise = res;
     this.transacoesExtraidas = res.transacoes.map(t => ({
       ...t,
+      tipo: t.tipo ?? 'DESPESA',
       data: this.paraDataLocal(t.data)
     }));
     this.exibirDialogUpload = false;
@@ -465,6 +485,7 @@ export class TransacoesComponent {
     this.analisarFatura({
       enviarPdfParaIa: true,
       consentimentoLgpd: true,
+      usarIa: true,
       provedor: this.provedorSelecionado,
     });
   }
@@ -562,6 +583,7 @@ export class TransacoesComponent {
       valor: Number(t.valor),
       data: this.dataParaIso(t.data),
       categoria: t.categoria,
+      tipo: t.tipo ?? 'DESPESA',
       numeroParcela: t.numeroParcela ?? null,
       totalParcelas: t.totalParcelas ?? null,
       valorTotalCompra: t.valorTotalCompra ?? null

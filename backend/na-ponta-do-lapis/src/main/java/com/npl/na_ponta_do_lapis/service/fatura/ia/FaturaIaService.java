@@ -61,17 +61,21 @@ public class FaturaIaService {
                   },
                   "valorTotalFatura": 0.00,
                   "transacoes": [
-                    {"descricao":"Amazon","valor":50.00,"data":"2026-01-15","categoria":"Outros","numeroParcela":2,"totalParcelas":10}
+                    {"descricao":"Amazon","valor":50.00,"data":"2026-01-15","categoria":"Outros","tipo":"DESPESA","numeroParcela":2,"totalParcelas":10}
                   ]
                 }
 
                 Regras obrigatórias:
-                - Ignore linhas de pagamento de fatura, pagamento recebido, saldo anterior, total, vencimento e limite.
-                - Use valores positivos para as compras (despesas).
+                - Inclua pagamentos de fatura (pagamento recebido/efetuado) como "tipo":"RECEITA", pois eles reduzem o total.
+                - Ignore apenas linhas de total, vencimento, limite, saldo anterior, saldo devedor e avisos de pagamento mínimo.
+                - Use "tipo":"DESPESA" para compras e "tipo":"RECEITA" para estornos, devoluções, reembolsos, cancelamentos, créditos e pagamentos de fatura.
+                - NÃO ignore estornos, créditos e pagamentos recebidos: registre-os como RECEITA.
+                - Use valores sempre positivos; o campo "tipo" indica se o valor soma (DESPESA) ou desconta (RECEITA).
                 - Datas sempre em YYYY-MM-DD.
                 - Categorias permitidas: %s. Se não souber, use "Outros".
                 - Se a descrição tiver algo como (02/10) ou 02/10, preencha numeroParcela=2 e totalParcelas=10 e remova esse trecho da descrição.
                 - O regexTransacao deve funcionar linha a linha e usar os grupos nomeados descricao, data e valor.
+                - O grupo "valor" deve aceitar um sinal negativo opcional, para o caso de o emissor marcar créditos com "-".
                 - O regexTransacao deve ser GENÉRICO e reutilizável em outras faturas do mesmo emissor: nunca inclua nomes de lojas, valores ou datas específicas deste texto.
                 - O regexTransacao deve casar com cada transação do texto (inclusive as com parcelas), usar sintaxe Java e ser tolerante a espaços (\\s+).
                 - O campo "padrao" é obrigatório na resposta.
@@ -98,13 +102,16 @@ public class FaturaIaService {
                   },
                   "valorTotalFatura": 0.00,
                   "transacoes": [
-                    {"descricao":"Amazon","valor":50.00,"data":"2026-01-15","categoria":"Outros","numeroParcela":2,"totalParcelas":10}
+                    {"descricao":"Amazon","valor":50.00,"data":"2026-01-15","categoria":"Outros","tipo":"DESPESA","numeroParcela":2,"totalParcelas":10}
                   ]
                 }
 
                 Regras obrigatórias:
-                - Ignore linhas de pagamento de fatura, pagamento recebido, saldo anterior, total, vencimento e limite.
-                - Use valores positivos para as compras (despesas).
+                - Inclua pagamentos de fatura (pagamento recebido/efetuado) como "tipo":"RECEITA", pois eles reduzem o total.
+                - Ignore apenas linhas de total, vencimento, limite, saldo anterior, saldo devedor e avisos de pagamento mínimo.
+                - Use "tipo":"DESPESA" para compras e "tipo":"RECEITA" para estornos, devoluções, reembolsos, cancelamentos, créditos e pagamentos de fatura.
+                - NÃO ignore estornos, créditos e pagamentos recebidos: registre-os como RECEITA.
+                - Use valores sempre positivos; o campo "tipo" indica se o valor soma (DESPESA) ou desconta (RECEITA).
                 - Datas sempre em YYYY-MM-DD.
                 - Categorias permitidas: %s. Se não souber, use "Outros".
                 - Se a descrição tiver algo como (02/10) ou 02/10, preencha numeroParcela=2 e totalParcelas=10 e remova esse trecho da descrição.

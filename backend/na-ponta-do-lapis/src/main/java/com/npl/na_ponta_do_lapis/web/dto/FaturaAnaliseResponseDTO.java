@@ -22,6 +22,8 @@ public record FaturaAnaliseResponseDTO(
     boolean consentimentoPdfIa,
     @Schema(description = "Quando verdadeiro, o frontend deve pedir autorização para enviar o PDF à IA")
     boolean precisaConsentimentoPdf,
+    @Schema(description = "Quando verdadeiro, a leitura local falhou e o usuário precisa ativar o uso de IA para continuar")
+    boolean precisaHabilitarIa,
     String mensagem
 ) {
 }

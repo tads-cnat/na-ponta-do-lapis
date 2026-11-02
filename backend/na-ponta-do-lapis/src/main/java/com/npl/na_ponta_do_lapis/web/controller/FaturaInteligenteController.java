@@ -45,7 +45,8 @@ public class FaturaInteligenteController {
     }
 
     @Operation(summary = "Extrair transações de uma fatura PDF",
-            description = "Tenta regex local primeiro. Se necessário, usa IA com a chave do usuário. "
+            description = "Com usarIa=true, a leitura é feita pela IA usando a chave do usuário. "
+                    + "Com usarIa=false, usa apenas regex/OCR local e pede para ativar a IA se não conseguir ler. "
                     + "PDFs escaneados usam OCR local e, com consentimento, envio multimodal.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Transações extraídas com sucesso"),
@@ -67,7 +68,7 @@ public class FaturaInteligenteController {
             @RequestParam(value = "provedor", required = false) String provedor,
             @RequestParam(value = "apiKey", required = false) String apiKey,
             @RequestParam(value = "manterNaSessao", defaultValue = "false") boolean manterNaSessao,
-            @RequestParam(value = "forceAiAnalysis", defaultValue = "false") boolean forceAiAnalysis,
+            @RequestParam(value = "usarIa", defaultValue = "false") boolean usarIa,
             @RequestParam(value = "enviarPdfParaIa", defaultValue = "false") boolean enviarPdfParaIa,
             @RequestParam(value = "consentimentoLgpd", defaultValue = "false") boolean consentimentoLgpd,
             HttpServletRequest request,
@@ -108,7 +109,7 @@ public class FaturaInteligenteController {
                     arquivo,
                     provedorEfetivo,
                     chaveEfetiva,
-                    forceAiAnalysis,
+                    usarIa,
                     enviarPdfParaIa,
                     consentimentoLgpd
             );

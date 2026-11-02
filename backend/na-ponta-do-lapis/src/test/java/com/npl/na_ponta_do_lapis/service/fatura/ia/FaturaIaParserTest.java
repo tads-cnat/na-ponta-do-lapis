@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.PadraoFaturaRepository;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaRegexService;
@@ -54,11 +55,47 @@ class FaturaIaParserTest {
         assertThat(resultado.transacoes()).hasSize(1);
         assertThat(resultado.transacoes().get(0).descricao()).isEqualTo("Amazon");
         assertThat(resultado.transacoes().get(0).valor()).isEqualByComparingTo("50.00");
+        assertThat(resultado.transacoes().get(0).tipo()).isEqualTo(TipoTransacao.DESPESA);
         assertThat(resultado.transacoes().get(0).data()).isEqualTo(LocalDate.of(2026, 1, 15));
         assertThat(resultado.transacoes().get(0).numeroParcela()).isEqualTo(2);
         assertThat(resultado.transacoes().get(0).totalParcelas()).isEqualTo(10);
         assertThat(resultado.transacoes().get(0).valorTotalCompra()).isEqualByComparingTo("500.00");
         assertThat(resultado.valorTotalFatura()).isEqualByComparingTo("1234.56");
+    }
+
+    @Test
+    void interpretaEstornoComoReceitaComValorPositivo() {
+        String resposta = """
+                {
+                  "transacoes": [
+                    {"descricao": "Estorno Amazon", "valor": -20.00, "data": "2026-01-16",
+                     "categoria": "Outros", "tipo": "RECEITA"}
+                  ]
+                }
+                """;
+
+        FaturaIaParser.ResultadoIa resultado = parser.parse(resposta, "texto", List.of("Outros"));
+
+        assertThat(resultado.transacoes()).hasSize(1);
+        assertThat(resultado.transacoes().get(0).tipo()).isEqualTo(TipoTransacao.RECEITA);
+        assertThat(resultado.transacoes().get(0).valor()).isEqualByComparingTo("20.00");
+    }
+
+    @Test
+    void corrigePagamentoDeFaturaMarcadoComoDespesaParaReceita() {
+        String resposta = """
+                {
+                  "transacoes": [
+                    {"descricao": "Pagamento recebido", "valor": 50.00, "data": "2026-01-10",
+                     "categoria": "Outros", "tipo": "DESPESA"}
+                  ]
+                }
+                """;
+
+        FaturaIaParser.ResultadoIa resultado = parser.parse(resposta, "texto", List.of("Outros"));
+
+        assertThat(resultado.transacoes()).hasSize(1);
+        assertThat(resultado.transacoes().get(0).tipo()).isEqualTo(TipoTransacao.RECEITA);
     }
 
     @Test

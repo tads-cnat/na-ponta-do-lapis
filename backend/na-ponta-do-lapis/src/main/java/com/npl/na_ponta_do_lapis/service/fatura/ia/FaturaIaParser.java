@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.npl.na_ponta_do_lapis.entity.PadraoFatura;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaRegexService;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
@@ -96,11 +97,17 @@ public class FaturaIaParser {
         String categoria = escolherCategoria(node.path("categoria").asText(null), categoriasPermitidas);
         BigDecimal valorTotalCompra = parseValor(node.path("valorTotalCompra"));
 
+        String tipoInformado = node.path("tipo").asText(null);
+        boolean receita = "RECEITA".equalsIgnoreCase(tipoInformado)
+                || valor.signum() < 0
+                || FaturaRegexService.indicaReceita(descricao);
+
         return new TransacaoFaturaDTO(
                 descricao.trim(),
                 valor.abs(),
                 data,
                 categoria,
+                receita ? TipoTransacao.RECEITA : TipoTransacao.DESPESA,
                 numeroParcela,
                 totalParcelas,
                 valorTotalCompra

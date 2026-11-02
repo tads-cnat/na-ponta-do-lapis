@@ -26,6 +26,7 @@ import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 
 class TransacaoServiceTest {
@@ -67,6 +68,7 @@ class TransacaoServiceTest {
         TipoCategoria categoria = new TipoCategoria();
         categoria.setNome("Outros");
         when(tipoCategoriaService.buscarPorId(anyLong())).thenReturn(categoria);
+        when(tipoCategoriaService.buscarPorNomeFlexivel(anyString())).thenReturn(categoria);
 
         when(transacaoRepository.saveAll(any())).thenAnswer(invocation -> invocation.getArgument(0));
     }
@@ -120,6 +122,23 @@ class TransacaoServiceTest {
         ReflectionTestUtils.invokeMethod(service, "estornarImpactoSaldo", transacao);
 
         assertThat(conta.getSaldo()).isEqualByComparingTo("1000.00");
+    }
+
+    @Test
+    void salvarFaturaEmLotePreservaReceitaEAtualizaSaldo() throws Exception {
+        List<TransacaoFaturaDTO> dtos = List.of(
+                new TransacaoFaturaDTO("Compra", new BigDecimal("100.00"),
+                        LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null),
+                new TransacaoFaturaDTO("Estorno", new BigDecimal("30.00"),
+                        LocalDate.of(2026, 1, 16), "Outros", TipoTransacao.RECEITA, null, null, null)
+        );
+
+        List<Transacao> salvas = service.salvarFaturaEmLote(dtos, 1L);
+
+        assertThat(salvas).hasSize(2);
+        assertThat(salvas.get(0).getTipo()).isEqualTo(TipoTransacao.DESPESA);
+        assertThat(salvas.get(1).getTipo()).isEqualTo(TipoTransacao.RECEITA);
+        assertThat(conta.getSaldo()).isEqualByComparingTo("930.00");
     }
 
     @Test

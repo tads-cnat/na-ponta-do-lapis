@@ -65,7 +65,7 @@ export class TransacoesService {
     if (opcoes.provedor) formData.append('provedor', opcoes.provedor);
     if (opcoes.apiKey) formData.append('apiKey', opcoes.apiKey);
     formData.append('manterNaSessao', String(opcoes.manterNaSessao ?? false));
-    formData.append('forceAiAnalysis', String(opcoes.forceAiAnalysis ?? false));
+    formData.append('usarIa', String(opcoes.usarIa ?? false));
     formData.append('enviarPdfParaIa', String(opcoes.enviarPdfParaIa ?? false));
     formData.append('consentimentoLgpd', String(opcoes.consentimentoLgpd ?? false));
 

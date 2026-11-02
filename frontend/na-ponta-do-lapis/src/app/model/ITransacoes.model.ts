@@ -51,6 +51,7 @@ export interface ITransacaoFatura {
   valor: number;
   data: string | Date;
   categoria: string;
+  tipo?: Tipo;
   numeroParcela?: number | null;
   totalParcelas?: number | null;
   valorTotalCompra?: number | null;
@@ -73,6 +74,7 @@ export interface FaturaAnaliseResponse {
   ocrUtilizado: boolean;
   consentimentoPdfIa: boolean;
   precisaConsentimentoPdf: boolean;
+  precisaHabilitarIa: boolean;
   mensagem: string | null;
 }
 
@@ -86,7 +88,7 @@ export interface FaturaAnaliseOpcoes {
   provedor?: ProvedorIa;
   apiKey?: string;
   manterNaSessao?: boolean;
-  forceAiAnalysis?: boolean;
+  usarIa?: boolean;
   enviarPdfParaIa?: boolean;
   consentimentoLgpd?: boolean;
 }

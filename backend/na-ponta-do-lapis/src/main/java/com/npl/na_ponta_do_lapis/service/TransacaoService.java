@@ -100,7 +100,7 @@ public class TransacaoService {
             transacao.setDescricao(dto.descricao().trim());
             transacao.setValor(dto.valor());
             transacao.setDataHora(dto.data().atStartOfDay());
-            transacao.setTipo(TipoTransacao.DESPESA);
+            transacao.setTipo(dto.tipo() != null ? dto.tipo() : TipoTransacao.DESPESA);
             transacao.setEstado(EstadoTransacao.REALIZADA);
             transacao.setContaFinanceira(conta);
             transacao.setCategoria(tipoCategoriaService.buscarPorNomeFlexivel(dto.categoria()));

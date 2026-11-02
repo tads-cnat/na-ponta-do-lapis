@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.npl.na_ponta_do_lapis.entity.PadraoFatura;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.PadraoFaturaRepository;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 
@@ -36,6 +37,10 @@ class FaturaRegexServiceTest {
         assertThat(FaturaRegexService.parseValor("45,90")).isEqualByComparingTo("45.90");
         assertThat(FaturaRegexService.parseValor("45.90")).isEqualByComparingTo("45.90");
         assertThat(FaturaRegexService.parseValor("-10,00")).isEqualByComparingTo("-10.00");
+        assertThat(FaturaRegexService.parseValor("10,00-")).isEqualByComparingTo("-10.00");
+        assertThat(FaturaRegexService.parseValor("(10,00)")).isEqualByComparingTo("-10.00");
+        assertThat(FaturaRegexService.parseValor("10,00 C")).isEqualByComparingTo("-10.00");
+        assertThat(FaturaRegexService.parseValor("10,00 D")).isEqualByComparingTo("10.00");
         assertThat(FaturaRegexService.parseValor("1.234")).isEqualByComparingTo("1234");
         assertThat(FaturaRegexService.parseValor("")).isNull();
         assertThat(FaturaRegexService.parseValor("abc")).isNull();
@@ -78,7 +83,7 @@ class FaturaRegexServiceTest {
         FaturaRegexService.ResultadoRegex resultado = service.analisar(texto);
 
         assertThat(resultado.padrao()).isSameAs(padrao);
-        assertThat(resultado.transacoes()).hasSize(3);
+        assertThat(resultado.transacoes()).hasSize(4);
 
         TransacaoFaturaDTO amazon = resultado.transacoes().get(0);
         assertThat(amazon.descricao()).isEqualTo("AMAZON");
@@ -93,7 +98,97 @@ class FaturaRegexServiceTest {
         assertThat(netflix.totalParcelas()).isEqualTo(10);
         assertThat(netflix.categoria()).isEqualTo("Lazer");
 
+        TransacaoFaturaDTO pagamento = resultado.transacoes().get(3);
+        assertThat(pagamento.descricao()).isEqualTo("Pagamento de fatura");
+        assertThat(pagamento.valor()).isEqualByComparingTo("100.00");
+        assertThat(pagamento.tipo()).isEqualTo(TipoTransacao.RECEITA);
+        assertThat(pagamento.data()).isEqualTo(LocalDate.of(2026, 1, 17));
+
         assertThat(resultado.valorTotalFatura()).isEqualByComparingTo("190.40");
+    }
+
+    @Test
+    void incluiPagamentoSemDataComoReceita() {
+        PadraoFatura padrao = padrao();
+        when(repository.findByAtivoTrueOrderByVersaoDesc()).thenReturn(List.of(padrao));
+
+        String texto = """
+                FATURA NUBANK
+                15/01/2026 COMPRA LOJA 150,00
+                Pagamento recebido
+                R$ 50,00
+                Total da fatura R$ 100,00
+                """;
+
+        FaturaRegexService.ResultadoRegex resultado = service.analisar(texto);
+
+        assertThat(resultado.transacoes()).hasSize(2);
+        TransacaoFaturaDTO pagamento = resultado.transacoes().get(1);
+        assertThat(pagamento.descricao()).isEqualTo("Pagamento recebido");
+        assertThat(pagamento.valor()).isEqualByComparingTo("50.00");
+        assertThat(pagamento.tipo()).isEqualTo(TipoTransacao.RECEITA);
+        assertThat(pagamento.data()).isEqualTo(LocalDate.of(2026, 1, 15));
+    }
+
+    @Test
+    void incluiPagamentoComDataForaDoInicioDaLinha() {
+        PadraoFatura padrao = padrao();
+        when(repository.findByAtivoTrueOrderByVersaoDesc()).thenReturn(List.of(padrao));
+
+        String texto = """
+                FATURA NUBANK
+                15/01/2026 COMPRA LOJA 150,00
+                Pagamento efetuado em 10/01/2026 R$ 50,00
+                Total da fatura R$ 100,00
+                """;
+
+        FaturaRegexService.ResultadoRegex resultado = service.analisar(texto);
+
+        assertThat(resultado.transacoes()).hasSize(2);
+        TransacaoFaturaDTO pagamento = resultado.transacoes().get(1);
+        assertThat(pagamento.descricao()).isEqualTo("Pagamento efetuado");
+        assertThat(pagamento.tipo()).isEqualTo(TipoTransacao.RECEITA);
+        assertThat(pagamento.data()).isEqualTo(LocalDate.of(2026, 1, 10));
+    }
+
+    @Test
+    void naoTrataAvisosDePagamentoMinimoComoReceita() {
+        PadraoFatura padrao = padrao();
+        when(repository.findByAtivoTrueOrderByVersaoDesc()).thenReturn(List.of(padrao));
+
+        String texto = """
+                FATURA NUBANK
+                15/01/2026 COMPRA LOJA 150,00
+                Pagamento minimo da fatura R$ 15,00
+                Total da fatura R$ 150,00
+                """;
+
+        FaturaRegexService.ResultadoRegex resultado = service.analisar(texto);
+
+        assertThat(resultado.transacoes()).hasSize(1);
+        assertThat(resultado.transacoes().get(0).tipo()).isEqualTo(TipoTransacao.DESPESA);
+    }
+
+    @Test
+    void classificaEstornosECreditosComoReceita() {
+        PadraoFatura padrao = padrao();
+        when(repository.findByAtivoTrueOrderByVersaoDesc()).thenReturn(List.of(padrao));
+
+        String texto = """
+                FATURA NUBANK
+                15/01/2026 COMPRA LOJA 10,00
+                16/01/2026 ESTORNO AMAZON -20,00
+                17/01/2026 DEVOLUCAO LOJA 15,00
+                """;
+
+        FaturaRegexService.ResultadoRegex resultado = service.analisar(texto);
+
+        assertThat(resultado.transacoes()).hasSize(3);
+        assertThat(resultado.transacoes().get(0).tipo()).isEqualTo(TipoTransacao.DESPESA);
+        assertThat(resultado.transacoes().get(1).tipo()).isEqualTo(TipoTransacao.RECEITA);
+        assertThat(resultado.transacoes().get(1).valor()).isEqualByComparingTo("20.00");
+        assertThat(resultado.transacoes().get(2).tipo()).isEqualTo(TipoTransacao.RECEITA);
+        assertThat(resultado.transacoes().get(2).valor()).isEqualByComparingTo("15.00");
     }
 
     @Test

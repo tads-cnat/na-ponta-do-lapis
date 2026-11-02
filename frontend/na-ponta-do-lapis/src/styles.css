@@ -13,6 +13,37 @@
   --color-npl-verde:#46B171;
 }
 
+/* Toggle switch: garante trilho em formato de pílula e impede que ele
+   encolha dentro de containers flex (o que o deixava com aparência de círculo). */
+p-toggleswitch.p-toggleswitch {
+  --p-toggleswitch-width: 2.5rem;
+  --p-toggleswitch-height: 1.5rem;
+  --p-toggleswitch-gap: 0.25rem;
+  --p-toggleswitch-handle-size: 1rem;
+  --p-toggleswitch-border-radius: 30px;
+  --p-toggleswitch-handle-border-radius: 50%;
+  --p-toggleswitch-background: var(--p-surface-300, #cbd5e1);
+  --p-toggleswitch-hover-background: var(--p-surface-400, #94a3b8);
+  --p-toggleswitch-checked-background: var(--p-primary-color, #7843cd);
+  --p-toggleswitch-checked-hover-background: var(--p-primary-hover-color, #6b3bb8);
+  --p-toggleswitch-handle-background: var(--p-surface-0, #ffffff);
+  --p-toggleswitch-handle-checked-background: var(--p-surface-0, #ffffff);
+  flex: 0 0 auto;
+  width: 2.5rem;
+  height: 1.5rem;
+}
+
+p-toggleswitch.p-toggleswitch .p-toggleswitch-slider {
+  width: 100%;
+  height: 100%;
+}
+
+p-toggleswitch.p-toggleswitch .p-toggleswitch-handle {
+  width: 1rem;
+  height: 1rem;
+  margin-block-start: -0.5rem;
+}
+
 main > *:not(p-toast):not(router-outlet) {
   flex: 1 1 0%;
   width: 100%;

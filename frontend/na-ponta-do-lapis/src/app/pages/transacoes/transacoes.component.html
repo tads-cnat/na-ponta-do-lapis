@@ -318,61 +318,82 @@
                     <i class="pi pi-sparkles text-[#7843cd]"></i>
                     <span class="font-semibold text-slate-700 text-sm">Ajuda da inteligência artificial (opcional)</span>
                     <i class="pi pi-question-circle text-slate-400 cursor-help"
-                        pTooltip="Primeiro tentamos ler a fatura automaticamente, sem enviar nada para fora. Só se isso não funcionar é que a IA entra em ação, usando a chave que você informar. Antes do envio, dados pessoais do texto são mascarados."
+                        pTooltip="Com o uso de IA desativado, a fatura é lida apenas no sistema, sem enviar nada para fora. Com o uso de IA ativado, a leitura usa a chave que você informar. Antes do envio pela IA, dados pessoais do texto são mascarados."
                         tooltipPosition="top"></i>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div class="flex flex-col gap-1">
-                        <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
-                            Serviço de IA
-                            <i class="pi pi-question-circle text-slate-400 cursor-help"
-                                pTooltip="Empresa que fornece a IA. Use aquela em que você tem uma conta e uma chave de acesso."
-                                tooltipPosition="top"></i>
+                <div class="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200 bg-white">
+                    <div class="flex flex-col gap-0.5">
+                        <label for="usarIa" class="text-sm font-semibold text-slate-700 cursor-pointer">
+                            Usar IA para ler a fatura
                         </label>
-                        <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
-                            [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
+                        <span class="text-xs text-slate-500">
+                            Ativado: a IA lê a fatura e precisa de uma chave de acesso. Desativado: a leitura é feita apenas no sistema.
+                        </span>
                     </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
-                            Chave de acesso
-                            <i class="pi pi-question-circle text-slate-400 cursor-help"
-                                pTooltip="Também chamada de chave de API. É como uma senha que você gera no site do serviço de IA escolhido. Ela só é usada para ler a sua fatura e nunca fica salva no banco de dados."
-                                tooltipPosition="top"></i>
-                        </label>
-                        <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                            placeholder="Deixe vazio para usar a chave já salva"
-                            styleClass="w-full" inputStyleClass="w-full"></p-password>
-                    </div>
+                    <p-toggleSwitch [(ngModel)]="usarIa" inputId="usarIa" styleClass="shrink-0"></p-toggleSwitch>
                 </div>
 
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-3 transition-opacity duration-200"
+                    [class.opacity-40]="!usarIa"
+                    [class.pointer-events-none]="!usarIa"
+                    [attr.aria-disabled]="!usarIa">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                                Serviço de IA
+                                <i class="pi pi-question-circle text-slate-400 cursor-help"
+                                    pTooltip="Empresa que fornece a IA. Use aquela em que você tem uma conta e uma chave de acesso."
+                                    tooltipPosition="top"></i>
+                            </label>
+                            <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
+                                [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"
+                                [disabled]="!usarIa"></p-select>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
+                                Chave de acesso
+                                <i class="pi pi-question-circle text-slate-400 cursor-help"
+                                    pTooltip="Também chamada de chave de API. É como uma senha que você gera no site do serviço de IA escolhido. Ela só é usada para ler a sua fatura e nunca fica salva no banco de dados."
+                                    tooltipPosition="top"></i>
+                            </label>
+                            <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
+                                placeholder="Deixe vazio para usar a chave já salva"
+                                styleClass="w-full" inputStyleClass="w-full"
+                                [disabled]="!usarIa"></p-password>
+                        </div>
+                    </div>
+
                     <div class="flex items-center gap-2">
-                        <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"></p-checkbox>
-                        <label for="manterSessao" class="text-xs text-slate-600 cursor-pointer">
+                        <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"
+                            [disabled]="!usarIa"></p-checkbox>
+                        <label for="manterSessao" class="text-xs text-slate-600"
+                            [class.cursor-pointer]="usarIa">
                             Lembrar minha chave por um tempo
                         </label>
                         <i class="pi pi-question-circle text-slate-400 cursor-help"
                             pTooltip="A chave fica guardada de forma criptografada em um cookie do navegador e expira em cerca de 1 hora. Assim você não precisa digitá-la a cada fatura."
                             tooltipPosition="top"></i>
                     </div>
-                    <div class="flex items-center gap-2">
-                        <p-checkbox [(ngModel)]="forceAiAnalysis" [binary]="true" inputId="forcarIa"></p-checkbox>
-                        <label for="forcarIa" class="text-xs text-slate-600 cursor-pointer">
-                            Usar a IA mesmo se a leitura automática funcionar
-                        </label>
-                        <i class="pi pi-question-circle text-slate-400 cursor-help"
-                            pTooltip="Por padrão, usamos primeiro um modelo de leitura (regex) já conhecido para o seu banco. Marque esta opção se o resultado vier incompleto ou errado e você quiser que a IA refaça a leitura."
-                            tooltipPosition="top"></i>
-                    </div>
-                </div>
 
-                <p-button label="Apagar chave salva" icon="pi pi-trash" [text]="true" severity="secondary"
-                    styleClass="text-xs self-start p-0" (onClick)="esquecerChaveIa()"></p-button>
+                    <p-button label="Apagar chave salva" icon="pi pi-trash" [text]="true" severity="secondary"
+                        styleClass="text-xs self-start p-0" [disabled]="!usarIa"
+                        (onClick)="esquecerChaveIa()"></p-button>
+                </div>
             </div>
 
-            @if (erroUpload) {
+            @if (precisaAtivarIa) {
+                <div class="w-full flex flex-col gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                    <div class="flex items-start gap-2">
+                        <i class="pi pi-sparkles text-amber-500 mt-0.5"></i>
+                        <span class="text-amber-800 text-sm">{{ erroUpload }}</span>
+                    </div>
+                    <p-button label="Ativar IA e tentar novamente" icon="pi pi-sparkles"
+                        styleClass="rounded-xl! w-full sm:w-auto border-[#7843cd]! bg-[#7843cd]!"
+                        [loading]="carregando" (onClick)="ativarIaETentarNovamente()"></p-button>
+                </div>
+            } @else if (erroUpload) {
                 <div class="w-full flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-200">
                     <i class="pi pi-exclamation-triangle text-red-500 mt-0.5"></i>
                     <span class="text-red-700 text-sm">{{ erroUpload }}</span>
@@ -503,7 +524,7 @@
                             <div class="flex flex-col gap-1 text-sm text-amber-800">
                                 <span class="font-semibold">A soma das transações não bate com o total da fatura.</span>
                                 <span>
-                                    Soma calculada: {{ faturaAnalise.somaCalculada | currency:'BRL' }}
+                                    Soma calculada (despesas − receitas): {{ faturaAnalise.somaCalculada | currency:'BRL' }}
                                     @if (faturaAnalise.valorTotalFatura !== null) {
                                         · Total da fatura: {{ faturaAnalise.valorTotalFatura | currency:'BRL' }}
                                     }
@@ -533,7 +554,7 @@
                     @for (t of transacoesExtraidas; track $index) {
                         <div class="flex flex-col gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50">
                             <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
-                                <div class="sm:col-span-4 flex flex-col gap-1">
+                                <div class="sm:col-span-3 flex flex-col gap-1">
                                     <label class="text-xs font-semibold text-slate-500">Descrição</label>
                                     <input pInputText [(ngModel)]="t.descricao" class="w-full text-sm" />
                                 </div>
@@ -542,10 +563,16 @@
                                     <p-inputNumber [(ngModel)]="t.valor" mode="currency" currency="BRL" locale="pt-BR"
                                         styleClass="w-full text-sm" inputStyleClass="w-full" />
                                 </div>
-                                <div class="sm:col-span-3 flex flex-col gap-1">
+                                <div class="sm:col-span-2 flex flex-col gap-1">
                                     <label class="text-xs font-semibold text-slate-500">Data</label>
                                     <p-datePicker [(ngModel)]="t.data" dateFormat="dd/mm/yy" showIcon="true"
                                         placeholder="Data" [appendTo]="'body'" styleClass="w-full text-sm"></p-datePicker>
+                                </div>
+                                <div class="sm:col-span-2 flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-500">Tipo</label>
+                                    <p-select [options]="opcoesTipo" [(ngModel)]="t.tipo"
+                                        optionLabel="label" optionValue="value" [appendTo]="'body'"
+                                        styleClass="w-full text-sm"></p-select>
                                 </div>
                                 <div class="sm:col-span-2 flex flex-col gap-1">
                                     <label class="text-xs font-semibold text-slate-500">Categoria</label>

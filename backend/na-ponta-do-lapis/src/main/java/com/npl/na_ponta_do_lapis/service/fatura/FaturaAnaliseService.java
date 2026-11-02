@@ -3,7 +3,6 @@ package com.npl.na_ponta_do_lapis.service.fatura;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.npl.na_ponta_do_lapis.entity.PadraoFatura;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.service.TipoCategoraService;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaParser;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaService;
@@ -58,7 +58,7 @@ public class FaturaAnaliseService {
     public FaturaAnaliseResponseDTO analisar(MultipartFile arquivo,
                                              ProvedorIa provedor,
                                              String apiKey,
-                                             boolean forceAiAnalysis,
+                                             boolean usarIa,
                                              boolean enviarPdfParaIa,
                                              boolean consentimentoLgpd) {
         validarArquivo(arquivo);
@@ -90,16 +90,26 @@ public class FaturaAnaliseService {
         }
 
         if (pdfEscaneado && !enviarPdfParaIa) {
+            if (!usarIa) {
+                return respostaPrecisaHabilitarIa(true, ocrUtilizado,
+                        "Não foi possível ler esta fatura sem usar IA. "
+                                + "Ative o uso de IA e informe uma chave de acesso para continuar.");
+            }
             return new FaturaAnaliseResponseDTO(
                     List.of(), "NENHUMA", null,
                     BigDecimal.ZERO, null, null, false, null,
-                    true, ocrUtilizado, false, true,
+                    true, ocrUtilizado, false, true, false,
                     "Não foi possível ler o texto deste PDF. Ele parece ser escaneado. "
                             + "Você pode autorizar o envio do PDF a um provedor de IA multimodal."
             );
         }
 
         if (enviarPdfParaIa) {
+            if (!usarIa) {
+                return respostaPrecisaHabilitarIa(pdfEscaneado, ocrUtilizado,
+                        "O envio do PDF para a IA está desativado. "
+                                + "Ative o uso de IA e informe uma chave de acesso para continuar.");
+            }
             if (!consentimentoLgpd) {
                 throw FaturaAnaliseException.consentimentoObrigatorio();
             }
@@ -116,12 +126,15 @@ public class FaturaAnaliseService {
                     null, pdfEscaneado, ocrUtilizado, true, null);
         }
 
-        if (!forceAiAnalysis) {
+        if (!usarIa) {
             FaturaRegexService.ResultadoRegex resultadoRegex = regexService.analisar(texto);
             if (!resultadoRegex.transacoes().isEmpty()) {
                 return montarResposta(resultadoRegex.transacoes(), resultadoRegex.valorTotalFatura(), "REGEX",
                         resultadoRegex.padrao(), false, ocrUtilizado, false, null);
             }
+            return respostaPrecisaHabilitarIa(pdfEscaneado, ocrUtilizado,
+                    "Não conseguimos ler esta fatura automaticamente. "
+                            + "Ative o uso de IA e informe uma chave de acesso para continuar.");
         }
 
         if (apiKey == null || apiKey.isBlank()) {
@@ -169,6 +182,17 @@ public class FaturaAnaliseService {
                 .toList();
     }
 
+    private FaturaAnaliseResponseDTO respostaPrecisaHabilitarIa(boolean pdfEscaneado,
+                                                                boolean ocrUtilizado,
+                                                                String mensagem) {
+        return new FaturaAnaliseResponseDTO(
+                List.of(), "NENHUMA", null,
+                BigDecimal.ZERO, null, null, false, null,
+                pdfEscaneado, ocrUtilizado, false, false, true,
+                mensagem
+        );
+    }
+
     private FaturaAnaliseResponseDTO montarResposta(List<TransacaoFaturaDTO> transacoes,
                                                     BigDecimal valorTotalFatura,
                                                     String fonte,
@@ -177,9 +201,15 @@ public class FaturaAnaliseService {
                                                     boolean ocrUtilizado,
                                                     boolean consentimentoPdfIa,
                                                     String mensagem) {
+        // Despesas somam e receitas (estornos/créditos) descontam do total da fatura.
         BigDecimal soma = transacoes.stream()
-                .map(TransacaoFaturaDTO::valor)
-                .filter(Objects::nonNull)
+                .map(transacao -> {
+                    BigDecimal valor = transacao.valor();
+                    if (valor == null) {
+                        return BigDecimal.ZERO;
+                    }
+                    return transacao.tipo() == TipoTransacao.RECEITA ? valor.negate() : valor;
+                })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal diferenca = valorTotalFatura == null ? null : valorTotalFatura.subtract(soma);
@@ -197,6 +227,7 @@ public class FaturaAnaliseService {
                 pdfEscaneado,
                 ocrUtilizado,
                 consentimentoPdfIa,
+                false,
                 false,
                 mensagem
         );

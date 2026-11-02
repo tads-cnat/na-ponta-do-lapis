@@ -19,6 +19,7 @@ import { PopoverModule } from 'primeng/popover';
 import { DatePickerModule } from 'primeng/datepicker';
 import { InputMaskModule } from 'primeng/inputmask';
 import { CheckboxModule } from 'primeng/checkbox';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { ColorPickerModule } from 'primeng/colorpicker';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
@@ -28,6 +29,7 @@ import { TooltipModule } from 'primeng/tooltip';
 @NgModule({
   exports: [
     CheckboxModule,
+    ToggleSwitchModule,
     DatePickerModule,
     InputMaskModule,
     InputGroupModule,
