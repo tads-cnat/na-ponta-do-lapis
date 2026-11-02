@@ -425,7 +425,14 @@ export class TransacoesComponent {
           return;
         }
 
-        this.aplicarResultadoAnalise(res);
+        // Fecha o modal de upload primeiro para que a animação não trave na tela
+        this.exibirDialogUpload = false;
+        this.cdr.detectChanges();
+
+        // Abre a revisão suavemente no próximo ciclo
+        setTimeout(() => {
+          this.aplicarResultadoAnalise(res);
+        }, 50);
       },
       error: (err: HttpErrorResponse) => {
         this.carregando = false;
@@ -446,16 +453,21 @@ export class TransacoesComponent {
     this.carregandoConsentimento = false;
     this.precisaAtivarIa = false;
     this.faturaAnalise = res;
-    this.transacoesExtraidas = res.transacoes.map(t => ({
-      ...t,
-      tipo: t.tipo ?? 'DESPESA',
-      data: this.paraDataLocal(t.data),
-      selecionada: true
-    }));
-    this.exibirDialogUpload = false;
-    this.exibirDialogConsentimento = false;
+    this.transacoesExtraidas = res.transacoes.map(t => {
+      const dataStr = typeof t.data === 'string' ? t.data.slice(0, 10) : this.dataParaIso(t.data);
+      return {
+        ...t,
+        tipo: t.tipo ?? 'DESPESA',
+        data: dataStr,
+        selecionada: true
+      };
+    });
     this.faturaPendenteConsentimento = null;
     this.contaSelecionadaRevisao = null;
+    if (this.opcoesConta.length > 0) {
+      this.contaSelecionadaRevisao = (this.opcoesConta[0] as any).id;
+    }
+    this.recalcularTotaisRevisao();
     this.exibirDialogRevisao = true;
 
     if (res.consentimentoPdfIa) {
@@ -567,21 +579,48 @@ export class TransacoesComponent {
     });
   }
 
+  somaTransacoesRevisao: number = 0;
+  diferencaRevisao: number | null = null;
+  alertaSomaRevisao: boolean = false;
+  qtdSelecionadas: number = 0;
+  todasSelecionadas: boolean = true;
+
+  recalcularTotaisRevisao() {
+    const selecionadas = this.transacoesExtraidas.filter(t => t.selecionada !== false);
+    this.qtdSelecionadas = selecionadas.length;
+    this.todasSelecionadas = this.transacoesExtraidas.length > 0 && selecionadas.length === this.transacoesExtraidas.length;
+
+    this.somaTransacoesRevisao = Number(selecionadas.reduce((acc, t) => {
+      const valor = Number(t.valor) || 0;
+      return t.tipo === 'RECEITA' ? acc - valor : acc + valor;
+    }, 0).toFixed(2));
+
+    if (this.faturaAnalise?.valorTotalFatura !== null && this.faturaAnalise?.valorTotalFatura !== undefined) {
+      this.diferencaRevisao = Number((this.faturaAnalise.valorTotalFatura - this.somaTransacoesRevisao).toFixed(2));
+      this.alertaSomaRevisao = Math.abs(this.diferencaRevisao) > 0.01;
+    } else {
+      this.diferencaRevisao = null;
+      this.alertaSomaRevisao = false;
+    }
+  }
+
   removerTransacaoExtraida(index: number) {
     this.transacoesExtraidas.splice(index, 1);
+    this.recalcularTotaisRevisao();
   }
 
   get transacoesSelecionadas(): ITransacaoFatura[] {
     return this.transacoesExtraidas.filter(t => t.selecionada !== false);
   }
 
-  get todasSelecionadas(): boolean {
-    return this.transacoesExtraidas.length > 0 && this.transacoesExtraidas.every(t => t.selecionada !== false);
-  }
-
   alternarSelecionarTodas() {
     const marcar = !this.todasSelecionadas;
     this.transacoesExtraidas.forEach(t => t.selecionada = marcar);
+    this.recalcularTotaisRevisao();
+  }
+
+  aoAlternarItem() {
+    this.recalcularTotaisRevisao();
   }
 
   iniciarMensagensProgresso() {
@@ -604,25 +643,6 @@ export class TransacoesComponent {
   pararMensagensProgresso() {
     clearInterval(this.intervaloEtapas);
     this.intervaloEtapas = null;
-  }
-
-  get somaTransacoesRevisao(): number {
-    return this.transacoesSelecionadas.reduce((acc, t) => {
-      const valor = Number(t.valor) || 0;
-      return t.tipo === 'RECEITA' ? acc - valor : acc + valor;
-    }, 0);
-  }
-
-  get diferencaRevisao(): number | null {
-    if (this.faturaAnalise?.valorTotalFatura === null || this.faturaAnalise?.valorTotalFatura === undefined) {
-      return null;
-    }
-    return Number((this.faturaAnalise.valorTotalFatura - this.somaTransacoesRevisao).toFixed(2));
-  }
-
-  get alertaSomaRevisao(): boolean {
-    const diff = this.diferencaRevisao;
-    return diff !== null && Math.abs(diff) > 0.01;
   }
 
   confirmarTransacoes() {
@@ -938,6 +958,9 @@ export class TransacoesComponent {
   }
 
   private dataParaIso(data: string | Date): string {
+    if (typeof data === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data)) {
+      return data.slice(0, 10);
+    }
     const d = data instanceof Date ? data : this.paraDataLocal(data);
     const ano = d.getFullYear();
     const mes = String(d.getMonth() + 1).padStart(2, '0');
