@@ -56,6 +56,8 @@ export interface ITransacaoFatura {
   totalParcelas?: number | null;
   valorTotalCompra?: number | null;
   selecionada?: boolean;
+  duplicata?: boolean;
+  duplicataInfo?: string;
 }
 
 export type ProvedorIa = 'GEMINI' | 'CLAUDE' | 'OPENAI' | 'DEEPSEEK' | 'GROQ';
@@ -89,6 +91,7 @@ export interface FaturaErro {
 export interface FaturaAnaliseOpcoes {
   provedor?: ProvedorIa;
   apiKey?: string;
+  senha?: string;
   manterNaSessao?: boolean;
   usarIa?: boolean;
   enviarPdfParaIa?: boolean;

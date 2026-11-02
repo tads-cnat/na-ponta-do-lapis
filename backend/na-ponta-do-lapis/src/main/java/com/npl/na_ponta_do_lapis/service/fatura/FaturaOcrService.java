@@ -50,6 +50,10 @@ public class FaturaOcrService {
     }
 
     public String extrairTexto(byte[] pdf) {
+        return extrairTexto(pdf, null);
+    }
+
+    public String extrairTexto(byte[] pdf, String senha) {
         if (!habilitado || pdf == null || pdf.length == 0) {
             return "";
         }
@@ -57,7 +61,9 @@ public class FaturaOcrService {
         Path diretorio = null;
         try {
             diretorio = Files.createTempDirectory("npl-fatura-ocr-");
-            try (PDDocument documento = Loader.loadPDF(pdf)) {
+            try (PDDocument documento = (senha != null && !senha.isBlank())
+                    ? Loader.loadPDF(pdf, senha)
+                    : Loader.loadPDF(pdf)) {
                 PDFRenderer renderer = new PDFRenderer(documento);
                 int paginas = Math.min(documento.getNumberOfPages(), maxPaginas);
                 StringBuilder texto = new StringBuilder();

@@ -71,6 +71,7 @@ public class FaturaInteligenteController {
             @RequestParam(value = "usarIa", defaultValue = "false") boolean usarIa,
             @RequestParam(value = "enviarPdfParaIa", defaultValue = "false") boolean enviarPdfParaIa,
             @RequestParam(value = "consentimentoLgpd", defaultValue = "false") boolean consentimentoLgpd,
+            @RequestParam(value = "senha", required = false) String senha,
             HttpServletRequest request,
             HttpServletResponse response) {
 
@@ -109,6 +110,7 @@ public class FaturaInteligenteController {
                     arquivo,
                     provedorEfetivo,
                     chaveEfetiva,
+                    senha,
                     usarIa,
                     enviarPdfParaIa,
                     consentimentoLgpd

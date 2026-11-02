@@ -63,6 +63,16 @@ public class FaturaAnaliseService {
                                              boolean usarIa,
                                              boolean enviarPdfParaIa,
                                              boolean consentimentoLgpd) {
+        return analisar(arquivo, provedor, apiKey, null, usarIa, enviarPdfParaIa, consentimentoLgpd);
+    }
+
+    public FaturaAnaliseResponseDTO analisar(MultipartFile arquivo,
+                                             ProvedorIa provedor,
+                                             String apiKey,
+                                             String senhaPdf,
+                                             boolean usarIa,
+                                             boolean enviarPdfParaIa,
+                                             boolean consentimentoLgpd) {
         validarArquivo(arquivo);
 
         byte[] bytes;
@@ -74,7 +84,13 @@ public class FaturaAnaliseService {
 
         String texto;
         try {
-            texto = regexService.extrairTexto(bytes);
+            texto = regexService.extrairTexto(bytes, senhaPdf);
+        } catch (org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException e) {
+            if (senhaPdf == null || senhaPdf.isBlank()) {
+                throw FaturaAnaliseException.pdfProtegidoPorSenha();
+            } else {
+                throw FaturaAnaliseException.senhaIncorreta();
+            }
         } catch (IOException e) {
             throw FaturaAnaliseException.arquivoInvalido("O arquivo não é um PDF válido ou está corrompido.");
         }
@@ -83,7 +99,7 @@ public class FaturaAnaliseService {
         boolean pdfEscaneado = texto.length() < minCaracteresTexto;
 
         if (pdfEscaneado && ocrService.habilitado()) {
-            String textoOcr = ocrService.extrairTexto(bytes);
+            String textoOcr = ocrService.extrairTexto(bytes, senhaPdf);
             if (textoOcr.length() > texto.length()) {
                 texto = textoOcr;
                 ocrUtilizado = true;

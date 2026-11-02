@@ -62,6 +62,9 @@ export class TransacoesComponent {
   private intervaloEtapas: any = null;
   faturaPendenteConsentimento: FaturaAnaliseResponse | null = null;
   precisaAtivarIa: boolean = false;
+  precisaSenhaPdf: boolean = false;
+  senhaPdf: string = '';
+  qtdDuplicatasDetectadas: number = 0;
 
   provedorSelecionado: ProvedorIa = 'GEMINI';
   apiKeyIa: string = '';
@@ -363,6 +366,8 @@ export class TransacoesComponent {
     this.arquivoSelecionado = null;
     this.erroUpload = null;
     this.precisaAtivarIa = false;
+    this.precisaSenhaPdf = false;
+    this.senhaPdf = '';
     this.faturaAnalise = null;
     this.exibirDialogUpload = true;
   }
@@ -371,10 +376,17 @@ export class TransacoesComponent {
     this.arquivoSelecionado = event.target.files[0] ?? null;
     this.erroUpload = null;
     this.precisaAtivarIa = false;
+    this.precisaSenhaPdf = false;
+    this.senhaPdf = '';
   }
 
   enviarFatura() {
     if (!this.arquivoSelecionado) return;
+    this.analisarFatura({});
+  }
+
+  enviarFaturaComSenha() {
+    if (!this.arquivoSelecionado || !this.senhaPdf.trim()) return;
     this.analisarFatura({});
   }
 
@@ -391,6 +403,7 @@ export class TransacoesComponent {
     const opcoes: FaturaAnaliseOpcoes = {
       provedor: this.provedorSelecionado,
       apiKey: this.apiKeyIa?.trim() || undefined,
+      senha: this.senhaPdf?.trim() || undefined,
       manterNaSessao: this.manterNaSessao,
       usarIa: this.usarIa,
       ...extras,
@@ -452,6 +465,7 @@ export class TransacoesComponent {
   private aplicarResultadoAnalise(res: FaturaAnaliseResponse) {
     this.carregandoConsentimento = false;
     this.precisaAtivarIa = false;
+    this.precisaSenhaPdf = false;
     this.faturaAnalise = res;
     this.transacoesExtraidas = res.transacoes.map(t => {
       const dataStr = typeof t.data === 'string' ? t.data.slice(0, 10) : this.dataParaIso(t.data);
@@ -467,6 +481,7 @@ export class TransacoesComponent {
     if (this.opcoesConta.length > 0) {
       this.contaSelecionadaRevisao = (this.opcoesConta[0] as any).id;
     }
+    this.detectarDuplicatas();
     this.recalcularTotaisRevisao();
     this.exibirDialogRevisao = true;
 
@@ -531,6 +546,14 @@ export class TransacoesComponent {
       case 428:
         return detalhe || 'Não conseguimos ler esta fatura automaticamente. Informe uma chave de acesso de IA para continuar.';
       case 422:
+        if (corpo?.codigo === 'PDF_PROTEGIDO_POR_SENHA') {
+          this.precisaSenhaPdf = true;
+          return 'Esta fatura está protegida por senha. Informe a senha abaixo (geralmente os primeiros dígitos do CPF) para continuar.';
+        }
+        if (corpo?.codigo === 'SENHA_INCORRETA') {
+          this.precisaSenhaPdf = true;
+          return 'A senha informada está incorreta para abrir este PDF. Confira e tente novamente.';
+        }
         if (corpo?.codigo === 'CONSENTIMENTO_OBRIGATORIO') {
           return 'Marque a autorização para enviar o PDF à IA.';
         }
@@ -584,6 +607,50 @@ export class TransacoesComponent {
   alertaSomaRevisao: boolean = false;
   qtdSelecionadas: number = 0;
   todasSelecionadas: boolean = true;
+
+  detectarDuplicatas(desmarcarDuplicatasAutomaticamente: boolean = true) {
+    if (!this.contaSelecionadaRevisao || !this.transacoesExtraidas.length) {
+      this.qtdDuplicatasDetectadas = 0;
+      return;
+    }
+
+    const contaId = Number(this.contaSelecionadaRevisao);
+    let count = 0;
+
+    this.transacoesExtraidas.forEach(t => {
+      const valorNum = Number(t.valor) || 0;
+      const dataIso = typeof t.data === 'string' ? t.data.slice(0, 10) : this.dataParaIso(t.data);
+
+      const duplicataExistente = this.transacoesDados.find(existente => {
+        const contaMatch = existente.conta?.id === contaId;
+        const dataMatch = existente.dataHora && existente.dataHora.slice(0, 10) === dataIso;
+        const valorMatch = Math.abs(Number(existente.valor) - valorNum) < 0.01;
+        const tipoMatch = !existente.tipo || existente.tipo === t.tipo;
+        return contaMatch && dataMatch && valorMatch && tipoMatch;
+      });
+
+      if (duplicataExistente) {
+        t.duplicata = true;
+        const partes = dataIso.split('-');
+        const dataBr = partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : dataIso;
+        t.duplicataInfo = `Já existe na conta: "${duplicataExistente.descricao}" (${dataBr})`;
+        if (desmarcarDuplicatasAutomaticamente) {
+          t.selecionada = false;
+        }
+        count++;
+      } else {
+        t.duplicata = false;
+        t.duplicataInfo = undefined;
+      }
+    });
+
+    this.qtdDuplicatasDetectadas = count;
+  }
+
+  aoMudarContaRevisao() {
+    this.detectarDuplicatas(true);
+    this.recalcularTotaisRevisao();
+  }
 
   recalcularTotaisRevisao() {
     const selecionadas = this.transacoesExtraidas.filter(t => t.selecionada !== false);

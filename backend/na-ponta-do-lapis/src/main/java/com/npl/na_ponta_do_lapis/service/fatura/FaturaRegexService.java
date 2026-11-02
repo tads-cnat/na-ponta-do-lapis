@@ -233,7 +233,13 @@ public class FaturaRegexService {
     // -------------------------------------------------------------------------
 
     public String extrairTexto(byte[] pdf) throws IOException {
-        try (PDDocument documento = Loader.loadPDF(pdf)) {
+        return extrairTexto(pdf, null);
+    }
+
+    public String extrairTexto(byte[] pdf, String senha) throws IOException {
+        try (PDDocument documento = (senha != null && !senha.isBlank())
+                ? Loader.loadPDF(pdf, senha)
+                : Loader.loadPDF(pdf)) {
             PDFTextStripper stripper = new PDFTextStripper();
             stripper.setSortByPosition(true);
             stripper.setLineSeparator("\n");

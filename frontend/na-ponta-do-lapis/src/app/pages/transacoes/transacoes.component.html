@@ -383,7 +383,26 @@
                 </div>
             </div>
 
-            @if (precisaAtivarIa) {
+            @if (precisaSenhaPdf) {
+                <div class="w-full flex flex-col gap-2.5 p-3.5 rounded-xl bg-amber-50 border border-amber-200">
+                    <div class="flex items-center gap-2 text-amber-900 font-semibold text-sm">
+                        <i class="pi pi-lock text-amber-600"></i>
+                        <span>Fatura protegida por senha</span>
+                    </div>
+                    <p class="text-xs text-amber-700 m-0">
+                        {{ erroUpload || 'Esta fatura está protegida por senha. Informe a senha (normalmente os primeiros dígitos do CPF do titular) para continuar:' }}
+                    </p>
+                    <div class="flex items-center gap-2 mt-1">
+                        <input type="password" [(ngModel)]="senhaPdf" (keyup.enter)="enviarFaturaComSenha()"
+                               placeholder="Digite a senha do PDF..."
+                               class="flex-1 text-sm py-2 px-3 rounded-lg border border-amber-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                        <p-button label="Desbloquear" icon="pi pi-key"
+                                  styleClass="rounded-lg! text-sm py-2 px-3 border-[#11b981]! bg-[#11b981]!"
+                                  [disabled]="!senhaPdf.trim() || carregando" [loading]="carregando"
+                                  (onClick)="enviarFaturaComSenha()"></p-button>
+                    </div>
+                </div>
+            } @else if (precisaAtivarIa) {
                 <div class="w-full flex flex-col gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
                     <div class="flex items-start gap-2">
                         <i class="pi pi-sparkles text-amber-500 mt-0.5"></i>
@@ -597,9 +616,24 @@
                 <div class="flex flex-col gap-2">
                     <label class="font-bold text-sm">Selecione a conta para lançamento</label>
                     <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
-                        [(ngModel)]="contaSelecionadaRevisao" placeholder="Selecione a conta..." [appendTo]="'body'"
+                        [(ngModel)]="contaSelecionadaRevisao" (onChange)="aoMudarContaRevisao()" placeholder="Selecione a conta..." [appendTo]="'body'"
                         styleClass="w-full"></p-select>
                 </div>
+
+                <!-- Alerta de Possíveis Duplicatas -->
+                @if (qtdDuplicatasDetectadas > 0) {
+                    <div class="flex items-start gap-2.5 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs shadow-xs animate-fade-in">
+                        <i class="pi pi-exclamation-triangle text-amber-600 text-base mt-0.5 shrink-0"></i>
+                        <div class="flex flex-col gap-0.5">
+                            <span class="font-bold text-sm text-amber-900">
+                                {{ qtdDuplicatasDetectadas }} transação(ões) já existente(s) identificada(s)!
+                            </span>
+                            <span class="text-amber-800">
+                                Encontramos lançamentos idênticos já salvos nesta conta com a mesma data e valor. Por segurança, essas transações foram desmarcadas automaticamente para evitar cobranças duplas no seu orçamento, mas você pode marcá-las se desejar.
+                            </span>
+                        </div>
+                    </div>
+                }
 
                 <!-- Barra de Ações e Seleção em Lote -->
                 <div class="flex items-center justify-between px-1 pt-1 text-xs text-slate-600 border-b border-slate-100 pb-2">
@@ -688,6 +722,14 @@
                                     (deixe em branco se não for compra parcelada)
                                 </span>
                             </div>
+
+                            @if (t.duplicata) {
+                                <div class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-100/80 text-amber-900 text-xs border border-amber-200">
+                                    <i class="pi pi-history text-amber-600 font-semibold"></i>
+                                    <span class="font-medium">{{ t.duplicataInfo }}</span>
+                                    <span class="text-amber-700 ml-auto hidden sm:inline">(Desmarcada por segurança)</span>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
@@ -697,16 +739,16 @@
         <ng-template pTemplate="footer">
             <div class="flex flex-col sm:flex-row items-center justify-between gap-3 w-full pt-1">
                 <span class="text-xs text-slate-500">
-                    <strong class="text-slate-800">{{ transacoesSelecionadas.length }}</strong> transação(ões) selecionada(s) para importação
+                    <strong class="text-slate-800">{{ qtdSelecionadas }}</strong> transação(ões) selecionada(s) para importação
                 </span>
                 <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
                     <p-button label="Cancelar" severity="secondary" [outlined]="true"
                         styleClass="rounded-xl! w-full sm:w-auto"
                         (onClick)="exibirDialogRevisao = false"></p-button>
                     <p-button styleClass="rounded-xl! border-[#11b981]! bg-[#11b981]! h-11 px-5 w-full sm:w-auto"
-                        [label]="'Confirmar (' + transacoesSelecionadas.length + ')'"
+                        [label]="'Confirmar (' + qtdSelecionadas + ')'"
                         icon="pi pi-check"
-                        [disabled]="!contaSelecionadaRevisao || transacoesSelecionadas.length === 0"
+                        [disabled]="!contaSelecionadaRevisao || qtdSelecionadas === 0"
                         (onClick)="confirmarTransacoes()"></p-button>
                 </div>
             </div>

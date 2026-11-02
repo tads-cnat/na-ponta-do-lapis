@@ -42,6 +42,16 @@ public class FaturaAnaliseException extends RuntimeException {
                 "O arquivo enviado excede o limite permitido de 10 MB.");
     }
 
+    public static FaturaAnaliseException pdfProtegidoPorSenha() {
+        return new FaturaAnaliseException(HttpStatus.UNPROCESSABLE_ENTITY, "PDF_PROTEGIDO_POR_SENHA",
+                "Esta fatura está protegida por senha. Informe a senha do PDF (geralmente os primeiros dígitos do CPF) para continuar.");
+    }
+
+    public static FaturaAnaliseException senhaIncorreta() {
+        return new FaturaAnaliseException(HttpStatus.UNPROCESSABLE_ENTITY, "SENHA_INCORRETA",
+                "A senha informada está incorreta para abrir este PDF. Confira e tente novamente.");
+    }
+
     public static FaturaAnaliseException precisaIa() {
         List<String> provedores = Arrays.stream(ProvedorIa.values())
                 .map(Enum::name)
