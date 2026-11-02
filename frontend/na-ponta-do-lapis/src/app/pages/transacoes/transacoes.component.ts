@@ -565,6 +565,25 @@ export class TransacoesComponent {
     this.transacoesExtraidas.splice(index, 1);
   }
 
+  get somaTransacoesRevisao(): number {
+    return this.transacoesExtraidas.reduce((acc, t) => {
+      const valor = Number(t.valor) || 0;
+      return t.tipo === 'RECEITA' ? acc - valor : acc + valor;
+    }, 0);
+  }
+
+  get diferencaRevisao(): number | null {
+    if (this.faturaAnalise?.valorTotalFatura === null || this.faturaAnalise?.valorTotalFatura === undefined) {
+      return null;
+    }
+    return Number((this.faturaAnalise.valorTotalFatura - this.somaTransacoesRevisao).toFixed(2));
+  }
+
+  get alertaSomaRevisao(): boolean {
+    const diff = this.diferencaRevisao;
+    return diff !== null && Math.abs(diff) > 0.01;
+  }
+
   confirmarTransacoes() {
     if (!this.contaSelecionadaRevisao || this.transacoesExtraidas.length === 0) return;
 

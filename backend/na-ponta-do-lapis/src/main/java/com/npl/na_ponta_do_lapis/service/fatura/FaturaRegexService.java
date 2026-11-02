@@ -72,6 +72,25 @@ public class FaturaRegexService {
             "proxima fatura"
     );
 
+    private static final List<String> INDICADORES_DESPESA_FORCADA = List.of(
+            "juros",
+            "multa",
+            "encargo",
+            "tarifa",
+            "pix credito",
+            "pix no credito",
+            "pix cred",
+            "pix a vista",
+            "saque credito",
+            "saque no credito",
+            "iof",
+            "anuidade",
+            "mercadolivre*reembolso",
+            "mercadolivre reembolso",
+            "mercadopago*reembolso",
+            "mercadopago reembolso"
+    );
+
     /**
      * Termos que indicam crédito na fatura (estornos, devoluções, reembolsos,
      * cancelamentos, créditos e pagamentos recebidos). Essas linhas entram como
@@ -143,6 +162,8 @@ public class FaturaRegexService {
 
     private static final String TOTAL_SUMARIO_TRANSACOES =
             "(?i)(?:[\\s\\S]{0,80}?)([-−]?\\s*R\\$\\s*\\d{1,3}(?:\\.\\d{3})*,\\d{2})";
+
+    private static final BigDecimal UM_CENTAVO = new BigDecimal("0.01");
 
     private static final Map<String, Integer> MESES = Map.ofEntries(
             Map.entry("JAN", 1), Map.entry("JANEIRO", 1), Map.entry("JANUARY", 1),
@@ -244,26 +265,27 @@ public class FaturaRegexService {
 
             BigDecimal total = extrairTotal(padrao, texto);
             ResumoFatura resumo = extrairResumo(texto);
-            boolean resumoCompleto = resumo != null
-                    && resumo.faturaAnterior() != null
-                    && resumo.totalCompras() != null;
-            List<TransacaoFaturaDTO> transacoes;
+            boolean leitorDeResumo = resumo != null
+                    && resumo.totalPagar() != null
+                    && ehFaturaNubank(texto);
+            List<TransacaoFaturaDTO> transacoes = List.of();
 
-            if (resumoCompleto) {
-                // Faturas com resumo (ex.: Nubank) têm o texto embaralhado pelo
-                // extrator de PDF. Lemos as compras linha a linha e usamos o
-                // resumo para conciliar o rodapé da fatura.
+            if (leitorDeResumo) {
+                // Faturas Nubank têm o texto embaralhado pelo extrator de PDF.
+                // Lemos as compras linha a linha e usamos o resumo para
+                // conciliar o rodapé da fatura.
                 transacoes = extrairTransacoesPorLinha(texto);
-                if (transacoes.isEmpty()) {
-                    transacoes = aplicarPadrao(padrao, texto);
-                }
-            } else {
+            }
+            if (transacoes.isEmpty()) {
+                // Layout diferente (ou leitor de resumo sem seção de
+                // transações): usa o regex do padrão salvo.
+                leitorDeResumo = false;
                 transacoes = aplicarPadrao(padrao, texto);
             }
 
             if (!transacoes.isEmpty()) {
                 List<TransacaoFaturaDTO> completas = new ArrayList<>(transacoes);
-                if (!resumoCompleto) {
+                if (!leitorDeResumo) {
                     completas.addAll(extrairPagamentosECreditos(texto, completas));
                 }
                 completas = reconciliar(texto, completas, total);
@@ -278,10 +300,49 @@ public class FaturaRegexService {
             List<TransacaoFaturaDTO> transacoes = extrairTransacoesPorLinha(texto);
             if (!transacoes.isEmpty()) {
                 BigDecimal total = resumo.totalPagar().abs();
-                return new ResultadoRegex(reconciliar(texto, transacoes, total), null, total);
+                PadraoFatura padraoEmissor = null;
+                if (ehFaturaNubank(texto)) {
+                    padraoEmissor = padraoFaturaRepository
+                            .findByEmissorAndAtivoTrueOrderByVersaoDesc("Nubank")
+                            .stream().findFirst().orElse(null);
+                }
+                return new ResultadoRegex(reconciliar(texto, transacoes, total), padraoEmissor, total);
             }
         }
         return new ResultadoRegex(List.of(), null, null);
+    }
+
+    /**
+     * Indica se a fatura tem um resumo que o leitor local consegue reconciliar.
+     * Nesses casos não vale a pena salvar um regex gerado pela IA, pois o
+     * leitor dedicado já garante que a soma fecha com o total.
+     */
+    public boolean possuiLeituraDeResumoConfiavel(String texto) {
+        if (texto == null || texto.isBlank() || !ehFaturaNubank(texto)) {
+            return false;
+        }
+        ResumoFatura resumo = extrairResumo(texto);
+        return resumo != null
+                && resumo.totalPagar() != null
+                && indiceSecaoTransacoes(texto) >= 0;
+    }
+
+    public ResumoFatura extrairResumoFatura(String texto) {
+        return extrairResumo(texto);
+    }
+
+    /**
+     * Aplica a conciliação do resumo a transações vindas de outra fonte (ex.: IA).
+     */
+    public List<TransacaoFaturaDTO> conciliarComResumo(String texto,
+                                                       List<TransacaoFaturaDTO> transacoes,
+                                                       BigDecimal total) {
+        return reconciliar(texto, transacoes, total);
+    }
+
+    private boolean ehFaturaNubank(String texto) {
+        String normalizado = normalizar(texto);
+        return normalizado.contains("nubank") || normalizado.contains("nu pagamentos");
     }
 
     public Optional<PadraoFatura> identificarPadrao(String texto) {
@@ -325,12 +386,23 @@ public class FaturaRegexService {
                 return transacoes;
             }
 
-            Matcher matcher = pattern.matcher(texto);
+            // Isola o texto da fatura atual se houver uma seção explícita de 'Próxima fatura'
+            String textoAlvo = texto;
+            Matcher mProxima = Pattern.compile("(?im)^\\s*próximas?\\s+faturas?\\s*$").matcher(texto);
+            if (mProxima.find()) {
+                textoAlvo = texto.substring(0, mProxima.start());
+            }
+
+            Matcher matcher = pattern.matcher(textoAlvo);
             while (matcher.find()) {
                 String descricao = matcher.group("descricao");
                 String data = matcher.group("data");
                 String valor = matcher.group("valor");
                 String linha = matcher.group();
+
+                if (linha.contains("+ R$") || linha.contains("+R$") || linha.matches("(?i).*\\+\\s*R\\$.*")) {
+                    continue;
+                }
 
                 if (descricao == null || valor == null || ignorarLinha(descricao) || ignorarLinha(linha)) {
                     continue;
@@ -376,50 +448,58 @@ public class FaturaRegexService {
             return null;
         }
 
-        // 1) O resumo da fatura é a fonte mais confiável.
-        ResumoFatura resumo = extrairResumo(texto);
-        if (resumo != null && resumo.totalPagar() != null) {
-            return resumo.totalPagar().abs();
+        // 1) O resumo da fatura é a fonte primária se for fatura Nubank (única com a tabela de resumo padronizada).
+        if (ehFaturaNubank(texto)) {
+            ResumoFatura resumo = extrairResumo(texto);
+            if (resumo != null && resumo.totalPagar() != null) {
+                return resumo.totalPagar().abs();
+            }
         }
 
-        // 2) Rótulos explícitos de total (evita "saldo em aberto total").
+        // 2) Regex do padrão salvo específico do emissor (ex: Inter, Itaú, etc.).
+        if (padrao != null && padrao.getRegexTotal() != null && !padrao.getRegexTotal().isBlank()) {
+            Optional<BigDecimal> totalDoPadrao = executarComTimeout(() -> {
+                Pattern pattern;
+                try {
+                    pattern = Pattern.compile(padrao.getRegexTotal(), REGEX_FLAGS);
+                } catch (PatternSyntaxException e) {
+                    return null;
+                }
+                Matcher matcher = pattern.matcher(texto);
+                while (matcher.find()) {
+                    if (matcher.groupCount() < 1) {
+                        continue;
+                    }
+                    BigDecimal valor = parseValor(matcher.group(1));
+                    if (valor == null || valor.compareTo(BigDecimal.ZERO) <= 0) {
+                        continue;
+                    }
+                    String contexto = normalizar(texto.substring(Math.max(0, matcher.start() - 60), matcher.start()));
+                    if (contexto.contains("saldo em aberto")
+                            || contexto.contains("saldo devedor")
+                            || contexto.contains("proxima fatura")
+                            || contexto.contains("limite")
+                            || contexto.contains("juros")
+                            || contexto.contains("encargos")
+                            || contexto.contains("multa")) {
+                        continue;
+                    }
+                    return valor.abs();
+                }
+                return null;
+            });
+            if (totalDoPadrao.isPresent() && totalDoPadrao.get() != null) {
+                return totalDoPadrao.get();
+            }
+        }
+
+        // 3) Rótulos explícitos de total (evita "saldo em aberto total" e encargos).
         BigDecimal explicito = extrairTotalExplicito(texto);
         if (explicito != null) {
             return explicito.abs();
         }
 
-        // 3) Regex do padrão salvo, ignorando contextos que não são o total.
-        if (padrao == null || padrao.getRegexTotal() == null || padrao.getRegexTotal().isBlank()) {
-            return null;
-        }
-        Optional<BigDecimal> total = executarComTimeout(() -> {
-            Pattern pattern;
-            try {
-                pattern = Pattern.compile(padrao.getRegexTotal(), REGEX_FLAGS);
-            } catch (PatternSyntaxException e) {
-                return null;
-            }
-            Matcher matcher = pattern.matcher(texto);
-            while (matcher.find()) {
-                if (matcher.groupCount() < 1) {
-                    continue;
-                }
-                BigDecimal valor = parseValor(matcher.group(1));
-                if (valor == null) {
-                    continue;
-                }
-                String contexto = normalizar(texto.substring(Math.max(0, matcher.start() - 60), matcher.start()));
-                if (contexto.contains("saldo em aberto")
-                        || contexto.contains("saldo devedor")
-                        || contexto.contains("proxima fatura")
-                        || contexto.contains("limite")) {
-                    continue;
-                }
-                return valor.abs();
-            }
-            return null;
-        });
-        return total.orElse(null);
+        return null;
     }
 
     /**
@@ -434,13 +514,32 @@ public class FaturaRegexService {
                 "(?i)valor\\s+total\\s+(?:da\\s+fatura\\s*)?:?",
                 "(?i)total\\s+desta\\s+fatura\\s*:?",
                 "(?i)total\\s+do\\s+cartao\\s*:?",
+                "(?i)fatura\\s+atual\\s*:?",
                 "(?i)no\\s+valor\\s+de\\s*:?"
         );
         for (String rotulo : rotulos) {
             Matcher matcher = Pattern.compile(rotulo + TOTAL_SUMARIO_TRANSACOES, REGEX_FLAGS).matcher(texto);
-            if (matcher.find()) {
+            while (matcher.find()) {
+                String trechoCasado = normalizar(matcher.group());
+                if (trechoCasado.contains("encargos")
+                        || trechoCasado.contains("rotativo")
+                        || trechoCasado.contains("juros")
+                        || trechoCasado.contains("multa")
+                        || trechoCasado.contains("iof")) {
+                    continue;
+                }
+                String contexto = normalizar(texto.substring(Math.max(0, matcher.start() - 60), matcher.start()));
+                if (contexto.contains("saldo em aberto")
+                        || contexto.contains("saldo devedor")
+                        || contexto.contains("proxima fatura")
+                        || contexto.contains("limite")
+                        || contexto.contains("juros")
+                        || contexto.contains("encargos")
+                        || contexto.contains("multa")) {
+                    continue;
+                }
                 BigDecimal valor = parseValor(matcher.group(1));
-                if (valor != null) {
+                if (valor != null && valor.compareTo(BigDecimal.ZERO) > 0) {
                     return valor;
                 }
             }
@@ -475,7 +574,65 @@ public class FaturaRegexService {
             return false;
         }
 
-        return !aplicarPadrao(padrao, texto).isEmpty();
+        List<TransacaoFaturaDTO> transacoes = aplicarPadrao(padrao, texto);
+        if (transacoes.isEmpty()) {
+            return false;
+        }
+
+        BigDecimal total = extrairTotal(padrao, texto);
+        if (total != null && total.compareTo(BigDecimal.ZERO) > 0) {
+            BigDecimal soma = somar(transacoes);
+            BigDecimal diferenca = total.subtract(soma).abs();
+            BigDecimal limiteAceitavel = total.multiply(new BigDecimal("0.05")).max(new BigDecimal("5.00"));
+            if (diferenca.compareTo(limiteAceitavel) > 0) {
+                log.warn("Padrão de fatura rejeitado na validação contábil: total R$ {}, soma R$ {}, diferença R$ {}",
+                        total, soma, diferenca);
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Evita que um padrão novo (normalmente gerado pela IA) substitua um padrão
+     * ativo que lê mais transações na mesma fatura.
+     */
+    public boolean padraoPiorQueAtivo(PadraoFatura novo, String texto, int transacoesEsperadas) {
+        List<TransacaoFaturaDTO> novas = aplicarPadrao(novo, texto);
+        if (novas.isEmpty()) {
+            return true;
+        }
+        if (transacoesEsperadas >= 10 && novas.size() < transacoesEsperadas / 2) {
+            return true;
+        }
+        if (novo.getEmissor() == null || novo.getEmissor().isBlank()) {
+            return false;
+        }
+        List<PadraoFatura> ativos = padraoFaturaRepository
+                .findByEmissorAndAtivoTrueOrderByVersaoDesc(novo.getEmissor());
+        if (ativos == null || ativos.isEmpty()) {
+            return false;
+        }
+        for (PadraoFatura ativo : ativos) {
+            List<TransacaoFaturaDTO> ativas = aplicarPadrao(ativo, texto);
+            BigDecimal totalAtivo = extrairTotal(ativo, texto);
+            boolean ativoBate = totalAtivo != null
+                    && somar(ativas).subtract(totalAtivo).abs().compareTo(UM_CENTAVO) <= 0;
+
+            BigDecimal totalNovo = extrairTotal(novo, texto);
+            boolean novoBate = totalNovo != null
+                    && somar(novas).subtract(totalNovo).abs().compareTo(UM_CENTAVO) <= 0;
+
+            if (novoBate && !ativoBate) {
+                // O padrão sugerido pela IA fecha 100% com o total da fatura e o ativo atual não!
+                continue;
+            }
+            if (ativas.size() > novas.size()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean ignorarLinha(String texto) {
@@ -516,7 +673,12 @@ public class FaturaRegexService {
             }
 
             String normalizada = normalizar(linha);
-            if (!indicaReceita(normalizada) || ignorarLinha(linha) || ignorarLinhaPagamento(normalizada)) {
+            if (!indicaReceita(normalizada)
+                    || ignorarLinha(linha)
+                    || ignorarLinhaPagamento(normalizada)
+                    || linha.contains("+ R$")
+                    || linha.contains("+R$")
+                    || linha.matches("(?i).*\\+\\s*R\\$.*")) {
                 continue;
             }
 
@@ -1001,6 +1163,9 @@ public class FaturaRegexService {
      */
     private List<TransacaoFaturaDTO> reconciliar(String texto, List<TransacaoFaturaDTO> transacoes,
                                                   BigDecimal total) {
+        if (!ehFaturaNubank(texto)) {
+            return transacoes;
+        }
         ResumoFatura resumo = extrairResumo(texto);
         if (resumo == null || total == null) {
             return transacoes;
@@ -1089,11 +1254,21 @@ public class FaturaRegexService {
                 .anyMatch(descricao -> descricao.contains(alvo));
     }
 
-    private BigDecimal somar(List<TransacaoFaturaDTO> transacoes) {
+    /**
+     * Soma contábil das transações da fatura: despesas somam e receitas (estornos/créditos) abatem.
+     */
+    public static BigDecimal somar(List<TransacaoFaturaDTO> transacoes) {
+        if (transacoes == null || transacoes.isEmpty()) {
+            return BigDecimal.ZERO;
+        }
         return transacoes.stream()
-                .map(transacao -> transacao.tipo() == TipoTransacao.RECEITA
-                        ? transacao.valor().negate()
-                        : transacao.valor())
+                .map(transacao -> {
+                    BigDecimal v = transacao.valor();
+                    if (v == null) {
+                        return BigDecimal.ZERO;
+                    }
+                    return transacao.tipo() == TipoTransacao.RECEITA ? v.abs().negate() : v.abs();
+                })
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
@@ -1119,9 +1294,14 @@ public class FaturaRegexService {
         return encontrada == null ? new Parcela(null, null) : encontrada;
     }
 
-    private String limparDescricao(String descricao) {
+    public static String limparDescricao(String descricao) {
+        if (descricao == null) {
+            return "";
+        }
         String limpa = PARCELA.matcher(descricao).replaceAll(" ");
         limpa = limpa.replaceAll("[()\\[\\]]", " ");
+        limpa = limpa.replaceAll("[•·]+\\s*\\d{4}", " ");
+        limpa = limpa.replaceAll("^\\s*\\d{2,3}\\.?\\d{3}\\.?\\d{3}", " ");
         limpa = limpa.replaceAll("\\s+", " ").trim();
         limpa = limpa.replaceAll("[-–—]+\\s*$", "").trim();
         return limpa;
@@ -1156,11 +1336,21 @@ public class FaturaRegexService {
         return semAcento.toLowerCase(Locale.ROOT).trim().replaceAll("\\s+", " ");
     }
 
+
     /**
      * Verifica se a descrição/linha representa um crédito (estorno, devolução, reembolso etc.).
      */
     public static boolean indicaReceita(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return false;
+        }
         String normalizado = normalizar(texto);
+        if (normalizado.contains("estorno") || normalizado.contains("devolucao")) {
+            return true;
+        }
+        if (INDICADORES_DESPESA_FORCADA.stream().anyMatch(normalizado::contains)) {
+            return false;
+        }
         return INDICADORES_RECEITA.stream().anyMatch(normalizado::contains);
     }
 
@@ -1315,12 +1505,12 @@ public class FaturaRegexService {
     private record Parcela(Integer numero, Integer total) {
     }
 
-    private record ResumoFatura(BigDecimal faturaAnterior,
-                                BigDecimal pagamentoRecebido,
-                                BigDecimal totalCompras,
-                                BigDecimal iofInternacional,
-                                BigDecimal outrosLancamentos,
-                                BigDecimal totalPagar) {
+    public record ResumoFatura(BigDecimal faturaAnterior,
+                               BigDecimal pagamentoRecebido,
+                               BigDecimal totalCompras,
+                               BigDecimal iofInternacional,
+                               BigDecimal outrosLancamentos,
+                               BigDecimal totalPagar) {
     }
 
     private record DataToken(int inicio, int fim, int dia, int mes) {

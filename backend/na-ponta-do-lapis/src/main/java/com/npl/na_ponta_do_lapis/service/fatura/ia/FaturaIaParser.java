@@ -22,6 +22,35 @@ public class FaturaIaParser {
 
     private static final org.slf4j.Logger log = org.slf4j.LoggerFactory.getLogger(FaturaIaParser.class);
 
+    /** Descrições que a IA às vezes devolve, mas que não são transações. */
+    private static final List<String> DESCARTAR_DESCRICAO = List.of(
+            "parcelar em",
+            "valor da parcela",
+            "valor de entrada",
+            "juros totais",
+            "custo efetivo total",
+            "cet ",
+            "simulacao",
+            "saldo em aberto",
+            "saldo devedor",
+            "proxima fatura",
+            "pagamento minimo",
+            "vencimento",
+            "limite total",
+            "limite disponivel",
+            "limite de credito",
+            "valor maximo",
+            "saque no credito",
+            "pix no credito",
+            "boleto no credito",
+            "juros de atraso",
+            "multa de atraso",
+            "iof de atraso",
+            "credito de atraso",
+            "encerramento de divida",
+            "saldo em atraso"
+    );
+
     private final ObjectMapper objectMapper;
     private final FaturaRegexService faturaRegexService;
 
@@ -68,8 +97,12 @@ public class FaturaIaParser {
     }
 
     private TransacaoFaturaDTO parseTransacao(JsonNode node, List<String> categoriasPermitidas) {
-        String descricao = node.path("descricao").asText(null);
-        if (descricao == null || descricao.isBlank()) {
+        String descricaoBruta = node.path("descricao").asText(null);
+        if (descricaoBruta == null || descricaoBruta.isBlank()) {
+            return null;
+        }
+        String descricao = FaturaRegexService.limparDescricao(descricaoBruta);
+        if (descricao.isBlank() || descricaoDeRuido(descricao)) {
             return null;
         }
         BigDecimal valor = parseValor(node.path("valor"));
@@ -79,6 +112,9 @@ public class FaturaIaParser {
         String dataTexto = node.path("data").asText(null);
         if (dataTexto == null || dataTexto.isBlank()) {
             return null;
+        }
+        if (dataTexto.length() > 10 && dataTexto.charAt(4) == '-') {
+            dataTexto = dataTexto.substring(0, 10);
         }
         var data = faturaRegexService.parseData(dataTexto, null);
         if (data == null) {
@@ -103,7 +139,7 @@ public class FaturaIaParser {
                 || FaturaRegexService.indicaReceita(descricao);
 
         return new TransacaoFaturaDTO(
-                descricao.trim(),
+                descricao,
                 valor.abs(),
                 data,
                 categoria,
@@ -112,6 +148,11 @@ public class FaturaIaParser {
                 totalParcelas,
                 valorTotalCompra
         );
+    }
+
+    private boolean descricaoDeRuido(String descricao) {
+        String normalizada = FaturaRegexService.normalizar(descricao);
+        return DESCARTAR_DESCRICAO.stream().anyMatch(normalizada::contains);
     }
 
     private PadraoFatura parsePadrao(JsonNode node, String textoSanitizado) {
@@ -146,6 +187,20 @@ public class FaturaIaParser {
             return null;
         }
         return padrao;
+    }
+
+    public PadraoFatura parsePadraoRefinado(String resposta, String textoSanitizado) {
+        if (resposta == null || resposta.isBlank()) {
+            return null;
+        }
+        try {
+            JsonNode raiz = objectMapper.readTree(limparCercas(resposta));
+            JsonNode node = raiz.has("padrao") ? raiz.path("padrao") : raiz;
+            return parsePadrao(node, textoSanitizado);
+        } catch (Exception e) {
+            log.warn("Erro ao fazer parse do padrão refinado da IA: {}", e.getMessage());
+            return null;
+        }
     }
 
     private String escolherCategoria(String categoria, List<String> categoriasPermitidas) {
@@ -192,8 +247,22 @@ public class FaturaIaParser {
 
     private String limparCercas(String resposta) {
         String limpa = resposta.trim();
-        limpa = limpa.replaceAll("^```(?:json)?\\s*", "");
-        limpa = limpa.replaceAll("\\s*```$", "");
+        limpa = limpa.replaceAll("(?s)^```(?:json)?\\s*", "");
+        limpa = limpa.replaceAll("(?s)\\s*```$", "");
+        limpa = limpa.trim();
+
+        // Alguns provedores adicionam texto antes/depois do JSON. Isola o
+        // primeiro objeto (ou array, quando for o caso) para não perder a
+        // resposta inteira por causa de uma frase de introdução.
+        int inicio = limpa.indexOf('{');
+        int fim = limpa.lastIndexOf('}');
+        if (inicio < 0 || fim <= inicio) {
+            inicio = limpa.indexOf('[');
+            fim = limpa.lastIndexOf(']');
+        }
+        if (inicio >= 0 && fim > inicio) {
+            limpa = limpa.substring(inicio, fim + 1);
+        }
         return limpa.trim();
     }
 

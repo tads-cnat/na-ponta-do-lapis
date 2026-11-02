@@ -518,22 +518,51 @@
                         </span>
                     </div>
 
-                    @if (faturaAnalise.alertaSoma) {
-                        <div class="flex items-start gap-2 p-3 rounded-xl bg-amber-50 border border-amber-200">
-                            <i class="pi pi-exclamation-triangle text-amber-500 mt-0.5"></i>
-                            <div class="flex flex-col gap-1 text-sm text-amber-800">
-                                <span class="font-semibold">A soma das transações não bate com o total da fatura.</span>
-                                <span>
-                                    Soma calculada (despesas − receitas): {{ faturaAnalise.somaCalculada | currency:'BRL' }}
-                                    @if (faturaAnalise.valorTotalFatura !== null) {
-                                        · Total da fatura: {{ faturaAnalise.valorTotalFatura | currency:'BRL' }}
-                                    }
-                                    @if (faturaAnalise.diferenca !== null) {
-                                        · Diferença: {{ faturaAnalise.diferenca | currency:'BRL' }}
-                                    }
+                    <!-- Card Resumo Financeiro da Fatura -->
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border transition-colors"
+                         [ngClass]="alertaSomaRevisao ? 'bg-amber-50/80 border-amber-200' : 'bg-emerald-50/70 border-emerald-200'">
+                        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+                            @if (faturaAnalise.valorTotalFatura !== null) {
+                                <div class="flex flex-col">
+                                    <span class="text-xs text-slate-500 font-medium">Total da fatura</span>
+                                    <span class="font-bold text-slate-800 text-base">
+                                        {{ faturaAnalise.valorTotalFatura | currency:'BRL' }}
+                                    </span>
+                                </div>
+                            }
+                            <div class="flex flex-col">
+                                <span class="text-xs text-slate-500 font-medium">Soma das transações</span>
+                                <span class="font-bold text-base" [ngClass]="alertaSomaRevisao ? 'text-amber-800' : 'text-emerald-700'">
+                                    {{ somaTransacoesRevisao | currency:'BRL' }}
                                 </span>
-                                <span class="text-xs">Confira se alguma transação ficou de fora antes de salvar.</span>
                             </div>
+                            @if (diferencaRevisao !== null && diferencaRevisao !== 0) {
+                                <div class="flex flex-col">
+                                    <span class="text-xs font-medium" [ngClass]="alertaSomaRevisao ? 'text-amber-700' : 'text-slate-500'">
+                                        Diferença
+                                    </span>
+                                    <span class="font-bold text-base" [ngClass]="alertaSomaRevisao ? 'text-amber-700' : 'text-slate-700'">
+                                        {{ diferencaRevisao | currency:'BRL' }}
+                                    </span>
+                                </div>
+                            }
+                        </div>
+                        <div class="flex items-center gap-2 shrink-0">
+                            @if (alertaSomaRevisao) {
+                                <p-tag value="Divergência detectada" severity="warn" icon="pi pi-exclamation-triangle"></p-tag>
+                            } @else if (faturaAnalise.valorTotalFatura !== null) {
+                                <p-tag value="Total conferido" severity="success" icon="pi pi-check-circle"></p-tag>
+                            }
+                        </div>
+                    </div>
+
+                    @if (alertaSomaRevisao) {
+                        <div class="flex items-start gap-2 p-2.5 rounded-lg bg-amber-100/70 text-xs text-amber-900 border border-amber-200">
+                            <i class="pi pi-info-circle text-amber-600 mt-0.5"></i>
+                            <span>
+                                A soma atual das transações não bate com o total da fatura.
+                                Confira se alguma transação ficou de fora ou se os valores editados estão corretos.
+                            </span>
                         </div>
                     }
 

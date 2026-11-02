@@ -34,6 +34,13 @@ public class PadraoFaturaSeeder implements CommandLineRunner {
                     + "(?<descricao>.+?)\\s+(?:R\\$\\s*)?"
                     + "(?<valor>-?\\d{1,3}(?:\\.\\d{3})*,\\d{2})\\s*$";
 
+    private static final String REGEX_INTER_TRANSACAO =
+            "(?m)^\\s*(?<data>\\d{1,2}\\s+de\\s+[A-Za-zÀ-ÿ]{3,}\\.?\\s+\\d{4}|\\d{2}/\\d{2}(?:/\\d{4})?)\\s+"
+                    + "(?<descricao>(?!.*\\+\\s*R\\$).+?)\\s+(?:-\\s+)?(?:R\\$\\s*)?(?<valor>[\\d.,]+)\\s*$";
+
+    private static final String REGEX_INTER_TOTAL =
+            "(?i)(?:total\\s+da\\s+(?:sua\\s+)?fatura|fatura\\s+atual)\\s*[:]?\\s*(?:R\\$\\s*)?(\\d{1,3}(?:\\.\\d{3})*,\\d{2})";
+
     private static final String REGEX_TOTAL =
             "(?i)total\\s*(?:da\\s*fatura|a\\s*pagar|desta\\s*fatura)?\\s*[:]?\\s*"
                     + "(?:R\\$\\s*)?(\\d{1,3}(?:\\.\\d{3})*,\\d{2})";
@@ -55,9 +62,9 @@ public class PadraoFaturaSeeder implements CommandLineRunner {
 
         criarSeAusente("Inter",
                 "(?i)banco\\s+inter|\\binter\\b",
-                REGEX_DATA_TRANSACAO,
-                REGEX_TOTAL,
-                "dd/MM/yyyy");
+                REGEX_INTER_TRANSACAO,
+                REGEX_INTER_TOTAL,
+                "dd 'de' MMM. yyyy");
 
         criarSeAusente("Itaú",
                 "(?i)ita[úu]|banco\\s+ita[úu]",

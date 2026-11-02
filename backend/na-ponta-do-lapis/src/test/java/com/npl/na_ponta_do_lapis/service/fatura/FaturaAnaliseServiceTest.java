@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -54,6 +56,8 @@ class FaturaAnaliseServiceTest {
 
         when(tipoCategoriaService.listarCategorias()).thenReturn(List.of());
         when(ocrService.habilitado()).thenReturn(false);
+        when(regexService.conciliarComResumo(anyString(), anyList(), any()))
+                .thenAnswer(invocation -> invocation.getArgument(1));
     }
 
     @Test
@@ -77,8 +81,28 @@ class FaturaAnaliseServiceTest {
         assertThat(resposta.transacoes()).hasSize(1);
         assertThat(resposta.somaCalculada()).isEqualByComparingTo("50.00");
         assertThat(resposta.diferenca()).isEqualByComparingTo("10.00");
-        assertThat(resposta.alertaSoma()).isTrue();
-        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList());
+        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
+    }
+
+    @Test
+    void leituraLocalComSucessoDispensarIaMesmoComIaAtivada() throws Exception {
+        when(regexService.extrairTexto(any())).thenReturn(textoFatura());
+        PadraoFatura padrao = new PadraoFatura();
+        padrao.setEmissor("Nubank");
+        when(regexService.analisar(any())).thenReturn(new FaturaRegexService.ResultadoRegex(
+                List.of(new TransacaoFaturaDTO("Amazon", new BigDecimal("60.00"),
+                        LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null)),
+                padrao,
+                new BigDecimal("60.00")
+        ));
+
+        FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+
+        assertThat(resposta.fonte()).isEqualTo("REGEX");
+        assertThat(resposta.emissor()).isEqualTo("Nubank");
+        assertThat(resposta.somaCalculada()).isEqualByComparingTo("60.00");
+        assertThat(resposta.alertaSoma()).isFalse();
+        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
     }
 
     @Test
@@ -115,7 +139,7 @@ class FaturaAnaliseServiceTest {
                     assertThat(e.getProvedores()).contains("GEMINI", "CLAUDE");
                 });
 
-        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList());
+        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
     }
 
     @Test
@@ -131,7 +155,7 @@ class FaturaAnaliseServiceTest {
         assertThat(resposta.fonte()).isEqualTo("NENHUMA");
         assertThat(resposta.transacoes()).isEmpty();
         assertThat(resposta.mensagem()).contains("Ative o uso de IA");
-        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList());
+        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
     }
 
     @Test
@@ -198,7 +222,7 @@ class FaturaAnaliseServiceTest {
                 padrao,
                 new BigDecimal("10.00")
         );
-        when(iaService.analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList()))
+        when(iaService.analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class)))
                 .thenReturn(resultadoIa);
         when(regexService.validarPadrao(eq(padrao), any())).thenReturn(true);
         when(padraoFaturaService.salvarNovaVersao(padrao)).thenReturn(padrao);
@@ -209,8 +233,108 @@ class FaturaAnaliseServiceTest {
         assertThat(resposta.emissor()).isEqualTo("Nubank");
         assertThat(resposta.padraoVersao()).isEqualTo(3);
         assertThat(resposta.alertaSoma()).isFalse();
-        verify(iaService).analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList());
+        verify(iaService).analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
         verify(padraoFaturaService).salvarNovaVersao(padrao);
+    }
+
+    @Test
+    void usaLeituraLocalQuandoAjusteDaIAEhGrandeDemais() throws Exception {
+        when(regexService.extrairTexto(any())).thenReturn(textoFatura());
+        when(regexService.extrairTotal(isNull(), anyString())).thenReturn(new BigDecimal("60.00"));
+        when(regexService.analisar(any()))
+                .thenReturn(new FaturaRegexService.ResultadoRegex(List.of(), null, null))
+                .thenReturn(new FaturaRegexService.ResultadoRegex(
+                        List.of(new TransacaoFaturaDTO("Amazon", new BigDecimal("60.00"),
+                                LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null)),
+                        null,
+                        new BigDecimal("60.00")
+                ));
+        when(regexService.conciliarComResumo(anyString(), anyList(), any()))
+                .thenReturn(List.of(new TransacaoFaturaDTO("Ajuste de conciliação da fatura",
+                        new BigDecimal("3450.00"), LocalDate.of(2026, 1, 20), "Outros",
+                        TipoTransacao.RECEITA, null, null, null)));
+
+        FaturaIaParser.ResultadoIa resultadoIa = new FaturaIaParser.ResultadoIa(
+                List.of(new TransacaoFaturaDTO("Loja", new BigDecimal("21.00"),
+                        LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null)),
+                null,
+                new BigDecimal("60.00")
+        );
+        when(iaService.analisarTexto(any(), any(), any(), anyList(),
+                any(FaturaIaService.ContextoFaturaIa.class))).thenReturn(resultadoIa);
+
+        FaturaAnaliseResponseDTO resposta = service.analisar(
+                arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+
+        assertThat(resposta.fonte()).isEqualTo("REGEX");
+        assertThat(resposta.transacoes()).hasSize(1);
+        assertThat(resposta.transacoes().get(0).descricao()).isEqualTo("Amazon");
+        assertThat(resposta.somaCalculada()).isEqualByComparingTo("60.00");
+    }
+
+    @Test
+    void totalLocalSobrepoeTotalInformadoPelaIa() throws Exception {
+        when(regexService.extrairTexto(any())).thenReturn(textoFatura());
+        when(regexService.extrairTotal(isNull(), anyString())).thenReturn(new BigDecimal("60.00"));
+
+        FaturaIaParser.ResultadoIa resultadoIa = new FaturaIaParser.ResultadoIa(
+                List.of(new TransacaoFaturaDTO("Loja", new BigDecimal("10.00"),
+                        LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null)),
+                null,
+                new BigDecimal("3490.05")
+        );
+        when(iaService.analisarTexto(any(), any(), any(), anyList(),
+                any(FaturaIaService.ContextoFaturaIa.class))).thenReturn(resultadoIa);
+
+        FaturaAnaliseResponseDTO resposta = service.analisar(
+                arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+
+        assertThat(resposta.valorTotalFatura()).isEqualByComparingTo("60.00");
+        assertThat(resposta.fonte()).isEqualTo("IA");
+    }
+
+    @Test
+    void naoSalvaPadraoQuandoLeituraDeResumoLocalEhConfiavel() throws Exception {
+        when(regexService.extrairTexto(any())).thenReturn(textoFatura());
+        when(regexService.possuiLeituraDeResumoConfiavel(anyString())).thenReturn(true);
+        when(regexService.validarPadrao(any(), anyString())).thenReturn(true);
+
+        PadraoFatura padrao = new PadraoFatura();
+        padrao.setEmissor("Nubank");
+        FaturaIaParser.ResultadoIa resultadoIa = new FaturaIaParser.ResultadoIa(
+                List.of(new TransacaoFaturaDTO("Loja", new BigDecimal("10.00"),
+                        LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null)),
+                padrao,
+                new BigDecimal("10.00")
+        );
+        when(iaService.analisarTexto(any(), any(), any(), anyList(),
+                any(FaturaIaService.ContextoFaturaIa.class))).thenReturn(resultadoIa);
+
+        service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+
+        verify(padraoFaturaService, never()).salvarNovaVersao(any());
+    }
+
+    @Test
+    void naoSalvaPadraoPiorQueOPadraoAtivo() throws Exception {
+        when(regexService.extrairTexto(any())).thenReturn(textoFatura());
+        when(regexService.validarPadrao(any(), anyString())).thenReturn(true);
+        when(regexService.padraoPiorQueAtivo(any(), anyString(), any(Integer.class))).thenReturn(true);
+
+        PadraoFatura padrao = new PadraoFatura();
+        padrao.setEmissor("Nubank");
+        FaturaIaParser.ResultadoIa resultadoIa = new FaturaIaParser.ResultadoIa(
+                List.of(new TransacaoFaturaDTO("Loja", new BigDecimal("10.00"),
+                        LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null)),
+                padrao,
+                new BigDecimal("10.00")
+        );
+        when(iaService.analisarTexto(any(), any(), any(), anyList(),
+                any(FaturaIaService.ContextoFaturaIa.class))).thenReturn(resultadoIa);
+
+        service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+
+        verify(padraoFaturaService, never()).salvarNovaVersao(any());
     }
 
     @Test

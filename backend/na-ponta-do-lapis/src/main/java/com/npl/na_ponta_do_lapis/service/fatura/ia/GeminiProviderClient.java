@@ -32,7 +32,8 @@ public class GeminiProviderClient implements IaProviderClient {
         Map<String, Object> corpo = Map.of(
                 "contents", List.of(Map.of(
                         "parts", List.of(Map.of("text", prompt))
-                ))
+                )),
+                "generationConfig", configuracaoGeracao()
         );
         JsonNode resposta = httpClient.post(url(), headers(apiKey), corpo);
         return extrairTexto(resposta);
@@ -50,10 +51,27 @@ public class GeminiProviderClient implements IaProviderClient {
                                 )),
                                 Map.of("text", prompt)
                         )
-                ))
+                )),
+                "generationConfig", configuracaoGeracao()
         );
         JsonNode resposta = httpClient.post(url(), headers(apiKey), corpo);
         return extrairTexto(resposta);
+    }
+
+    /**
+     * Extração não precisa de criatividade. Desligar o "thinking" evita gastar
+     * o limite de saída e truncar o JSON em faturas grandes.
+     */
+    private Map<String, Object> configuracaoGeracao() {
+        Map<String, Object> configuracao = new java.util.LinkedHashMap<>();
+        configuracao.put("responseMimeType", "application/json");
+        configuracao.put("temperature", 0);
+        configuracao.put("maxOutputTokens", 8192);
+        // O orçamento zero de "thinking" só é aceito pelos modelos Flash.
+        if (modelo != null && modelo.toLowerCase(java.util.Locale.ROOT).contains("flash")) {
+            configuracao.put("thinkingConfig", Map.of("thinkingBudget", 0));
+        }
+        return configuracao;
     }
 
     private String url() {
@@ -68,8 +86,18 @@ public class GeminiProviderClient implements IaProviderClient {
     }
 
     private String extrairTexto(JsonNode resposta) {
-        String texto = resposta.path("candidates").path(0)
-                .path("content").path("parts").path(0).path("text").asText(null);
+        JsonNode parts = resposta.path("candidates").path(0)
+                .path("content").path("parts");
+        if (parts.isArray()) {
+            StringBuilder texto = new StringBuilder();
+            for (JsonNode part : parts) {
+                texto.append(part.path("text").asText(""));
+            }
+            if (!texto.isEmpty()) {
+                return texto.toString();
+            }
+        }
+        String texto = parts.path(0).path("text").asText(null);
         if (texto == null || texto.isBlank()) {
             throw FaturaAnaliseException.respostaIaInvalida("O Gemini não retornou texto.");
         }

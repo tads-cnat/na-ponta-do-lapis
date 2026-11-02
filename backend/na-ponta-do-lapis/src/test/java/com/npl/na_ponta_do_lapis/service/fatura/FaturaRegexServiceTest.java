@@ -214,6 +214,42 @@ class FaturaRegexServiceTest {
         assertThat(service.validarPadrao(invalido, texto)).isFalse();
     }
 
+    @Test
+    void validaPadraoRejeitaQuandoTotalDivergeDaSoma() {
+        PadraoFatura padrao = padrao();
+        // Total é 1000,00 mas as transações somam apenas 50,00
+        String texto = """
+                FATURA NUBANK
+                15/01/2026 AMAZON 50,00
+                Total da fatura R$ 1.000,00
+                """;
+
+        assertThat(service.validarPadrao(padrao, texto)).isFalse();
+
+        // Quando o total bate perfeitamente
+        String textoCorreto = """
+                FATURA NUBANK
+                15/01/2026 AMAZON 50,00
+                Total da fatura R$ 50,00
+                """;
+
+        assertThat(service.validarPadrao(padrao, textoCorreto)).isTrue();
+    }
+
+    @Test
+    void naoClassificaJurosETarifasComoReceitaMesmoComTermoCredito() {
+        assertThat(FaturaRegexService.indicaReceita("JUROS PIX CREDITO")).isFalse();
+        assertThat(FaturaRegexService.indicaReceita("SAQUE CREDITO TARIFA")).isFalse();
+        assertThat(FaturaRegexService.indicaReceita("ENCARGOS CARTAO CREDITO")).isFalse();
+        assertThat(FaturaRegexService.indicaReceita("MULTA CONTRATUAL")).isFalse();
+        assertThat(FaturaRegexService.indicaReceita("IOF TRANSAÇÃO")).isFalse();
+
+        // Estorno verdadeiro continua sendo RECEITA
+        assertThat(FaturaRegexService.indicaReceita("ESTORNO JUROS")).isTrue();
+        assertThat(FaturaRegexService.indicaReceita("ESTORNO DEVOLUCAO COMPRA")).isTrue();
+        assertThat(FaturaRegexService.indicaReceita("PAGAMENTO DE FATURA")).isTrue();
+    }
+
     private PadraoFatura padrao() {
         PadraoFatura padrao = new PadraoFatura();
         padrao.setEmissor("Nubank");

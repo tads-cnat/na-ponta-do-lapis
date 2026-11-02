@@ -32,6 +32,7 @@ public class ClaudeProviderClient implements IaProviderClient {
         Map<String, Object> corpo = Map.of(
                 "model", modelo,
                 "max_tokens", 8192,
+                "temperature", 0,
                 "messages", List.of(Map.of(
                         "role", "user",
                         "content", List.of(Map.of("type", "text", "text", prompt))
@@ -47,6 +48,7 @@ public class ClaudeProviderClient implements IaProviderClient {
         Map<String, Object> corpo = Map.of(
                 "model", modelo,
                 "max_tokens", 8192,
+                "temperature", 0,
                 "messages", List.of(Map.of(
                         "role", "user",
                         "content", List.of(
@@ -75,7 +77,19 @@ public class ClaudeProviderClient implements IaProviderClient {
     }
 
     private String extrairTexto(JsonNode resposta) {
-        String texto = resposta.path("content").path(0).path("text").asText(null);
+        JsonNode content = resposta.path("content");
+        if (content.isArray()) {
+            StringBuilder texto = new StringBuilder();
+            for (JsonNode parte : content) {
+                if ("text".equals(parte.path("type").asText())) {
+                    texto.append(parte.path("text").asText(""));
+                }
+            }
+            if (!texto.isEmpty()) {
+                return texto.toString();
+            }
+        }
+        String texto = content.path(0).path("text").asText(null);
         if (texto == null || texto.isBlank()) {
             throw FaturaAnaliseException.respostaIaInvalida("O Claude não retornou texto.");
         }

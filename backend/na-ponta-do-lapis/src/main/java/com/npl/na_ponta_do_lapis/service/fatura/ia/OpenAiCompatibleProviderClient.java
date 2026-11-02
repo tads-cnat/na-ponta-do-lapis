@@ -36,11 +36,14 @@ public class OpenAiCompatibleProviderClient implements IaProviderClient {
 
     @Override
     public String completar(ProvedorIa provedor, String apiKey, String prompt) {
-        Map<String, Object> corpo = Map.of(
-                "model", modelo(provedor),
-                "temperature", 0,
-                "messages", List.of(Map.of("role", "user", "content", prompt))
-        );
+        Map<String, Object> corpo = new java.util.LinkedHashMap<>();
+        corpo.put("model", modelo(provedor));
+        corpo.put("temperature", 0);
+        corpo.put("max_tokens", 8192);
+        if (provedor == ProvedorIa.OPENAI || provedor == ProvedorIa.DEEPSEEK) {
+            corpo.put("response_format", Map.of("type", "json_object"));
+        }
+        corpo.put("messages", List.of(Map.of("role", "user", "content", prompt)));
         Map<String, String> headers = Map.of("Authorization", "Bearer " + apiKey);
         JsonNode resposta = httpClient.post(url(provedor), headers, corpo);
         return extrairTexto(resposta);

@@ -2,7 +2,9 @@ package com.npl.na_ponta_do_lapis.service.fatura;
 
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -122,13 +124,22 @@ public class FaturaAnaliseService {
 
             log.info("Envio multimodal de PDF autorizado explicitamente pelo usuário (provedor={}).", provedor);
             FaturaIaParser.ResultadoIa resultado = iaService.analisarPdf(provedor, apiKey, bytes, categorias());
-            return montarResposta(resultado.transacoes(), resultado.valorTotalFatura(), "IA",
+            ResultadoAnalise avaliado = avaliarResultadoIa(texto, resultado);
+            return montarResposta(avaliado.transacoes(), avaliado.valorTotalFatura(), "IA",
                     null, pdfEscaneado, ocrUtilizado, true, null);
         }
 
+        // 1. Local-First: se o leitor local conseguir ler e a conta fechar 100%,
+        // dispensamos a chamada à IA para economizar tokens do usuário e responder instantaneamente.
+        FaturaRegexService.ResultadoRegex resultadoRegex = regexService.analisar(texto);
+        if (resultadoRegex != null && !resultadoRegex.transacoes().isEmpty() && resultadoBateComTotal(resultadoRegex)) {
+            log.info("Fatura resolvida com sucesso pelo leitor local. Chamada à IA dispensada para economizar tokens.");
+            return montarResposta(resultadoRegex.transacoes(), resultadoRegex.valorTotalFatura(), "REGEX",
+                    resultadoRegex.padrao(), false, ocrUtilizado, false, null);
+        }
+
         if (!usarIa) {
-            FaturaRegexService.ResultadoRegex resultadoRegex = regexService.analisar(texto);
-            if (!resultadoRegex.transacoes().isEmpty()) {
+            if (resultadoRegex != null && !resultadoRegex.transacoes().isEmpty()) {
                 return montarResposta(resultadoRegex.transacoes(), resultadoRegex.valorTotalFatura(), "REGEX",
                         resultadoRegex.padrao(), false, ocrUtilizado, false, null);
             }
@@ -147,20 +158,135 @@ public class FaturaAnaliseService {
         }
 
         FaturaIaParser.ResultadoIa resultadoIa = iaService.analisarTexto(
-                provedor, apiKey, textoSanitizado, categorias());
+                provedor, apiKey, textoSanitizado, categorias(), contextoIa(texto));
+
+        ResultadoAnalise avaliado = avaliarResultadoIa(texto, resultadoIa);
 
         PadraoFatura padraoSalvo = null;
-        if (resultadoIa.padrao() != null) {
-            // O regex foi validado no texto sanitizado, mas será aplicado ao texto original.
-            if (regexService.validarPadrao(resultadoIa.padrao(), texto)) {
-                padraoSalvo = padraoFaturaService.salvarNovaVersao(resultadoIa.padrao());
+        PadraoFatura padraoCandidato = resultadoIa.padrao();
+
+        if (!avaliado.usouFallbackLocal()
+                && padraoCandidato != null
+                && !regexService.possuiLeituraDeResumoConfiavel(texto)) {
+
+            List<TransacaoFaturaDTO> transacoesPadrao = regexService.aplicarPadrao(padraoCandidato, texto);
+            BigDecimal totalPadrao = regexService.extrairTotal(padraoCandidato, texto);
+            BigDecimal totalEsperado = totalPadrao != null ? totalPadrao : avaliado.valorTotalFatura();
+
+            boolean fechaExato = totalEsperado != null && !transacoesPadrao.isEmpty()
+                    && somar(transacoesPadrao).subtract(totalEsperado).abs().compareTo(UM_CENTAVO) <= 0;
+
+            if (!fechaExato && apiKey != null && !apiKey.isBlank()) {
+                try {
+                    log.info("Padrão inicial da IA divergiu do total (soma={}, total={}). Disparando auto-refinamento...",
+                            somar(transacoesPadrao), totalEsperado);
+                    PadraoFatura padraoRefinado = iaService.refinarPadrao(provedor, apiKey, padraoCandidato,
+                            textoSanitizado, totalEsperado, transacoesPadrao);
+                    if (padraoRefinado != null) {
+                        List<TransacaoFaturaDTO> transacoesRefinadas = regexService.aplicarPadrao(padraoRefinado, texto);
+                        BigDecimal totalRefinado = regexService.extrairTotal(padraoRefinado, texto);
+                        BigDecimal totalRefEfetivo = totalRefinado != null ? totalRefinado : totalEsperado;
+
+                        boolean refinadoFecha = totalRefEfetivo != null && !transacoesRefinadas.isEmpty()
+                                && somar(transacoesRefinadas).subtract(totalRefEfetivo).abs().compareTo(UM_CENTAVO) <= 0;
+
+                        if (refinadoFecha || transacoesRefinadas.size() > transacoesPadrao.size()) {
+                            log.info("Padrão da IA refinado com sucesso no segundo turno!");
+                            padraoCandidato = padraoRefinado;
+                        }
+                    }
+                } catch (Exception e) {
+                    log.warn("Auto-refinamento da IA não pôde ser concluído: {}", e.getMessage());
+                }
+            }
+
+            if (regexService.validarPadrao(padraoCandidato, texto)
+                    && !regexService.padraoPiorQueAtivo(padraoCandidato, texto, avaliado.transacoes().size())) {
+                padraoSalvo = padraoFaturaService.salvarNovaVersao(padraoCandidato);
             } else {
-                log.warn("Padrão da IA não funciona no texto original da fatura (difere do sanitizado); não foi salvo.");
+                log.info("Padrão sugerido pela IA não foi salvo: resumo local confiável, "
+                        + "fallback local ou qualidade inferior ao padrão ativo.");
             }
         }
 
-        return montarResposta(resultadoIa.transacoes(), resultadoIa.valorTotalFatura(), "IA",
-                padraoSalvo, false, ocrUtilizado, false, null);
+        PadraoFatura padraoEfetivo = padraoSalvo != null ? padraoSalvo : (padraoCandidato != null ? padraoCandidato : avaliado.padrao());
+        return montarResposta(avaliado.transacoes(), avaliado.valorTotalFatura(),
+                avaliado.usouFallbackLocal() ? "REGEX" : "IA",
+                padraoEfetivo, false, ocrUtilizado, false, null);
+    }
+
+    private FaturaIaService.ContextoFaturaIa contextoIa(String texto) {
+        FaturaRegexService.ResumoFatura resumo = regexService.extrairResumoFatura(texto);
+        if (resumo == null) {
+            return FaturaIaService.ContextoFaturaIa.vazio();
+        }
+        return new FaturaIaService.ContextoFaturaIa(
+                resumo.totalPagar(),
+                resumo.faturaAnterior(),
+                resumo.pagamentoRecebido(),
+                resumo.totalCompras(),
+                resumo.iofInternacional(),
+                resumo.outrosLancamentos()
+        );
+    }
+
+    /**
+     * Confere o resultado da IA contra o total detectado localmente. Se a IA
+     * deixar um resíduo grande na conciliação e a leitura local fechar exata, a
+     * leitura local é preferida para não importar valores errados.
+     */
+    private ResultadoAnalise avaliarResultadoIa(String texto, FaturaIaParser.ResultadoIa resultadoIa) {
+        BigDecimal totalLocal = regexService.extrairTotal(null, texto);
+        BigDecimal total = totalLocal != null ? totalLocal : resultadoIa.valorTotalFatura();
+        List<TransacaoFaturaDTO> transacoes = new ArrayList<>(resultadoIa.transacoes());
+
+        if (total != null) {
+            List<TransacaoFaturaDTO> conciliadas = regexService.conciliarComResumo(texto, transacoes, total);
+            BigDecimal ajuste = ajusteDeConciliacao(conciliadas);
+            if (ajuste.compareTo(limiteDeAjuste(total)) > 0) {
+                FaturaRegexService.ResultadoRegex local = regexService.analisar(texto);
+                if (resultadoBateComTotal(local)) {
+                    log.warn("Resultado da IA descartado: ajuste de conciliação de R$ {} acima do limite. "
+                            + "Usando a leitura local, que fecha com o total.", ajuste.toPlainString());
+                    return new ResultadoAnalise(local.transacoes(), local.valorTotalFatura(), local.padrao(), true);
+                }
+            }
+            transacoes = conciliadas;
+        }
+
+        return new ResultadoAnalise(transacoes, total, resultadoIa.padrao(), false);
+    }
+
+    private BigDecimal ajusteDeConciliacao(List<TransacaoFaturaDTO> transacoes) {
+        return transacoes.stream()
+                .filter(transacao -> transacao.descricao() != null
+                        && transacao.descricao().startsWith("Ajuste de conciliação"))
+                .map(TransacaoFaturaDTO::valor)
+                .filter(Objects::nonNull)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
+
+    private BigDecimal limiteDeAjuste(BigDecimal total) {
+        BigDecimal doisPorCento = total.abs().multiply(new BigDecimal("0.02"));
+        return doisPorCento.max(new BigDecimal("5.00"));
+    }
+
+    private boolean resultadoBateComTotal(FaturaRegexService.ResultadoRegex resultado) {
+        if (resultado == null || resultado.transacoes().isEmpty() || resultado.valorTotalFatura() == null) {
+            return false;
+        }
+        BigDecimal soma = somar(resultado.transacoes());
+        return soma.subtract(resultado.valorTotalFatura()).abs().compareTo(UM_CENTAVO) <= 0;
+    }
+
+    private BigDecimal somar(List<TransacaoFaturaDTO> transacoes) {
+        return FaturaRegexService.somar(transacoes);
+    }
+
+    private record ResultadoAnalise(List<TransacaoFaturaDTO> transacoes,
+                                    BigDecimal valorTotalFatura,
+                                    PadraoFatura padrao,
+                                    boolean usouFallbackLocal) {
     }
 
     private void validarArquivo(MultipartFile arquivo) {
@@ -202,15 +328,7 @@ public class FaturaAnaliseService {
                                                     boolean consentimentoPdfIa,
                                                     String mensagem) {
         // Despesas somam e receitas (estornos/créditos) descontam do total da fatura.
-        BigDecimal soma = transacoes.stream()
-                .map(transacao -> {
-                    BigDecimal valor = transacao.valor();
-                    if (valor == null) {
-                        return BigDecimal.ZERO;
-                    }
-                    return transacao.tipo() == TipoTransacao.RECEITA ? valor.negate() : valor;
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        BigDecimal soma = somar(transacoes);
 
         BigDecimal diferenca = valorTotalFatura == null ? null : valorTotalFatura.subtract(soma);
         boolean alertaSoma = diferenca != null && diferenca.abs().compareTo(UM_CENTAVO) > 0;
