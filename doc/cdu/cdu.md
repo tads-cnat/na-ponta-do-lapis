@@ -17,7 +17,7 @@
 ## 2. Listagem dos Detalhamentos dos Casos de Uso
 
 | Caso de Uso | Documentação | Backend | Frontend |
-|------------|:-------:|:--------:|:------------:|
+| :---------: | :----------: | :-----: | :------: |
 | [CDU-01 - Login](./cdu-01/detalhamento-01.md) | ✅ | ✅ | ✅ |
 | [CDU-02 - Logout](./cdu-02/detalhamento-02.md) | ✅ | ✅ | ✅ |
 | [CDU-03 - Cadastro Usuario](./cdu-03/detalhamento-03.md) | ✅ | ✅ | ✅ |
