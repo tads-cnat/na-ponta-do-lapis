@@ -100,7 +100,7 @@ public class FaturaAnaliseService {
             return new FaturaAnaliseResponseDTO(
                     List.of(), "NENHUMA", null,
                     BigDecimal.ZERO, null, null, false, null,
-                    true, ocrUtilizado, false, true, false,
+                    true, ocrUtilizado, false, true, false, false,
                     "Não foi possível ler o texto deste PDF. Ele parece ser escaneado. "
                             + "Você pode autorizar o envio do PDF a um provedor de IA multimodal."
             );
@@ -212,7 +212,7 @@ public class FaturaAnaliseService {
         PadraoFatura padraoEfetivo = padraoSalvo != null ? padraoSalvo : (padraoCandidato != null ? padraoCandidato : avaliado.padrao());
         return montarResposta(avaliado.transacoes(), avaliado.valorTotalFatura(),
                 avaliado.usouFallbackLocal() ? "REGEX" : "IA",
-                padraoEfetivo, false, ocrUtilizado, false, null);
+                padraoEfetivo, false, ocrUtilizado, false, padraoSalvo != null, null);
     }
 
     private FaturaIaService.ContextoFaturaIa contextoIa(String texto) {
@@ -314,7 +314,7 @@ public class FaturaAnaliseService {
         return new FaturaAnaliseResponseDTO(
                 List.of(), "NENHUMA", null,
                 BigDecimal.ZERO, null, null, false, null,
-                pdfEscaneado, ocrUtilizado, false, false, true,
+                pdfEscaneado, ocrUtilizado, false, false, true, false,
                 mensagem
         );
     }
@@ -326,6 +326,19 @@ public class FaturaAnaliseService {
                                                     boolean pdfEscaneado,
                                                     boolean ocrUtilizado,
                                                     boolean consentimentoPdfIa,
+                                                    String mensagem) {
+        return montarResposta(transacoes, valorTotalFatura, fonte, padrao, pdfEscaneado, ocrUtilizado,
+                consentimentoPdfIa, false, mensagem);
+    }
+
+    private FaturaAnaliseResponseDTO montarResposta(List<TransacaoFaturaDTO> transacoes,
+                                                    BigDecimal valorTotalFatura,
+                                                    String fonte,
+                                                    PadraoFatura padrao,
+                                                    boolean pdfEscaneado,
+                                                    boolean ocrUtilizado,
+                                                    boolean consentimentoPdfIa,
+                                                    boolean padraoNovoAprendido,
                                                     String mensagem) {
         // Despesas somam e receitas (estornos/créditos) descontam do total da fatura.
         BigDecimal soma = somar(transacoes);
@@ -347,6 +360,7 @@ public class FaturaAnaliseService {
                 consentimentoPdfIa,
                 false,
                 false,
+                padraoNovoAprendido,
                 mensagem
         );
     }

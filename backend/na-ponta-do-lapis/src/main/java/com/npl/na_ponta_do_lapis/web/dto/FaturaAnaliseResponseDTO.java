@@ -24,6 +24,8 @@ public record FaturaAnaliseResponseDTO(
     boolean precisaConsentimentoPdf,
     @Schema(description = "Quando verdadeiro, a leitura local falhou e o usuário precisa ativar o uso de IA para continuar")
     boolean precisaHabilitarIa,
+    @Schema(description = "Quando verdadeiro, a IA conseguiu aprender e salvar um novo padrão reutilizável no banco")
+    boolean padraoNovoAprendido,
     String mensagem
 ) {
 }

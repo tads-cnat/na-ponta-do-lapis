@@ -400,6 +400,13 @@
                 </div>
             }
 
+            @if (carregando) {
+                <div class="w-full flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
+                    <p-progressSpinner strokeWidth="4" styleClass="w-6 h-6 shrink-0" />
+                    <span class="text-xs sm:text-sm font-medium text-slate-700 animate-pulse">{{ etapaAnalise }}</span>
+                </div>
+            }
+
             <div class="flex flex-col sm:flex-row gap-3 w-full justify-end mt-1">
                 <p-button label="Cancelar" severity="secondary" [outlined]="true"
                     styleClass="rounded-xl! w-full sm:w-auto"
@@ -483,7 +490,8 @@
     </p-dialog>
 
     <p-dialog header="Revisar Transações" [(visible)]="exibirDialogRevisao" [modal]="true"
-        [breakpoints]="{ '960px': '90vw', '640px': '95vw' }" [style]="{ width: '900px' }" [maximizable]="true">
+        [breakpoints]="{ '960px': '90vw', '640px': '95vw' }" [style]="{ width: '920px' }"
+        [contentStyle]="{ 'max-height': '72vh', 'overflow-y': 'auto' }" [maximizable]="true">
         <div class="flex flex-col gap-4 py-2">
             @if (carregando) {
                 <div class="flex flex-col items-center gap-4 py-8">
@@ -492,6 +500,7 @@
                 </div>
             } @else {
                 @if (faturaAnalise) {
+                    <!-- Tag e Informações do Emissor -->
                     <div class="flex flex-wrap items-center gap-2">
                         <p-tag
                             [value]="faturaAnalise.fonte === 'REGEX' ? 'Leitura automática' : (faturaAnalise.fonte === 'IA' ? 'Leitura com IA' : 'Origem desconhecida')"
@@ -518,6 +527,19 @@
                         </span>
                     </div>
 
+                    <!-- Banner de Novo Padrão Aprendido (Efeito UAU) -->
+                    @if (faturaAnalise.padraoNovoAprendido) {
+                        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs shadow-xs animate-fade-in">
+                            <i class="pi pi-sparkles text-purple-600 text-lg mt-0.5 shrink-0"></i>
+                            <div class="flex flex-col gap-0.5">
+                                <span class="font-bold text-sm text-purple-900">Novo padrão aprendido para {{ faturaAnalise.emissor || 'este banco' }}!</span>
+                                <span class="text-purple-700">
+                                    O sistema memorizou e calibrou o formato desta fatura. Suas próximas faturas desse mesmo banco serão lidas de forma instantânea, automática e sem gastar tokens de IA.
+                                </span>
+                            </div>
+                        </div>
+                    }
+
                     <!-- Card Resumo Financeiro da Fatura -->
                     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border transition-colors"
                          [ngClass]="alertaSomaRevisao ? 'bg-amber-50/80 border-amber-200' : 'bg-emerald-50/70 border-emerald-200'">
@@ -531,7 +553,7 @@
                                 </div>
                             }
                             <div class="flex flex-col">
-                                <span class="text-xs text-slate-500 font-medium">Soma das transações</span>
+                                <span class="text-xs text-slate-500 font-medium">Soma das transações selecionadas</span>
                                 <span class="font-bold text-base" [ngClass]="alertaSomaRevisao ? 'text-amber-800' : 'text-emerald-700'">
                                     {{ somaTransacoesRevisao | currency:'BRL' }}
                                 </span>
@@ -560,8 +582,8 @@
                         <div class="flex items-start gap-2 p-2.5 rounded-lg bg-amber-100/70 text-xs text-amber-900 border border-amber-200">
                             <i class="pi pi-info-circle text-amber-600 mt-0.5"></i>
                             <span>
-                                A soma atual das transações não bate com o total da fatura.
-                                Confira se alguma transação ficou de fora ou se os valores editados estão corretos.
+                                A soma das transações selecionadas diverge do total da fatura.
+                                Confira se alguma transação foi desmarcada indevidamente ou se os valores editados estão corretos.
                             </span>
                         </div>
                     }
@@ -573,18 +595,41 @@
                 }
 
                 <div class="flex flex-col gap-2">
-                    <label class="font-bold text-sm">Selecione a conta</label>
+                    <label class="font-bold text-sm">Selecione a conta para lançamento</label>
                     <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
                         [(ngModel)]="contaSelecionadaRevisao" placeholder="Selecione a conta..." [appendTo]="'body'"
                         styleClass="w-full"></p-select>
                 </div>
 
-                <div class="flex flex-col gap-3 mt-2 max-h-[26rem] overflow-y-auto">
+                <!-- Barra de Ações e Seleção em Lote -->
+                <div class="flex items-center justify-between px-1 pt-1 text-xs text-slate-600 border-b border-slate-100 pb-2">
+                    <label class="flex items-center gap-2 cursor-pointer font-semibold text-slate-700 select-none hover:text-slate-900">
+                        <input type="checkbox"
+                               [checked]="todasSelecionadas"
+                               (change)="alternarSelecionarTodas()"
+                               class="w-4 h-4 rounded text-emerald-600 accent-emerald-600 cursor-pointer" />
+                        <span>Selecionar todas as transações</span>
+                    </label>
+                    <span class="font-medium text-slate-500">
+                        <strong class="text-slate-800">{{ transacoesSelecionadas.length }}</strong> de {{ transacoesExtraidas.length }} selecionada(s)
+                    </span>
+                </div>
+
+                <!-- Lista de Transações (sem barra de rolagem interna dupla) -->
+                <div class="flex flex-col gap-3">
                     @for (t of transacoesExtraidas; track $index) {
-                        <div class="flex flex-col gap-2 p-3 border border-slate-200 rounded-xl bg-slate-50">
+                        <div class="flex flex-col gap-2 p-3 border rounded-xl transition-all"
+                             [ngClass]="t.selecionada === false ? 'opacity-55 bg-slate-100/60 border-dashed border-slate-300' : 'bg-slate-50 border-slate-200'">
                             <div class="grid grid-cols-1 sm:grid-cols-12 gap-2 items-center">
-                                <div class="sm:col-span-3 flex flex-col gap-1">
-                                    <label class="text-xs font-semibold text-slate-500">Descrição</label>
+                                <div class="sm:col-span-4 flex flex-col gap-1">
+                                    <div class="flex items-center justify-between">
+                                        <label class="flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-600 select-none">
+                                            <input type="checkbox"
+                                                   [(ngModel)]="t.selecionada"
+                                                   class="w-4 h-4 rounded text-emerald-600 accent-emerald-600 cursor-pointer" />
+                                            <span>Descrição</span>
+                                        </label>
+                                    </div>
                                     <input pInputText [(ngModel)]="t.descricao" class="w-full text-sm" />
                                 </div>
                                 <div class="sm:col-span-2 flex flex-col gap-1">
@@ -604,14 +649,17 @@
                                         styleClass="w-full text-sm"></p-select>
                                 </div>
                                 <div class="sm:col-span-2 flex flex-col gap-1">
-                                    <label class="text-xs font-semibold text-slate-500">Categoria</label>
+                                    <div class="flex items-center justify-between">
+                                        <label class="text-xs font-semibold text-slate-500">Categoria</label>
+                                        <button type="button"
+                                            class="text-red-500 hover:text-red-700 text-xs p-0.5 rounded cursor-pointer"
+                                            title="Remover lançamento"
+                                            (click)="removerTransacaoExtraida($index)">
+                                            <i class="pi pi-trash"></i>
+                                        </button>
+                                    </div>
                                     <p-select [options]="opcoesCategoriaNome" [(ngModel)]="t.categoria"
                                         placeholder="Cat." [appendTo]="'body'" styleClass="w-full text-sm"></p-select>
-                                </div>
-                                <div class="sm:col-span-1 flex items-end justify-center pt-4">
-                                    <p-button icon="pi pi-trash"
-                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
-                                        (onClick)="removerTransacaoExtraida($index)"></p-button>
                                 </div>
                             </div>
 
@@ -635,16 +683,26 @@
                         </div>
                     }
                 </div>
-
-                @if (transacoesExtraidas.length > 0) {
-                    <div class="flex justify-end mt-4">
-                        <p-button styleClass="rounded-xl! border-[#11b981]! bg-[#11b981]! h-12 px-6"
-                            label="Confirmar Transações" [disabled]="!contaSelecionadaRevisao"
-                            (onClick)="confirmarTransacoes()"></p-button>
-                    </div>
-                }
             }
         </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-3 w-full pt-1">
+                <span class="text-xs text-slate-500">
+                    <strong class="text-slate-800">{{ transacoesSelecionadas.length }}</strong> transação(ões) selecionada(s) para importação
+                </span>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    <p-button label="Cancelar" severity="secondary" [outlined]="true"
+                        styleClass="rounded-xl! w-full sm:w-auto"
+                        (onClick)="exibirDialogRevisao = false"></p-button>
+                    <p-button styleClass="rounded-xl! border-[#11b981]! bg-[#11b981]! h-11 px-5 w-full sm:w-auto"
+                        [label]="'Confirmar (' + transacoesSelecionadas.length + ')'"
+                        icon="pi pi-check"
+                        [disabled]="!contaSelecionadaRevisao || transacoesSelecionadas.length === 0"
+                        (onClick)="confirmarTransacoes()"></p-button>
+                </div>
+            </div>
+        </ng-template>
     </p-dialog>
 
     <p-dialog header="Parcelas futuras" [(visible)]="exibirDialogParcelasFuturas" [modal]="true"

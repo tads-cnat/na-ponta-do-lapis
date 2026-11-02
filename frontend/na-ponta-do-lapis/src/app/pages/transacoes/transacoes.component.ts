@@ -58,6 +58,8 @@ export class TransacoesComponent {
   transacoesExtraidas: ITransacaoFatura[] = [];
   contaSelecionadaRevisao: number | null = null;
   faturaAnalise: FaturaAnaliseResponse | null = null;
+  etapaAnalise: string = 'Lendo páginas do arquivo...';
+  private intervaloEtapas: any = null;
   faturaPendenteConsentimento: FaturaAnaliseResponse | null = null;
   precisaAtivarIa: boolean = false;
 
@@ -398,10 +400,12 @@ export class TransacoesComponent {
     this.erroUpload = null;
     this.precisaAtivarIa = false;
     this.erroConsentimento = null;
+    this.iniciarMensagensProgresso();
 
     this.transacoesService.analisarFatura(this.arquivoSelecionado, opcoes).subscribe({
       next: (res: FaturaAnaliseResponse) => {
         this.carregando = false;
+        this.pararMensagensProgresso();
 
         if (res.precisaHabilitarIa) {
           this.precisaAtivarIa = true;
@@ -425,6 +429,7 @@ export class TransacoesComponent {
       },
       error: (err: HttpErrorResponse) => {
         this.carregando = false;
+        this.pararMensagensProgresso();
         const mensagem = this.mensagemErroFatura(err);
         if (this.exibirDialogConsentimento) {
           this.carregandoConsentimento = false;
@@ -444,7 +449,8 @@ export class TransacoesComponent {
     this.transacoesExtraidas = res.transacoes.map(t => ({
       ...t,
       tipo: t.tipo ?? 'DESPESA',
-      data: this.paraDataLocal(t.data)
+      data: this.paraDataLocal(t.data),
+      selecionada: true
     }));
     this.exibirDialogUpload = false;
     this.exibirDialogConsentimento = false;
@@ -565,8 +571,43 @@ export class TransacoesComponent {
     this.transacoesExtraidas.splice(index, 1);
   }
 
+  get transacoesSelecionadas(): ITransacaoFatura[] {
+    return this.transacoesExtraidas.filter(t => t.selecionada !== false);
+  }
+
+  get todasSelecionadas(): boolean {
+    return this.transacoesExtraidas.length > 0 && this.transacoesExtraidas.every(t => t.selecionada !== false);
+  }
+
+  alternarSelecionarTodas() {
+    const marcar = !this.todasSelecionadas;
+    this.transacoesExtraidas.forEach(t => t.selecionada = marcar);
+  }
+
+  iniciarMensagensProgresso() {
+    const mensagens = [
+      'Lendo páginas e estrutura do documento...',
+      'Identificando emissor e transações...',
+      'Conferindo conciliação contábil...',
+      'Finalizando leitura e ajustes...'
+    ];
+    let idx = 0;
+    this.etapaAnalise = mensagens[0];
+    clearInterval(this.intervaloEtapas);
+    this.intervaloEtapas = setInterval(() => {
+      idx = (idx + 1) % mensagens.length;
+      this.etapaAnalise = mensagens[idx];
+      this.cdr.detectChanges();
+    }, 2500);
+  }
+
+  pararMensagensProgresso() {
+    clearInterval(this.intervaloEtapas);
+    this.intervaloEtapas = null;
+  }
+
   get somaTransacoesRevisao(): number {
-    return this.transacoesExtraidas.reduce((acc, t) => {
+    return this.transacoesSelecionadas.reduce((acc, t) => {
       const valor = Number(t.valor) || 0;
       return t.tipo === 'RECEITA' ? acc - valor : acc + valor;
     }, 0);
@@ -585,7 +626,7 @@ export class TransacoesComponent {
   }
 
   confirmarTransacoes() {
-    if (!this.contaSelecionadaRevisao || this.transacoesExtraidas.length === 0) return;
+    if (!this.contaSelecionadaRevisao || this.transacoesSelecionadas.length === 0) return;
 
     if (this.parcelamentoInvalido()) {
       this.messageService.add({
@@ -597,7 +638,7 @@ export class TransacoesComponent {
       return;
     }
 
-    const transacoesParaEnviar: ITransacaoFatura[] = this.transacoesExtraidas.map(t => ({
+    const transacoesParaEnviar: ITransacaoFatura[] = this.transacoesSelecionadas.map(t => ({
       descricao: t.descricao.trim(),
       valor: Number(t.valor),
       data: this.dataParaIso(t.data),
