@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record TransacaoRequestDTO(
-        @Size(min = 1, max = 254)
+        @Size(min = 1, max = 100, message = "A descrição deve ter entre 1 e 100 caracteres")
         @NotNull(message = "A Descrição não pode ser null!")
         @NotBlank(message = "O campo não pode estar vazio!")
         String descricao,

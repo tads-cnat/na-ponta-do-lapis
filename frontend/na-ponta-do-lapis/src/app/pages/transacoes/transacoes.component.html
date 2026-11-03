@@ -240,13 +240,13 @@
                             <th pSortableColumn="estado" class="bg-[#F8F8FC]! text-slate-700! w-[120px] cursor-pointer">
                                 Situação <p-sortIcon field="estado"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="valor" class="bg-[#F8F8FC]! text-slate-700! w-[140px] cursor-pointer text-right!">
+                            <th pSortableColumn="valor" class="bg-[#F8F8FC]! text-slate-700! w-[150px] cursor-pointer text-right! pr-8!">
                                 <div class="flex items-center justify-end gap-1.5 w-full">
                                     <span>Valor</span>
                                     <p-sortIcon field="valor"></p-sortIcon>
                                 </div>
                             </th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! w-[96px] text-center">Ações</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! w-[110px] text-center! pl-4!">Ações</th>
                         </tr>
                     </ng-template>
 
@@ -302,13 +302,13 @@
                                     </button>
                                 }
                             </td>
-                            <td class="text-right! whitespace-nowrap">
-                                <span class="tabular-nums text-sm"
-                                    [class]="t.tipo === 'RECEITA' ? 'font-bold text-emerald-600' : 'font-semibold text-slate-800'">
+                            <td class="text-right! whitespace-nowrap pr-8!">
+                                <span class="tabular-nums text-sm font-semibold"
+                                    [class]="t.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-slate-800'">
                                     {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency: 'BRL' }}
                                 </span>
                             </td>
-                            <td>
+                            <td class="pl-4! whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <p-button icon="pi pi-pencil"
                                         pTooltip="Editar transação" tooltipPosition="top"
@@ -389,8 +389,13 @@
             <div class="flex flex-col gap-4 mt-4 px-2 sm:px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Descrição</label>
-                        <input pInputText formControlName="descricao" placeholder="Ex: Internet" class="w-full" />
+                        <div class="flex justify-between items-center">
+                            <label class="font-bold text-sm">Descrição</label>
+                            <span class="text-xs text-slate-400 font-medium">
+                                {{ formTransacao.get('descricao')?.value?.length || 0 }}/100
+                            </span>
+                        </div>
+                        <input pInputText formControlName="descricao" maxlength="100" placeholder="Ex: Internet fibra" class="w-full" />
                     </div>
 
                     <div class="flex flex-col gap-1">

@@ -176,7 +176,7 @@ export class TransacoesComponent {
     private router: Router
   ) {
     this.formTransacao = this.fb.group({
-      descricao: ['', [Validators.required, Validators.minLength(3)]],
+      descricao: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       idCategoria: ['', [Validators.required]],
       valor: [0, [Validators.required, Validators.min(0.01)]],
       idContaFinanceira: ['', [Validators.required]],
