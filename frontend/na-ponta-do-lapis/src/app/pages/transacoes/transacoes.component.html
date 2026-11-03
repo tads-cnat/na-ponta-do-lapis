@@ -218,39 +218,35 @@
                 </div>
 
                 <p-table [value]="transacoesDados" [(selection)]="transacoesMarcadas" dataKey="id" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
-                    [scrollable]="true" scrollDirection="horizontal" responsiveLayout="scroll"
-                    sortField="dataHora" [sortOrder]="-1" styleClass="p-datatable-sm w-full">
+                    responsiveLayout="scroll" sortField="dataHora" [sortOrder]="-1" styleClass="p-datatable-sm w-full">
 
                     <ng-template pTemplate="header">
                         <tr>
-                            <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]">
+                            <th class="bg-[#F8F8FC]! text-slate-700! w-[48px]">
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
-                            <th pSortableColumn="marcador.nome" class="bg-[#F8F8FC]! text-slate-700! min-w-[140px] cursor-pointer">
-                                Marcador <p-sortIcon field="marcador.nome"></p-sortIcon>
-                            </th>
-                            <th pSortableColumn="descricao" class="bg-[#F8F8FC]! text-slate-700! min-w-[220px] cursor-pointer">
-                                Descrição <p-sortIcon field="descricao"></p-sortIcon>
-                            </th>
-                            <th pSortableColumn="categoria.nome" class="bg-[#F8F8FC]! text-slate-700! min-w-[140px] cursor-pointer">
-                                Categoria <p-sortIcon field="categoria.nome"></p-sortIcon>
-                            </th>
-                            <th pSortableColumn="conta.nome" class="bg-[#F8F8FC]! text-slate-700! min-w-[140px] cursor-pointer">
-                                Conta <p-sortIcon field="conta.nome"></p-sortIcon>
-                            </th>
-                            <th pSortableColumn="dataHora" class="bg-[#F8F8FC]! text-slate-700! min-w-[120px] cursor-pointer">
+                            <th pSortableColumn="dataHora" class="bg-[#F8F8FC]! text-slate-700! w-[110px] cursor-pointer">
                                 Data <p-sortIcon field="dataHora"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="tipo" class="bg-[#F8F8FC]! text-slate-700! min-w-[100px] cursor-pointer">
-                                Tipo <p-sortIcon field="tipo"></p-sortIcon>
+                            <th pSortableColumn="descricao" class="bg-[#F8F8FC]! text-slate-700! min-w-[200px] max-w-[320px] cursor-pointer">
+                                Descrição <p-sortIcon field="descricao"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="estado" class="bg-[#F8F8FC]! text-slate-700! min-w-[110px] cursor-pointer">
-                                Estado <p-sortIcon field="estado"></p-sortIcon>
+                            <th pSortableColumn="categoria.nome" class="bg-[#F8F8FC]! text-slate-700! w-[140px] cursor-pointer">
+                                Categoria <p-sortIcon field="categoria.nome"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="valor" class="bg-[#F8F8FC]! text-slate-700! min-w-[120px] cursor-pointer">
-                                Valor <p-sortIcon field="valor"></p-sortIcon>
+                            <th pSortableColumn="conta.nome" class="bg-[#F8F8FC]! text-slate-700! w-[130px] cursor-pointer">
+                                Conta <p-sortIcon field="conta.nome"></p-sortIcon>
                             </th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Ações</th>
+                            <th pSortableColumn="estado" class="bg-[#F8F8FC]! text-slate-700! w-[120px] cursor-pointer">
+                                Situação <p-sortIcon field="estado"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="valor" class="bg-[#F8F8FC]! text-slate-700! w-[140px] cursor-pointer text-right!">
+                                <div class="flex items-center justify-end gap-1.5 w-full">
+                                    <span>Valor</span>
+                                    <p-sortIcon field="valor"></p-sortIcon>
+                                </div>
+                            </th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! w-[96px] text-center">Ações</th>
                         </tr>
                     </ng-template>
 
@@ -259,65 +255,61 @@
                             <td>
                                 <p-tableCheckbox [value]="t" />
                             </td>
-                            <td class="whitespace-nowrap">
-                                @if (t.marcador) {
-                                <span class="pi pi-bookmark-fill mr-2" [style.color]="t.marcador.cor"></span>
-                                <span class="font-medium text-slate-700">{{ t.marcador.nome }}</span>
-                                } @else {
-                                <span class="text-gray-400 italic text-xs">Sem marcador</span>
-                                }
-                            </td>
                             <td>
-                                <div class="flex items-center gap-2 whitespace-nowrap">
-                                    <span class="font-medium text-slate-800">{{ t.descricao }}</span>
+                                <span class="text-slate-600 text-xs font-medium whitespace-nowrap">{{ t.dataHora | date:'dd/MM/yyyy' }}</span>
+                            </td>
+                            <td class="max-w-[240px] lg:max-w-[320px]">
+                                <div class="flex items-center gap-1.5 py-0.5">
+                                    <span class="font-semibold text-slate-800 text-sm truncate"
+                                        [pTooltip]="t.descricao" tooltipPosition="top">
+                                        {{ t.descricao }}
+                                    </span>
                                     @if (t.numeroParcela && t.totalParcelas) {
                                         <p-tag
                                             [value]="t.numeroParcela + '/' + t.totalParcelas"
                                             severity="warn"
                                             [rounded]="true"
-                                            styleClass="text-xs cursor-pointer hover:opacity-85 transition-opacity"
+                                            styleClass="text-[11px] font-semibold cursor-pointer hover:opacity-80 transition-opacity shrink-0"
                                             pTooltip="Ver parcelas desta compra"
                                             tooltipPosition="top"
                                             (click)="abrirGrupoParcelamento(t)"></p-tag>
                                     }
+                                    @if (t.marcador) {
+                                        <span class="inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-md shrink-0"
+                                            [style.backgroundColor]="t.marcador.cor ? t.marcador.cor + '18' : '#f1f5f9'"
+                                            [style.color]="t.marcador.cor || '#475569'">
+                                            <i class="pi pi-bookmark-fill text-[9px] mr-1"></i>{{ t.marcador.nome }}
+                                        </span>
+                                    }
                                 </div>
                             </td>
-                            <td class="whitespace-nowrap text-slate-700">{{ t.categoria?.nome }}</td>
-                            <td class="whitespace-nowrap text-slate-700">{{ t.conta?.nome }}</td>
-                            <td class="text-slate-600 whitespace-nowrap">{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
-                            <td>
-                                <p-tag [value]="t.tipo === 'RECEITA' ? 'Receita' : 'Despesa'" [style]="{ 
-                                'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340', 
-                                'color': '#ffffff' 
-                                }" styleClass="text-xs"></p-tag>
+                            <td class="whitespace-nowrap text-xs text-slate-700 font-medium">
+                                {{ t.categoria?.nome || '-' }}
+                            </td>
+                            <td class="whitespace-nowrap text-xs text-slate-600 font-medium">
+                                {{ t.conta?.nome || '-' }}
                             </td>
                             <td>
-                                <p-tag [value]="t.estado === 'REALIZADA' ? 'Realizada' : 'Pendente'" [style]="{ 
-                                'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1', 
-                                'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74' 
-                                }" styleClass="text-xs"></p-tag>
+                                @if (t.estado === 'REALIZADA') {
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                        <i class="pi pi-check text-[10px]"></i> Realizada
+                                    </span>
+                                } @else {
+                                    <button type="button" (click)="confirmarPagamento(t)"
+                                        pTooltip="Clique para confirmar pagamento" tooltipPosition="top"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors cursor-pointer">
+                                        <i class="pi pi-clock text-[10px]"></i> Pendente
+                                    </button>
+                                }
                             </td>
-                            <td class="whitespace-nowrap">
-                                <span [class]="t.tipo === 'RECEITA' ? 'font-bold text-emerald-600' : 'font-semibold text-slate-800'">
-                                    {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency: 'BRL'}}
+                            <td class="text-right! whitespace-nowrap">
+                                <span class="tabular-nums text-sm"
+                                    [class]="t.tipo === 'RECEITA' ? 'font-bold text-emerald-600' : 'font-semibold text-slate-800'">
+                                    {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency: 'BRL' }}
                                 </span>
                             </td>
                             <td>
-                                <div class="flex gap-2">
-                                    @if (t.estado === 'PENDENTE') {
-                                        <p-button icon="pi pi-check"
-                                            pTooltip="Confirmar pagamento (marcar como realizada)"
-                                            tooltipPosition="top"
-                                            styleClass="text-emerald-700! bg-emerald-100! border-emerald-200! h-8 w-8"
-                                            (onClick)="confirmarPagamento(t)"></p-button>
-                                    }
-                                    @if (t.grupoParcelamento) {
-                                        <p-button icon="pi pi-calendar"
-                                            pTooltip="Ver parcelas (compra parcelada)"
-                                            tooltipPosition="top"
-                                            styleClass="text-[#1976d2]! bg-[#e3f2fd]! border-[#e3f2fd]! h-8 w-8"
-                                            (onClick)="abrirGrupoParcelamento(t)"></p-button>
-                                    }
+                                <div class="flex items-center justify-center gap-1.5">
                                     <p-button icon="pi pi-pencil"
                                         pTooltip="Editar transação" tooltipPosition="top"
                                         styleClass="text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]! h-8 w-8"
@@ -333,7 +325,7 @@
 
                     <ng-template pTemplate="emptymessage">
                         <tr>
-                            <td colspan="10" class="text-center py-12">
+                            <td colspan="8" class="text-center py-12">
                                 <div class="flex flex-col items-center justify-center gap-3">
                                     <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
                                         <i class="pi pi-search text-2xl"></i>
