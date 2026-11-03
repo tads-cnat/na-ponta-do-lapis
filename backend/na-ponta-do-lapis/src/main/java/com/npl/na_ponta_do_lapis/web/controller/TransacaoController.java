@@ -4,6 +4,7 @@ import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.service.TransacaoService;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TransacoesExclusaoLoteDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacoesResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -90,6 +91,15 @@ public class TransacaoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remover(@PathVariable Long id) throws AccessDeniedException {
         transacaoService.removerTransacao(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @Operation(summary = "Deletar Transações em Lote")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PostMapping("/excluir-lote")
+    public ResponseEntity<Void> removerEmLote(@Valid @RequestBody TransacoesExclusaoLoteDTO dto)
+            throws AccessDeniedException {
+        transacaoService.removerTransacoesEmLote(dto.ids());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 

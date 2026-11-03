@@ -8,76 +8,268 @@
 
             <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
 
-                <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4 mb-4">
+                <div class="flex flex-col gap-4 mb-4">
+                    <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4">
+                        <div class="flex items-center gap-3">
+                            <h1 class="text-amber-500 font-bold text-2xl whitespace-nowrap m-0">
+                                Movimentações
+                            </h1>
+                            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-200/70 text-slate-700 font-semibold">
+                                {{ transacoesDados.length }} {{ transacoesDados.length === 1 ? 'item' : 'itens' }}
+                            </span>
+                        </div>
 
-                    <h1 class="text-amber-400 font-bold text-2xl text-center xl:text-left whitespace-nowrap">
-                        Movimentações
-                    </h1>
+                        <div class="flex flex-wrap gap-2 justify-start xl:justify-end items-center">
+                            <p-button
+                                styleClass="font-semibold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm px-3 py-2 shadow-xs"
+                                (onClick)="abrirDialogEscolha()">
+                                <i class="pi pi-plus mr-1"></i> Nova Transação
+                            </p-button>
 
-                    <div class="flex flex-wrap xl:flex-nowrap gap-2 justify-center xl:justify-end items-center">
-                        <p-button
-                            styleClass="font-bold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm sm:text-base px-2 py-1"
-                            (onClick)="abrirDialogEscolha()">
-                            <i class="pi pi-plus mr-1"></i> Adicionar Transação
-                        </p-button>
+                            <p-button
+                                [styleClass]="painelFiltrosAberto || qtdFiltrosAtivos > 0
+                                    ? 'font-semibold text-[#7843cd]! bg-purple-50! border-[#7843cd]! rounded-xl! text-sm px-3 py-2'
+                                    : 'font-semibold text-slate-700! bg-white! border-slate-300! rounded-xl! text-sm px-3 py-2'"
+                                (onClick)="alternarPainelFiltros()">
+                                <i class="pi pi-filter mr-1.5"></i>
+                                <span>Filtrar</span>
+                                @if (qtdFiltrosAtivos > 0) {
+                                    <span class="ml-1.5 px-1.5 py-0.5 text-xs font-bold rounded-full bg-[#7843cd] text-white">
+                                        {{ qtdFiltrosAtivos }}
+                                    </span>
+                                }
+                            </p-button>
 
-                        <p-button [disabled]="false"
-                            styleClass="text-[#6b7280]! !bg-[#fafafa] !text-slate-700 !border-[#e2e4e4] rounded-xl! text-sm sm:text-base px-2 py-1">
-                            <i class="pi pi-sliders-h mr-1" pButtonIcon></i> Filtrar
-                        </p-button>
+                            <p-button
+                                styleClass="font-semibold text-[#1976d2]! bg-blue-50/50! border-blue-200! rounded-xl! text-sm px-3 py-2"
+                                (onClick)="abrirDialogMarcador()">
+                                <i class="pi pi-bookmark-fill mr-1" pButtonIcon></i> Marcadores
+                            </p-button>
 
-                        <p-button
-                            styleClass="text-[#1976d2]! !bg-[#fafafa] !text-slate-700 !border-[#1976d2] rounded-xl! text-sm sm:text-base px-2 py-1"
-                            (onClick)="abrirDialogMarcador()">
-                            <i class="pi pi-bookmark-fill mr-1" pButtonIcon></i> Marcador
-                        </p-button>
-
-                        <p-floatlabel class="w-full sm:w-auto mt-2 sm:mt-0">
-                            <p-iconfield>
-                                <p-inputicon class="pi pi-search" />
-                                <input pInputText #inputDescricao (input)="buscarPorDescricao(inputDescricao.value)"
-                                    id="buscar" autocomplete="on" class="w-full sm:w-auto rounded-xl" />
-                            </p-iconfield>
-                            <label for="buscar">Buscar</label>
-                        </p-floatlabel>
+                            <div class="relative w-full sm:w-64">
+                                <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none z-10"></i>
+                                <input pInputText [ngModel]="textoBusca" (ngModelChange)="buscarPorDescricao($event)"
+                                    placeholder="Buscar movimentação..."
+                                    class="w-full text-sm rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    style="padding-left: 2.5rem !important; padding-right: 2.25rem !important;" />
+                                @if (textoBusca) {
+                                    <button type="button" (click)="buscarPorDescricao('')"
+                                        class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer z-10"
+                                        title="Limpar busca">
+                                        <i class="pi pi-times text-xs"></i>
+                                    </button>
+                                }
+                            </div>
+                        </div>
                     </div>
+
+                    <!-- Painel de Filtros Retrátil -->
+                    @if (painelFiltrosAberto) {
+                        <div class="p-4 rounded-2xl bg-white border border-slate-200/80 shadow-xs flex flex-col gap-4 transition-all">
+                            <!-- Linha de Atalhos Rápidos de Período -->
+                            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-3 border-b border-slate-100">
+                                <span class="text-xs font-bold uppercase tracking-wider text-slate-400">Atalhos de período</span>
+                                <div class="flex flex-wrap gap-1.5">
+                                    <button type="button"
+                                        [class]="filtroPeriodoRapido === 'MES_ATUAL'
+                                            ? 'px-3 py-1 text-xs font-semibold rounded-lg bg-[#7843cd] text-white'
+                                            : 'px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700'"
+                                        (click)="selecionarPeriodoRapido('MES_ATUAL')">Este mês</button>
+                                    <button type="button"
+                                        [class]="filtroPeriodoRapido === 'MES_ANTERIOR'
+                                            ? 'px-3 py-1 text-xs font-semibold rounded-lg bg-[#7843cd] text-white'
+                                            : 'px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700'"
+                                        (click)="selecionarPeriodoRapido('MES_ANTERIOR')">Mês anterior</button>
+                                    <button type="button"
+                                        [class]="filtroPeriodoRapido === 'ULTIMOS_30'
+                                            ? 'px-3 py-1 text-xs font-semibold rounded-lg bg-[#7843cd] text-white'
+                                            : 'px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700'"
+                                        (click)="selecionarPeriodoRapido('ULTIMOS_30')">Últimos 30 dias</button>
+                                    <button type="button"
+                                        [class]="filtroPeriodoRapido === 'ANO_ATUAL'
+                                            ? 'px-3 py-1 text-xs font-semibold rounded-lg bg-[#7843cd] text-white'
+                                            : 'px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700'"
+                                        (click)="selecionarPeriodoRapido('ANO_ATUAL')">Ano atual</button>
+                                    <button type="button"
+                                        [class]="filtroPeriodoRapido === 'TODOS'
+                                            ? 'px-3 py-1 text-xs font-semibold rounded-lg bg-[#7843cd] text-white'
+                                            : 'px-3 py-1 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700'"
+                                        (click)="selecionarPeriodoRapido('TODOS')">Todo o histórico</button>
+                                </div>
+                            </div>
+
+                            <!-- Grid de Filtros -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-600">Tipo</label>
+                                    <p-select [options]="opcoesFiltroTipo" optionLabel="label" optionValue="value"
+                                        [(ngModel)]="filtroTipo" (onChange)="aplicarFiltros()"
+                                        styleClass="w-full text-sm" [appendTo]="'body'"></p-select>
+                                </div>
+
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-600">Estado de pagamento</label>
+                                    <p-select [options]="opcoesFiltroEstado" optionLabel="label" optionValue="value"
+                                        [(ngModel)]="filtroEstado" (onChange)="aplicarFiltros()"
+                                        styleClass="w-full text-sm" [appendTo]="'body'"></p-select>
+                                </div>
+
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-600">Conta financeira</label>
+                                    <p-select [options]="opcoesFiltroConta" optionLabel="nome" optionValue="id"
+                                        [(ngModel)]="filtroContaId" (onChange)="aplicarFiltros()"
+                                        styleClass="w-full text-sm" [appendTo]="'body'"></p-select>
+                                </div>
+
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-600">Categoria</label>
+                                    <p-select [options]="opcoesFiltroCategoria" optionLabel="nome" optionValue="id"
+                                        [(ngModel)]="filtroCategoriaId" (onChange)="aplicarFiltros()"
+                                        styleClass="w-full text-sm" [appendTo]="'body'"></p-select>
+                                </div>
+
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-600">Marcador</label>
+                                    <p-select [options]="opcoesFiltroMarcador" optionLabel="nome" optionValue="id"
+                                        [(ngModel)]="filtroMarcadorId" (onChange)="aplicarFiltros()"
+                                        styleClass="w-full text-sm" [appendTo]="'body'"></p-select>
+                                </div>
+
+                                <div class="flex flex-col gap-1 sm:col-span-2">
+                                    <label class="text-xs font-semibold text-slate-600">Intervalo de datas personalizado</label>
+                                    <p-datePicker [(ngModel)]="filtroDataRange" selectionMode="range" [readonlyInput]="true"
+                                        dateFormat="dd/mm/yy" placeholder="Selecione início e fim"
+                                        (onSelect)="aoMudarDataRange()" styleClass="w-full text-sm" [appendTo]="'body'"></p-datePicker>
+                                </div>
+
+                                <div class="flex items-end justify-end gap-2 pt-1 sm:col-span-1">
+                                    <p-button label="Limpar filtros" icon="pi pi-trash" [outlined]="true" severity="secondary"
+                                        size="small" styleClass="rounded-xl! text-xs w-full sm:w-auto"
+                                        [disabled]="qtdFiltrosAtivos === 0 && !textoBusca"
+                                        (onClick)="limparFiltros()"></p-button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+
+                    <!-- Barra de Resumo das Transações Filtradas -->
+                    @if (transacoesTodas.length > 0) {
+                        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3 rounded-2xl bg-white border border-slate-200/80 text-xs shadow-2xs">
+                            <div class="flex items-center gap-2.5 px-2">
+                                <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center text-emerald-600">
+                                    <i class="pi pi-arrow-down-left text-sm"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-slate-400 font-medium">Receitas no filtro</span>
+                                    <span class="font-bold text-emerald-600 text-sm">{{ totalReceitasFiltradas | currency:'BRL' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2.5 px-2 sm:border-l sm:border-slate-100">
+                                <div class="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
+                                    <i class="pi pi-arrow-up-right text-sm"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-slate-400 font-medium">Despesas no filtro</span>
+                                    <span class="font-bold text-rose-600 text-sm">{{ totalDespesasFiltradas | currency:'BRL' }}</span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2.5 px-2 sm:border-l sm:border-slate-100">
+                                <div class="w-8 h-8 rounded-lg bg-purple-100 flex items-center justify-center text-[#7843cd]">
+                                    <i class="pi pi-wallet text-sm"></i>
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-slate-400 font-medium">Balanço do período</span>
+                                    <span [class]="saldoFiltrado >= 0 ? 'font-bold text-emerald-600 text-sm' : 'font-bold text-rose-600 text-sm'">
+                                        {{ saldoFiltrado | currency:'BRL' }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <!-- Barra de Ações em Lote (Bulk Actions) -->
+                    @if (transacoesMarcadas.length > 0) {
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50/40 to-rose-50 border border-purple-200/80 shadow-xs animate-fadein">
+                            <div class="flex items-center gap-3 w-full sm:w-auto">
+                                <div class="w-8 h-8 rounded-xl bg-[#7843cd] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
+                                    {{ transacoesMarcadas.length }}
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-xs sm:text-sm font-semibold text-slate-800">
+                                        {{ transacoesMarcadas.length }} {{ transacoesMarcadas.length === 1 ? 'movimentação selecionada' : 'movimentações selecionadas' }}
+                                    </span>
+                                    <span class="text-xs text-slate-500">
+                                        Total selecionado: <span class="font-bold text-slate-700">{{ totalValorSelecionadas | currency:'BRL' }}</span>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                                <p-button label="Desmarcar todas" icon="pi pi-times" [outlined]="true" severity="secondary"
+                                    size="small" styleClass="rounded-xl! text-xs font-medium"
+                                    (onClick)="limparSelecao()"></p-button>
+                                <p-button label="Excluir selecionadas" icon="pi pi-trash" severity="danger"
+                                    size="small" styleClass="rounded-xl! text-xs font-semibold shadow-xs"
+                                    (onClick)="abrirConfirmacaoExcluirSelecionadas()"></p-button>
+                            </div>
+                        </div>
+                    }
                 </div>
 
-                <p-table [value]="transacoesDados" [paginator]="true" [rows]="5" [scrollable]="true"
-                    scrollDirection="horizontal" responsiveLayout="scroll" styleClass="p-datatable-sm w-full">
+                <p-table [value]="transacoesDados" [(selection)]="transacoesMarcadas" dataKey="id" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
+                    [scrollable]="true" scrollDirection="horizontal" responsiveLayout="scroll"
+                    sortField="dataHora" [sortOrder]="-1" styleClass="p-datatable-sm w-full">
 
                     <ng-template pTemplate="header">
                         <tr>
                             <th class="bg-[#F8F8FC]! text-slate-700! w-[50px]">
-                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox></th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Marcador</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[220px]">Descrição</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Categoria</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Conta</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Data</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[100px]">Tipo</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[110px]">Estado</th>
-                            <th class="bg-[#F8F8FC]! text-slate-700! min-w-[120px]">Valor</th>
+                                <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                            </th>
+                            <th pSortableColumn="marcador.nome" class="bg-[#F8F8FC]! text-slate-700! min-w-[140px] cursor-pointer">
+                                Marcador <p-sortIcon field="marcador.nome"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="descricao" class="bg-[#F8F8FC]! text-slate-700! min-w-[220px] cursor-pointer">
+                                Descrição <p-sortIcon field="descricao"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="categoria.nome" class="bg-[#F8F8FC]! text-slate-700! min-w-[140px] cursor-pointer">
+                                Categoria <p-sortIcon field="categoria.nome"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="conta.nome" class="bg-[#F8F8FC]! text-slate-700! min-w-[140px] cursor-pointer">
+                                Conta <p-sortIcon field="conta.nome"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="dataHora" class="bg-[#F8F8FC]! text-slate-700! min-w-[120px] cursor-pointer">
+                                Data <p-sortIcon field="dataHora"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="tipo" class="bg-[#F8F8FC]! text-slate-700! min-w-[100px] cursor-pointer">
+                                Tipo <p-sortIcon field="tipo"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="estado" class="bg-[#F8F8FC]! text-slate-700! min-w-[110px] cursor-pointer">
+                                Estado <p-sortIcon field="estado"></p-sortIcon>
+                            </th>
+                            <th pSortableColumn="valor" class="bg-[#F8F8FC]! text-slate-700! min-w-[120px] cursor-pointer">
+                                Valor <p-sortIcon field="valor"></p-sortIcon>
+                            </th>
                             <th class="bg-[#F8F8FC]! text-slate-700! min-w-[140px]">Ações</th>
                         </tr>
                     </ng-template>
 
                     <ng-template pTemplate="body" let-t>
-                        <tr>
+                        <tr class="hover:bg-slate-50/80 transition-colors">
                             <td>
                                 <p-tableCheckbox [value]="t" />
                             </td>
                             <td class="whitespace-nowrap">
                                 @if (t.marcador) {
                                 <span class="pi pi-bookmark-fill mr-2" [style.color]="t.marcador.cor"></span>
-                                <span>{{ t.marcador.nome }}</span>
+                                <span class="font-medium text-slate-700">{{ t.marcador.nome }}</span>
                                 } @else {
-                                <span class="text-gray-400 italic text-sm">Sem marcador</span>
+                                <span class="text-gray-400 italic text-xs">Sem marcador</span>
                                 }
                             </td>
                             <td>
                                 <div class="flex items-center gap-2 whitespace-nowrap">
-                                    <span>{{ t.descricao }}</span>
+                                    <span class="font-medium text-slate-800">{{ t.descricao }}</span>
                                     @if (t.numeroParcela && t.totalParcelas) {
                                         <p-tag
                                             [value]="t.numeroParcela + '/' + t.totalParcelas"
@@ -90,22 +282,26 @@
                                     }
                                 </div>
                             </td>
-                            <td class="whitespace-nowrap">{{ t.categoria.nome }}</td>
-                            <td class="whitespace-nowrap">{{ t.conta.nome }}</td>
-                            <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
+                            <td class="whitespace-nowrap text-slate-700">{{ t.categoria?.nome }}</td>
+                            <td class="whitespace-nowrap text-slate-700">{{ t.conta?.nome }}</td>
+                            <td class="text-slate-600 whitespace-nowrap">{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
                             <td>
-                                <p-tag [value]="t.tipo" [style]="{ 
+                                <p-tag [value]="t.tipo === 'RECEITA' ? 'Receita' : 'Despesa'" [style]="{ 
                                 'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340', 
                                 'color': '#ffffff' 
-                                }"></p-tag>
+                                }" styleClass="text-xs"></p-tag>
                             </td>
                             <td>
-                                <p-tag [value]="t.estado" [style]="{ 
+                                <p-tag [value]="t.estado === 'REALIZADA' ? 'Realizada' : 'Pendente'" [style]="{ 
                                 'background': t.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1', 
                                 'color': t.estado === 'PENDENTE' ? '#FFB016' : '#14ca74' 
-                                }"></p-tag>
+                                }" styleClass="text-xs"></p-tag>
                             </td>
-                            <td class="">{{ t.valor | currency: 'BRL'}}</td>
+                            <td class="whitespace-nowrap">
+                                <span [class]="t.tipo === 'RECEITA' ? 'font-bold text-emerald-600' : 'font-semibold text-slate-800'">
+                                    {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency: 'BRL'}}
+                                </span>
+                            </td>
                             <td>
                                 <div class="flex gap-2">
                                     @if (t.estado === 'PENDENTE') {
@@ -122,12 +318,36 @@
                                             styleClass="text-[#1976d2]! bg-[#e3f2fd]! border-[#e3f2fd]! h-8 w-8"
                                             (onClick)="abrirGrupoParcelamento(t)"></p-button>
                                     }
-                                    <p-button icon="pi pi-trash"
-                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
-                                        (onClick)="excluir(t.id)"></p-button>
                                     <p-button icon="pi pi-pencil"
+                                        pTooltip="Editar transação" tooltipPosition="top"
                                         styleClass="text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]! h-8 w-8"
                                         (onClick)="prepararEdicao(t)"></p-button>
+                                    <p-button icon="pi pi-trash"
+                                        pTooltip="Excluir transação" tooltipPosition="top"
+                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
+                                        (onClick)="abrirConfirmacaoExcluir(t)"></p-button>
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                        <tr>
+                            <td colspan="10" class="text-center py-12">
+                                <div class="flex flex-col items-center justify-center gap-3">
+                                    <div class="w-14 h-14 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400">
+                                        <i class="pi pi-search text-2xl"></i>
+                                    </div>
+                                    <div class="flex flex-col items-center gap-1">
+                                        <span class="font-semibold text-slate-700 text-base">Nenhuma movimentação encontrada</span>
+                                        <span class="text-xs text-slate-500 max-w-sm text-center">
+                                            Não encontramos transações para os filtros ou busca informados.
+                                        </span>
+                                    </div>
+                                    @if (qtdFiltrosAtivos > 0 || textoBusca) {
+                                        <p-button label="Limpar filtros e busca" icon="pi pi-filter-slash" [outlined]="true" size="small"
+                                            styleClass="rounded-xl! text-xs mt-1" (onClick)="limparFiltros()"></p-button>
+                                    }
                                 </div>
                             </td>
                         </tr>
@@ -990,34 +1210,88 @@
     </p-dialog>
 
     <p-dialog header="Excluir Parcelamento" [(visible)]="exibirDialogExcluirParcelamento" [modal]="true"
-        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '480px' }" [closable]="!carregandoExclusao">
-        <div class="flex flex-col gap-4 py-2">
-            <div class="flex items-center gap-3">
-                <div class="w-11 h-11 rounded-2xl bg-rose-100 flex items-center justify-center shrink-0">
-                    <i class="pi pi-exclamation-triangle text-rose-600 text-xl"></i>
-                </div>
-                <div class="flex flex-col">
-                    <span class="text-base font-semibold text-slate-800">
-                        {{ excluirApenasFuturas ? 'Excluir parcelas pendentes?' : 'Excluir todas as parcelas?' }}
-                    </span>
-                    <span class="text-xs text-slate-500">
-                        {{ excluirApenasFuturas
-                            ? 'As parcelas futuras ainda não pagas serão removidas do seu planejamento.'
-                            : 'Todas as parcelas (pagas e pendentes) desta compra serão excluídas permanentemente.' }}
-                    </span>
-                </div>
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '420px' }" [closable]="!carregandoExclusao">
+        <div class="flex items-center gap-3 py-2">
+            <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center shrink-0">
+                <i class="pi pi-trash text-rose-600"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-sm font-semibold text-slate-800">
+                    {{ excluirApenasFuturas ? 'Excluir parcelas pendentes?' : 'Excluir todas as parcelas?' }}
+                </span>
+                <span class="text-xs text-slate-500">
+                    {{ excluirApenasFuturas ? 'As parcelas futuras não pagas serão canceladas.' : 'Todas as parcelas desta compra serão removidas.' }}
+                </span>
             </div>
         </div>
 
         <ng-template pTemplate="footer">
             <div class="flex justify-end gap-2 w-full pt-1">
                 <p-button label="Cancelar" severity="secondary" [outlined]="true"
-                    styleClass="rounded-xl! text-xs" [disabled]="carregandoExclusao"
+                    size="small" styleClass="rounded-xl! text-xs" [disabled]="carregandoExclusao"
                     (onClick)="exibirDialogExcluirParcelamento = false"></p-button>
                 <p-button [label]="excluirApenasFuturas ? 'Excluir Pendentes' : 'Excluir Todas'"
-                    icon="pi pi-trash" severity="danger" [outlined]="true"
+                    icon="pi pi-trash" severity="danger" size="small"
                     styleClass="rounded-xl! text-xs" [loading]="carregandoExclusao"
                     (onClick)="executarExclusaoParcelamento()"></p-button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog header="Excluir Movimentações" [(visible)]="exibirDialogExcluirSelecionadas" [modal]="true"
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '420px' }" [closable]="!carregandoExclusaoSelecionadas">
+        <div class="flex items-center gap-3 py-2">
+            <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center shrink-0">
+                <i class="pi pi-trash text-rose-600"></i>
+            </div>
+            <div class="flex flex-col">
+                <span class="text-sm font-semibold text-slate-800">
+                    Excluir {{ transacoesMarcadas.length }} {{ transacoesMarcadas.length === 1 ? 'movimentação' : 'movimentações' }}?
+                </span>
+                <span class="text-xs text-slate-500">
+                    Total: <strong class="text-slate-700">{{ totalValorSelecionadas | currency:'BRL' }}</strong> • O saldo das contas será estornado.
+                </span>
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex justify-end gap-2 w-full pt-1">
+                <p-button label="Cancelar" severity="secondary" [outlined]="true"
+                    size="small" styleClass="rounded-xl! text-xs" [disabled]="carregandoExclusaoSelecionadas"
+                    (onClick)="fecharConfirmacaoExcluirSelecionadas()"></p-button>
+                <p-button label="Excluir" icon="pi pi-trash" severity="danger"
+                    size="small" styleClass="rounded-xl! text-xs" [loading]="carregandoExclusaoSelecionadas"
+                    (onClick)="executarExclusaoSelecionadas()"></p-button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
+    <p-dialog header="Excluir Movimentação" [(visible)]="exibirDialogExcluirIndividual" [modal]="true"
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '420px' }" [closable]="!carregandoExclusaoIndividual">
+        @if (transacaoParaExcluir) {
+            <div class="flex items-center gap-3 py-2">
+                <div class="w-10 h-10 rounded-xl bg-rose-100 flex items-center justify-center shrink-0">
+                    <i class="pi pi-trash text-rose-600"></i>
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <span class="text-sm font-semibold text-slate-800 truncate">
+                        Excluir "{{ transacaoParaExcluir.descricao }}"?
+                    </span>
+                    <span class="text-xs text-slate-500">
+                        Valor: <strong class="text-slate-700">{{ transacaoParaExcluir.valor | currency:'BRL' }}</strong> • O saldo da conta será estornado.
+                    </span>
+                </div>
+            </div>
+        }
+
+        <ng-template pTemplate="footer">
+            <div class="flex justify-end gap-2 w-full pt-1">
+                <p-button label="Cancelar" severity="secondary" [outlined]="true"
+                    size="small" styleClass="rounded-xl! text-xs" [disabled]="carregandoExclusaoIndividual"
+                    (onClick)="fecharConfirmacaoExcluir()"></p-button>
+                <p-button label="Excluir" icon="pi pi-trash" severity="danger"
+                    size="small" styleClass="rounded-xl! text-xs" [loading]="carregandoExclusaoIndividual"
+                    (onClick)="confirmarExclusaoIndividual()"></p-button>
             </div>
         </ng-template>
     </p-dialog>

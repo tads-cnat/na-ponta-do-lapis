@@ -54,6 +54,12 @@ export class TransacoesComponent {
   exibirDialogExcluirParcelamento: boolean = false;
   excluirApenasFuturas: boolean = false;
   carregandoExclusao: boolean = false;
+  transacoesMarcadas: ITransacoes[] = [];
+  exibirDialogExcluirSelecionadas: boolean = false;
+  carregandoExclusaoSelecionadas: boolean = false;
+  transacaoParaExcluir: ITransacoes | null = null;
+  exibirDialogExcluirIndividual: boolean = false;
+  carregandoExclusaoIndividual: boolean = false;
   carregando: boolean = false;
   carregandoConsentimento: boolean = false;
   carregandoGrupo: boolean = false;
@@ -275,7 +281,127 @@ export class TransacoesComponent {
         }
       });
   }
+  transacoesTodas: ITransacoes[] = [];
   transacoesDados: ITransacoes[] = [];
+
+  // Filtros e ordenação
+  painelFiltrosAberto: boolean = false;
+  textoBusca: string = '';
+  filtroTipo: 'TODOS' | 'RECEITA' | 'DESPESA' = 'TODOS';
+  filtroEstado: 'TODOS' | 'REALIZADA' | 'PENDENTE' = 'TODOS';
+  filtroContaId: number | null = null;
+  filtroCategoriaId: number | null = null;
+  filtroMarcadorId: number | null = null;
+  filtroPeriodoRapido: 'TODOS' | 'MES_ATUAL' | 'MES_ANTERIOR' | 'ULTIMOS_30' | 'ANO_ATUAL' | 'CUSTOM' = 'TODOS';
+  filtroDataRange: Date[] | null = null;
+
+  opcoesFiltroTipo = [
+    { label: 'Todos os tipos', value: 'TODOS' },
+    { label: 'Despesas', value: 'DESPESA' },
+    { label: 'Receitas', value: 'RECEITA' }
+  ];
+
+  opcoesFiltroEstado = [
+    { label: 'Todos os estados', value: 'TODOS' },
+    { label: 'Pagas / Realizadas', value: 'REALIZADA' },
+    { label: 'Pendentes', value: 'PENDENTE' }
+  ];
+
+  get opcoesFiltroConta(): { id: number | null; nome: string }[] {
+    const contas = (this.opcoesConta as any[]).map(c => ({ id: c.id as number, nome: c.nome as string }));
+    return [{ id: null, nome: 'Todas as contas' }, ...contas];
+  }
+
+  get opcoesFiltroCategoria(): { id: number | null; nome: string }[] {
+    const cats = this.opcoesCategoria.map(c => ({ id: c.id, nome: c.nome }));
+    return [{ id: null, nome: 'Todas as categorias' }, ...cats];
+  }
+
+  get opcoesFiltroMarcador(): { id: number | null; nome: string; cor?: string }[] {
+    const marcs = this.opcoesMarcador.map(m => ({ id: m.id, nome: m.nome, cor: m.cor }));
+    return [{ id: null, nome: 'Todos os marcadores' }, ...marcs];
+  }
+
+  get qtdFiltrosAtivos(): number {
+    let count = 0;
+    if (this.filtroTipo !== 'TODOS') count++;
+    if (this.filtroEstado !== 'TODOS') count++;
+    if (this.filtroContaId !== null) count++;
+    if (this.filtroCategoriaId !== null) count++;
+    if (this.filtroMarcadorId !== null) count++;
+    if (this.filtroPeriodoRapido !== 'TODOS') count++;
+    return count;
+  }
+
+  get totalReceitasFiltradas(): number {
+    return this.transacoesDados
+      .filter(t => t.tipo === 'RECEITA')
+      .reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
+  }
+
+  get totalDespesasFiltradas(): number {
+    return this.transacoesDados
+      .filter(t => t.tipo === 'DESPESA')
+      .reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
+  }
+
+  get saldoFiltrado(): number {
+    return this.totalReceitasFiltradas - this.totalDespesasFiltradas;
+  }
+
+  get totalValorSelecionadas(): number {
+    return this.transacoesMarcadas.reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
+  }
+
+  alternarPainelFiltros() {
+    this.painelFiltrosAberto = !this.painelFiltrosAberto;
+  }
+
+  selecionarPeriodoRapido(periodo: 'TODOS' | 'MES_ATUAL' | 'MES_ANTERIOR' | 'ULTIMOS_30' | 'ANO_ATUAL') {
+    this.filtroPeriodoRapido = periodo;
+    const hoje = new Date();
+
+    if (periodo === 'TODOS') {
+      this.filtroDataRange = null;
+    } else if (periodo === 'MES_ATUAL') {
+      const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
+      const fim = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0, 23, 59, 59);
+      this.filtroDataRange = [inicio, fim];
+    } else if (periodo === 'MES_ANTERIOR') {
+      const inicio = new Date(hoje.getFullYear(), hoje.getMonth() - 1, 1);
+      const fim = new Date(hoje.getFullYear(), hoje.getMonth(), 0, 23, 59, 59);
+      this.filtroDataRange = [inicio, fim];
+    } else if (periodo === 'ULTIMOS_30') {
+      const inicio = new Date();
+      inicio.setDate(inicio.getDate() - 30);
+      inicio.setHours(0, 0, 0, 0);
+      const fim = new Date();
+      fim.setHours(23, 59, 59, 999);
+      this.filtroDataRange = [inicio, fim];
+    } else if (periodo === 'ANO_ATUAL') {
+      const inicio = new Date(hoje.getFullYear(), 0, 1);
+      const fim = new Date(hoje.getFullYear(), 11, 31, 23, 59, 59);
+      this.filtroDataRange = [inicio, fim];
+    }
+    this.aplicarFiltros();
+  }
+
+  aoMudarDataRange() {
+    this.filtroPeriodoRapido = 'CUSTOM';
+    this.aplicarFiltros();
+  }
+
+  limparFiltros() {
+    this.textoBusca = '';
+    this.filtroTipo = 'TODOS';
+    this.filtroEstado = 'TODOS';
+    this.filtroContaId = null;
+    this.filtroCategoriaId = null;
+    this.filtroMarcadorId = null;
+    this.filtroPeriodoRapido = 'TODOS';
+    this.filtroDataRange = null;
+    this.aplicarFiltros();
+  }
 
   public abrirDialogMarcador() {
     this.exibirDialogMarcador = true
@@ -287,57 +413,206 @@ export class TransacoesComponent {
   }
 
   public buscarPorDescricao(descricao: string): void {
-    this.transacoesService.listarTransacoesPorDescricao(descricao).subscribe({
-      next: (res: ITransacoes[]) => {
-        this.transacoesDados = res
-        this.cdr.detectChanges()
-      },
-      error: (erro: HttpErrorResponse) => {
-        console.error(erro)
-        this.erroAoSalvar("Erro ao carregar transação", erro);
+    this.textoBusca = descricao;
+    this.aplicarFiltros();
+  }
+
+  public aplicarFiltros(): void {
+    let lista = [...this.transacoesTodas];
+
+    // Busca textual inteligente (descrição, categoria, conta, marcador, valor)
+    if (this.textoBusca && this.textoBusca.trim()) {
+      const termo = this.textoBusca.toLowerCase().trim();
+      lista = lista.filter(t => {
+        const desc = (t.descricao || '').toLowerCase();
+        const cat = (t.categoria?.nome || '').toLowerCase();
+        const conta = (t.conta?.nome || '').toLowerCase();
+        const marcador = (t.marcador?.nome || '').toLowerCase();
+        const valorStr = String(t.valor || '');
+        return desc.includes(termo) ||
+               cat.includes(termo) ||
+               conta.includes(termo) ||
+               marcador.includes(termo) ||
+               valorStr.includes(termo);
+      });
+    }
+
+    // Tipo
+    if (this.filtroTipo !== 'TODOS') {
+      lista = lista.filter(t => t.tipo === this.filtroTipo);
+    }
+
+    // Estado
+    if (this.filtroEstado !== 'TODOS') {
+      lista = lista.filter(t => t.estado === this.filtroEstado);
+    }
+
+    // Conta
+    if (this.filtroContaId !== null) {
+      lista = lista.filter(t => t.conta?.id === this.filtroContaId);
+    }
+
+    // Categoria
+    if (this.filtroCategoriaId !== null) {
+      lista = lista.filter(t => t.categoria?.id === this.filtroCategoriaId);
+    }
+
+    // Marcador
+    if (this.filtroMarcadorId !== null) {
+      lista = lista.filter(t => t.marcador?.id === this.filtroMarcadorId);
+    }
+
+    // Período
+    if (this.filtroDataRange && this.filtroDataRange.length > 0) {
+      const inicio = this.filtroDataRange[0];
+      const fim = this.filtroDataRange[1] || inicio;
+
+      if (inicio) {
+        const dInicio = new Date(inicio);
+        dInicio.setHours(0, 0, 0, 0);
+        const dFim = new Date(fim);
+        dFim.setHours(23, 59, 59, 999);
+
+        lista = lista.filter(t => {
+          if (!t.dataHora) return false;
+          const dataTransacao = new Date(t.dataHora);
+          return dataTransacao >= dInicio && dataTransacao <= dFim;
+        });
       }
-    })
+    }
+
+    this.transacoesDados = lista;
+    this.cdr.detectChanges();
   }
 
   public listarTransacoes(): any {
     this.transacoesService.listarTransacoes().subscribe({
       next: (res: ITransacoes[]) => {
-        this.transacoesDados = res
-        this.cdr.detectChanges()
+        this.transacoesTodas = res;
+        if (this.transacoesMarcadas.length > 0) {
+          const idsExistentes = new Set(res.map(r => r.id));
+          this.transacoesMarcadas = this.transacoesMarcadas.filter(m => m.id && idsExistentes.has(m.id));
+        }
+        this.aplicarFiltros();
       },
       error: (erro: Error) => {
         this.messageService.add({
           severity: 'warn',
-          summary: 'Erro ao carregar transação',
+          summary: 'Erro ao carregar transações',
           detail: '',
           life: 2000
         });
       }
     })
   }
-  public excluir(id: number): void {
-    this.transacoesService.deletarTransacaoPorId(id).subscribe({
-      next: (res: any) => {
-        this.listarTransacoes()
-        this.atualizarSaldo()
+
+  public abrirConfirmacaoExcluirSelecionadas(): void {
+    if (this.transacoesMarcadas.length === 0) return;
+    this.exibirDialogExcluirSelecionadas = true;
+  }
+
+  public fecharConfirmacaoExcluirSelecionadas(): void {
+    if (this.carregandoExclusaoSelecionadas) return;
+    this.exibirDialogExcluirSelecionadas = false;
+  }
+
+  public limparSelecao(): void {
+    this.transacoesMarcadas = [];
+  }
+
+  public executarExclusaoSelecionadas(): void {
+    if (this.transacoesMarcadas.length === 0) return;
+
+    this.carregandoExclusaoSelecionadas = true;
+    const idsParaExcluir = this.transacoesMarcadas
+      .map(t => t.id)
+      .filter((id): id is number => id !== undefined && id !== null);
+
+    if (idsParaExcluir.length === 0) {
+      this.carregandoExclusaoSelecionadas = false;
+      this.exibirDialogExcluirSelecionadas = false;
+      this.transacoesMarcadas = [];
+      return;
+    }
+
+    this.transacoesService.deletarTransacoesEmLote(idsParaExcluir).subscribe({
+      next: () => {
+        const qtd = idsParaExcluir.length;
         this.messageService.add({
           severity: 'success',
-          summary: 'Transação excluida com sucesso',
-          detail: '',
-          life: 2000
+          summary: 'Exclusão concluída',
+          detail: `${qtd} movimentaç${qtd > 1 ? 'ões excluídas' : 'ão excluída'}.`,
+          life: 2500
         });
+        this.carregandoExclusaoSelecionadas = false;
+        this.exibirDialogExcluirSelecionadas = false;
+        this.transacoesMarcadas = [];
+        this.listarTransacoes();
+        this.atualizarSaldo();
       },
-      error: (res: Error) => {
-        console.error("Erro ao deletar Transação", res)
-        this.listarTransacoes()
+      error: (erro) => {
+        console.error('Erro ao excluir movimentações em lote', erro);
         this.messageService.add({
-          severity: 'warn',
-          summary: 'Erro ao excluir com transação',
-          detail: '',
-          life: 2000
+          severity: 'error',
+          summary: 'Erro na exclusão em lote',
+          detail: 'Não foi possível excluir os registros selecionados.',
+          life: 3500
         });
+        this.carregandoExclusaoSelecionadas = false;
+        this.listarTransacoes();
+        this.atualizarSaldo();
       }
-    })
+    });
+  }
+
+  public abrirConfirmacaoExcluir(t: ITransacoes): void {
+    this.transacaoParaExcluir = t;
+    this.exibirDialogExcluirIndividual = true;
+  }
+
+  public fecharConfirmacaoExcluir(): void {
+    if (this.carregandoExclusaoIndividual) return;
+    this.transacaoParaExcluir = null;
+    this.exibirDialogExcluirIndividual = false;
+  }
+
+  public confirmarExclusaoIndividual(): void {
+    if (!this.transacaoParaExcluir?.id) return;
+    const id = this.transacaoParaExcluir.id;
+    this.carregandoExclusaoIndividual = true;
+
+    this.transacoesService.deletarTransacaoPorId(id).subscribe({
+      next: () => {
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Movimentação excluída',
+          life: 2500
+        });
+        this.carregandoExclusaoIndividual = false;
+        this.fecharConfirmacaoExcluir();
+        this.listarTransacoes();
+        this.atualizarSaldo();
+      },
+      error: (erro) => {
+        console.error('Erro ao deletar transação', erro);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao excluir movimentação',
+          life: 3000
+        });
+        this.carregandoExclusaoIndividual = false;
+      }
+    });
+  }
+
+  public excluir(id: number): void {
+    const t = this.transacoesDados.find(item => item.id === id);
+    if (t) {
+      this.abrirConfirmacaoExcluir(t);
+    } else {
+      this.transacaoParaExcluir = { id } as ITransacoes;
+      this.confirmarExclusaoIndividual();
+    }
   }
 
 

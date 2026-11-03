@@ -89,3 +89,10 @@ yarn-debug.log*
 .env
 env
 venv/
+
+# ==========================================
+# CONTEXTO LOCAL DE DESENVOLVIMENTO (IA / NOTAS)
+# ==========================================
+CONTEXTO.md
+contexto.md
+.contexto.md
