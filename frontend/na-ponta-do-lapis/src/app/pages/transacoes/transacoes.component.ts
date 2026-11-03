@@ -53,8 +53,25 @@ export class TransacoesComponent {
   carregandoGrupo: boolean = false;
   editandoParcelada: boolean = false;
   erroUpload: string | null = null;
+  codigoErroUpload: string | null = null;
+  validandoArquivo: boolean = false;
+  faturaPreviaValida: boolean = false;
+  emissorDetectado: string | null = null;
+  temChaveSalva: boolean = false;
+  provedorSalvo: ProvedorIa | null = null;
+  carregandoSessaoIa: boolean = false;
   erroConsentimento: string | null = null;
   arquivoSelecionado: File | null = null;
+
+  get podeAnalisarFatura(): boolean {
+    if (!this.arquivoSelecionado || this.carregando || this.validandoArquivo) {
+      return false;
+    }
+    if (this.codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA' || !this.faturaPreviaValida) {
+      return false;
+    }
+    return this.temChaveSalva || !!this.apiKeyIa?.trim();
+  }
   transacoesExtraidas: ITransacaoFatura[] = [];
   contaSelecionadaRevisao: number | null = null;
   faturaAnalise: FaturaAnaliseResponse | null = null;
@@ -68,6 +85,7 @@ export class TransacoesComponent {
 
   provedorSelecionado: ProvedorIa = 'GEMINI';
   apiKeyIa: string = '';
+  apiKeyIaTocada: boolean = false;
   manterNaSessao: boolean = false;
   usarIa: boolean = true;
   consentimentoLgpd: boolean = false;
@@ -461,19 +479,127 @@ export class TransacoesComponent {
     this.exibirDialogEscolha = false;
     this.arquivoSelecionado = null;
     this.erroUpload = null;
+    this.codigoErroUpload = null;
+    this.validandoArquivo = false;
+    this.faturaPreviaValida = false;
+    this.emissorDetectado = null;
     this.precisaAtivarIa = false;
     this.precisaSenhaPdf = false;
     this.senhaPdf = '';
+    this.apiKeyIaTocada = false;
     this.faturaAnalise = null;
     this.exibirDialogUpload = true;
+    this.carregarSessaoIa();
+  }
+
+  carregarSessaoIa() {
+    this.carregandoSessaoIa = true;
+    this.transacoesService.obterSessaoIa().subscribe({
+      next: (res) => {
+        this.carregandoSessaoIa = false;
+        this.temChaveSalva = res.temChaveSalva;
+        this.provedorSalvo = res.provedor;
+        if (this.temChaveSalva && res.provedor) {
+          this.provedorSelecionado = res.provedor;
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregandoSessaoIa = false;
+      }
+    });
   }
 
   selecionarArquivo(event: any) {
-    this.arquivoSelecionado = event.target.files[0] ?? null;
+    const file = event.target?.files?.[0] ?? null;
     this.erroUpload = null;
+    this.codigoErroUpload = null;
     this.precisaAtivarIa = false;
     this.precisaSenhaPdf = false;
     this.senhaPdf = '';
+    this.validandoArquivo = false;
+    this.faturaPreviaValida = false;
+    this.emissorDetectado = null;
+
+    if (file) {
+      const nome = file.name.toLowerCase();
+      if (!nome.endsWith('.pdf')) {
+        this.arquivoSelecionado = null;
+        this.codigoErroUpload = 'FORMATO_INVALIDO';
+        this.erroUpload = 'Formato não suportado. O Na Ponta do Lápis suporta apenas faturas em formato PDF.';
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Formato não suportado',
+          detail: 'Por favor, selecione um arquivo em formato PDF.',
+          life: 4000
+        });
+        if (event.target) event.target.value = '';
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        this.arquivoSelecionado = null;
+        this.codigoErroUpload = 'ARQUIVO_MUITO_GRANDE';
+        this.erroUpload = 'O arquivo selecionado excede o limite máximo permitido de 10 MB.';
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Arquivo muito grande',
+          detail: 'O limite máximo para upload é de 10 MB.',
+          life: 4000
+        });
+        if (event.target) event.target.value = '';
+        return;
+      }
+
+      this.arquivoSelecionado = file;
+      this.executarValidacaoPrevia(file);
+    } else {
+      this.arquivoSelecionado = null;
+    }
+  }
+
+  executarValidacaoPrevia(file: File, senha?: string) {
+    this.validandoArquivo = true;
+    this.erroUpload = null;
+    this.codigoErroUpload = null;
+    this.faturaPreviaValida = false;
+    this.emissorDetectado = null;
+
+    this.transacoesService.validarPreviaFatura(file, senha).subscribe({
+      next: (res) => {
+        this.validandoArquivo = false;
+        if (res.protegidoPorSenha) {
+          this.precisaSenhaPdf = true;
+          this.erroUpload = res.mensagem;
+          this.codigoErroUpload = res.codigo;
+          this.cdr.detectChanges();
+          return;
+        }
+
+        if (res.valido) {
+          this.faturaPreviaValida = true;
+          this.emissorDetectado = res.emissor;
+          this.precisaSenhaPdf = false;
+          this.erroUpload = null;
+          this.codigoErroUpload = null;
+        } else {
+          this.faturaPreviaValida = false;
+          this.codigoErroUpload = res.codigo;
+          this.erroUpload = res.mensagem || 'O documento enviado não parece ser uma fatura de cartão de crédito.';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Documento não é fatura',
+            detail: this.erroUpload,
+            life: 5000
+          });
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        // Se a validação prévia falhar por conexão/rede, não bloqueia o fluxo normal
+        this.validandoArquivo = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   enviarFatura() {
@@ -490,6 +616,7 @@ export class TransacoesComponent {
     this.usarIa = true;
     this.precisaAtivarIa = false;
     this.erroUpload = null;
+    this.codigoErroUpload = null;
     this.enviarFatura();
   }
 
@@ -507,6 +634,7 @@ export class TransacoesComponent {
 
     this.carregando = true;
     this.erroUpload = null;
+    this.codigoErroUpload = null;
     this.precisaAtivarIa = false;
     this.erroConsentimento = null;
     this.iniciarMensagensProgresso();
@@ -546,13 +674,25 @@ export class TransacoesComponent {
       error: (err: HttpErrorResponse) => {
         this.carregando = false;
         this.pararMensagensProgresso();
+        const corpo = (typeof err.error === 'object' && err.error !== null) ? err.error as FaturaErro : null;
+        this.codigoErroUpload = corpo?.codigo ?? (err.status === 400 ? 'DOCUMENTO_NAO_EH_FATURA' : null);
         const mensagem = this.mensagemErroFatura(err);
+
         if (this.exibirDialogConsentimento) {
           this.carregandoConsentimento = false;
           this.erroConsentimento = mensagem;
         } else {
           this.erroUpload = mensagem;
         }
+
+        const ehNaoFatura = this.codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA';
+        this.messageService.add({
+          severity: ehNaoFatura ? 'error' : (err.status === 428 || err.status === 422 ? 'warn' : 'error'),
+          summary: ehNaoFatura ? 'Documento não é fatura' : 'Atenção na leitura da fatura',
+          detail: mensagem,
+          life: 5000
+        });
+
         this.cdr.detectChanges();
       }
     });
@@ -665,6 +805,9 @@ export class TransacoesComponent {
       case 413:
         return 'O arquivo é maior que o limite permitido de 10 MB.';
       case 400:
+        if (corpo?.codigo === 'DOCUMENTO_NAO_EH_FATURA') {
+          return detalhe || 'O documento enviado não parece ser uma fatura de cartão de crédito. Verifique se selecionou o arquivo correto.';
+        }
         return detalhe || 'Arquivo inválido. Envie um PDF de fatura de cartão de crédito.';
       case 502:
         return 'O serviço de IA não respondeu como esperado. Tente novamente.';
@@ -681,12 +824,15 @@ export class TransacoesComponent {
     this.transacoesService.esquecerChaveIa().subscribe({
       next: () => {
         this.apiKeyIa = '';
+        this.temChaveSalva = false;
+        this.provedorSalvo = null;
         this.manterNaSessao = false;
         this.messageService.add({
           severity: 'success',
           summary: 'Chave apagada',
           life: 2500
         });
+        this.cdr.detectChanges();
       },
       error: () => {
         this.messageService.add({

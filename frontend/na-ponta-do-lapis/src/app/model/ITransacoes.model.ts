@@ -98,3 +98,18 @@ export interface FaturaAnaliseOpcoes {
   consentimentoLgpd?: boolean;
 }
 
+export interface FaturaValidacaoPreviaResponse {
+  valido: boolean;
+  protegidoPorSenha: boolean;
+  emissor: string | null;
+  codigo: string | null;
+  mensagem: string | null;
+}
+
+export interface FaturaSessaoResponse {
+  temChaveSalva: boolean;
+  provedor: ProvedorIa | null;
+}
+
+
+

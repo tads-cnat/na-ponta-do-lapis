@@ -88,6 +88,7 @@ public class FaturaIaService {
                 7. Na descrição, limpe o nome comercial (remova máscara de cartão como "•••• 1234", "R$", e trechos como "Parcela X/Y").
                 8. Compras parceladas: quando houver identificação de parcela (ex: "02/03", "10/12", "Parcela 2 de 10"),
                    preencha os campos inteiros "numeroParcela" e "totalParcelas".
+                9. Se o documento NÃO for uma fatura de cartão de crédito (ex: currículo, receita médica, contrato, foto aleatória, etc.), retorne SOMENTE: {"erro":"DOCUMENTO_NAO_EH_FATURA","transacoes":[]}
 
                 Categorias permitidas: %s. Se não souber, use "Outros".
 
@@ -127,6 +128,7 @@ public class FaturaIaService {
                 7. Na descrição, limpe o nome comercial (remova máscara de cartão como "•••• 1234", "R$", e trechos como "Parcela X/Y").
                 8. Compras parceladas: quando houver identificação de parcela (ex: "02/03", "10/12", "Parcela 2 de 10"),
                    preencha os campos inteiros "numeroParcela" e "totalParcelas".
+                9. Se o documento NÃO for uma fatura de cartão de crédito (ex: currículo, receita médica, contrato, foto aleatória, etc.), retorne SOMENTE: {"erro":"DOCUMENTO_NAO_EH_FATURA","transacoes":[]}
 
                 Categorias permitidas: %s. Se não souber, use "Outros".
                 """.formatted(String.join(", ", categorias));

@@ -42,6 +42,11 @@ public class FaturaAnaliseException extends RuntimeException {
                 "O arquivo enviado excede o limite permitido de 10 MB.");
     }
 
+    public static FaturaAnaliseException documentoNaoEhFatura() {
+        return new FaturaAnaliseException(HttpStatus.BAD_REQUEST, "DOCUMENTO_NAO_EH_FATURA",
+                "O arquivo enviado não parece ser uma fatura de cartão de crédito. Verifique se selecionou o documento correto.");
+    }
+
     public static FaturaAnaliseException pdfProtegidoPorSenha() {
         return new FaturaAnaliseException(HttpStatus.UNPROCESSABLE_ENTITY, "PDF_PROTEGIDO_POR_SENHA",
                 "Esta fatura está protegida por senha. Informe a senha do PDF (geralmente os primeiros dígitos do CPF) para continuar.");

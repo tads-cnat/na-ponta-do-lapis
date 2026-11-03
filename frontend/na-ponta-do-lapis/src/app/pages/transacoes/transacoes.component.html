@@ -302,15 +302,42 @@
         <div class="flex flex-col items-center gap-4 py-2 px-1 sm:px-3">
 
             <label for="fileUpload"
-                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-slate-300 rounded-xl cursor-pointer hover:border-[#7843cd] transition-colors">
+                class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all"
+                [ngClass]="{
+                    'border-emerald-300 bg-emerald-50/40 hover:border-emerald-400': faturaPreviaValida,
+                    'border-rose-300 bg-rose-50/40 hover:border-rose-400': codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA',
+                    'border-slate-300 hover:border-[#7843cd]': !faturaPreviaValida && codigoErroUpload !== 'DOCUMENTO_NAO_EH_FATURA'
+                }">
                 @if (arquivoSelecionado) {
-                    <i class="pi pi-file-pdf text-4xl text-[#7843cd]"></i>
-                    <span class="mt-2 font-medium text-slate-700 text-center px-2 break-all">{{ arquivoSelecionado.name }}</span>
+                    <i class="pi text-4xl"
+                       [ngClass]="{
+                           'pi-check-circle text-emerald-600': faturaPreviaValida,
+                           'pi-times-circle text-rose-500': codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA',
+                           'pi-file-pdf text-[#7843cd]': !faturaPreviaValida && codigoErroUpload !== 'DOCUMENTO_NAO_EH_FATURA'
+                       }"></i>
+                    <span class="mt-2 font-medium text-slate-700 text-center px-2 break-all text-xs sm:text-sm">{{ arquivoSelecionado.name }}</span>
+
+                    @if (validandoArquivo) {
+                        <div class="flex items-center gap-1.5 mt-1 text-xs text-purple-700 animate-pulse">
+                            <i class="pi pi-spin pi-spinner text-[11px]"></i>
+                            <span>Verificando documento...</span>
+                        </div>
+                    } @else if (faturaPreviaValida) {
+                        <div class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-emerald-700">
+                            <i class="pi pi-check text-[11px]"></i>
+                            <span>Fatura reconhecida{{ emissorDetectado ? ' (' + emissorDetectado + ')' : '' }}</span>
+                        </div>
+                    } @else if (codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA') {
+                        <div class="flex items-center gap-1.5 mt-1 text-xs font-semibold text-rose-600">
+                            <i class="pi pi-times text-[11px]"></i>
+                            <span>Não é uma fatura de cartão (clique para trocar)</span>
+                        </div>
+                    }
                 } @else {
                     <i class="pi pi-upload text-4xl text-slate-400"></i>
-                    <span class="mt-2 text-slate-500">Clique para escolher o PDF da fatura</span>
+                    <span class="mt-2 text-slate-500 text-xs sm:text-sm">Clique para escolher o PDF da fatura</span>
                 }
-                <input id="fileUpload" type="file" accept=".pdf,application/pdf" class="hidden" (change)="selecionarArquivo($event)" />
+                <input #fileUploadInput id="fileUpload" type="file" accept=".pdf,application/pdf" class="hidden" (change)="selecionarArquivo($event)" />
             </label>
 
             <div class="w-full border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col gap-3.5">
@@ -336,7 +363,14 @@
 
                     <div class="flex flex-col gap-1.5">
                         <div class="flex items-center justify-between">
-                            <label class="text-xs font-semibold text-slate-700">Chave de acesso (API Key)</label>
+                            <div class="flex items-center gap-2">
+                                <label class="text-xs font-semibold text-slate-700">Chave de acesso (API Key)</label>
+                                @if (temChaveSalva) {
+                                    <span class="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                        ✓ Salva na sessão
+                                    </span>
+                                }
+                            </div>
                             <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
                                class="text-xs font-medium text-[#7843cd] hover:text-[#5d2fa8] hover:underline flex items-center gap-1 transition-colors"
                                [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top" tooltipStyleClass="whitespace-pre-line text-xs">
@@ -345,8 +379,15 @@
                             </a>
                         </div>
                         <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                            placeholder="Deixe vazio para usar a chave salva"
+                            (onBlur)="apiKeyIaTocada = true"
+                            [placeholder]="temChaveSalva ? 'Usando chave salva (' + (provedorSalvo || provedorSelecionado) + ') — digite para trocar' : 'Cole sua chave de API aqui...'"
                             styleClass="w-full" inputStyleClass="w-full"></p-password>
+                        @if (apiKeyIaTocada && !temChaveSalva && !apiKeyIa.trim()) {
+                            <span class="text-[11px] text-amber-600 flex items-center gap-1 mt-0.5">
+                                <i class="pi pi-exclamation-circle text-[10px]"></i>
+                                <span>Informe uma chave de API para habilitar a análise da fatura.</span>
+                            </span>
+                        }
                     </div>
                 </div>
 
@@ -357,11 +398,13 @@
                             Lembrar chave nesta sessão
                         </label>
                     </div>
-                    <button type="button" (click)="esquecerChaveIa()"
-                        class="text-xs text-slate-400 hover:text-red-600 flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 transition-colors">
-                        <i class="pi pi-trash text-[11px]"></i>
-                        <span>Apagar chave salva</span>
-                    </button>
+                    @if (temChaveSalva) {
+                        <button type="button" (click)="esquecerChaveIa()"
+                            class="text-xs text-slate-400 hover:text-red-600 flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 transition-colors">
+                            <i class="pi pi-trash text-[11px]"></i>
+                            <span>Apagar chave salva</span>
+                        </button>
+                    }
                 </div>
             </div>
 
@@ -394,7 +437,7 @@
                         styleClass="rounded-xl! w-full sm:w-auto border-[#7843cd]! bg-[#7843cd]!"
                         [loading]="carregando" (onClick)="ativarIaETentarNovamente()"></p-button>
                 </div>
-            } @else if (erroUpload) {
+            } @else if (erroUpload && codigoErroUpload !== 'DOCUMENTO_NAO_EH_FATURA') {
                 <div class="w-full flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-200">
                     <i class="pi pi-exclamation-triangle text-red-500 mt-0.5"></i>
                     <span class="text-red-700 text-sm">{{ erroUpload }}</span>
@@ -414,7 +457,7 @@
                     (onClick)="exibirDialogUpload = false"></p-button>
                 <p-button label="Analisar fatura" icon="pi pi-search"
                     styleClass="rounded-xl! w-full sm:w-auto border-[#11b981]! bg-[#11b981]!"
-                    [disabled]="!arquivoSelecionado || carregando" [loading]="carregando"
+                    [disabled]="!podeAnalisarFatura" [loading]="carregando"
                     (onClick)="enviarFatura()"></p-button>
             </div>
         </div>

@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -20,6 +21,8 @@ import com.npl.na_ponta_do_lapis.service.fatura.FaturaSessionCookieHelper;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.ProvedorIa;
 import com.npl.na_ponta_do_lapis.web.dto.FaturaAnaliseResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FaturaErroDTO;
+import com.npl.na_ponta_do_lapis.web.dto.FaturaSessaoDTO;
+import com.npl.na_ponta_do_lapis.web.dto.FaturaValidacaoPreviaDTO;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -130,12 +133,34 @@ public class FaturaInteligenteController {
         }
     }
 
+    @Operation(summary = "Verifica se há chave de IA salva na sessão atual")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @GetMapping("/sessao")
+    public ResponseEntity<FaturaSessaoDTO> obterSessao(HttpServletRequest request) {
+        Optional<CredencialIa> credencial = cookieHelper.ler(request);
+        return ResponseEntity.ok(new FaturaSessaoDTO(
+                credencial.isPresent(),
+                credencial.map(CredencialIa::provedor).map(Enum::name).orElse(null)
+        ));
+    }
+
     @Operation(summary = "Esquecer a chave de IA guardada no cookie de sessão")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @DeleteMapping("/sessao")
     public ResponseEntity<Void> esquecerSessao(HttpServletRequest request, HttpServletResponse response) {
         cookieHelper.limpar(response, request);
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(summary = "Validação prévia local do arquivo de fatura",
+            description = "Verifica em milissegundos se o PDF possui características de fatura e se tem senha, sem usar IA.")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PostMapping(value = "/validar-previa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<FaturaValidacaoPreviaDTO> validarPrevia(
+            @RequestParam("arquivo") MultipartFile arquivo,
+            @RequestParam(value = "senha", required = false) String senha) {
+        FaturaValidacaoPreviaDTO resultado = faturaAnaliseService.validarArquivoPrevia(arquivo, senha);
+        return ResponseEntity.ok(resultado);
     }
 
     private ProvedorIa parseProvedor(String provedor) {

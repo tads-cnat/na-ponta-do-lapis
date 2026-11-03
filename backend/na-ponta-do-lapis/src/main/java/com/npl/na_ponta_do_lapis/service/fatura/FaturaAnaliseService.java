@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaParser;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaService;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.ProvedorIa;
 import com.npl.na_ponta_do_lapis.web.dto.FaturaAnaliseResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.FaturaValidacaoPreviaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 
 /**
@@ -26,6 +29,11 @@ public class FaturaAnaliseService {
 
     private static final Logger log = LoggerFactory.getLogger(FaturaAnaliseService.class);
     private static final BigDecimal UM_CENTAVO = new BigDecimal("0.01");
+
+    private static final Pattern PADRAO_LINHA_DIGITAVEL = Pattern.compile(
+            "\\b\\d{5}[.\\s]?\\d{5}\\s+\\d{5}[.\\s]?\\d{6}\\s+\\d{5}[.\\s]?\\d{6}\\b|\\b\\d{47,48}\\b"
+    );
+    private static final Pattern PADRAO_PIX = Pattern.compile("000201[0-9]{2}");
 
     private final FaturaRegexService regexService;
     private final FaturaSanitizerService sanitizerService;
@@ -128,6 +136,8 @@ public class FaturaAnaliseService {
                     pdfEscaneado, ocrUtilizado, true, null);
         }
 
+        validarSeEhFatura(texto);
+
         if (apiKey == null || apiKey.isBlank()) {
             throw FaturaAnaliseException.precisaIa();
         }
@@ -164,6 +174,104 @@ public class FaturaAnaliseService {
         if (lower.contains("c6 bank") || lower.contains("c6bank")) return "C6 Bank";
         if (lower.contains("banco do brasil")) return "Banco do Brasil";
         if (lower.contains("caixa economica") || lower.contains("caixa econômica")) return "Caixa";
+        return null;
+    }
+
+    public void validarSeEhFatura(String texto) {
+        if (texto == null || texto.isBlank()) {
+            return;
+        }
+        String lower = texto.toLowerCase();
+
+        // 1. Indicadores de fatura / cartão / banco emissor
+        boolean temIndicadorCartao = lower.contains("fatura")
+                || lower.contains("cartão") || lower.contains("cartao")
+                || lower.contains("credit card") || lower.contains("crédito") || lower.contains("credito")
+                || lower.contains("nubank") || lower.contains("itau") || lower.contains("itaú")
+                || lower.contains("bradesco") || lower.contains("santander") || lower.contains("banco inter")
+                || lower.contains("c6 bank") || lower.contains("c6bank") || lower.contains("banco do brasil")
+                || lower.contains("caixa economica") || lower.contains("caixa econômica")
+                || lower.contains("mastercard") || lower.contains("visa") || lower.contains("elo");
+
+        // 2. Indicadores de cobrança / financeiro / movimentação
+        boolean temIndicadorFinanceiro = lower.contains("vencimento")
+                || lower.contains("pagamento mínimo") || lower.contains("pagamento minimo")
+                || lower.contains("total da fatura") || lower.contains("total a pagar")
+                || lower.contains("lançamentos") || lower.contains("lancamentos")
+                || lower.contains("compras") || lower.contains("limite total") || lower.contains("limite disponível")
+                || lower.contains("melhor dia") || lower.contains("saldo anterior")
+                || lower.contains("autenticação mecânica") || lower.contains("autenticacao mecanica")
+                || PADRAO_LINHA_DIGITAVEL.matcher(texto).find()
+                || PADRAO_PIX.matcher(texto).find();
+
+        if (!temIndicadorCartao || !temIndicadorFinanceiro) {
+            log.warn("Arquivo rejeitado: não apresenta características de fatura de cartão (cartao={}, financeiro={})",
+                    temIndicadorCartao, temIndicadorFinanceiro);
+            throw FaturaAnaliseException.documentoNaoEhFatura();
+        }
+    }
+
+    public FaturaValidacaoPreviaDTO validarArquivoPrevia(MultipartFile arquivo, String senhaPdf) {
+        try {
+            validarArquivo(arquivo);
+        } catch (FaturaAnaliseException e) {
+            return new FaturaValidacaoPreviaDTO(false, false, null, e.getCodigo(), e.getMessage());
+        }
+
+        byte[] bytes;
+        try {
+            bytes = arquivo.getBytes();
+        } catch (IOException e) {
+            return new FaturaValidacaoPreviaDTO(false, false, null, "ARQUIVO_INVALIDO", "Não foi possível ler o arquivo enviado.");
+        }
+
+        String texto;
+        try {
+            texto = regexService.extrairTexto(bytes, senhaPdf);
+        } catch (org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException e) {
+            if (senhaPdf == null || senhaPdf.isBlank()) {
+                return new FaturaValidacaoPreviaDTO(false, true, null, "PDF_PROTEGIDO_POR_SENHA",
+                        "Esta fatura está protegida por senha. Informe a senha para continuar.");
+            } else {
+                return new FaturaValidacaoPreviaDTO(false, true, null, "SENHA_INCORRETA",
+                        "A senha informada está incorreta para abrir este PDF.");
+            }
+        } catch (IOException e) {
+            return new FaturaValidacaoPreviaDTO(false, false, null, "ARQUIVO_INVALIDO",
+                    "O arquivo não é um PDF válido ou está corrompido.");
+        }
+
+        boolean pdfEscaneado = texto.length() < minCaracteresTexto;
+        if (pdfEscaneado) {
+            return new FaturaValidacaoPreviaDTO(true, false, null, "PDF_ESCANEADO",
+                    "PDF com texto em imagem/escaneado. Pode requerer leitura multimodal.");
+        }
+
+        try {
+            validarSeEhFatura(texto);
+            String emissor = detectarEmissor(texto);
+            return new FaturaValidacaoPreviaDTO(true, false, emissor, null,
+                    "Documento reconhecido como fatura de cartão.");
+        } catch (FaturaAnaliseException e) {
+            return new FaturaValidacaoPreviaDTO(false, false, null, e.getCodigo(), e.getMessage());
+        }
+    }
+
+    public String detectarEmissor(String texto) {
+        if (texto == null) return null;
+        String lower = texto.toLowerCase(Locale.ROOT);
+        if (lower.contains("nubank") || lower.contains("nu pagamentos")) return "Nubank";
+        if (lower.contains("itau") || lower.contains("itaú")) return "Itaú";
+        if (lower.contains("bradesco")) return "Bradesco";
+        if (lower.contains("santander")) return "Santander";
+        if (lower.contains("inter") || lower.contains("banco inter")) return "Banco Inter";
+        if (lower.contains("c6 bank") || lower.contains("c6bank")) return "C6 Bank";
+        if (lower.contains("banco do brasil") || lower.contains("bb s.a.")) return "Banco do Brasil";
+        if (lower.contains("caixa economica") || lower.contains("caixa econômica")) return "Caixa";
+        if (lower.contains("xp investimentos") || lower.contains("cartao xp")) return "XP";
+        if (lower.contains("btg pactual") || lower.contains("btg")) return "BTG Pactual";
+        if (lower.contains("neon")) return "Neon";
+        if (lower.contains("picpay")) return "PicPay";
         return null;
     }
 

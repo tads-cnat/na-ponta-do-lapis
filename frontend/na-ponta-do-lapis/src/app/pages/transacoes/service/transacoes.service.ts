@@ -5,6 +5,8 @@ import {
   Categoria,
   FaturaAnaliseOpcoes,
   FaturaAnaliseResponse,
+  FaturaSessaoResponse,
+  FaturaValidacaoPreviaResponse,
   ITransacaoFatura,
   ITransacaoRequest,
   ITransacoes,
@@ -75,6 +77,22 @@ export class TransacoesService {
       formData,
       { withCredentials: true }
     );
+  }
+
+  public validarPreviaFatura(arquivo: File, senha?: string): Observable<FaturaValidacaoPreviaResponse> {
+    const formData = new FormData();
+    formData.append('arquivo', arquivo);
+    if (senha) formData.append('senha', senha);
+
+    return this.http.post<FaturaValidacaoPreviaResponse>(
+      `${this.BASE_URL}/faturas/validar-previa`,
+      formData,
+      { withCredentials: true }
+    );
+  }
+
+  public obterSessaoIa(): Observable<FaturaSessaoResponse> {
+    return this.http.get<FaturaSessaoResponse>(`${this.BASE_URL}/faturas/sessao`, { withCredentials: true });
   }
 
   public esquecerChaveIa(): Observable<void> {

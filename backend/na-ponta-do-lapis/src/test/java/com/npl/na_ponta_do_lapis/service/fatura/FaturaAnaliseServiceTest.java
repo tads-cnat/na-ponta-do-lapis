@@ -25,6 +25,7 @@ import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaParser;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaService;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.ProvedorIa;
 import com.npl.na_ponta_do_lapis.web.dto.FaturaAnaliseResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.FaturaValidacaoPreviaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 
 class FaturaAnaliseServiceTest {
@@ -157,6 +158,53 @@ class FaturaAnaliseServiceTest {
 
         assertThatThrownBy(() -> service.analisar(txt, null, null, false, false, false))
                 .isInstanceOf(FaturaAnaliseException.class);
+    }
+
+    @Test
+    void arquivoQueNaoEhFaturaEhRejeitadoAntesDeChamarIa() throws Exception {
+        String textoCurriculo = """
+                Curriculum Vitae
+                João da Silva - Desenvolvedor de Software
+                Experiência profissional: Empresa XYZ (2020 - 2024)
+                Educação: Bacharelado em Ciência da Computação
+                Habilidades: Java, Spring Boot, Angular
+                """;
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoCurriculo);
+
+        assertThatThrownBy(() -> service.analisar(arquivo(), ProvedorIa.GEMINI, "chave-valida", true, false, false))
+                .isInstanceOfSatisfying(FaturaAnaliseException.class, e -> {
+                    assertThat(e.getStatus().value()).isEqualTo(400);
+                    assertThat(e.getCodigo()).isEqualTo("DOCUMENTO_NAO_EH_FATURA");
+                });
+
+        verify(iaService, never()).analisarTexto(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void validarArquivoPreviaIdentificaFaturaComSucesso() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoFatura());
+
+        FaturaValidacaoPreviaDTO resultado = service.validarArquivoPrevia(arquivo(), null);
+
+        assertThat(resultado.valido()).isTrue();
+        assertThat(resultado.protegidoPorSenha()).isFalse();
+        assertThat(resultado.emissor()).isEqualTo("Nubank");
+        assertThat(resultado.codigo()).isNull();
+    }
+
+    @Test
+    void validarArquivoPreviaRejeitaDocumentoInvalido() throws Exception {
+        String textoCurriculo = """
+                Curriculum Vitae
+                João da Silva - Desenvolvedor
+                """;
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoCurriculo);
+
+        FaturaValidacaoPreviaDTO resultado = service.validarArquivoPrevia(arquivo(), null);
+
+        assertThat(resultado.valido()).isFalse();
+        assertThat(resultado.protegidoPorSenha()).isFalse();
+        assertThat(resultado.codigo()).isEqualTo("DOCUMENTO_NAO_EH_FATURA");
     }
 
     private MockMultipartFile arquivo() {

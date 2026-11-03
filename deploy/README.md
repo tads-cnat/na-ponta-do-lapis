@@ -157,7 +157,13 @@ O **mesmo** `docker-compose.deploy.yml` é usado nos dois ambientes. O Coolify s
 | `CORS_ALLOWED_ORIGINS` | `https://homolog.napontadolapis.app` | `https://napontadolapis.app,https://www.napontadolapis.app` | Origens liberadas no navegador |
 | `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | valores do stack | valores do stack | Credenciais do Postgres interno |
 | `JWT_SECRET` | segredo próprio | segredo próprio | Assinatura dos tokens |
-| `FATURA_COOKIE_SECRET` | segredo próprio | segredo próprio | Criptografia (AES-GCM) da chave de IA guardada no cookie de sessão; se ausente, cai no `JWT_SECRET` |
+| `FATURA_COOKIE_SECRET` | segredo próprio | segredo próprio | Criptografia (AES-GCM) da chave de IA no cookie de sessão (se ausente, usa o `JWT_SECRET`) |
+| `FATURA_OCR_ENABLED` | `true` | `true` | Ativa/desativa OCR local de PDFs escaneados via Tesseract |
+| `FATURA_IA_GEMINI_MODEL` | `gemini-2.5-flash` | `gemini-2.5-flash` | Modelo padrão do Google Gemini |
+| `FATURA_IA_CLAUDE_MODEL` | `claude-sonnet-4-5` | `claude-sonnet-4-5` | Modelo padrão da Anthropic Claude |
+| `FATURA_IA_OPENAI_MODEL` | `gpt-4.1-mini` | `gpt-4.1-mini` | Modelo padrão da OpenAI |
+| `FATURA_IA_DEEPSEEK_MODEL` | `deepseek-chat` | `deepseek-chat` | Modelo padrão da DeepSeek |
+| `FATURA_IA_GROQ_MODEL` | `llama-3.3-70b-versatile` | `llama-3.3-70b-versatile` | Modelo padrão da Groq |
 | `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | credenciais | credenciais | Upload de imagens/comprovantes |
 
 > **Importante:** o `docker-compose.deploy.yml` já define defaults seguros (`SPRING_PROFILES_ACTIVE:-prod`, `SPRING_JPA_HIBERNATE_DDLAUTO:-validate` e `APP_SEED_ENABLED:-false`). Se alguma variável ficar vazia no Coolify, o backend **não** cai no profile local e **não** popula dados de teste.

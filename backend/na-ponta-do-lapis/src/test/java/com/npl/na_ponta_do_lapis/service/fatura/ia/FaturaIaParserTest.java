@@ -139,4 +139,15 @@ class FaturaIaParserTest {
         assertThatThrownBy(() -> parser.parse("isto não é json", "texto", List.of("Outros")))
                 .isInstanceOf(FaturaAnaliseException.class);
     }
+
+    @Test
+    void lancaExcecaoQuandoIaIdentificaDocumentoNaoFatura() {
+        String resposta = """
+                {"erro": "DOCUMENTO_NAO_EH_FATURA", "transacoes": []}
+                """;
+
+        assertThatThrownBy(() -> parser.parse(resposta, "texto", List.of("Outros")))
+                .isInstanceOf(FaturaAnaliseException.class)
+                .hasMessageContaining("não parece ser uma fatura");
+    }
 }

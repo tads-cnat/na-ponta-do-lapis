@@ -70,6 +70,11 @@ public class FaturaIaParser {
             throw FaturaAnaliseException.respostaIaInvalida("JSON inválido.");
         }
 
+        JsonNode erroNode = raiz.path("erro");
+        if (!erroNode.isMissingNode() && "DOCUMENTO_NAO_EH_FATURA".equalsIgnoreCase(erroNode.asText())) {
+            throw FaturaAnaliseException.documentoNaoEhFatura();
+        }
+
         JsonNode arrayTransacoes = raiz.isArray() ? raiz : raiz.path("transacoes");
         if (!arrayTransacoes.isArray() || arrayTransacoes.isEmpty()) {
             throw FaturaAnaliseException.respostaIaInvalida("Nenhuma transação encontrada na resposta.");
