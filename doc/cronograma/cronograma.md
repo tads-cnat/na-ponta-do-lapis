@@ -14,3 +14,38 @@
 | **30/06** | [CDU 12 - Alterar Tema](../cdu/cdu-12/detalhamento-12.md), [CDU 05 - Visualizar cotação](../cdu/cdu-05/detalhamento-05.md) | 🟢 Baixa |
 | **07/07** | Apresentação Wtads | - |
 | **14/07** | Entrega Final | - |
+
+## Gráficos de Burn Down e Burn Up 
+
+O cronograma prevê a entrega do **CDU 18 — Manter transação** em 05/05. O escopo foi normalizado para 100%; os dias representam cinco dias úteis da sprint.
+
+### Burn Down
+
+Mostra o percentual de trabalho restante ao longo da sprint. A linha ideal distribui o trabalho igualmente; a linha simulada representa um exemplo de execução.
+
+Legenda, na ordem das linhas: ideal; simulado.
+
+```mermaid
+xychart-beta
+	title "Burn Down — CDU 18 (simulação)"
+	x-axis "Dia útil" [1, 2, 3, 4, 5]
+	y-axis "Escopo restante (%)" 0 --> 100
+	line [100, 75, 50, 25, 0]
+	line [100, 80, 60, 35, 0]
+```
+
+### Burn Up
+
+Mostra o percentual concluído. A linha de escopo total permanece em 100%; as demais linhas mostram o avanço ideal e o avanço simulado.
+
+Legenda, na ordem das linhas: ideal; simulado; escopo total.
+
+```mermaid
+xychart-beta
+	title "Burn Up — CDU 18 (simulação)"
+	x-axis "Dia útil" [1, 2, 3, 4, 5]
+	y-axis "Escopo (%)" 0 --> 100
+	line [0, 25, 50, 75, 100]
+	line [0, 20, 40, 65, 100]
+	line [100, 100, 100, 100, 100]
+```
