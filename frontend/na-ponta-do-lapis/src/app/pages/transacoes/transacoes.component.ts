@@ -2,7 +2,8 @@ import { ChangeDetectorRef, Component, DestroyRef, inject, ViewChild } from '@an
 import { ActivatedRoute, Router } from '@angular/router';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
 import {
   Categoria,
@@ -46,8 +47,13 @@ export class TransacoesComponent {
   exibirDialogUpload: boolean = false;
   exibirDialogRevisao: boolean = false;
   exibirDialogConsentimento: boolean = false;
-  exibirDialogParcelasFuturas: boolean = false;
   exibirDialogGrupo: boolean = false;
+  exibirDialogConfirmarPagamento: boolean = false;
+  transacaoParaConfirmar: ITransacoes | null = null;
+  carregandoConfirmacao: boolean = false;
+  exibirDialogExcluirParcelamento: boolean = false;
+  excluirApenasFuturas: boolean = false;
+  carregandoExclusao: boolean = false;
   carregando: boolean = false;
   carregandoConsentimento: boolean = false;
   carregandoGrupo: boolean = false;
@@ -71,6 +77,61 @@ export class TransacoesComponent {
       return false;
     }
     return this.temChaveSalva || !!this.apiKeyIa?.trim();
+  }
+
+  projetarParcelasFuturas: boolean = true;
+
+  get temParcelasNaRevisao(): boolean {
+    return this.transacoesExtraidas.some(
+      t => t.selecionada && !!t.numeroParcela && !!t.totalParcelas && t.numeroParcela < t.totalParcelas
+    );
+  }
+
+  get totalParcelasEsperadas(): number {
+    return this.parcelasGrupo[0]?.totalParcelas ?? this.parcelasGrupo.length;
+  }
+
+  get numerosParcelasCadastradas(): number[] {
+    return this.parcelasGrupo
+      .map(p => p.numeroParcela || 0)
+      .filter(n => n > 0);
+  }
+
+  get menorParcelaCadastrada(): number {
+    const nums = this.numerosParcelasCadastradas;
+    return nums.length > 0 ? Math.min(...nums) : 1;
+  }
+
+  get maiorParcelaCadastrada(): number {
+    const nums = this.numerosParcelasCadastradas;
+    return nums.length > 0 ? Math.max(...nums) : 0;
+  }
+
+  get qtdParcelasFaltantes(): number {
+    const total = this.totalParcelasEsperadas;
+    return Math.max(0, total - this.parcelasGrupo.length);
+  }
+
+  get qtdFuturasFaltantes(): number {
+    const total = this.totalParcelasEsperadas;
+    if (this.maiorParcelaCadastrada >= total) return 0;
+    return Math.max(0, total - this.maiorParcelaCadastrada);
+  }
+
+  get qtdAnterioresFaltantes(): number {
+    if (this.menorParcelaCadastrada <= 1) return 0;
+    return this.menorParcelaCadastrada - 1;
+  }
+
+  get temParcelasPendentesNoGrupo(): boolean {
+    return this.parcelasGrupo.some(p => p.estado === 'PENDENTE');
+  }
+
+  get proximaParcelaPendente(): ITransacoes | null {
+    const pendentes = this.parcelasGrupo
+      .filter(p => p.estado === 'PENDENTE')
+      .sort((a, b) => (a.numeroParcela || 0) - (b.numeroParcela || 0));
+    return pendentes[0] || null;
   }
   transacoesExtraidas: ITransacaoFatura[] = [];
   contaSelecionadaRevisao: number | null = null;
@@ -122,12 +183,58 @@ export class TransacoesComponent {
       numeroParcela: [1],
       valorTotalCompra: [null],
       criarParcelasAnteriores: [true]
+    }, {
+      validators: [this.validarParcelamento]
     })
 
     this.formTransacao.get('parcelado')?.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((parcelado: boolean) => this.ajustarValidacaoParcelas(parcelado));
+
+    this.formTransacao.get('totalParcelas')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((novoTotal: number) => {
+        const atual = this.formTransacao.get('numeroParcela')?.value;
+        if (novoTotal && atual && Number(atual) > Number(novoTotal)) {
+          this.formTransacao.get('numeroParcela')?.setValue(Number(novoTotal));
+        }
+        this.formTransacao.updateValueAndValidity({ emitEvent: false });
+      });
+
+    this.formTransacao.get('numeroParcela')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.formTransacao.updateValueAndValidity({ emitEvent: false });
+      });
   }
+
+  validarParcelamento = (control: AbstractControl): ValidationErrors | null => {
+    const parcelado = control.get('parcelado')?.value;
+    const numeroControl = control.get('numeroParcela');
+    if (!parcelado) {
+      if (numeroControl?.hasError('numeroMaiorQueTotal')) {
+        const errors = { ...numeroControl.errors };
+        delete errors['numeroMaiorQueTotal'];
+        numeroControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
+      return null;
+    }
+
+    const numero = numeroControl?.value;
+    const total = control.get('totalParcelas')?.value;
+
+    if (numero != null && total != null && Number(numero) > Number(total)) {
+      numeroControl?.setErrors({ ...(numeroControl.errors || {}), numeroMaiorQueTotal: true });
+      return { numeroMaiorQueTotal: true };
+    } else {
+      if (numeroControl?.hasError('numeroMaiorQueTotal')) {
+        const errors = { ...numeroControl.errors };
+        delete errors['numeroMaiorQueTotal'];
+        numeroControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    }
+    return null;
+  };
 
   /** Parcelas só são obrigatórias quando a transação é parcelada. */
   private ajustarValidacaoParcelas(parcelado: boolean) {
@@ -140,6 +247,7 @@ export class TransacoesComponent {
     atual.setValidators(parcelado ? [Validators.required, Validators.min(1)] : []);
     total.updateValueAndValidity({ emitEvent: false });
     atual.updateValueAndValidity({ emitEvent: false });
+    this.formTransacao.updateValueAndValidity({ emitEvent: false });
   }
 
   ngOnInit(): void {
@@ -983,10 +1091,44 @@ export class TransacoesComponent {
       next: (salvas: ITransacoes[]) => {
         this.carregando = false;
         this.exibirDialogRevisao = false;
-        this.messageService.add({ severity: 'success', summary: 'Transações salvas com sucesso!', life: 3000 });
         this.listarTransacoes();
         this.atualizarSaldo();
-        this.prepararParcelasFuturas(salvas);
+
+        if (this.projetarParcelasFuturas) {
+          const gruposParaGerar = [...new Set(
+            salvas
+              .filter(t => t.grupoParcelamento && t.numeroParcela && t.totalParcelas && t.numeroParcela < t.totalParcelas)
+              .map(t => t.grupoParcelamento!)
+          )];
+
+          if (gruposParaGerar.length > 0) {
+            const chamadas = gruposParaGerar.map(id => this.transacoesService.gerarParcelasFuturas(id));
+            forkJoin(chamadas).subscribe({
+              next: (resultados) => {
+                const totalGeradas = resultados.reduce((acc, curr) => acc + curr.length, 0);
+                this.listarTransacoes();
+                this.atualizarSaldo();
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Fatura importada com sucesso!',
+                  detail: `${salvas.length} transação(ões) salva(s) e ${totalGeradas} parcela(s) restante(s) projetada(s) no seu planejamento.`,
+                  life: 4500
+                });
+              },
+              error: () => {
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Transações salvas com sucesso!',
+                  life: 3000
+                });
+              }
+            });
+            this.cdr.detectChanges();
+            return;
+          }
+        }
+
+        this.messageService.add({ severity: 'success', summary: 'Transações salvas com sucesso!', life: 3000 });
         this.cdr.detectChanges();
       },
       error: (err: HttpErrorResponse) => {
@@ -1001,69 +1143,13 @@ export class TransacoesComponent {
     });
   }
 
-  private parcelamentoInvalido(): boolean {
-    return this.transacoesExtraidas.some(t => {
+  parcelamentoInvalido(): boolean {
+    return this.transacoesSelecionadas.some(t => {
       const numero = t.numeroParcela ?? null;
       const total = t.totalParcelas ?? null;
       if (numero === null && total === null) return false;
       return numero === null || total === null || numero < 1 || total < 2 || numero > total || total > 60;
     });
-  }
-
-  private prepararParcelasFuturas(salvas: ITransacoes[]) {
-    const grupos = new Map<string, GrupoParcelamentoResumo>();
-
-    salvas.forEach(t => {
-      if (!t.grupoParcelamento || !t.numeroParcela || !t.totalParcelas) return;
-      if (t.numeroParcela >= t.totalParcelas) return;
-
-      const atual = grupos.get(t.grupoParcelamento);
-      if (!atual || t.numeroParcela > atual.numeroParcela) {
-        grupos.set(t.grupoParcelamento, {
-          grupoId: t.grupoParcelamento,
-          descricao: t.descricao,
-          numeroParcela: t.numeroParcela,
-          totalParcelas: t.totalParcelas,
-          valorTotalCompra: t.valorTotalCompra
-        });
-      }
-    });
-
-    this.gruposParcelamentoCriados = [...grupos.values()];
-    this.gruposGerados.clear();
-
-    if (this.gruposParcelamentoCriados.length > 0) {
-      this.exibirDialogParcelasFuturas = true;
-    }
-  }
-
-  gerarFuturasDoGrupo(grupoId: string) {
-    this.transacoesService.gerarParcelasFuturas(grupoId).subscribe({
-      next: (novas: ITransacoes[]) => {
-        this.gruposGerados.add(grupoId);
-        this.messageService.add({
-          severity: 'success',
-          summary: novas.length > 0
-            ? `${novas.length} parcela(s) futura(s) gerada(s)`
-            : 'Não há parcelas futuras para gerar',
-          life: 3000
-        });
-        this.listarTransacoes();
-        this.atualizarSaldo();
-        this.cdr.detectChanges();
-      },
-      error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro ao gerar parcelas futuras',
-          life: 3000
-        });
-      }
-    });
-  }
-
-  fecharDialogParcelasFuturas() {
-    this.exibirDialogParcelasFuturas = false;
   }
 
   abrirGrupoParcelamento(transacao: ITransacoes) {
@@ -1123,19 +1209,99 @@ export class TransacoesComponent {
     });
   }
 
-  excluirGrupoParcelamento(apenasFuturas: boolean) {
+  gerarAnterioresGrupoAtual() {
     if (!this.grupoSelecionado) return;
 
-    const mensagem = apenasFuturas
-      ? 'Excluir somente as parcelas pendentes deste parcelamento?'
-      : 'Excluir TODAS as parcelas deste parcelamento?';
-    if (!window.confirm(mensagem)) return;
-
-    this.transacoesService.excluirParcelamento(this.grupoSelecionado, apenasFuturas).subscribe({
-      next: () => {
+    this.transacoesService.gerarParcelasAnteriores(this.grupoSelecionado).subscribe({
+      next: (novas: ITransacoes[]) => {
         this.messageService.add({
           severity: 'success',
-          summary: apenasFuturas ? 'Parcelas futuras excluídas' : 'Parcelamento excluído',
+          summary: novas.length > 0
+            ? `${novas.length} parcela(s) anterior(es) registrada(s) no histórico`
+            : 'Não há parcelas anteriores para registrar',
+          life: 3000
+        });
+        this.carregarGrupo();
+        this.listarTransacoes();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao registrar parcelas anteriores',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  confirmarPagamento(transacao: ITransacoes) {
+    if (!transacao.id || transacao.estado === 'REALIZADA') return;
+    this.transacaoParaConfirmar = transacao;
+    this.exibirDialogConfirmarPagamento = true;
+  }
+
+  fecharDialogConfirmarPagamento() {
+    this.transacaoParaConfirmar = null;
+    this.exibirDialogConfirmarPagamento = false;
+    this.carregandoConfirmacao = false;
+  }
+
+  executarConfirmacaoPagamento() {
+    if (!this.transacaoParaConfirmar?.id) return;
+    const id = this.transacaoParaConfirmar.id;
+
+    this.carregandoConfirmacao = true;
+    this.transacoesService.confirmarPagamento(id).subscribe({
+      next: () => {
+        this.carregandoConfirmacao = false;
+        this.exibirDialogConfirmarPagamento = false;
+        this.transacaoParaConfirmar = null;
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Pagamento confirmado!',
+          detail: 'A transação foi realizada e o saldo da conta foi atualizado.',
+          life: 3000
+        });
+
+        const idx = this.parcelasGrupo.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          this.parcelasGrupo[idx] = { ...this.parcelasGrupo[idx], estado: 'REALIZADA' };
+        }
+
+        this.listarTransacoes();
+        this.atualizarSaldo();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregandoConfirmacao = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao confirmar pagamento',
+          detail: 'Não foi possível confirmar o pagamento. Tente novamente.',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  excluirGrupoParcelamento(apenasFuturas: boolean) {
+    if (!this.grupoSelecionado) return;
+    this.excluirApenasFuturas = apenasFuturas;
+    this.exibirDialogExcluirParcelamento = true;
+  }
+
+  executarExclusaoParcelamento() {
+    if (!this.grupoSelecionado) return;
+
+    this.carregandoExclusao = true;
+    this.transacoesService.excluirParcelamento(this.grupoSelecionado, this.excluirApenasFuturas).subscribe({
+      next: () => {
+        this.carregandoExclusao = false;
+        this.exibirDialogExcluirParcelamento = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: this.excluirApenasFuturas ? 'Parcelas futuras excluídas' : 'Parcelamento excluído',
           life: 3000
         });
         this.exibirDialogGrupo = false;
@@ -1146,6 +1312,7 @@ export class TransacoesComponent {
         this.cdr.detectChanges();
       },
       error: () => {
+        this.carregandoExclusao = false;
         this.messageService.add({
           severity: 'error',
           summary: 'Erro ao excluir o parcelamento',

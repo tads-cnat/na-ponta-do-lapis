@@ -103,12 +103,20 @@ export class TransacoesService {
     return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes/lote?contaId=${contaId}`, transacoes);
   }
 
+  public confirmarPagamento(id: number): Observable<ITransacoes> {
+    return this.http.patch<ITransacoes>(`${this.BASE_URL}/transacoes/${id}/confirmar-pagamento`, {});
+  }
+
   public listarParcelamento(grupoId: string): Observable<ITransacoes[]> {
     return this.http.get<ITransacoes[]>(`${this.BASE_URL}/transacoes/parcelamento/${grupoId}`);
   }
 
   public gerarParcelasFuturas(grupoId: string): Observable<ITransacoes[]> {
     return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes/parcelamento/${grupoId}/futuras`, {});
+  }
+
+  public gerarParcelasAnteriores(grupoId: string): Observable<ITransacoes[]> {
+    return this.http.post<ITransacoes[]>(`${this.BASE_URL}/transacoes/parcelamento/${grupoId}/anteriores`, {});
   }
 
   public excluirParcelamento(grupoId: string, apenasFuturas: boolean): Observable<void> {

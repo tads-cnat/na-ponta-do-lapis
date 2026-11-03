@@ -58,7 +58,9 @@ public class IaHttpClient {
                 return objectMapper.readTree(resposta);
             } catch (RestClientResponseException e) {
                 int status = e.getStatusCode().value();
-                if (status == 401 || status == 403) {
+                String corpoErro = e.getResponseBodyAsString();
+                if (status == 401 || status == 403 ||
+                        (status == 400 && (corpoErro.contains("API_KEY_INVALID") || corpoErro.contains("API key not valid")))) {
                     throw FaturaAnaliseException.chaveInvalida();
                 }
                 if (status == 429) {

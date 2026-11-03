@@ -21,7 +21,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter.getEmailUsuarioLogado;
 
@@ -218,8 +220,21 @@ public class TransacaoService {
         if (numeroAtual <= 1) {
             return;
         }
-        List<BigDecimal> valores = ParcelamentoCalculator.calcularValores(
-                atual.getValorTotalCompra(), atual.getTotalParcelas());
+
+        BigDecimal valorTotal = atual.getValorTotalCompra();
+        int qtdAnteriores = numeroAtual - 1;
+        List<BigDecimal> valores;
+
+        if (valorTotal != null && valorTotal.compareTo(atual.getValor()) > 0) {
+            BigDecimal saldoParaOutras = valorTotal.subtract(atual.getValor());
+            int parcelasRestantes = atual.getTotalParcelas() - 1;
+            List<BigDecimal> divididas = ParcelamentoCalculator.calcularValores(saldoParaOutras, parcelasRestantes);
+            valores = divididas.subList(0, Math.min(qtdAnteriores, divididas.size()));
+        } else {
+            valores = ParcelamentoCalculator.calcularValores(
+                    valorTotal != null ? valorTotal : atual.getValor().multiply(BigDecimal.valueOf(atual.getTotalParcelas())),
+                    atual.getTotalParcelas());
+        }
 
         List<Transacao> anteriores = new ArrayList<>();
         for (int numero = 1; numero < numeroAtual; numero++) {
@@ -250,6 +265,20 @@ public class TransacaoService {
 
         estornarImpactoSaldo(transacao);
         transacaoRepository.delete(transacao);
+    }
+
+    @Transactional
+    public Transacao confirmarPagamento(Long id) throws AccessDeniedException {
+        Transacao transacao = buscarPorId(id);
+        validarDono(transacao.getContaFinanceira(), getEmailUsuarioLogado());
+
+        if (transacao.getEstado() == EstadoTransacao.REALIZADA) {
+            return transacao;
+        }
+
+        transacao.setEstado(EstadoTransacao.REALIZADA);
+        aplicarImpactoSaldo(transacao);
+        return transacaoRepository.save(transacao);
     }
 
     // -------------------------------------------------------------------------
@@ -346,17 +375,32 @@ public class TransacaoService {
         if (valorTotalCompra == null) {
             valorTotalCompra = referencia.getValor().multiply(BigDecimal.valueOf(totalParcelas));
         }
-        List<BigDecimal> valores = ParcelamentoCalculator.calcularValores(valorTotalCompra, totalParcelas);
+
+        BigDecimal somaExistentes = existentes.stream()
+                .map(Transacao::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        int qtdFuturas = totalParcelas - numeroAtual;
+        BigDecimal saldoRestante = valorTotalCompra.subtract(somaExistentes);
+
+        List<BigDecimal> valores;
+        if (saldoRestante.compareTo(BigDecimal.ZERO) > 0) {
+            valores = ParcelamentoCalculator.calcularValores(saldoRestante, qtdFuturas);
+        } else {
+            valores = ParcelamentoCalculator.calcularValores(
+                    referencia.getValor().multiply(BigDecimal.valueOf(qtdFuturas)), qtdFuturas);
+        }
 
         List<Transacao> novas = new ArrayList<>();
-        for (int numero = numeroAtual + 1; numero <= totalParcelas; numero++) {
+        for (int i = 0; i < qtdFuturas; i++) {
+            int numero = numeroAtual + 1 + i;
             Transacao transacao = new Transacao();
             transacao.setDescricao(referencia.getDescricao());
-            transacao.setValor(valores.get(numero - 1));
+            transacao.setValor(valores.get(i));
             transacao.setCategoria(referencia.getCategoria());
             transacao.setEstado(EstadoTransacao.PENDENTE);
             transacao.setTipo(referencia.getTipo());
-            transacao.setDataHora(referencia.getDataHora().plusMonths(numero - numeroAtual));
+            transacao.setDataHora(referencia.getDataHora().plusMonths(i + 1L));
             transacao.setContaFinanceira(referencia.getContaFinanceira());
             transacao.setMarcador(referencia.getMarcador());
             transacao.setGrupoParcelamento(grupoId);
@@ -367,6 +411,70 @@ public class TransacaoService {
         }
 
         return transacaoRepository.saveAll(novas);
+    }
+
+    @Transactional
+    public List<Transacao> gerarParcelasAnteriores(String grupoId) throws AccessDeniedException {
+        List<Transacao> existentes = transacaoRepository.findByGrupoParcelamentoOrderByNumeroParcelaAsc(grupoId);
+        if (existentes.isEmpty()) {
+            throw new NotFoundException("Parcelamento não encontrado.");
+        }
+
+        Transacao primeira = existentes.get(0);
+        validarDono(primeira.getContaFinanceira(), getEmailUsuarioLogado());
+
+        Integer totalParcelas = primeira.getTotalParcelas();
+        Integer menorNumero = primeira.getNumeroParcela();
+        if (totalParcelas == null || menorNumero == null || menorNumero <= 1) {
+            return List.of();
+        }
+
+        BigDecimal valorTotalCompra = primeira.getValorTotalCompra();
+        if (valorTotalCompra == null) {
+            valorTotalCompra = primeira.getValor().multiply(BigDecimal.valueOf(totalParcelas));
+        }
+
+        BigDecimal somaExistentes = existentes.stream()
+                .map(Transacao::getValor)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        int qtdAnteriores = menorNumero - 1;
+        BigDecimal saldoRestante = valorTotalCompra.subtract(somaExistentes);
+        List<BigDecimal> valores;
+        if (saldoRestante.compareTo(BigDecimal.ZERO) > 0) {
+            valores = ParcelamentoCalculator.calcularValores(saldoRestante, qtdAnteriores);
+        } else {
+            valores = ParcelamentoCalculator.calcularValores(
+                    primeira.getValor().multiply(BigDecimal.valueOf(qtdAnteriores)), qtdAnteriores);
+        }
+
+        Set<Integer> existentesNumeros = existentes.stream()
+                .map(Transacao::getNumeroParcela)
+                .collect(Collectors.toSet());
+
+        List<Transacao> novasAnteriores = new ArrayList<>();
+        for (int i = 0; i < qtdAnteriores; i++) {
+            int numero = i + 1;
+            if (existentesNumeros.contains(numero)) {
+                continue;
+            }
+            Transacao parcela = new Transacao();
+            parcela.setDescricao(primeira.getDescricao());
+            parcela.setValor(valores.get(i));
+            parcela.setCategoria(primeira.getCategoria());
+            parcela.setTipo(primeira.getTipo());
+            parcela.setEstado(EstadoTransacao.REALIZADA);
+            parcela.setDataHora(primeira.getDataHora().minusMonths(menorNumero - numero));
+            parcela.setContaFinanceira(primeira.getContaFinanceira());
+            parcela.setMarcador(primeira.getMarcador());
+            parcela.setGrupoParcelamento(grupoId);
+            parcela.setNumeroParcela(numero);
+            parcela.setTotalParcelas(totalParcelas);
+            parcela.setValorTotalCompra(valorTotalCompra);
+            novasAnteriores.add(parcela);
+        }
+
+        return transacaoRepository.saveAll(novasAnteriores);
     }
 
     @Transactional

@@ -93,6 +93,15 @@ public class TransacaoController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
+    @Operation(summary = "Confirmar pagamento de uma transação pendente")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PatchMapping("/{id}/confirmar-pagamento")
+    public ResponseEntity<TransacoesResponseDTO> confirmarPagamento(@PathVariable Long id)
+            throws AccessDeniedException {
+        Transacao confirmada = transacaoService.confirmarPagamento(id);
+        return ResponseEntity.ok(new TransacoesResponseDTO(confirmada));
+    }
+
     @Operation(summary = "Salvar Transações em Lote")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Transações salvas com sucesso"),
@@ -136,6 +145,16 @@ public class TransacaoController {
     public ResponseEntity<List<TransacoesResponseDTO>> gerarParcelasFuturas(
             @PathVariable String grupoId) throws AccessDeniedException {
         List<Transacao> parcelas = transacaoService.gerarParcelasFuturas(grupoId);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(parcelas.stream().map(TransacoesResponseDTO::new).toList());
+    }
+
+    @Operation(summary = "Gerar as parcelas anteriores de um grupo para histórico")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PostMapping("/parcelamento/{grupoId}/anteriores")
+    public ResponseEntity<List<TransacoesResponseDTO>> gerarParcelasAnteriores(
+            @PathVariable String grupoId) throws AccessDeniedException {
+        List<Transacao> parcelas = transacaoService.gerarParcelasAnteriores(grupoId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(parcelas.stream().map(TransacoesResponseDTO::new).toList());
     }
