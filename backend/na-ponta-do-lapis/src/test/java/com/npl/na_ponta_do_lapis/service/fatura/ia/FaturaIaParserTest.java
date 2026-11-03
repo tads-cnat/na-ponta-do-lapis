@@ -13,7 +13,6 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
-import com.npl.na_ponta_do_lapis.repository.PadraoFaturaRepository;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaRegexService;
 
@@ -23,7 +22,7 @@ class FaturaIaParserTest {
 
     @BeforeEach
     void configurar() {
-        FaturaRegexService regexService = new FaturaRegexService(mock(PadraoFaturaRepository.class));
+        FaturaRegexService regexService = new FaturaRegexService();
         ReflectionTestUtils.setField(regexService, "timeoutMs", 5000L);
         ReflectionTestUtils.setField(regexService, "maxTextChars", 300000);
         parser = new FaturaIaParser(new ObjectMapper(), regexService);
@@ -139,28 +138,5 @@ class FaturaIaParserTest {
     void rejeitaJsonInvalido() {
         assertThatThrownBy(() -> parser.parse("isto não é json", "texto", List.of("Outros")))
                 .isInstanceOf(FaturaAnaliseException.class);
-    }
-
-    @Test
-    void padraoSugeridoQueNaoExtraiNadaEhDescartado() {
-        String resposta = """
-                {
-                  "padrao": {
-                    "emissor": "Banco X",
-                    "regexIdentificacao": "banco x",
-                    "regexTransacao": "(?<descricao>.*)",
-                    "regexTotal": "(\\\\d+,\\\\d{2})",
-                    "formatoData": "dd/MM/yyyy"
-                  },
-                  "transacoes": [
-                    {"descricao": "Loja", "valor": 10, "data": "2026-01-15", "categoria": "Outros"}
-                  ]
-                }
-                """;
-
-        FaturaIaParser.ResultadoIa resultado = parser.parse(resposta, "texto sem o padrao", List.of("Outros"));
-
-        assertThat(resultado.padrao()).isNull();
-        assertThat(resultado.transacoes()).hasSize(1);
     }
 }

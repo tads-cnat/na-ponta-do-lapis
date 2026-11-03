@@ -313,73 +313,55 @@
                 <input id="fileUpload" type="file" accept=".pdf,application/pdf" class="hidden" (change)="selecionarArquivo($event)" />
             </label>
 
-            <div class="w-full border border-slate-200 rounded-xl p-3 bg-slate-50 flex flex-col gap-3">
+            <div class="w-full border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col gap-3.5">
                 <div class="flex items-center gap-2">
-                    <i class="pi pi-sparkles text-[#7843cd]"></i>
-                    <span class="font-semibold text-slate-700 text-sm">Ajuda da inteligência artificial (opcional)</span>
-                    <i class="pi pi-question-circle text-slate-400 cursor-help"
-                        pTooltip="Com o uso de IA desativado, a fatura é lida apenas no sistema, sem enviar nada para fora. Com o uso de IA ativado, a leitura usa a chave que você informar. Antes do envio pela IA, dados pessoais do texto são mascarados."
-                        tooltipPosition="top"></i>
+                    <i class="pi pi-sparkles text-[#7843cd] text-base"></i>
+                    <span class="font-semibold text-slate-800 text-sm">Leitura Inteligente por IA</span>
                 </div>
+                <p class="text-xs text-slate-500 m-0 leading-relaxed">
+                    Extração inteligente de transações com privacidade e mascaramento de dados pessoais.
+                </p>
 
-                <div class="flex items-center justify-between gap-3 p-3 rounded-xl border border-slate-200 bg-white">
-                    <div class="flex flex-col gap-0.5">
-                        <label for="usarIa" class="text-sm font-semibold text-slate-700 cursor-pointer">
-                            Usar IA para ler a fatura
+                <div class="flex flex-col gap-3">
+                    <div class="flex flex-col gap-1.5">
+                        <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                            <span>Serviço de IA</span>
+                            <i class="pi pi-question-circle text-slate-400 cursor-help text-[11px]"
+                                pTooltip="Escolha o provedor da sua chave de API (Gemini, Claude, OpenAI, DeepSeek ou Groq) para ler a fatura."
+                                tooltipPosition="top"></i>
                         </label>
-                        <span class="text-xs text-slate-500">
-                            Ativado: a IA lê a fatura e precisa de uma chave de acesso. Desativado: a leitura é feita apenas no sistema.
-                        </span>
+                        <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
+                            [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
-                    <p-toggleSwitch [(ngModel)]="usarIa" inputId="usarIa" styleClass="shrink-0"></p-toggleSwitch>
+
+                    <div class="flex flex-col gap-1.5">
+                        <div class="flex items-center justify-between">
+                            <label class="text-xs font-semibold text-slate-700">Chave de acesso (API Key)</label>
+                            <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
+                               class="text-xs font-medium text-[#7843cd] hover:text-[#5d2fa8] hover:underline flex items-center gap-1 transition-colors"
+                               [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top" tooltipStyleClass="whitespace-pre-line text-xs">
+                                <span>{{ linkApiKeyProvedor.label }}</span>
+                                <i class="pi pi-external-link text-[10px]"></i>
+                            </a>
+                        </div>
+                        <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
+                            placeholder="Deixe vazio para usar a chave salva"
+                            styleClass="w-full" inputStyleClass="w-full"></p-password>
+                    </div>
                 </div>
 
-                <div class="flex flex-col gap-3 transition-opacity duration-200"
-                    [class.opacity-40]="!usarIa"
-                    [class.pointer-events-none]="!usarIa"
-                    [attr.aria-disabled]="!usarIa">
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
-                                Serviço de IA
-                                <i class="pi pi-question-circle text-slate-400 cursor-help"
-                                    pTooltip="Empresa que fornece a IA. Use aquela em que você tem uma conta e uma chave de acesso."
-                                    tooltipPosition="top"></i>
-                            </label>
-                            <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
-                                [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"
-                                [disabled]="!usarIa"></p-select>
-                        </div>
-
-                        <div class="flex flex-col gap-1">
-                            <label class="text-xs font-semibold text-slate-500 flex items-center gap-1">
-                                Chave de acesso
-                                <i class="pi pi-question-circle text-slate-400 cursor-help"
-                                    pTooltip="Também chamada de chave de API. É como uma senha que você gera no site do serviço de IA escolhido. Ela só é usada para ler a sua fatura e nunca fica salva no banco de dados."
-                                    tooltipPosition="top"></i>
-                            </label>
-                            <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                                placeholder="Deixe vazio para usar a chave já salva"
-                                styleClass="w-full" inputStyleClass="w-full"
-                                [disabled]="!usarIa"></p-password>
-                        </div>
-                    </div>
-
+                <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200">
                     <div class="flex items-center gap-2">
-                        <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"
-                            [disabled]="!usarIa"></p-checkbox>
-                        <label for="manterSessao" class="text-xs text-slate-600"
-                            [class.cursor-pointer]="usarIa">
-                            Lembrar minha chave por um tempo
+                        <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"></p-checkbox>
+                        <label for="manterSessao" class="text-xs text-slate-600 cursor-pointer select-none">
+                            Lembrar chave nesta sessão
                         </label>
-                        <i class="pi pi-question-circle text-slate-400 cursor-help"
-                            pTooltip="A chave fica guardada de forma criptografada em um cookie do navegador e expira em cerca de 1 hora. Assim você não precisa digitá-la a cada fatura."
-                            tooltipPosition="top"></i>
                     </div>
-
-                    <p-button label="Apagar chave salva" icon="pi pi-trash" [text]="true" severity="secondary"
-                        styleClass="text-xs self-start p-0" [disabled]="!usarIa"
-                        (onClick)="esquecerChaveIa()"></p-button>
+                    <button type="button" (click)="esquecerChaveIa()"
+                        class="text-xs text-slate-400 hover:text-red-600 flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 transition-colors">
+                        <i class="pi pi-trash text-[11px]"></i>
+                        <span>Apagar chave salva</span>
+                    </button>
                 </div>
             </div>
 
@@ -420,9 +402,9 @@
             }
 
             @if (carregando) {
-                <div class="w-full flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200">
-                    <p-progressSpinner strokeWidth="4" styleClass="w-6 h-6 shrink-0" />
-                    <span class="text-xs sm:text-sm font-medium text-slate-700 animate-pulse">{{ etapaAnalise }}</span>
+                <div class="w-full flex items-center gap-3 px-3.5 py-3 rounded-xl bg-purple-50/70 border border-purple-200 min-w-0">
+                    <p-progressSpinner [style]="{ width: '22px', height: '22px' }" strokeWidth="4" styleClass="shrink-0" />
+                    <span class="text-xs sm:text-sm font-medium text-purple-900 truncate animate-pulse flex-1 min-w-0">{{ etapaAnalise }}</span>
                 </div>
             }
 
@@ -456,17 +438,30 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div class="flex flex-col gap-1">
-                    <label class="text-xs font-semibold text-slate-500">Serviço de IA (Gemini ou Claude)</label>
+            <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-1.5">
+                    <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                        <span>Serviço de IA (Multimodal)</span>
+                        <i class="pi pi-question-circle text-slate-400 cursor-help text-[11px]"
+                            pTooltip="Para faturas em imagem, apenas Gemini e Claude possuem visão multimodal para leitura direta do PDF."
+                            tooltipPosition="top"></i>
+                    </label>
                     <p-select [options]="opcoesProvedorPdf" optionLabel="label" optionValue="value"
                         [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
                 </div>
 
-                <div class="flex flex-col gap-1">
-                    <label class="text-xs font-semibold text-slate-500">Chave de acesso</label>
+                <div class="flex flex-col gap-1.5">
+                    <div class="flex items-center justify-between">
+                        <label class="text-xs font-semibold text-slate-700">Chave de acesso (API Key)</label>
+                        <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
+                           class="text-xs font-medium text-[#7843cd] hover:text-[#5d2fa8] hover:underline flex items-center gap-1 transition-colors"
+                           [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top" tooltipStyleClass="whitespace-pre-line text-xs">
+                            <span>{{ linkApiKeyProvedor.label }}</span>
+                            <i class="pi pi-external-link text-[10px]"></i>
+                        </a>
+                    </div>
                     <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                        placeholder="Ou use a chave já salva"
+                        placeholder="Deixe vazio para usar a chave salva"
                         styleClass="w-full" inputStyleClass="w-full"></p-password>
                 </div>
             </div>
@@ -513,55 +508,27 @@
         [contentStyle]="{ 'max-height': '72vh', 'overflow-y': 'auto' }" [maximizable]="true">
         <div class="flex flex-col gap-4 py-2">
             @if (carregando) {
-                <div class="flex flex-col items-center gap-4 py-8">
-                    <p-progressSpinner strokeWidth="4" styleClass="w-12 h-12" />
-                    <span class="text-slate-600">Salvando transações...</span>
+                <div class="flex flex-col items-center gap-3 py-8">
+                    <p-progressSpinner [style]="{ width: '32px', height: '32px' }" strokeWidth="4" />
+                    <span class="text-sm font-medium text-slate-600">Salvando transações...</span>
                 </div>
             } @else {
                 @if (faturaAnalise) {
-                    <!-- Tag e Informações do Emissor -->
+                    <!-- Informações do Emissor e Contagem -->
                     <div class="flex flex-wrap items-center gap-2">
-                        <p-tag
-                            [value]="faturaAnalise.fonte === 'REGEX' ? 'Leitura automática' : (faturaAnalise.fonte === 'IA' ? 'Leitura com IA' : 'Origem desconhecida')"
-                            [severity]="faturaAnalise.fonte === 'REGEX' ? 'success' : 'info'"></p-tag>
-                        <i class="pi pi-question-circle text-slate-400 cursor-help"
-                            [pTooltip]="faturaAnalise.fonte === 'REGEX'
-                                ? 'A fatura foi lida por um modelo de leitura (regex) já conhecido, sem enviar nada para fora do sistema.'
-                                : 'A fatura foi lida por uma IA. Se o modelo de leitura gerado funcionar, ele fica salvo e as próximas faturas do mesmo banco serão lidas automaticamente.'"
-                            tooltipPosition="top"></i>
                         @if (faturaAnalise.emissor) {
-                            <p-tag [value]="faturaAnalise.emissor" severity="secondary"></p-tag>
+                            <p-tag [value]="faturaAnalise.emissor" severity="secondary" icon="pi pi-building"></p-tag>
                         }
                         @if (faturaAnalise.ocrUtilizado) {
-                            <p-tag value="Texto reconhecido da imagem" severity="warn"></p-tag>
-                            <i class="pi pi-question-circle text-slate-400 cursor-help"
-                                pTooltip="O PDF era uma imagem, então o texto foi reconhecido por OCR no próprio servidor. Confira os valores com atenção, pois esse reconhecimento pode errar."
-                                tooltipPosition="top"></i>
+                            <p-tag value="OCR" severity="warn" icon="pi pi-eye"></p-tag>
                         }
-                        @if (faturaAnalise.padraoVersao) {
-                            <span class="text-xs text-slate-500">Modelo de leitura v{{ faturaAnalise.padraoVersao }}</span>
-                        }
-                        <span class="text-xs text-slate-500 ml-auto">
-                            {{ transacoesExtraidas.length }} transação(ões) encontrada(s)
+                        <span class="text-xs text-slate-500 ml-auto font-medium">
+                            {{ transacoesExtraidas.length }} lançamento(s) encontrado(s)
                         </span>
                     </div>
 
-                    <!-- Banner de Novo Padrão Aprendido (Efeito UAU) -->
-                    @if (faturaAnalise.padraoNovoAprendido) {
-                        <div class="flex items-start gap-3 p-3.5 rounded-xl bg-purple-50 border border-purple-200 text-purple-900 text-xs shadow-xs animate-fade-in">
-                            <i class="pi pi-sparkles text-purple-600 text-lg mt-0.5 shrink-0"></i>
-                            <div class="flex flex-col gap-0.5">
-                                <span class="font-bold text-sm text-purple-900">Novo padrão aprendido para {{ faturaAnalise.emissor || 'este banco' }}!</span>
-                                <span class="text-purple-700">
-                                    O sistema memorizou e calibrou o formato desta fatura. Suas próximas faturas desse mesmo banco serão lidas de forma instantânea, automática e sem gastar tokens de IA.
-                                </span>
-                            </div>
-                        </div>
-                    }
-
                     <!-- Card Resumo Financeiro da Fatura -->
-                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border transition-colors"
-                         [ngClass]="alertaSomaRevisao ? 'bg-amber-50/80 border-amber-200' : 'bg-emerald-50/70 border-emerald-200'">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl border bg-slate-50/70 border-slate-200">
                         <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
                             @if (faturaAnalise.valorTotalFatura !== null) {
                                 <div class="flex flex-col">
@@ -572,49 +539,37 @@
                                 </div>
                             }
                             <div class="flex flex-col">
-                                <span class="text-xs text-slate-500 font-medium">Soma das transações selecionadas</span>
-                                <span class="font-bold text-base" [ngClass]="alertaSomaRevisao ? 'text-amber-800' : 'text-emerald-700'">
+                                <span class="text-xs text-slate-500 font-medium">Lançamentos selecionados</span>
+                                <span class="font-bold text-base text-slate-800">
                                     {{ somaTransacoesRevisao | currency:'BRL' }}
                                 </span>
                             </div>
                             @if (diferencaRevisao !== null && diferencaRevisao !== 0) {
                                 <div class="flex flex-col">
-                                    <span class="text-xs font-medium" [ngClass]="alertaSomaRevisao ? 'text-amber-700' : 'text-slate-500'">
-                                        Diferença
-                                    </span>
-                                    <span class="font-bold text-base" [ngClass]="alertaSomaRevisao ? 'text-amber-700' : 'text-slate-700'">
+                                    <span class="text-xs font-medium text-slate-500">Diferença</span>
+                                    <span class="font-bold text-base text-slate-700">
                                         {{ diferencaRevisao | currency:'BRL' }}
                                     </span>
                                 </div>
                             }
                         </div>
                         <div class="flex items-center gap-2 shrink-0">
-                            @if (alertaSomaRevisao) {
-                                <p-tag value="Divergência detectada" severity="warn" icon="pi pi-exclamation-triangle"></p-tag>
-                            } @else if (faturaAnalise.valorTotalFatura !== null) {
+                            @if (diferencaRevisao === 0 && faturaAnalise.valorTotalFatura !== null) {
                                 <p-tag value="Total conferido" severity="success" icon="pi pi-check-circle"></p-tag>
                             }
                         </div>
                     </div>
 
-                    @if (alertaSomaRevisao) {
-                        <div class="flex items-start gap-2 p-2.5 rounded-lg bg-amber-100/70 text-xs text-amber-900 border border-amber-200">
-                            <i class="pi pi-info-circle text-amber-600 mt-0.5"></i>
-                            <span>
-                                A soma das transações selecionadas diverge do total da fatura.
-                                Confira se alguma transação foi desmarcada indevidamente ou se os valores editados estão corretos.
-                            </span>
+                    @if (diferencaRevisao !== null && diferencaRevisao !== 0) {
+                        <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-50 text-xs text-sky-800 border border-sky-200">
+                            <i class="pi pi-info-circle text-sky-600 shrink-0"></i>
+                            <span>Diferença de <strong>{{ diferencaRevisao | currency:'BRL' }}</strong> em relação ao boleto (comum com créditos ou estornos).</span>
                         </div>
                     }
-
-                    <p class="text-xs text-slate-500 m-0">
-                        A importação salva somente a parcela atual de cada compra parcelada.
-                        As parcelas futuras podem ser geradas depois, com sua confirmação.
-                    </p>
                 }
 
-                <div class="flex flex-col gap-2">
-                    <label class="font-bold text-sm">Selecione a conta para lançamento</label>
+                <div class="flex flex-col gap-1.5">
+                    <label class="font-bold text-xs text-slate-700">Conta para lançamento</label>
                     <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
                         [(ngModel)]="contaSelecionadaRevisao" (onChange)="aoMudarContaRevisao()" placeholder="Selecione a conta..." [appendTo]="'body'"
                         styleClass="w-full"></p-select>
@@ -622,16 +577,9 @@
 
                 <!-- Alerta de Possíveis Duplicatas -->
                 @if (qtdDuplicatasDetectadas > 0) {
-                    <div class="flex items-start gap-2.5 p-3.5 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-xs shadow-xs animate-fade-in">
-                        <i class="pi pi-exclamation-triangle text-amber-600 text-base mt-0.5 shrink-0"></i>
-                        <div class="flex flex-col gap-0.5">
-                            <span class="font-bold text-sm text-amber-900">
-                                {{ qtdDuplicatasDetectadas }} transação(ões) já existente(s) identificada(s)!
-                            </span>
-                            <span class="text-amber-800">
-                                Encontramos lançamentos idênticos já salvos nesta conta com a mesma data e valor. Por segurança, essas transações foram desmarcadas automaticamente para evitar cobranças duplas no seu orçamento, mas você pode marcá-las se desejar.
-                            </span>
-                        </div>
+                    <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs">
+                        <i class="pi pi-exclamation-triangle text-amber-600 shrink-0"></i>
+                        <span><strong>{{ qtdDuplicatasDetectadas }} lançamento(s) já existente(s)</strong> foram desmarcados automaticamente por precaução.</span>
                     </div>
                 }
 
@@ -718,9 +666,6 @@
                                     <p-tag [value]="t.numeroParcela + ' de ' + t.totalParcelas" severity="warn"
                                         [rounded]="true" styleClass="text-xs"></p-tag>
                                 }
-                                <span class="text-xs text-slate-400">
-                                    (deixe em branco se não for compra parcelada)
-                                </span>
                             </div>
 
                             @if (t.duplicata) {

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.npl.na_ponta_do_lapis.entity.PadraoFatura;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaRegexService;
@@ -87,13 +86,16 @@ public class FaturaIaParser {
             throw FaturaAnaliseException.respostaIaInvalida("Nenhuma transação válida na resposta.");
         }
 
-        PadraoFatura padrao = parsePadrao(raiz.path("padrao"), textoSanitizado);
+        String emissor = raiz.path("emissor").asText(null);
+        if (emissor != null && emissor.isBlank()) {
+            emissor = null;
+        }
         BigDecimal total = parseValor(raiz.path("valorTotalFatura"));
         if (total == null) {
             total = parseValor(raiz.path("totalFatura"));
         }
 
-        return new ResultadoIa(transacoes, padrao, total);
+        return new ResultadoIa(transacoes, total, emissor);
     }
 
     private TransacaoFaturaDTO parseTransacao(JsonNode node, List<String> categoriasPermitidas) {
@@ -153,54 +155,6 @@ public class FaturaIaParser {
     private boolean descricaoDeRuido(String descricao) {
         String normalizada = FaturaRegexService.normalizar(descricao);
         return DESCARTAR_DESCRICAO.stream().anyMatch(normalizada::contains);
-    }
-
-    private PadraoFatura parsePadrao(JsonNode node, String textoSanitizado) {
-        if (!node.isObject()) {
-            log.warn("IA não retornou o objeto 'padrao'; regex não será salvo.");
-            return null;
-        }
-        String emissor = node.path("emissor").asText(null);
-        String identificacao = node.path("regexIdentificacao").asText(null);
-        String transacao = node.path("regexTransacao").asText(null);
-        String total = node.path("regexTotal").asText(null);
-        String formatoData = node.path("formatoData").asText("dd/MM/yyyy");
-
-        if (emissor == null || emissor.isBlank()
-                || identificacao == null || identificacao.isBlank()
-                || transacao == null || transacao.isBlank()) {
-            log.warn("Padrão da IA incompleto (emissor/regexIdentificacao/regexTransacao); não será salvo.");
-            return null;
-        }
-
-        PadraoFatura padrao = new PadraoFatura();
-        padrao.setEmissor(emissor.trim());
-        padrao.setRegexIdentificacao(identificacao);
-        padrao.setRegexTransacao(transacao);
-        padrao.setRegexTotal(total);
-        padrao.setFormatoData(formatoData == null || formatoData.isBlank() ? "dd/MM/yyyy" : formatoData);
-        padrao.setOrigem("IA");
-
-        if (!faturaRegexService.validarPadrao(padrao, textoSanitizado)) {
-            log.warn("Padrão da IA descartado: não reproduz transações no texto. identificacao='{}' transacao='{}'",
-                    identificacao, transacao);
-            return null;
-        }
-        return padrao;
-    }
-
-    public PadraoFatura parsePadraoRefinado(String resposta, String textoSanitizado) {
-        if (resposta == null || resposta.isBlank()) {
-            return null;
-        }
-        try {
-            JsonNode raiz = objectMapper.readTree(limparCercas(resposta));
-            JsonNode node = raiz.has("padrao") ? raiz.path("padrao") : raiz;
-            return parsePadrao(node, textoSanitizado);
-        } catch (Exception e) {
-            log.warn("Erro ao fazer parse do padrão refinado da IA: {}", e.getMessage());
-            return null;
-        }
     }
 
     private String escolherCategoria(String categoria, List<String> categoriasPermitidas) {
@@ -267,7 +221,10 @@ public class FaturaIaParser {
     }
 
     public record ResultadoIa(List<TransacaoFaturaDTO> transacoes,
-                              PadraoFatura padrao,
-                              BigDecimal valorTotalFatura) {
+                              BigDecimal valorTotalFatura,
+                              String emissor) {
+        public ResultadoIa(List<TransacaoFaturaDTO> transacoes, BigDecimal valorTotalFatura) {
+            this(transacoes, valorTotalFatura, null);
+        }
     }
 }

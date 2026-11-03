@@ -69,7 +69,7 @@ export class TransacoesComponent {
   provedorSelecionado: ProvedorIa = 'GEMINI';
   apiKeyIa: string = '';
   manterNaSessao: boolean = false;
-  usarIa: boolean = false;
+  usarIa: boolean = true;
   consentimentoLgpd: boolean = false;
 
   gruposParcelamentoCriados: GrupoParcelamentoResumo[] = [];
@@ -308,6 +308,102 @@ export class TransacoesComponent {
 
   get provedorSelecionadoSuportaPdf(): boolean {
     return this.opcoesProvedorIa.find(p => p.value === this.provedorSelecionado)?.suportaPdf ?? false;
+  }
+
+  get tutorialApiKey(): {
+    provedorNome: string;
+    url: string;
+    labelLink: string;
+    resumoTooltip: string;
+    passos: string[];
+  } {
+    switch (this.provedorSelecionado) {
+      case 'GEMINI':
+        return {
+          provedorNome: 'Google Gemini',
+          url: 'https://aistudio.google.com/app/apikey',
+          labelLink: 'Obter chave gratuita',
+          resumoTooltip: 'Passo a passo rápido:\n1. Acesse o Google AI Studio com sua conta Google\n2. Clique em "Criar chave de API" (ou "Get API key")\n3. Copie o código da chave gerada',
+          passos: [
+            'Acesse o Google AI Studio com sua conta Google.',
+            'Clique no botão "Criar chave de API" (ou "Get API key" / "Create API key").',
+            'Selecione ou crie um projeto (ex: Meu Projeto) e confirme.',
+            'Copie a chave gerada e cole no campo de Chave de Acesso.'
+          ]
+        };
+      case 'CLAUDE':
+        return {
+          provedorNome: 'Anthropic Claude',
+          url: 'https://console.anthropic.com/settings/keys',
+          labelLink: 'Obter chave Claude',
+          resumoTooltip: 'Passo a passo rápido (site em inglês):\n1. Acesse o Anthropic Console\n2. Vá no menu Settings > "API Keys"\n3. Clique em "Create Key" e copie a chave',
+          passos: [
+            'Acesse o Anthropic Console e entre com sua conta (painel em inglês).',
+            'No menu superior ou lateral, vá em Settings > "API Keys".',
+            'Clique em "Create Key", digite um nome e confirme.',
+            'Copie o código gerado (começa com sk-ant-...) e cole aqui.'
+          ]
+        };
+      case 'OPENAI':
+        return {
+          provedorNome: 'OpenAI (ChatGPT)',
+          url: 'https://platform.openai.com/api-keys',
+          labelLink: 'Obter chave OpenAI',
+          resumoTooltip: 'Passo a passo rápido (site em inglês):\n1. Acesse platform.openai.com\n2. No menu lateral, acesse "API keys"\n3. Clique em "+ Create new secret key" e copie',
+          passos: [
+            'Acesse a plataforma da OpenAI e faça login na sua conta.',
+            'No menu lateral esquerdo, selecione "API keys".',
+            'Clique em "+ Create new secret key", escolha um nome e crie.',
+            'Copie o código gerado de imediato e cole aqui.'
+          ]
+        };
+      case 'DEEPSEEK':
+        return {
+          provedorNome: 'DeepSeek',
+          url: 'https://platform.deepseek.com/api_keys',
+          labelLink: 'Obter chave DeepSeek',
+          resumoTooltip: 'Passo a passo rápido (site em inglês):\n1. Acesse platform.deepseek.com\n2. No menu lateral, acesse "API Keys"\n3. Clique em "Create API Key" e copie o código',
+          passos: [
+            'Acesse platform.deepseek.com e entre com sua conta (painel em inglês).',
+            'No menu lateral esquerdo, clique em "API Keys".',
+            'Clique em "Create API Key", confirme o nome e gere.',
+            'Copie o código da chave e cole no campo abaixo.'
+          ]
+        };
+      case 'GROQ':
+        return {
+          provedorNome: 'Groq Cloud',
+          url: 'https://console.groq.com/keys',
+          labelLink: 'Obter chave Groq',
+          resumoTooltip: 'Passo a passo rápido (site em inglês):\n1. Acesse console.groq.com\n2. No menu lateral, acesse "API Keys"\n3. Clique em "Create API Key" e copie',
+          passos: [
+            'Acesse o Groq Console com sua conta (painel em inglês).',
+            'No menu lateral, selecione a seção "API Keys".',
+            'Clique no botão "Create API Key", dê um nome e confirme.',
+            'Copie o código da chave (começa com gsk_...) e cole aqui.'
+          ]
+        };
+      default:
+        return {
+          provedorNome: 'Provedor de IA',
+          url: 'https://aistudio.google.com/app/apikey',
+          labelLink: 'Obter chave',
+          resumoTooltip: 'Acesse o painel oficial para gerar sua chave.',
+          passos: [
+            'Acesse o painel do provedor de IA escolhido.',
+            'Navegue até a seção de chaves (API Keys).',
+            'Crie uma chave e copie o código para cá.'
+          ]
+        };
+    }
+  }
+
+  get linkApiKeyProvedor() {
+    return {
+      url: this.tutorialApiKey.url,
+      label: this.tutorialApiKey.labelLink,
+      dicaLink: this.tutorialApiKey.resumoTooltip
+    };
   }
 
   resetForm(): ITransacoes {
