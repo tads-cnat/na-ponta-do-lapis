@@ -2,9 +2,20 @@ import { ChangeDetectorRef, Component, DestroyRef, inject, ViewChild } from '@an
 import { ActivatedRoute, Router } from '@angular/router';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { forkJoin } from 'rxjs';
+import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
-import { Categoria, ITransacaoFatura, ITransacaoRequest, ITransacoes, Tipo } from '../../model/ITransacoes.model';
+import {
+  Categoria,
+  FaturaAnaliseOpcoes,
+  FaturaAnaliseResponse,
+  FaturaErro,
+  ITransacaoFatura,
+  ITransacaoRequest,
+  ITransacoes,
+  ProvedorIa,
+  Tipo,
+} from '../../model/ITransacoes.model';
 import { IContasRequest } from '../../model/IContas.models';
 import { Marcador, MarcadorRequest } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
@@ -13,6 +24,14 @@ import { CardSaldoComponent } from '../../shared/components/card-saldo/card-sald
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MarcadorDlgComponent } from '../marcador-dlg/marcador-dlg.component';
+
+interface GrupoParcelamentoResumo {
+  grupoId: string;
+  descricao: string;
+  numeroParcela: number;
+  totalParcelas: number;
+  valorTotalCompra: number | null;
+}
 
 @Component({
   selector: 'app-transacoes',
@@ -27,11 +46,117 @@ export class TransacoesComponent {
   exibirDialogEscolha: boolean = false;
   exibirDialogUpload: boolean = false;
   exibirDialogRevisao: boolean = false;
+  exibirDialogConsentimento: boolean = false;
+  exibirDialogGrupo: boolean = false;
+  exibirDialogConfirmarPagamento: boolean = false;
+  transacaoParaConfirmar: ITransacoes | null = null;
+  carregandoConfirmacao: boolean = false;
+  exibirDialogExcluirParcelamento: boolean = false;
+  excluirApenasFuturas: boolean = false;
+  carregandoExclusao: boolean = false;
   carregando: boolean = false;
+  carregandoConsentimento: boolean = false;
+  carregandoGrupo: boolean = false;
+  editandoParcelada: boolean = false;
   erroUpload: string | null = null;
+  codigoErroUpload: string | null = null;
+  validandoArquivo: boolean = false;
+  faturaPreviaValida: boolean = false;
+  emissorDetectado: string | null = null;
+  temChaveSalva: boolean = false;
+  provedorSalvo: ProvedorIa | null = null;
+  carregandoSessaoIa: boolean = false;
+  erroConsentimento: string | null = null;
   arquivoSelecionado: File | null = null;
+
+  get podeAnalisarFatura(): boolean {
+    if (!this.arquivoSelecionado || this.carregando || this.validandoArquivo) {
+      return false;
+    }
+    if (this.codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA' || !this.faturaPreviaValida) {
+      return false;
+    }
+    return this.temChaveSalva || !!this.apiKeyIa?.trim();
+  }
+
+  projetarParcelasFuturas: boolean = true;
+
+  get temParcelasNaRevisao(): boolean {
+    return this.transacoesExtraidas.some(
+      t => t.selecionada && !!t.numeroParcela && !!t.totalParcelas && t.numeroParcela < t.totalParcelas
+    );
+  }
+
+  get totalParcelasEsperadas(): number {
+    return this.parcelasGrupo[0]?.totalParcelas ?? this.parcelasGrupo.length;
+  }
+
+  get numerosParcelasCadastradas(): number[] {
+    return this.parcelasGrupo
+      .map(p => p.numeroParcela || 0)
+      .filter(n => n > 0);
+  }
+
+  get menorParcelaCadastrada(): number {
+    const nums = this.numerosParcelasCadastradas;
+    return nums.length > 0 ? Math.min(...nums) : 1;
+  }
+
+  get maiorParcelaCadastrada(): number {
+    const nums = this.numerosParcelasCadastradas;
+    return nums.length > 0 ? Math.max(...nums) : 0;
+  }
+
+  get qtdParcelasFaltantes(): number {
+    const total = this.totalParcelasEsperadas;
+    return Math.max(0, total - this.parcelasGrupo.length);
+  }
+
+  get qtdFuturasFaltantes(): number {
+    const total = this.totalParcelasEsperadas;
+    if (this.maiorParcelaCadastrada >= total) return 0;
+    return Math.max(0, total - this.maiorParcelaCadastrada);
+  }
+
+  get qtdAnterioresFaltantes(): number {
+    if (this.menorParcelaCadastrada <= 1) return 0;
+    return this.menorParcelaCadastrada - 1;
+  }
+
+  get temParcelasPendentesNoGrupo(): boolean {
+    return this.parcelasGrupo.some(p => p.estado === 'PENDENTE');
+  }
+
+  get proximaParcelaPendente(): ITransacoes | null {
+    const pendentes = this.parcelasGrupo
+      .filter(p => p.estado === 'PENDENTE')
+      .sort((a, b) => (a.numeroParcela || 0) - (b.numeroParcela || 0));
+    return pendentes[0] || null;
+  }
   transacoesExtraidas: ITransacaoFatura[] = [];
   contaSelecionadaRevisao: number | null = null;
+  faturaAnalise: FaturaAnaliseResponse | null = null;
+  etapaAnalise: string = 'Lendo páginas do arquivo...';
+  private intervaloEtapas: any = null;
+  faturaPendenteConsentimento: FaturaAnaliseResponse | null = null;
+  precisaAtivarIa: boolean = false;
+  precisaSenhaPdf: boolean = false;
+  senhaPdf: string = '';
+  qtdDuplicatasDetectadas: number = 0;
+
+  provedorSelecionado: ProvedorIa = 'GEMINI';
+  apiKeyIa: string = '';
+  apiKeyIaTocada: boolean = false;
+  manterNaSessao: boolean = false;
+  usarIa: boolean = true;
+  consentimentoLgpd: boolean = false;
+
+  gruposParcelamentoCriados: GrupoParcelamentoResumo[] = [];
+  gruposGerados = new Set<string>();
+
+  grupoSelecionado: string | null = null;
+  parcelasGrupo: ITransacoes[] = [];
+
   private messageService = inject(MessageService)
   private destroyRef = inject(DestroyRef)
   id: number | null = null;
@@ -52,8 +177,77 @@ export class TransacoesComponent {
       dataHora: ['', [Validators.required]],
       estado: ['', [Validators.required]],
       tipo: ['', [Validators.required]],
-      marcadorId: ['']
+      marcadorId: [''],
+      parcelado: [false],
+      totalParcelas: [2],
+      numeroParcela: [1],
+      valorTotalCompra: [null],
+      criarParcelasAnteriores: [true]
+    }, {
+      validators: [this.validarParcelamento]
     })
+
+    this.formTransacao.get('parcelado')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((parcelado: boolean) => this.ajustarValidacaoParcelas(parcelado));
+
+    this.formTransacao.get('totalParcelas')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((novoTotal: number) => {
+        const atual = this.formTransacao.get('numeroParcela')?.value;
+        if (novoTotal && atual && Number(atual) > Number(novoTotal)) {
+          this.formTransacao.get('numeroParcela')?.setValue(Number(novoTotal));
+        }
+        this.formTransacao.updateValueAndValidity({ emitEvent: false });
+      });
+
+    this.formTransacao.get('numeroParcela')?.valueChanges
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.formTransacao.updateValueAndValidity({ emitEvent: false });
+      });
+  }
+
+  validarParcelamento = (control: AbstractControl): ValidationErrors | null => {
+    const parcelado = control.get('parcelado')?.value;
+    const numeroControl = control.get('numeroParcela');
+    if (!parcelado) {
+      if (numeroControl?.hasError('numeroMaiorQueTotal')) {
+        const errors = { ...numeroControl.errors };
+        delete errors['numeroMaiorQueTotal'];
+        numeroControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
+      return null;
+    }
+
+    const numero = numeroControl?.value;
+    const total = control.get('totalParcelas')?.value;
+
+    if (numero != null && total != null && Number(numero) > Number(total)) {
+      numeroControl?.setErrors({ ...(numeroControl.errors || {}), numeroMaiorQueTotal: true });
+      return { numeroMaiorQueTotal: true };
+    } else {
+      if (numeroControl?.hasError('numeroMaiorQueTotal')) {
+        const errors = { ...numeroControl.errors };
+        delete errors['numeroMaiorQueTotal'];
+        numeroControl.setErrors(Object.keys(errors).length ? errors : null);
+      }
+    }
+    return null;
+  };
+
+  /** Parcelas só são obrigatórias quando a transação é parcelada. */
+  private ajustarValidacaoParcelas(parcelado: boolean) {
+    const total = this.formTransacao.get('totalParcelas');
+    const atual = this.formTransacao.get('numeroParcela');
+    if (!total || !atual) return;
+    total.setValidators(parcelado
+      ? [Validators.required, Validators.min(2), Validators.max(60)]
+      : []);
+    atual.setValidators(parcelado ? [Validators.required, Validators.min(1)] : []);
+    total.updateValueAndValidity({ emitEvent: false });
+    atual.updateValueAndValidity({ emitEvent: false });
+    this.formTransacao.updateValueAndValidity({ emitEvent: false });
   }
 
   ngOnInit(): void {
@@ -112,7 +306,6 @@ export class TransacoesComponent {
         this.cdr.detectChanges()
       },
       error: (erro: Error) => {
-        console.log(erro)
         this.messageService.add({
           severity: 'warn',
           summary: 'Erro ao carregar transação',
@@ -197,7 +390,6 @@ export class TransacoesComponent {
     this.formTransacao.patchValue({
       marcadorId: marcador.id
     })
-    console.log("Marcador selecionado:", marcador)
     this.op.hide();
     this.formTransacao.get('marcadorId')?.markAsDirty();
   }
@@ -228,6 +420,117 @@ export class TransacoesComponent {
     { label: 'Receita', value: 'RECEITA' }
   ];
 
+  opcoesProvedorIa: { label: string; value: ProvedorIa; suportaPdf: boolean }[] = [
+    { label: 'Gemini', value: 'GEMINI', suportaPdf: true },
+    { label: 'Claude', value: 'CLAUDE', suportaPdf: true },
+    { label: 'OpenAI', value: 'OPENAI', suportaPdf: false },
+    { label: 'DeepSeek', value: 'DEEPSEEK', suportaPdf: false },
+    { label: 'Groq', value: 'GROQ', suportaPdf: false },
+  ];
+
+  get opcoesProvedorPdf() {
+    return this.opcoesProvedorIa.filter(p => p.suportaPdf);
+  }
+
+  get provedorSelecionadoSuportaPdf(): boolean {
+    return this.opcoesProvedorIa.find(p => p.value === this.provedorSelecionado)?.suportaPdf ?? false;
+  }
+
+  get tutorialApiKey(): {
+    provedorNome: string;
+    url: string;
+    labelLink: string;
+    resumoTooltip: string;
+    passos: string[];
+  } {
+    switch (this.provedorSelecionado) {
+      case 'GEMINI':
+        return {
+          provedorNome: 'Google Gemini',
+          url: 'https://aistudio.google.com/app/apikey',
+          labelLink: 'Obter chave gratuita',
+          resumoTooltip: 'Passo a passo rápido:\n1. Acesse o Google AI Studio com sua conta Google\n2. Clique em "Criar chave de API" (ou "Get API key")\n3. Copie o código da chave gerada',
+          passos: [
+            'Acesse o Google AI Studio com sua conta Google.',
+            'Clique no botão "Criar chave de API" (ou "Get API key" / "Create API key").',
+            'Selecione ou crie um projeto (ex: Meu Projeto) e confirme.',
+            'Copie a chave gerada e cole no campo de Chave de Acesso.'
+          ]
+        };
+      case 'CLAUDE':
+        return {
+          provedorNome: 'Anthropic Claude',
+          url: 'https://console.anthropic.com/settings/keys',
+          labelLink: 'Obter chave Claude',
+          resumoTooltip: 'Passo a passo rápido (site em inglês):\n1. Acesse o Anthropic Console\n2. Vá no menu Settings > "API Keys"\n3. Clique em "Create Key" e copie a chave',
+          passos: [
+            'Acesse o Anthropic Console e entre com sua conta (painel em inglês).',
+            'No menu superior ou lateral, vá em Settings > "API Keys".',
+            'Clique em "Create Key", digite um nome e confirme.',
+            'Copie o código gerado (começa com sk-ant-...) e cole aqui.'
+          ]
+        };
+      case 'OPENAI':
+        return {
+          provedorNome: 'OpenAI (ChatGPT)',
+          url: 'https://platform.openai.com/api-keys',
+          labelLink: 'Obter chave OpenAI',
+          resumoTooltip: 'Passo a passo rápido (site em inglês):\n1. Acesse platform.openai.com\n2. No menu lateral, acesse "API keys"\n3. Clique em "+ Create new secret key" e copie',
+          passos: [
+            'Acesse a plataforma da OpenAI e faça login na sua conta.',
+            'No menu lateral esquerdo, selecione "API keys".',
+            'Clique em "+ Create new secret key", escolha um nome e crie.',
+            'Copie o código gerado de imediato e cole aqui.'
+          ]
+        };
+      case 'DEEPSEEK':
+        return {
+          provedorNome: 'DeepSeek',
+          url: 'https://platform.deepseek.com/api_keys',
+          labelLink: 'Obter chave DeepSeek',
+          resumoTooltip: 'Passo a passo rápido (site em inglês):\n1. Acesse platform.deepseek.com\n2. No menu lateral, acesse "API Keys"\n3. Clique em "Create API Key" e copie o código',
+          passos: [
+            'Acesse platform.deepseek.com e entre com sua conta (painel em inglês).',
+            'No menu lateral esquerdo, clique em "API Keys".',
+            'Clique em "Create API Key", confirme o nome e gere.',
+            'Copie o código da chave e cole no campo abaixo.'
+          ]
+        };
+      case 'GROQ':
+        return {
+          provedorNome: 'Groq Cloud',
+          url: 'https://console.groq.com/keys',
+          labelLink: 'Obter chave Groq',
+          resumoTooltip: 'Passo a passo rápido (site em inglês):\n1. Acesse console.groq.com\n2. No menu lateral, acesse "API Keys"\n3. Clique em "Create API Key" e copie',
+          passos: [
+            'Acesse o Groq Console com sua conta (painel em inglês).',
+            'No menu lateral, selecione a seção "API Keys".',
+            'Clique no botão "Create API Key", dê um nome e confirme.',
+            'Copie o código da chave (começa com gsk_...) e cole aqui.'
+          ]
+        };
+      default:
+        return {
+          provedorNome: 'Provedor de IA',
+          url: 'https://aistudio.google.com/app/apikey',
+          labelLink: 'Obter chave',
+          resumoTooltip: 'Acesse o painel oficial para gerar sua chave.',
+          passos: [
+            'Acesse o painel do provedor de IA escolhido.',
+            'Navegue até a seção de chaves (API Keys).',
+            'Crie uma chave e copie o código para cá.'
+          ]
+        };
+    }
+  }
+
+  get linkApiKeyProvedor() {
+    return {
+      url: this.tutorialApiKey.url,
+      label: this.tutorialApiKey.labelLink,
+      dicaLink: this.tutorialApiKey.resumoTooltip
+    };
+  }
 
   resetForm(): ITransacoes {
     return {
@@ -239,7 +542,11 @@ export class TransacoesComponent {
       estado: 'REALIZADA',
       valor: 0,
       dataHora: new Date().toISOString().slice(0, 19),
-      marcador: null
+      marcador: null,
+      grupoParcelamento: null,
+      numeroParcela: null,
+      totalParcelas: null,
+      valorTotalCompra: null
     };
   }
 
@@ -255,7 +562,14 @@ export class TransacoesComponent {
       estado: 'REALIZADA',
       tipo: '',
       marcadorId: null,
+      parcelado: false,
+      totalParcelas: 2,
+      numeroParcela: 1,
+      valorTotalCompra: null,
+      criarParcelasAnteriores: true,
     });
+    this.editandoParcelada = false;
+    this.ajustarValidacaoParcelas(false);
     this.novaTransacao = this.resetForm();
     this.exibirDialog = true;
   }
@@ -273,67 +587,548 @@ export class TransacoesComponent {
     this.exibirDialogEscolha = false;
     this.arquivoSelecionado = null;
     this.erroUpload = null;
+    this.codigoErroUpload = null;
+    this.validandoArquivo = false;
+    this.faturaPreviaValida = false;
+    this.emissorDetectado = null;
+    this.precisaAtivarIa = false;
+    this.precisaSenhaPdf = false;
+    this.senhaPdf = '';
+    this.apiKeyIaTocada = false;
+    this.faturaAnalise = null;
     this.exibirDialogUpload = true;
+    this.carregarSessaoIa();
+  }
+
+  carregarSessaoIa() {
+    this.carregandoSessaoIa = true;
+    this.transacoesService.obterSessaoIa().subscribe({
+      next: (res) => {
+        this.carregandoSessaoIa = false;
+        this.temChaveSalva = res.temChaveSalva;
+        this.provedorSalvo = res.provedor;
+        if (this.temChaveSalva && res.provedor) {
+          this.provedorSelecionado = res.provedor;
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregandoSessaoIa = false;
+      }
+    });
   }
 
   selecionarArquivo(event: any) {
-    this.arquivoSelecionado = event.target.files[0] ?? null;
+    const file = event.target?.files?.[0] ?? null;
+    this.erroUpload = null;
+    this.codigoErroUpload = null;
+    this.precisaAtivarIa = false;
+    this.precisaSenhaPdf = false;
+    this.senhaPdf = '';
+    this.validandoArquivo = false;
+    this.faturaPreviaValida = false;
+    this.emissorDetectado = null;
+
+    if (file) {
+      const nome = file.name.toLowerCase();
+      if (!nome.endsWith('.pdf')) {
+        this.arquivoSelecionado = null;
+        this.codigoErroUpload = 'FORMATO_INVALIDO';
+        this.erroUpload = 'Formato não suportado. O Na Ponta do Lápis suporta apenas faturas em formato PDF.';
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Formato não suportado',
+          detail: 'Por favor, selecione um arquivo em formato PDF.',
+          life: 4000
+        });
+        if (event.target) event.target.value = '';
+        return;
+      }
+      if (file.size > 10 * 1024 * 1024) {
+        this.arquivoSelecionado = null;
+        this.codigoErroUpload = 'ARQUIVO_MUITO_GRANDE';
+        this.erroUpload = 'O arquivo selecionado excede o limite máximo permitido de 10 MB.';
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Arquivo muito grande',
+          detail: 'O limite máximo para upload é de 10 MB.',
+          life: 4000
+        });
+        if (event.target) event.target.value = '';
+        return;
+      }
+
+      this.arquivoSelecionado = file;
+      this.executarValidacaoPrevia(file);
+    } else {
+      this.arquivoSelecionado = null;
+    }
   }
 
-  enviarFatura() {
-    if (!this.arquivoSelecionado) return;
-    this.carregando = true;
+  executarValidacaoPrevia(file: File, senha?: string) {
+    this.validandoArquivo = true;
     this.erroUpload = null;
-    this.transacoesService.analisarFatura(this.arquivoSelecionado).subscribe({
-      next: (res: ITransacaoFatura[]) => {
-        this.transacoesExtraidas = res.map(t => ({
-          ...t,
-          data: t.data ? new Date(t.data) : new Date()
-        }));
-        this.carregando = false;
-        this.exibirDialogUpload = false;
-        this.contaSelecionadaRevisao = null;
-        this.exibirDialogRevisao = true;
+    this.codigoErroUpload = null;
+    this.faturaPreviaValida = false;
+    this.emissorDetectado = null;
+
+    this.transacoesService.validarPreviaFatura(file, senha).subscribe({
+      next: (res) => {
+        this.validandoArquivo = false;
+        if (res.protegidoPorSenha) {
+          this.precisaSenhaPdf = true;
+          this.erroUpload = res.mensagem;
+          this.codigoErroUpload = res.codigo;
+          this.cdr.detectChanges();
+          return;
+        }
+
+        if (res.valido) {
+          this.faturaPreviaValida = true;
+          this.emissorDetectado = res.emissor;
+          this.precisaSenhaPdf = false;
+          this.erroUpload = null;
+          this.codigoErroUpload = null;
+        } else {
+          this.faturaPreviaValida = false;
+          this.codigoErroUpload = res.codigo;
+          this.erroUpload = res.mensagem || 'O documento enviado não parece ser uma fatura de cartão de crédito.';
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Documento não é fatura',
+            detail: this.erroUpload,
+            life: 5000
+          });
+        }
         this.cdr.detectChanges();
       },
-      error: (err: HttpErrorResponse) => {
-        this.carregando = false;
-        if (err.status === 503) {
-          this.erroUpload = 'Serviço temporariamente indisponível. Tente novamente em alguns instantes.';
-        } else if (err.status === 504) {
-          this.erroUpload = 'Tempo limite excedido. O PDF pode ser muito grande ou o serviço está lento.';
-        } else if (err.status === 502) {
-          this.erroUpload = 'Erro ao processar a fatura. O PDF pode estar corrompido ou em formato não esperado.';
-        } else if (err.status === 400) {
-          this.erroUpload = 'Arquivo inválido. Envie um PDF de fatura de cartão de crédito.';
-        } else {
-          this.erroUpload = 'Erro ao analisar fatura. Verifique o arquivo e tente novamente.';
-        }
+      error: () => {
+        // Se a validação prévia falhar por conexão/rede, não bloqueia o fluxo normal
+        this.validandoArquivo = false;
         this.cdr.detectChanges();
       }
     });
   }
 
+  enviarFatura() {
+    if (!this.arquivoSelecionado) return;
+    this.analisarFatura({});
+  }
+
+  enviarFaturaComSenha() {
+    if (!this.arquivoSelecionado || !this.senhaPdf.trim()) return;
+    this.analisarFatura({});
+  }
+
+  ativarIaETentarNovamente() {
+    this.usarIa = true;
+    this.precisaAtivarIa = false;
+    this.erroUpload = null;
+    this.codigoErroUpload = null;
+    this.enviarFatura();
+  }
+
+  private analisarFatura(extras: FaturaAnaliseOpcoes) {
+    if (!this.arquivoSelecionado) return;
+
+    const opcoes: FaturaAnaliseOpcoes = {
+      provedor: this.provedorSelecionado,
+      apiKey: this.apiKeyIa?.trim() || undefined,
+      senha: this.senhaPdf?.trim() || undefined,
+      manterNaSessao: this.manterNaSessao,
+      usarIa: this.usarIa,
+      ...extras,
+    };
+
+    this.carregando = true;
+    this.erroUpload = null;
+    this.codigoErroUpload = null;
+    this.precisaAtivarIa = false;
+    this.erroConsentimento = null;
+    this.iniciarMensagensProgresso();
+
+    this.transacoesService.analisarFatura(this.arquivoSelecionado, opcoes).subscribe({
+      next: (res: FaturaAnaliseResponse) => {
+        this.carregando = false;
+        this.pararMensagensProgresso();
+
+        if (res.precisaHabilitarIa) {
+          this.precisaAtivarIa = true;
+          this.erroUpload = res.mensagem ?? 'Não conseguimos ler esta fatura sem IA. Ative o uso de IA para continuar.';
+          this.cdr.detectChanges();
+          return;
+        }
+
+        if (res.precisaConsentimentoPdf) {
+          this.carregandoConsentimento = false;
+          this.faturaPendenteConsentimento = res;
+          this.consentimentoLgpd = false;
+          this.ajustarProvedorParaPdf();
+          this.exibirDialogUpload = false;
+          this.exibirDialogConsentimento = true;
+          this.cdr.detectChanges();
+          return;
+        }
+
+        // Fecha o modal de upload primeiro para que a animação não trave na tela
+        this.exibirDialogUpload = false;
+        this.cdr.detectChanges();
+
+        // Abre a revisão suavemente no próximo ciclo
+        setTimeout(() => {
+          this.aplicarResultadoAnalise(res);
+        }, 50);
+      },
+      error: (err: HttpErrorResponse) => {
+        this.carregando = false;
+        this.pararMensagensProgresso();
+        const corpo = (typeof err.error === 'object' && err.error !== null) ? err.error as FaturaErro : null;
+        this.codigoErroUpload = corpo?.codigo ?? (err.status === 400 ? 'DOCUMENTO_NAO_EH_FATURA' : null);
+        const mensagem = this.mensagemErroFatura(err);
+
+        if (this.exibirDialogConsentimento) {
+          this.carregandoConsentimento = false;
+          this.erroConsentimento = mensagem;
+        } else {
+          this.erroUpload = mensagem;
+        }
+
+        const ehNaoFatura = this.codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA';
+        this.messageService.add({
+          severity: ehNaoFatura ? 'error' : (err.status === 428 || err.status === 422 ? 'warn' : 'error'),
+          summary: ehNaoFatura ? 'Documento não é fatura' : 'Atenção na leitura da fatura',
+          detail: mensagem,
+          life: 5000
+        });
+
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  private aplicarResultadoAnalise(res: FaturaAnaliseResponse) {
+    this.carregandoConsentimento = false;
+    this.precisaAtivarIa = false;
+    this.precisaSenhaPdf = false;
+    this.faturaAnalise = res;
+    this.transacoesExtraidas = res.transacoes.map(t => {
+      const dataStr = typeof t.data === 'string' ? t.data.slice(0, 10) : this.dataParaIso(t.data);
+      return {
+        ...t,
+        tipo: t.tipo ?? 'DESPESA',
+        data: dataStr,
+        selecionada: true
+      };
+    });
+    this.faturaPendenteConsentimento = null;
+    this.contaSelecionadaRevisao = null;
+    if (this.opcoesConta.length > 0) {
+      this.contaSelecionadaRevisao = (this.opcoesConta[0] as any).id;
+    }
+    this.detectarDuplicatas();
+    this.recalcularTotaisRevisao();
+    this.exibirDialogRevisao = true;
+
+    if (res.consentimentoPdfIa) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'PDF enviado à IA com a sua autorização',
+        life: 3500
+      });
+    } else if (res.ocrUtilizado) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Fatura lida a partir da imagem',
+        detail: 'Nenhum dado saiu do nosso servidor.',
+        life: 3500
+      });
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  enviarFaturaComConsentimento() {
+    if (!this.consentimentoLgpd) {
+      this.erroConsentimento = 'Marque a autorização para enviar o PDF ao provedor de IA.';
+      return;
+    }
+    if (!this.arquivoSelecionado) {
+      this.erroConsentimento = 'Selecione novamente o arquivo PDF.';
+      return;
+    }
+
+    this.carregandoConsentimento = true;
+    this.erroConsentimento = null;
+    this.analisarFatura({
+      enviarPdfParaIa: true,
+      consentimentoLgpd: true,
+      usarIa: true,
+      provedor: this.provedorSelecionado,
+    });
+  }
+
+  cancelarConsentimento() {
+    this.carregandoConsentimento = false;
+    this.exibirDialogConsentimento = false;
+    this.faturaPendenteConsentimento = null;
+    this.erroConsentimento = null;
+    this.consentimentoLgpd = false;
+    this.exibirDialogUpload = true;
+  }
+
+  private ajustarProvedorParaPdf() {
+    if (!this.provedorSelecionadoSuportaPdf) {
+      this.provedorSelecionado = 'GEMINI';
+    }
+  }
+
+  private mensagemErroFatura(err: HttpErrorResponse): string {
+    const corpo = err.error as FaturaErro | null;
+    const detalhe = corpo?.error;
+
+    switch (err.status) {
+      case 428:
+        return detalhe || 'Não conseguimos ler esta fatura automaticamente. Informe uma chave de acesso de IA para continuar.';
+      case 422:
+        if (corpo?.codigo === 'PDF_PROTEGIDO_POR_SENHA') {
+          this.precisaSenhaPdf = true;
+          return 'Esta fatura está protegida por senha. Informe a senha abaixo (geralmente os primeiros dígitos do CPF) para continuar.';
+        }
+        if (corpo?.codigo === 'SENHA_INCORRETA') {
+          this.precisaSenhaPdf = true;
+          return 'A senha informada está incorreta para abrir este PDF. Confira e tente novamente.';
+        }
+        if (corpo?.codigo === 'CONSENTIMENTO_OBRIGATORIO') {
+          return 'Marque a autorização para enviar o PDF à IA.';
+        }
+        if (corpo?.codigo === 'PROVEDOR_SEM_SUPORTE_PDF') {
+          return 'Escolha Gemini ou Claude para enviar o PDF à IA.';
+        }
+        if (corpo?.codigo === 'CHAVE_INVALIDA') {
+          return 'A chave de acesso foi recusada. Confira se copiou corretamente e tente de novo.';
+        }
+        return detalhe || 'Não foi possível processar a fatura.';
+      case 429:
+        return 'O serviço de IA atingiu o limite de uso. Aguarde alguns instantes e tente novamente.';
+      case 413:
+        return 'O arquivo é maior que o limite permitido de 10 MB.';
+      case 400:
+        if (corpo?.codigo === 'DOCUMENTO_NAO_EH_FATURA') {
+          return detalhe || 'O documento enviado não parece ser uma fatura de cartão de crédito. Verifique se selecionou o arquivo correto.';
+        }
+        return detalhe || 'Arquivo inválido. Envie um PDF de fatura de cartão de crédito.';
+      case 502:
+        return 'O serviço de IA não respondeu como esperado. Tente novamente.';
+      case 503:
+        return 'Serviço temporariamente indisponível. Tente novamente em alguns instantes.';
+      case 504:
+        return 'Tempo limite excedido. O PDF pode ser muito grande ou o serviço está lento.';
+      default:
+        return detalhe || 'Erro ao analisar fatura. Verifique o arquivo e tente novamente.';
+    }
+  }
+
+  esquecerChaveIa() {
+    this.transacoesService.esquecerChaveIa().subscribe({
+      next: () => {
+        this.apiKeyIa = '';
+        this.temChaveSalva = false;
+        this.provedorSalvo = null;
+        this.manterNaSessao = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Chave apagada',
+          life: 2500
+        });
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Não foi possível apagar a chave salva',
+          life: 2500
+        });
+      }
+    });
+  }
+
+  somaTransacoesRevisao: number = 0;
+  diferencaRevisao: number | null = null;
+  alertaSomaRevisao: boolean = false;
+  qtdSelecionadas: number = 0;
+  todasSelecionadas: boolean = true;
+
+  detectarDuplicatas(desmarcarDuplicatasAutomaticamente: boolean = true) {
+    if (!this.contaSelecionadaRevisao || !this.transacoesExtraidas.length) {
+      this.qtdDuplicatasDetectadas = 0;
+      return;
+    }
+
+    const contaId = Number(this.contaSelecionadaRevisao);
+    let count = 0;
+
+    this.transacoesExtraidas.forEach(t => {
+      const valorNum = Number(t.valor) || 0;
+      const dataIso = typeof t.data === 'string' ? t.data.slice(0, 10) : this.dataParaIso(t.data);
+
+      const duplicataExistente = this.transacoesDados.find(existente => {
+        const contaMatch = existente.conta?.id === contaId;
+        const dataMatch = existente.dataHora && existente.dataHora.slice(0, 10) === dataIso;
+        const valorMatch = Math.abs(Number(existente.valor) - valorNum) < 0.01;
+        const tipoMatch = !existente.tipo || existente.tipo === t.tipo;
+        return contaMatch && dataMatch && valorMatch && tipoMatch;
+      });
+
+      if (duplicataExistente) {
+        t.duplicata = true;
+        const partes = dataIso.split('-');
+        const dataBr = partes.length === 3 ? `${partes[2]}/${partes[1]}/${partes[0]}` : dataIso;
+        t.duplicataInfo = `Já existe na conta: "${duplicataExistente.descricao}" (${dataBr})`;
+        if (desmarcarDuplicatasAutomaticamente) {
+          t.selecionada = false;
+        }
+        count++;
+      } else {
+        t.duplicata = false;
+        t.duplicataInfo = undefined;
+      }
+    });
+
+    this.qtdDuplicatasDetectadas = count;
+  }
+
+  aoMudarContaRevisao() {
+    this.detectarDuplicatas(true);
+    this.recalcularTotaisRevisao();
+  }
+
+  recalcularTotaisRevisao() {
+    const selecionadas = this.transacoesExtraidas.filter(t => t.selecionada !== false);
+    this.qtdSelecionadas = selecionadas.length;
+    this.todasSelecionadas = this.transacoesExtraidas.length > 0 && selecionadas.length === this.transacoesExtraidas.length;
+
+    this.somaTransacoesRevisao = Number(selecionadas.reduce((acc, t) => {
+      const valor = Number(t.valor) || 0;
+      return t.tipo === 'RECEITA' ? acc - valor : acc + valor;
+    }, 0).toFixed(2));
+
+    if (this.faturaAnalise?.valorTotalFatura !== null && this.faturaAnalise?.valorTotalFatura !== undefined) {
+      this.diferencaRevisao = Number((this.faturaAnalise.valorTotalFatura - this.somaTransacoesRevisao).toFixed(2));
+      this.alertaSomaRevisao = Math.abs(this.diferencaRevisao) > 0.01;
+    } else {
+      this.diferencaRevisao = null;
+      this.alertaSomaRevisao = false;
+    }
+  }
+
   removerTransacaoExtraida(index: number) {
     this.transacoesExtraidas.splice(index, 1);
+    this.recalcularTotaisRevisao();
+  }
+
+  get transacoesSelecionadas(): ITransacaoFatura[] {
+    return this.transacoesExtraidas.filter(t => t.selecionada !== false);
+  }
+
+  alternarSelecionarTodas() {
+    const marcar = !this.todasSelecionadas;
+    this.transacoesExtraidas.forEach(t => t.selecionada = marcar);
+    this.recalcularTotaisRevisao();
+  }
+
+  aoAlternarItem() {
+    this.recalcularTotaisRevisao();
+  }
+
+  iniciarMensagensProgresso() {
+    const mensagens = [
+      'Lendo páginas e estrutura do documento...',
+      'Identificando emissor e transações...',
+      'Conferindo conciliação contábil...',
+      'Finalizando leitura e ajustes...'
+    ];
+    let idx = 0;
+    this.etapaAnalise = mensagens[0];
+    clearInterval(this.intervaloEtapas);
+    this.intervaloEtapas = setInterval(() => {
+      idx = (idx + 1) % mensagens.length;
+      this.etapaAnalise = mensagens[idx];
+      this.cdr.detectChanges();
+    }, 2500);
+  }
+
+  pararMensagensProgresso() {
+    clearInterval(this.intervaloEtapas);
+    this.intervaloEtapas = null;
   }
 
   confirmarTransacoes() {
-    if (!this.contaSelecionadaRevisao || this.transacoesExtraidas.length === 0) return;
-    const transacoesParaEnviar: ITransacaoFatura[] = this.transacoesExtraidas.map(t => ({
-      descricao: t.descricao,
-      valor: t.valor,
-      data: t.data instanceof Date ? t.data.toISOString() : t.data,
-      categoria: t.categoria
+    if (!this.contaSelecionadaRevisao || this.transacoesSelecionadas.length === 0) return;
+
+    if (this.parcelamentoInvalido()) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Parcelamento inválido',
+        detail: 'Preencha a parcela atual e o total, com a parcela entre 1 e o total (máximo 60).',
+        life: 4500
+      });
+      return;
+    }
+
+    const transacoesParaEnviar: ITransacaoFatura[] = this.transacoesSelecionadas.map(t => ({
+      descricao: t.descricao.trim(),
+      valor: Number(t.valor),
+      data: this.dataParaIso(t.data),
+      categoria: t.categoria,
+      tipo: t.tipo ?? 'DESPESA',
+      numeroParcela: t.numeroParcela ?? null,
+      totalParcelas: t.totalParcelas ?? null,
+      valorTotalCompra: t.valorTotalCompra ?? null
     }));
+
     this.carregando = true;
     this.transacoesService.salvarFaturaEmLote(transacoesParaEnviar, this.contaSelecionadaRevisao).subscribe({
-      next: () => {
+      next: (salvas: ITransacoes[]) => {
         this.carregando = false;
         this.exibirDialogRevisao = false;
-        this.messageService.add({ severity: 'success', summary: 'Transações salvas com sucesso!', life: 3000 });
         this.listarTransacoes();
         this.atualizarSaldo();
+
+        if (this.projetarParcelasFuturas) {
+          const gruposParaGerar = [...new Set(
+            salvas
+              .filter(t => t.grupoParcelamento && t.numeroParcela && t.totalParcelas && t.numeroParcela < t.totalParcelas)
+              .map(t => t.grupoParcelamento!)
+          )];
+
+          if (gruposParaGerar.length > 0) {
+            const chamadas = gruposParaGerar.map(id => this.transacoesService.gerarParcelasFuturas(id));
+            forkJoin(chamadas).subscribe({
+              next: (resultados) => {
+                const totalGeradas = resultados.reduce((acc, curr) => acc + curr.length, 0);
+                this.listarTransacoes();
+                this.atualizarSaldo();
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Fatura importada com sucesso!',
+                  detail: `${salvas.length} transação(ões) salva(s) e ${totalGeradas} parcela(s) restante(s) projetada(s) no seu planejamento.`,
+                  life: 4500
+                });
+              },
+              error: () => {
+                this.messageService.add({
+                  severity: 'success',
+                  summary: 'Transações salvas com sucesso!',
+                  life: 3000
+                });
+              }
+            });
+            this.cdr.detectChanges();
+            return;
+          }
+        }
+
+        this.messageService.add({ severity: 'success', summary: 'Transações salvas com sucesso!', life: 3000 });
         this.cdr.detectChanges();
       },
       error: (err: HttpErrorResponse) => {
@@ -344,6 +1139,185 @@ export class TransacoesComponent {
         else if (err.status === 503) msg = 'Serviço temporariamente indisponível. Tente novamente.';
         this.messageService.add({ severity: 'error', summary: msg, life: 5000 });
         this.cdr.detectChanges();
+      }
+    });
+  }
+
+  parcelamentoInvalido(): boolean {
+    return this.transacoesSelecionadas.some(t => {
+      const numero = t.numeroParcela ?? null;
+      const total = t.totalParcelas ?? null;
+      if (numero === null && total === null) return false;
+      return numero === null || total === null || numero < 1 || total < 2 || numero > total || total > 60;
+    });
+  }
+
+  abrirGrupoParcelamento(transacao: ITransacoes) {
+    if (!transacao.grupoParcelamento) return;
+
+    this.grupoSelecionado = transacao.grupoParcelamento;
+    this.parcelasGrupo = [];
+    this.exibirDialogGrupo = true;
+    this.carregarGrupo();
+  }
+
+  private carregarGrupo() {
+    if (!this.grupoSelecionado) return;
+
+    this.carregandoGrupo = true;
+    this.transacoesService.listarParcelamento(this.grupoSelecionado).subscribe({
+      next: (parcelas: ITransacoes[]) => {
+        this.parcelasGrupo = parcelas;
+        this.carregandoGrupo = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregandoGrupo = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao carregar o parcelamento',
+          life: 3000
+        });
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  gerarFuturasGrupoAtual() {
+    if (!this.grupoSelecionado) return;
+
+    this.transacoesService.gerarParcelasFuturas(this.grupoSelecionado).subscribe({
+      next: (novas: ITransacoes[]) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: novas.length > 0
+            ? `${novas.length} parcela(s) futura(s) gerada(s)`
+            : 'Não há parcelas futuras para gerar',
+          life: 3000
+        });
+        this.carregarGrupo();
+        this.listarTransacoes();
+        this.atualizarSaldo();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao gerar parcelas futuras',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  gerarAnterioresGrupoAtual() {
+    if (!this.grupoSelecionado) return;
+
+    this.transacoesService.gerarParcelasAnteriores(this.grupoSelecionado).subscribe({
+      next: (novas: ITransacoes[]) => {
+        this.messageService.add({
+          severity: 'success',
+          summary: novas.length > 0
+            ? `${novas.length} parcela(s) anterior(es) registrada(s) no histórico`
+            : 'Não há parcelas anteriores para registrar',
+          life: 3000
+        });
+        this.carregarGrupo();
+        this.listarTransacoes();
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao registrar parcelas anteriores',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  confirmarPagamento(transacao: ITransacoes) {
+    if (!transacao.id || transacao.estado === 'REALIZADA') return;
+    this.transacaoParaConfirmar = transacao;
+    this.exibirDialogConfirmarPagamento = true;
+  }
+
+  fecharDialogConfirmarPagamento() {
+    this.transacaoParaConfirmar = null;
+    this.exibirDialogConfirmarPagamento = false;
+    this.carregandoConfirmacao = false;
+  }
+
+  executarConfirmacaoPagamento() {
+    if (!this.transacaoParaConfirmar?.id) return;
+    const id = this.transacaoParaConfirmar.id;
+
+    this.carregandoConfirmacao = true;
+    this.transacoesService.confirmarPagamento(id).subscribe({
+      next: () => {
+        this.carregandoConfirmacao = false;
+        this.exibirDialogConfirmarPagamento = false;
+        this.transacaoParaConfirmar = null;
+
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Pagamento confirmado!',
+          detail: 'A transação foi realizada e o saldo da conta foi atualizado.',
+          life: 3000
+        });
+
+        const idx = this.parcelasGrupo.findIndex(p => p.id === id);
+        if (idx !== -1) {
+          this.parcelasGrupo[idx] = { ...this.parcelasGrupo[idx], estado: 'REALIZADA' };
+        }
+
+        this.listarTransacoes();
+        this.atualizarSaldo();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregandoConfirmacao = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao confirmar pagamento',
+          detail: 'Não foi possível confirmar o pagamento. Tente novamente.',
+          life: 3000
+        });
+      }
+    });
+  }
+
+  excluirGrupoParcelamento(apenasFuturas: boolean) {
+    if (!this.grupoSelecionado) return;
+    this.excluirApenasFuturas = apenasFuturas;
+    this.exibirDialogExcluirParcelamento = true;
+  }
+
+  executarExclusaoParcelamento() {
+    if (!this.grupoSelecionado) return;
+
+    this.carregandoExclusao = true;
+    this.transacoesService.excluirParcelamento(this.grupoSelecionado, this.excluirApenasFuturas).subscribe({
+      next: () => {
+        this.carregandoExclusao = false;
+        this.exibirDialogExcluirParcelamento = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: this.excluirApenasFuturas ? 'Parcelas futuras excluídas' : 'Parcelamento excluído',
+          life: 3000
+        });
+        this.exibirDialogGrupo = false;
+        this.grupoSelecionado = null;
+        this.parcelasGrupo = [];
+        this.listarTransacoes();
+        this.atualizarSaldo();
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.carregandoExclusao = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao excluir o parcelamento',
+          life: 3000
+        });
       }
     });
   }
@@ -365,33 +1339,68 @@ export class TransacoesComponent {
       dataHora: new Date(transacao.dataHora),
       estado: transacao.estado,
       tipo: transacao.tipo,
-      marcadorId: transacao.marcador?.id 
+      marcadorId: transacao.marcador?.id,
+      parcelado: false,
+      totalParcelas: transacao.totalParcelas ?? 2,
+      numeroParcela: transacao.numeroParcela ?? 1,
+      valorTotalCompra: null,
+      criarParcelasAnteriores: true
     });
-    console.log(this.formTransacao.value);
+    this.editandoParcelada = !!transacao.grupoParcelamento;
+    this.ajustarValidacaoParcelas(false);
 
     this.marcadorSelecionado = transacao.marcador;
   }
 
   salvar() {
     if (this.formTransacao.valid) {
-      const dadosParaEnviar: any = this.formTransacao.value
-      console.log("Dados para enviar:", dadosParaEnviar)
+      const dadosParaEnviar: any = { ...this.formTransacao.value }
       this.exibirDialog = false
 
       if (this.id) {
-        console.log("Editando transação com ID:", this.id, "Dados:", dadosParaEnviar)
+        // Transação já parcelada: edição altera só esta parcela. Avulsa: pode virar parcelada.
+        if (this.editandoParcelada || !dadosParaEnviar.parcelado) {
+          delete dadosParaEnviar.parcelado
+          delete dadosParaEnviar.totalParcelas
+          delete dadosParaEnviar.numeroParcela
+          delete dadosParaEnviar.valorTotalCompra
+          delete dadosParaEnviar.criarParcelasAnteriores
+        } else {
+          dadosParaEnviar.totalParcelas = Number(dadosParaEnviar.totalParcelas)
+          dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela)
+          dadosParaEnviar.valorTotalCompra = dadosParaEnviar.valorTotalCompra
+            ? Number(dadosParaEnviar.valorTotalCompra)
+            : null
+          dadosParaEnviar.criarParcelasAnteriores =
+            !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1
+        }
         this.transacoesService.editarTransacao(this.id, dadosParaEnviar).subscribe({
           next: () => this.sucessoAoSalvar('Transação atualizada') ,
           error: (err: Error) => this.erroAoSalvar('Erro ao editar', err)
         })
       } else {
+        const parcelado = !!dadosParaEnviar.parcelado
+        dadosParaEnviar.parcelado = parcelado
+        delete dadosParaEnviar.valorTotalCompra
+        if (parcelado) {
+          dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela)
+          dadosParaEnviar.criarParcelasAnteriores =
+            !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1
+        } else {
+          delete dadosParaEnviar.numeroParcela
+          delete dadosParaEnviar.criarParcelasAnteriores
+        }
+        dadosParaEnviar.totalParcelas = parcelado ? Number(dadosParaEnviar.totalParcelas) : null
+
         this.transacoesService.adicionarTransacao(dadosParaEnviar).subscribe({
-          next: (res: ITransacoes) => {
-            this.sucessoAoSalvar('Transação criada!')
+          next: (res: ITransacoes[]) => {
+            this.sucessoAoSalvar(parcelado
+              ? `Compra parcelada em ${res.length} vez(es)`
+              : 'Transação criada!')
           },
-          error: (error: Error) => {
-            this.erroAoSalvar('Error ao salvar', error)
-            console.error(error)
+          error: (error: HttpErrorResponse) => {
+            const corpo = error.error as FaturaErro | null
+            this.erroAoSalvar(corpo?.error || 'Error ao salvar', error)
           }
         })
       }
@@ -414,7 +1423,26 @@ export class TransacoesComponent {
     this.messageService.add({ severity: 'error', summary: mensagem, life: 2000 });
   }
 
+  private paraDataLocal(data: string | Date): Date {
+    if (data instanceof Date) return data;
 
+    const somenteData = /^(\d{4})-(\d{2})-(\d{2})/.exec(data);
+    if (somenteData) {
+      return new Date(Number(somenteData[1]), Number(somenteData[2]) - 1, Number(somenteData[3]));
+    }
+    return new Date(data);
+  }
+
+  private dataParaIso(data: string | Date): string {
+    if (typeof data === 'string' && /^\d{4}-\d{2}-\d{2}/.test(data)) {
+      return data.slice(0, 10);
+    }
+    const d = data instanceof Date ? data : this.paraDataLocal(data);
+    const ano = d.getFullYear();
+    const mes = String(d.getMonth() + 1).padStart(2, '0');
+    const dia = String(d.getDate()).padStart(2, '0');
+    return `${ano}-${mes}-${dia}`;
+  }
 
   getSeverity(status: string) {
     if (status == 'RECEITA') {

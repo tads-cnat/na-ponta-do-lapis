@@ -38,7 +38,14 @@ services:
       CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
       CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
       CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      GEMINI_API_KEY: ${GEMINI_API_KEY}
+      # Análise de faturas com IA (opcionais com defaults seguros)
+      FATURA_COOKIE_SECRET: ${FATURA_COOKIE_SECRET:-}
+      FATURA_OCR_ENABLED: ${FATURA_OCR_ENABLED:-true}
+      FATURA_IA_GEMINI_MODEL: ${FATURA_IA_GEMINI_MODEL:-gemini-2.5-flash}
+      FATURA_IA_CLAUDE_MODEL: ${FATURA_IA_CLAUDE_MODEL:-claude-sonnet-4-5}
+      FATURA_IA_OPENAI_MODEL: ${FATURA_IA_OPENAI_MODEL:-gpt-4.1-mini}
+      FATURA_IA_DEEPSEEK_MODEL: ${FATURA_IA_DEEPSEEK_MODEL:-deepseek-chat}
+      FATURA_IA_GROQ_MODEL: ${FATURA_IA_GROQ_MODEL:-llama-3.3-70b-versatile}
     depends_on:
       db: { condition: service_healthy }
     healthcheck:

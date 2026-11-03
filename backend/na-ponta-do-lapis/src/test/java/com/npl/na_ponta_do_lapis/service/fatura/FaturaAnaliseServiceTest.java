@@ -1,0 +1,223 @@
+package com.npl.na_ponta_do_lapis.service.fatura;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
+import com.npl.na_ponta_do_lapis.service.TipoCategoraService;
+import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaParser;
+import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaService;
+import com.npl.na_ponta_do_lapis.service.fatura.ia.ProvedorIa;
+import com.npl.na_ponta_do_lapis.web.dto.FaturaAnaliseResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.FaturaValidacaoPreviaDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
+
+class FaturaAnaliseServiceTest {
+
+    private FaturaRegexService regexService;
+    private FaturaSanitizerService sanitizerService;
+    private FaturaOcrService ocrService;
+    private FaturaIaService iaService;
+    private TipoCategoraService tipoCategoriaService;
+    private FaturaAnaliseService service;
+
+    @BeforeEach
+    void configurar() {
+        regexService = mock(FaturaRegexService.class);
+        sanitizerService = new FaturaSanitizerService();
+        ocrService = mock(FaturaOcrService.class);
+        iaService = mock(FaturaIaService.class);
+        tipoCategoriaService = mock(TipoCategoraService.class);
+
+        service = new FaturaAnaliseService(regexService, sanitizerService, ocrService,
+                iaService, tipoCategoriaService);
+        ReflectionTestUtils.setField(service, "minCaracteresTexto", 40);
+        ReflectionTestUtils.setField(service, "maxCaracteresIa", 60000);
+
+        when(tipoCategoriaService.listarCategorias()).thenReturn(List.of());
+        when(ocrService.habilitado()).thenReturn(false);
+    }
+
+    @Test
+    void semChaveDeIaRetorna428() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoFatura());
+
+        assertThatThrownBy(() -> service.analisar(arquivo(), ProvedorIa.GEMINI, null, true, false, false))
+                .isInstanceOfSatisfying(FaturaAnaliseException.class, e -> {
+                    assertThat(e.getStatus().value()).isEqualTo(428);
+                    assertThat(e.getCodigo()).isEqualTo("IA_NECESSARIA");
+                    assertThat(e.getProvedores()).contains("GEMINI", "CLAUDE");
+                });
+
+        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
+    }
+
+    @Test
+    void analiseIaComSucessoSanitizaEExtraiTransacoes() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoFatura());
+
+        FaturaIaParser.ResultadoIa resultadoIa = new FaturaIaParser.ResultadoIa(
+                List.of(new TransacaoFaturaDTO("Amazon", new BigDecimal("50.00"),
+                        LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null)),
+                new BigDecimal("50.00"),
+                "Nubank"
+        );
+        when(iaService.analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class)))
+                .thenReturn(resultadoIa);
+
+        FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+
+        assertThat(resposta.fonte()).isEqualTo("IA");
+        assertThat(resposta.emissor()).isEqualTo("Nubank");
+        assertThat(resposta.transacoes()).hasSize(1);
+        assertThat(resposta.somaCalculada()).isEqualByComparingTo("50.00");
+        assertThat(resposta.valorTotalFatura()).isEqualByComparingTo("50.00");
+        assertThat(resposta.alertaSoma()).isFalse();
+        verify(iaService).analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
+    }
+
+    @Test
+    void receitasDescontamDaSomaCalculada() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoFatura());
+
+        FaturaIaParser.ResultadoIa resultadoIa = new FaturaIaParser.ResultadoIa(
+                List.of(
+                        new TransacaoFaturaDTO("Amazon", new BigDecimal("50.00"),
+                                LocalDate.of(2026, 1, 15), "Outros", TipoTransacao.DESPESA, null, null, null),
+                        new TransacaoFaturaDTO("Estorno", new BigDecimal("20.00"),
+                                LocalDate.of(2026, 1, 16), "Outros", TipoTransacao.RECEITA, null, null, null)
+                ),
+                new BigDecimal("30.00"),
+                "Santander"
+        );
+        when(iaService.analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class)))
+                .thenReturn(resultadoIa);
+
+        FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+
+        assertThat(resposta.somaCalculada()).isEqualByComparingTo("30.00");
+        assertThat(resposta.diferenca()).isEqualByComparingTo("0.00");
+        assertThat(resposta.alertaSoma()).isFalse();
+    }
+
+    @Test
+    void pdfEscaneadoSemConsentimentoPedeAutorizacaoSemChamarIa() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn("curto");
+
+        FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), null, null, true, false, false);
+
+        assertThat(resposta.precisaConsentimentoPdf()).isTrue();
+        assertThat(resposta.pdfEscaneado()).isTrue();
+        assertThat(resposta.transacoes()).isEmpty();
+        assertThat(resposta.fonte()).isEqualTo("NENHUMA");
+        verify(iaService, never()).analisarPdf(any(), any(), any(), anyList());
+    }
+
+    @Test
+    void envioDePdfSemConsentimentoEhRejeitado() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn("curto");
+
+        assertThatThrownBy(() -> service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, true, false))
+                .isInstanceOfSatisfying(FaturaAnaliseException.class, e -> {
+                    assertThat(e.getStatus().value()).isEqualTo(422);
+                    assertThat(e.getCodigo()).isEqualTo("CONSENTIMENTO_OBRIGATORIO");
+                });
+    }
+
+    @Test
+    void provedorSemSuportePdfEhRejeitado() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn("curto");
+
+        assertThatThrownBy(() -> service.analisar(arquivo(), ProvedorIa.OPENAI, "chave", true, true, true))
+                .isInstanceOfSatisfying(FaturaAnaliseException.class, e -> {
+                    assertThat(e.getStatus().value()).isEqualTo(422);
+                    assertThat(e.getCodigo()).isEqualTo("PROVEDOR_SEM_SUPORTE_PDF");
+                });
+    }
+
+    @Test
+    void arquivoInvalidoLancaErro() {
+        MockMultipartFile txt = new MockMultipartFile(
+                "arquivo", "fatura.txt", "text/plain", "conteudo".getBytes());
+
+        assertThatThrownBy(() -> service.analisar(txt, null, null, false, false, false))
+                .isInstanceOf(FaturaAnaliseException.class);
+    }
+
+    @Test
+    void arquivoQueNaoEhFaturaEhRejeitadoAntesDeChamarIa() throws Exception {
+        String textoCurriculo = """
+                Curriculum Vitae
+                João da Silva - Desenvolvedor de Software
+                Experiência profissional: Empresa XYZ (2020 - 2024)
+                Educação: Bacharelado em Ciência da Computação
+                Habilidades: Java, Spring Boot, Angular
+                """;
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoCurriculo);
+
+        assertThatThrownBy(() -> service.analisar(arquivo(), ProvedorIa.GEMINI, "chave-valida", true, false, false))
+                .isInstanceOfSatisfying(FaturaAnaliseException.class, e -> {
+                    assertThat(e.getStatus().value()).isEqualTo(400);
+                    assertThat(e.getCodigo()).isEqualTo("DOCUMENTO_NAO_EH_FATURA");
+                });
+
+        verify(iaService, never()).analisarTexto(any(), any(), any(), any(), any());
+    }
+
+    @Test
+    void validarArquivoPreviaIdentificaFaturaComSucesso() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoFatura());
+
+        FaturaValidacaoPreviaDTO resultado = service.validarArquivoPrevia(arquivo(), null);
+
+        assertThat(resultado.valido()).isTrue();
+        assertThat(resultado.protegidoPorSenha()).isFalse();
+        assertThat(resultado.emissor()).isEqualTo("Nubank");
+        assertThat(resultado.codigo()).isNull();
+    }
+
+    @Test
+    void validarArquivoPreviaRejeitaDocumentoInvalido() throws Exception {
+        String textoCurriculo = """
+                Curriculum Vitae
+                João da Silva - Desenvolvedor
+                """;
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoCurriculo);
+
+        FaturaValidacaoPreviaDTO resultado = service.validarArquivoPrevia(arquivo(), null);
+
+        assertThat(resultado.valido()).isFalse();
+        assertThat(resultado.protegidoPorSenha()).isFalse();
+        assertThat(resultado.codigo()).isEqualTo("DOCUMENTO_NAO_EH_FATURA");
+    }
+
+    private MockMultipartFile arquivo() {
+        return new MockMultipartFile(
+                "arquivo", "fatura.pdf", "application/pdf", "%PDF-1.4 teste".getBytes());
+    }
+
+    private String textoFatura() {
+        return """
+                Fatura Nubank de João da Silva
+                CPF 123.456.789-00
+                Total a pagar: R$ 50,00
+                01/01/2026 Amazon 50,00
+                """;
+    }
+}

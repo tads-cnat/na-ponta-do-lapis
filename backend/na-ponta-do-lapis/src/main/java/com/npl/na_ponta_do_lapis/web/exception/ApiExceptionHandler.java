@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -39,6 +40,12 @@ public class ApiExceptionHandler {
                     .body(new ErrorResponse("Não é possível excluir este item porque ele está sendo usado em outros registros"));
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponse("Erro de integridade de dados."));
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<ErrorResponse> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(new ErrorResponse("O arquivo enviado excede o limite permitido de 10 MB."));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

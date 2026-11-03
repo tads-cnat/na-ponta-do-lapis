@@ -96,6 +96,29 @@ class TransacaoRequestDTOTest {
         assertThat(mensagensDe(dtoValido(), "marcadorId")).as("marcador é opcional").isEmpty();
     }
 
+    @Test
+    void deveRejeitarParceladoSemTotalDeParcelas() {
+        TransacaoRequestDTO dto = new TransacaoRequestDTO(DESCRICAO_PADRAO, VALOR_PADRAO,
+                TipoTransacao.DESPESA, null, 10L, 1L, null, DATA_PADRAO, true, null);
+        assertThat(mensagensDe(dto, "totalParcelasInformado"))
+                .containsExactly("Informe o número de parcelas para uma compra parcelada");
+    }
+
+    @Test
+    void deveRejeitarParcelaAtualMaiorQueTotal() {
+        TransacaoRequestDTO dto = new TransacaoRequestDTO(DESCRICAO_PADRAO, VALOR_PADRAO,
+                TipoTransacao.DESPESA, null, 10L, 1L, null, DATA_PADRAO, true, 3, 5);
+        assertThat(mensagensDe(dto, "numeroParcelaValido"))
+                .containsExactly("A parcela atual não pode ser maior que o total de parcelas");
+    }
+
+    @Test
+    void deveAceitarParceladoComTotalEParcelaAtualValidos() {
+        TransacaoRequestDTO dto = new TransacaoRequestDTO(DESCRICAO_PADRAO, VALOR_PADRAO,
+                TipoTransacao.DESPESA, null, 10L, 1L, null, DATA_PADRAO, true, 10, 3);
+        assertThat(validator.validate(dto)).isEmpty();
+    }
+
     // =====================================================================
     // DESCRIÇÃO: nula, vazia e em branco (inválidas) | 1..254 (válida) | > 254 (inválida)
     // =====================================================================

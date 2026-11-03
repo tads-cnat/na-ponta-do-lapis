@@ -48,6 +48,18 @@ public class Transacao {
     @OnDelete(action = OnDeleteAction.SET_NULL)
     private Marcador marcador;
 
+    @Column(name = "grupo_parcelamento", length = 36)
+    private String grupoParcelamento;
+
+    @Column(name = "numero_parcela")
+    private Integer numeroParcela;
+
+    @Column(name = "total_parcelas")
+    private Integer totalParcelas;
+
+    @Column(name = "valor_total_compra", precision = 19, scale = 2)
+    private BigDecimal valorTotalCompra;
+
 
     public Marcador getMarcador() {
         return marcador;
@@ -84,4 +96,16 @@ public class Transacao {
 
     public ContaFinanceira getContaFinanceira() { return contaFinanceira; }
     public void setContaFinanceira(ContaFinanceira contaFinanceira) { this.contaFinanceira = contaFinanceira; }
+
+    public String getGrupoParcelamento() { return grupoParcelamento; }
+    public void setGrupoParcelamento(String grupoParcelamento) { this.grupoParcelamento = grupoParcelamento; }
+
+    public Integer getNumeroParcela() { return numeroParcela; }
+    public void setNumeroParcela(Integer numeroParcela) { this.numeroParcela = numeroParcela; }
+
+    public Integer getTotalParcelas() { return totalParcelas; }
+    public void setTotalParcelas(Integer totalParcelas) { this.totalParcelas = totalParcelas; }
+
+    public BigDecimal getValorTotalCompra() { return valorTotalCompra; }
+    public void setValorTotalCompra(BigDecimal valorTotalCompra) { this.valorTotalCompra = valorTotalCompra; }
 }

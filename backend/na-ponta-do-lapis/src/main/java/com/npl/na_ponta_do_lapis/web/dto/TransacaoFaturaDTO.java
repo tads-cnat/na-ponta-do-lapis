@@ -3,6 +3,8 @@ package com.npl.na_ponta_do_lapis.web.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
+import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Transação extraída de uma fatura de cartão de crédito")
@@ -14,9 +16,22 @@ public record TransacaoFaturaDTO(
     @Schema(example = "150.00")
     BigDecimal valor,
 
-    @Schema(example = "15/01/2026")
+    @Schema(example = "2026-01-15")
     LocalDate data,
 
-    @Schema(example = "Alimentacao")
-    String categoria
-) {}
+    @Schema(example = "Alimentação")
+    String categoria,
+
+    @Schema(description = "DESPESA para compras; RECEITA para estornos, devoluções e créditos", example = "DESPESA")
+    TipoTransacao tipo,
+
+    @Schema(description = "Número da parcela atual, quando a compra é parcelada", example = "2")
+    Integer numeroParcela,
+
+    @Schema(description = "Total de parcelas da compra", example = "10")
+    Integer totalParcelas,
+
+    @Schema(description = "Valor total original da compra parcelada", example = "500.00")
+    BigDecimal valorTotalCompra
+) {
+}

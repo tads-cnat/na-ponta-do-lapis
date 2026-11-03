@@ -17,6 +17,9 @@ FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
+# OCR local de faturas escaneadas (o PDF não sai do servidor)
+RUN apk add --no-cache tesseract-ocr tesseract-ocr-data-por
+
 # Copia o JAR gerado na etapa de build
 COPY --from=build /workspace/target/na-ponta-do-lapis-*.jar app.jar
 
