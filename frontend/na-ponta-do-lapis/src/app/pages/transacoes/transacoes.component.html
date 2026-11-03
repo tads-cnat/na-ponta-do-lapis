@@ -132,7 +132,28 @@
                                     <label class="text-xs font-semibold text-slate-600">Marcador</label>
                                     <p-select [options]="opcoesFiltroMarcador" optionLabel="nome" optionValue="id"
                                         [(ngModel)]="filtroMarcadorId" (onChange)="aplicarFiltros()"
-                                        styleClass="w-full text-sm" [appendTo]="'body'"></p-select>
+                                        styleClass="w-full text-sm" [appendTo]="'body'">
+                                        <ng-template pTemplate="selectedItem">
+                                            <div class="flex items-center gap-2">
+                                                @if (marcadorFiltroSelecionado.cor) {
+                                                    <span class="pi pi-bookmark-fill text-xs" [style.color]="marcadorFiltroSelecionado.cor"></span>
+                                                } @else {
+                                                    <span class="pi pi-bookmark text-xs text-slate-400"></span>
+                                                }
+                                                <span class="truncate">{{ marcadorFiltroSelecionado.nome }}</span>
+                                            </div>
+                                        </ng-template>
+                                        <ng-template pTemplate="item" let-item>
+                                            <div class="flex items-center gap-2">
+                                                @if (item.cor) {
+                                                    <span class="pi pi-bookmark-fill text-xs" [style.color]="item.cor"></span>
+                                                } @else {
+                                                    <span class="pi pi-bookmark text-xs text-slate-400"></span>
+                                                }
+                                                <span>{{ item.nome }}</span>
+                                            </div>
+                                        </ng-template>
+                                    </p-select>
                                 </div>
 
                                 <div class="flex flex-col gap-1 sm:col-span-2">

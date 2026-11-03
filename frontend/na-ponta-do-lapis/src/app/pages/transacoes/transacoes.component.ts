@@ -322,6 +322,11 @@ export class TransacoesComponent {
     return [{ id: null, nome: 'Todos os marcadores' }, ...marcs];
   }
 
+  get marcadorFiltroSelecionado(): { id: number | null; nome: string; cor?: string } {
+    return this.opcoesFiltroMarcador.find(m => m.id === this.filtroMarcadorId)
+      ?? { id: null, nome: 'Todos os marcadores' };
+  }
+
   get qtdFiltrosAtivos(): number {
     let count = 0;
     if (this.filtroTipo !== 'TODOS') count++;
