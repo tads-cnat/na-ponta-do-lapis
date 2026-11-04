@@ -37,6 +37,10 @@ export class TransacoesService {
     return this.http.delete<void>(`${this.BASE_URL}/transacoes/${id}`)
   }
 
+  public deletarTransacoesEmLote(ids: number[]): Observable<void> {
+    return this.http.post<void>(`${this.BASE_URL}/transacoes/excluir-lote`, { ids });
+  }
+
   public editarTransacao(id:number ,transacao:ITransacaoRequest) {
     return this.http.put<ITransacoes>(`${this.BASE_URL}/transacoes/${id}`, transacao)
   }

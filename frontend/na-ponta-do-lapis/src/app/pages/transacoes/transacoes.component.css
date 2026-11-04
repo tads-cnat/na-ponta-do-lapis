@@ -1,0 +1,20 @@
+/* Linha selecionada via checkbox (destaque roxo claro nítido e elegante) */
+:host ::ng-deep .p-datatable-tbody > tr.p-datatable-row-selected > td {
+  background-color: #ede9fe !important; /* Purple-100 visível e sofisticado */
+}
+
+/* Hover suave e neutro na linha não selecionada (imediato, sem lag ou retenção de estado) */
+:host ::ng-deep .p-datatable-tbody > tr:not(.p-datatable-row-selected):hover > td {
+  background-color: #f1f5f9 !important; /* Slate-100 neutro */
+}
+
+/* Hover na linha selecionada */
+:host ::ng-deep .p-datatable-tbody > tr.p-datatable-row-selected:hover > td {
+  background-color: #ddd6fe !important; /* Purple-200 um pouco mais acentuado no hover */
+}
+
+/* Desativa transições em tr e td para eliminar o bug de repintura do navegador em tabelas */
+:host ::ng-deep .p-datatable-tbody > tr,
+:host ::ng-deep .p-datatable-tbody > tr > td {
+  transition: none !important;
+}

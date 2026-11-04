@@ -50,3 +50,8 @@ main > *:not(p-toast):not(router-outlet) {
   display: flex;
   flex-direction: column;
 }
+
+/* Previne que overlays flutuantes de tooltip interceptem eventos do ponteiro e travem o hover */
+.p-tooltip {
+  pointer-events: none !important;
+}

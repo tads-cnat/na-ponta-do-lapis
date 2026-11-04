@@ -120,7 +120,7 @@ class TransacaoRequestDTOTest {
     }
 
     // =====================================================================
-    // DESCRIÇÃO: nula, vazia e em branco (inválidas) | 1..254 (válida) | > 254 (inválida)
+    // DESCRIÇÃO: nula, vazia e em branco (inválidas) | 1..100 (válida) | > 100 (inválida)
     // =====================================================================
 
     @ParameterizedTest
@@ -144,15 +144,15 @@ class TransacaoRequestDTOTest {
     }
 
     @Test
-    void deveAceitarDescricaoComExatamente254Caracteres() { // limite superior
-        assertThat(mensagensDe(comDescricao("a".repeat(254)), "descricao"))
-                .as("descrição com 254 caracteres").isEmpty();
+    void deveAceitarDescricaoComExatamente100Caracteres() { // limite superior
+        assertThat(mensagensDe(comDescricao("a".repeat(100)), "descricao"))
+                .as("descrição com 100 caracteres").isEmpty();
     }
 
     @Test
-    void deveRejeitarDescricaoComMaisDe254Caracteres() { // logo acima do limite
-        assertThat(mensagensDe(comDescricao("a".repeat(255)), "descricao"))
-                .as("descrição com 255 caracteres").isNotEmpty();
+    void deveRejeitarDescricaoComMaisDe100Caracteres() { // logo acima do limite
+        assertThat(mensagensDe(comDescricao("a".repeat(101)), "descricao"))
+                .as("descrição com 101 caracteres").isNotEmpty();
     }
 
     // =====================================================================

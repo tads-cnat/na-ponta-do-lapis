@@ -268,6 +268,20 @@ public class TransacaoService {
     }
 
     @Transactional
+    public void removerTransacoesEmLote(List<Long> ids) throws AccessDeniedException {
+        if (ids == null || ids.isEmpty()) {
+            return;
+        }
+        String email = getEmailUsuarioLogado();
+        for (Long id : ids) {
+            Transacao transacao = buscarPorId(id);
+            validarDono(transacao.getContaFinanceira(), email);
+            estornarImpactoSaldo(transacao);
+            transacaoRepository.delete(transacao);
+        }
+    }
+
+    @Transactional
     public Transacao confirmarPagamento(Long id) throws AccessDeniedException {
         Transacao transacao = buscarPorId(id);
         validarDono(transacao.getContaFinanceira(), getEmailUsuarioLogado());
