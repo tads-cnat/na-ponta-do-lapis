@@ -179,7 +179,7 @@ export class TransacoesComponent {
     this.formTransacao = this.fb.group({
       descricao: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
       idCategoria: ['', [Validators.required]],
-      valor: [0, [Validators.required, Validators.min(0.01)]],
+      valor: [null, [Validators.required, Validators.min(0.01)]],
       idContaFinanceira: ['', [Validators.required]],
       dataHora: ['', [Validators.required]],
       estado: ['', [Validators.required]],
@@ -520,6 +520,13 @@ export class TransacoesComponent {
     })
   }
 
+  public aoFocarValor(event: any): void {
+    const input = event?.target as HTMLInputElement;
+    if (input && typeof input.select === 'function') {
+      setTimeout(() => input.select(), 0);
+    }
+  }
+
   public abrirConfirmacaoExcluirSelecionadas(): void {
     if (this.transacoesMarcadas.length === 0) return;
     this.exibirDialogExcluirSelecionadas = true;
@@ -845,7 +852,7 @@ export class TransacoesComponent {
     this.formTransacao.reset({
       descricao: '',
       idCategoria: '',
-      valor: 0,
+      valor: null,
       idContaFinanceira: '',
       dataHora: null,
       estado: 'REALIZADA',

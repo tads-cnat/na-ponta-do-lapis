@@ -272,7 +272,7 @@
                     </ng-template>
 
                     <ng-template pTemplate="body" let-t>
-                        <tr class="hover:bg-slate-50/80 transition-colors">
+                        <tr class="hover:bg-purple-50/40 transition-colors duration-150">
                             <td>
                                 <p-tableCheckbox [value]="t" />
                             </td>
@@ -318,7 +318,7 @@
                                 } @else {
                                     <button type="button" (click)="confirmarPagamento(t)"
                                         pTooltip="Clique para confirmar pagamento" tooltipPosition="top"
-                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors cursor-pointer">
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 hover:shadow-xs hover:scale-[1.02] active:scale-95 transition-all cursor-pointer">
                                         <i class="pi pi-clock text-[10px]"></i> Pendente
                                     </button>
                                 }
@@ -333,11 +333,11 @@
                                 <div class="flex items-center justify-center gap-1.5">
                                     <p-button icon="pi pi-pencil"
                                         pTooltip="Editar transação" tooltipPosition="top"
-                                        styleClass="text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]! h-8 w-8"
+                                        styleClass="text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]! hover:bg-[#7843cd]! hover:text-white! hover:shadow-xs hover:scale-105 active:scale-95 transition-all! h-8 w-8 rounded-lg!"
                                         (onClick)="prepararEdicao(t)"></p-button>
                                     <p-button icon="pi pi-trash"
                                         pTooltip="Excluir transação" tooltipPosition="top"
-                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! h-8 w-8"
+                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! hover:bg-[#ef4444]! hover:text-white! hover:shadow-xs hover:scale-105 active:scale-95 transition-all! h-8 w-8 rounded-lg!"
                                         (onClick)="abrirConfirmacaoExcluir(t)"></p-button>
                                 </div>
                             </td>
@@ -421,8 +421,9 @@
 
                     <div class="flex flex-col gap-1">
                         <label class="font-bold text-sm">Valor</label>
-                        <p-inputNumber formControlName="valor" mode="currency" currency="BRL" locale="pt-BR"
-                            styleClass="w-full" inputStyleClass="w-full" />
+                        <p-inputNumber formControlName="valor" mode="currency" [currency]="codigoMoeda" locale="pt-BR"
+                            [minFractionDigits]="2" [maxFractionDigits]="2" (onFocus)="aoFocarValor($event)"
+                            placeholder="R$ 0,00" styleClass="w-full" inputStyleClass="w-full" />
                     </div>
                 </div>
 
@@ -490,8 +491,9 @@
                         @if (id) {
                         <div class="flex flex-col gap-1">
                             <label class="font-bold text-sm">Valor total da compra (opcional)</label>
-                            <p-inputNumber formControlName="valorTotalCompra" mode="currency" currency="BRL"
-                                locale="pt-BR" styleClass="w-full" inputStyleClass="w-full" />
+                            <p-inputNumber formControlName="valorTotalCompra" mode="currency" [currency]="codigoMoeda"
+                                locale="pt-BR" [minFractionDigits]="2" [maxFractionDigits]="2" (onFocus)="aoFocarValor($event)"
+                                placeholder="R$ 0,00" styleClass="w-full" inputStyleClass="w-full" />
                         </div>
                         }
                         @if ((formTransacao.get('numeroParcela')?.value ?? 1) > 1) {
