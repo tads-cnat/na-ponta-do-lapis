@@ -1084,113 +1084,118 @@
     </p-dialog>
 
     <p-dialog header="Detalhes do Parcelamento" [(visible)]="exibirDialogGrupo" [modal]="true"
-        [breakpoints]="{ '640px': '95vw' }" [style]="{ width: '640px' }">
+        [breakpoints]="{ '640px': '95vw' }" [style]="{ width: '44rem', maxWidth: '95vw' }">
         <div class="flex flex-col gap-3 py-1">
             @if (carregandoGrupo) {
                 <div class="flex flex-col items-center gap-3 py-8">
                     <p-progressSpinner strokeWidth="4" styleClass="w-10 h-10" />
-                    <span class="text-slate-600">Carregando parcelas...</span>
+                    <span class="text-xs text-slate-500 font-medium">Carregando parcelas...</span>
                 </div>
             } @else {
                 @if (parcelasGrupo.length > 0) {
-                    <div class="flex flex-col gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
-                        <div class="flex flex-wrap items-center justify-between gap-2">
-                            <span class="font-semibold text-slate-800 text-sm">{{ parcelasGrupo[0].descricao }}</span>
-                            <p-tag [value]="parcelasGrupo.length + ' de ' + totalParcelasEsperadas + ' parcela(s) lançadas'"
-                                   [severity]="qtdParcelasFaltantes === 0 ? 'success' : 'warn'"></p-tag>
+                    <!-- Card Resumo do Parcelamento -->
+                    <div class="flex flex-col gap-2.5 p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80">
+                        <div class="flex items-center justify-between gap-2">
+                            <div class="flex items-center gap-2.5">
+                                <span class="w-8 h-8 rounded-xl bg-purple-100 text-[#7843cd] flex items-center justify-center shrink-0">
+                                    <i class="pi pi-shopping-bag text-sm"></i>
+                                </span>
+                                <div class="flex flex-col">
+                                    <span class="font-bold text-slate-800 text-sm leading-tight">{{ parcelasGrupo[0].descricao }}</span>
+                                    <span class="text-xs text-slate-500">
+                                        {{ totalParcelasEsperadas }}x de {{ parcelasGrupo[0].valor | currency: codigoMoeda }}
+                                    </span>
+                                </div>
+                            </div>
+                            <p-tag [value]="parcelasGrupo.length + ' de ' + totalParcelasEsperadas + ' lançadas'"
+                                   [severity]="qtdParcelasFaltantes === 0 ? 'success' : 'warn'"
+                                   styleClass="text-xs font-semibold shrink-0"></p-tag>
                         </div>
-                        @if (parcelasGrupo[0].valorTotalCompra) {
-                            <span class="text-xs text-slate-500">
-                                Valor total: <strong>{{ parcelasGrupo[0].valorTotalCompra | currency:'BRL' }}</strong> em {{ totalParcelasEsperadas }}x de {{ parcelasGrupo[0].valor | currency:'BRL' }}
-                            </span>
-                        }
+
+                        <div class="grid grid-cols-3 gap-2 pt-2 border-t border-slate-200/70 text-xs">
+                            <div class="flex flex-col">
+                                <span class="text-slate-400 font-medium">Total da Compra</span>
+                                <span class="font-bold text-slate-800">
+                                    {{ (parcelasGrupo[0].valorTotalCompra || (parcelasGrupo[0].valor * totalParcelasEsperadas)) | currency: codigoMoeda }}
+                                </span>
+                            </div>
+                            <div class="flex flex-col border-l border-slate-200/70 pl-2.5">
+                                <span class="text-slate-400 font-medium">Pagas</span>
+                                <span class="font-bold text-emerald-600">
+                                    {{ qtdPagasNoGrupo }} parcela(s)
+                                </span>
+                            </div>
+                            <div class="flex flex-col border-l border-slate-200/70 pl-2.5">
+                                <span class="text-slate-400 font-medium">Pendentes</span>
+                                <span class="font-bold text-amber-600">
+                                    {{ qtdPendentesNoGrupo }} parcela(s)
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
-                    @if (proximaParcelaPendente) {
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl bg-emerald-50/80 border border-emerald-200">
-                            <div class="flex items-start gap-2.5 text-xs text-emerald-950">
-                                <i class="pi pi-check-circle text-emerald-600 mt-0.5 text-base"></i>
-                                <div>
-                                    <span class="font-bold text-emerald-900 text-sm block">
-                                        Próxima parcela a pagar: {{ proximaParcelaPendente.numeroParcela }} de {{ proximaParcelaPendente.totalParcelas }}
-                                    </span>
-                                    <span class="text-emerald-800 mt-0.5 block">
-                                        Vencimento em <strong>{{ proximaParcelaPendente.dataHora | date:'dd/MM/yyyy' }}</strong> · Valor: <strong>{{ proximaParcelaPendente.valor | currency:'BRL' }}</strong>
-                                    </span>
-                                </div>
+                    <!-- Ações Rápidas de Parcelas Não Geradas -->
+                    @if (qtdFuturasFaltantes > 0 || qtdAnterioresFaltantes > 0) {
+                        <div class="flex flex-col sm:flex-row items-center justify-between gap-2.5 p-2.5 rounded-xl bg-indigo-50/70 border border-indigo-100 text-xs">
+                            <div class="flex items-center gap-2 text-indigo-900 font-medium">
+                                <i class="pi pi-calendar-plus text-indigo-600 text-sm"></i>
+                                <span>Existem parcelas não geradas desta compra:</span>
                             </div>
-                            <p-button label="Confirmar pagamento" icon="pi pi-check" severity="success" size="small"
-                                styleClass="rounded-lg! text-xs py-2 px-3.5 whitespace-nowrap shrink-0 border-[#11b981]! bg-[#11b981]!"
-                                pTooltip="Registra o pagamento desta parcela e debita o valor da sua conta" tooltipPosition="top"
-                                (onClick)="confirmarPagamento(proximaParcelaPendente)"></p-button>
+                            <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                                @if (qtdAnterioresFaltantes > 0) {
+                                    <p-button [label]="'Gerar anteriores (' + qtdAnterioresFaltantes + ')'"
+                                        icon="pi pi-history" severity="warn" size="small" [outlined]="true"
+                                        styleClass="rounded-lg! text-xs py-1 px-2.5"
+                                        (onClick)="gerarAnterioresGrupoAtual()"></p-button>
+                                }
+                                @if (qtdFuturasFaltantes > 0) {
+                                    <p-button [label]="'Gerar futuras (' + qtdFuturasFaltantes + ')'"
+                                        icon="pi pi-calendar-plus" severity="info" size="small"
+                                        styleClass="rounded-lg! text-xs py-1 px-2.5 bg-indigo-600! border-indigo-600!"
+                                        (onClick)="gerarFuturasGrupoAtual()"></p-button>
+                                }
+                            </div>
                         </div>
                     }
 
-                    @if (qtdFuturasFaltantes > 0) {
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-blue-50/70 border border-blue-200">
-                            <div class="flex items-start gap-2 text-xs text-blue-950">
-                                <i class="pi pi-calendar-plus text-blue-600 mt-0.5 text-sm"></i>
-                                <div>
-                                    <span class="font-semibold">Faltam {{ qtdFuturasFaltantes }} parcela(s) futura(s)</span>
-                                    <p class="text-blue-700 m-0 mt-0.5">As parcelas dos próximos meses ainda não constam no seu planejamento.</p>
-                                </div>
-                            </div>
-                            <p-button [label]="'Lançar futuras (' + qtdFuturasFaltantes + ')'"
-                                icon="pi pi-calendar-plus" severity="info" size="small"
-                                styleClass="rounded-lg! text-xs py-2 px-3 whitespace-nowrap shrink-0 border-[#1976d2]! bg-[#1976d2]!"
-                                (onClick)="gerarFuturasGrupoAtual()"></p-button>
-                        </div>
-                    }
-
-                    @if (qtdAnterioresFaltantes > 0) {
-                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-amber-50/70 border border-amber-200">
-                            <div class="flex items-start gap-2 text-xs text-amber-950">
-                                <i class="pi pi-history text-amber-600 mt-0.5 text-sm"></i>
-                                <div>
-                                    <span class="font-semibold">Faltam {{ qtdAnterioresFaltantes }} parcela(s) anterior(es) (1 a {{ menorParcelaCadastrada - 1 }})</span>
-                                    <p class="text-amber-700 m-0 mt-0.5">São de meses passados. Você pode lançá-las para histórico (sem alterar seu saldo atual).</p>
-                                </div>
-                            </div>
-                            <p-button [label]="'Lançar no histórico (' + qtdAnterioresFaltantes + ')'"
-                                icon="pi pi-history" severity="warn" size="small"
-                                styleClass="rounded-lg! text-xs py-2 px-3 whitespace-nowrap shrink-0"
-                                (onClick)="gerarAnterioresGrupoAtual()"></p-button>
-                        </div>
-                    }
-
-                    <p-table [value]="parcelasGrupo" styleClass="p-datatable-sm" [paginator]="parcelasGrupo.length > 8"
-                        [rows]="8">
+                    <!-- Tabela Enxuta de Parcelas -->
+                    <p-table [value]="parcelasGrupo" styleClass="p-datatable-sm w-full" [paginator]="parcelasGrupo.length > 8" [rows]="8">
                         <ng-template pTemplate="header">
                             <tr>
-                                <th>Parcela</th>
-                                <th>Data</th>
-                                <th>Valor</th>
-                                <th>Estado</th>
-                                <th>Ação</th>
+                                <th class="bg-[#F8F8FC]! text-slate-700! w-[90px]">Parcela</th>
+                                <th class="bg-[#F8F8FC]! text-slate-700!">Vencimento</th>
+                                <th class="bg-[#F8F8FC]! text-slate-700! text-right! pr-6!">Valor</th>
+                                <th class="bg-[#F8F8FC]! text-slate-700! text-center! w-[140px]">Situação</th>
                             </tr>
                         </ng-template>
                         <ng-template pTemplate="body" let-p>
-                            <tr>
+                            <tr class="hover:bg-slate-50 transition-colors">
                                 <td>
-                                    <span class="font-medium text-slate-700">{{ p.numeroParcela }} de {{ p.totalParcelas }}</span>
-                                </td>
-                                <td>{{ p.dataHora | date:'dd/MM/yyyy' }}</td>
-                                <td>{{ p.valor | currency:'BRL' }}</td>
-                                <td>
-                                    <p-tag [value]="p.estado" [style]="{
-                                        'background': p.estado === 'PENDENTE' ? '#ffefd0' : '#cdf3e1',
-                                        'color': p.estado === 'PENDENTE' ? '#FFB016' : '#14ca74'
-                                    }"></p-tag>
+                                    <span class="inline-flex items-center font-bold text-xs text-slate-700 bg-slate-100 px-2 py-0.5 rounded-md">
+                                        {{ p.numeroParcela }}/{{ p.totalParcelas }}
+                                    </span>
                                 </td>
                                 <td>
-                                    @if (p.estado === 'PENDENTE') {
-                                        <p-button icon="pi pi-check" label="Confirmar pagamento" size="small" severity="success" [outlined]="true"
-                                            styleClass="rounded-lg! text-xs py-1 px-2 whitespace-nowrap" (onClick)="confirmarPagamento(p)"
-                                            pTooltip="Marcar esta parcela como realizada e debitar do saldo" tooltipPosition="top"></p-button>
-                                    } @else {
-                                        <span class="text-xs text-emerald-600 font-medium inline-flex items-center gap-1">
-                                            <i class="pi pi-check text-[10px]"></i> Pago
+                                    <span class="text-xs font-medium text-slate-600">
+                                        {{ p.dataHora | date:'dd/MM/yyyy' }}
+                                    </span>
+                                </td>
+                                <td class="text-right! pr-6! whitespace-nowrap">
+                                    <span class="tabular-nums text-xs font-semibold text-slate-800">
+                                        {{ p.valor | currency: codigoMoeda }}
+                                    </span>
+                                </td>
+                                <td class="text-center! whitespace-nowrap">
+                                    @if (p.estado === 'REALIZADA') {
+                                        <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                            <i class="pi pi-check text-[10px]"></i> Paga
                                         </span>
+                                    } @else {
+                                        <button type="button" (click)="confirmarPagamento(p)"
+                                            pTooltip="Clique para confirmar pagamento" tooltipPosition="top" [showDelay]="300"
+                                            class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors cursor-pointer">
+                                            <i class="pi pi-clock text-[10px]"></i> Pendente
+                                        </button>
                                     }
                                 </td>
                             </tr>
@@ -1199,7 +1204,7 @@
                 } @else {
                     <div class="flex flex-col items-center gap-2 py-8">
                         <i class="pi pi-info-circle text-2xl text-slate-400"></i>
-                        <span class="text-slate-500">Nenhuma parcela encontrada.</span>
+                        <span class="text-slate-500 text-xs">Nenhuma parcela encontrada.</span>
                     </div>
                 }
             }
@@ -1209,15 +1214,16 @@
             <div class="flex flex-col sm:flex-row gap-2 w-full justify-between items-center pt-2">
                 <div class="flex items-center gap-2 w-full sm:w-auto">
                     @if (temParcelasPendentesNoGrupo) {
-                        <p-button label="Remover parcelas pendentes" icon="pi pi-calendar-times" severity="warn" [outlined]="true"
-                            styleClass="rounded-xl! text-xs w-full sm:w-auto" (onClick)="excluirGrupoParcelamento(true)"
-                            pTooltip="Remove apenas as parcelas futuras que ainda não foram pagas" tooltipPosition="top"></p-button>
+                        <p-button label="Remover pendentes" icon="pi pi-calendar-times" severity="warn" [outlined]="true"
+                            size="small" styleClass="rounded-xl! text-xs w-full sm:w-auto" (onClick)="excluirGrupoParcelamento(true)"
+                            pTooltip="Remove as parcelas futuras não pagas" tooltipPosition="top" [showDelay]="300"></p-button>
                     }
-                    <p-button label="Excluir todas as parcelas" icon="pi pi-trash" severity="danger" [outlined]="true"
-                        styleClass="rounded-xl! text-xs w-full sm:w-auto" (onClick)="excluirGrupoParcelamento(false)"></p-button>
+                    <p-button label="Excluir todas as parcelas" icon="pi pi-trash" severity="danger" [text]="true"
+                        size="small" styleClass="text-rose-600 hover:bg-rose-50 rounded-xl! text-xs font-semibold w-full sm:w-auto"
+                        (onClick)="excluirGrupoParcelamento(false)"></p-button>
                 </div>
-                <p-button label="Fechar" severity="secondary" [outlined]="true"
-                    styleClass="rounded-xl! text-xs w-full sm:w-auto" (onClick)="exibirDialogGrupo = false"></p-button>
+                <p-button label="Fechar" severity="secondary" [outlined]="true" size="small"
+                    styleClass="rounded-xl! text-xs px-4 w-full sm:w-auto" (onClick)="exibirDialogGrupo = false"></p-button>
             </div>
         </ng-template>
     </p-dialog>

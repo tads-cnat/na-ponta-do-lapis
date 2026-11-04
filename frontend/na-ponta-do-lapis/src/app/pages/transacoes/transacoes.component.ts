@@ -135,6 +135,14 @@ export class TransacoesComponent {
     return this.parcelasGrupo.some(p => p.estado === 'PENDENTE');
   }
 
+  get qtdPagasNoGrupo(): number {
+    return this.parcelasGrupo.filter(p => p.estado === 'REALIZADA').length;
+  }
+
+  get qtdPendentesNoGrupo(): number {
+    return this.parcelasGrupo.filter(p => p.estado === 'PENDENTE').length;
+  }
+
   get proximaParcelaPendente(): ITransacoes | null {
     const pendentes = this.parcelasGrupo
       .filter(p => p.estado === 'PENDENTE')
