@@ -11,9 +11,33 @@ on:
 
 permissions:
   contents: write
+  issues: write
 
 jobs:
+  approve:
+    name: Solicitar Aprovação da Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aguardar Aprovação Manual
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ secrets.GITHUB_TOKEN }}
+          approvers: ${{ vars.RELEASE_APPROVERS }}
+          minimum-approvals: ${{ vars.RELEASE_MIN_APPROVALS || 3 }}
+          issue-timeout-seconds: ${{ vars.RELEASE_TIMEOUT_SECONDS || 86400 }}
+          issue-title: "Aprovação necessária para a Release (Tipo: ${{ inputs.bump }})"
+          issue-body: |
+            Uma nova execução de Release para Produção foi iniciada.
+            
+            **Disparado por:** `@${{ github.actor }}`
+            **Tipo de bump:** `${{ inputs.bump }}`
+            **Commit SHA:** `${{ github.sha }}`
+            
+            Por favor, aprovem digitando `approved` nesta issue ou utilizando o botão de resposta.
+
   release:
+    name: Gerar Release e Imagens
+    needs: approve
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
