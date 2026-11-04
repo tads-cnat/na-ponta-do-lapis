@@ -239,7 +239,7 @@
                 </div>
 
                 <p-table [value]="transacoesDados" [(selection)]="transacoesMarcadas" dataKey="id" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
-                    responsiveLayout="scroll" sortField="dataHora" [sortOrder]="-1" styleClass="p-datatable-sm w-full">
+                    [rowHover]="true" responsiveLayout="scroll" sortField="dataHora" [sortOrder]="-1" styleClass="p-datatable-sm w-full">
 
                     <ng-template pTemplate="header">
                         <tr>
@@ -272,7 +272,7 @@
                     </ng-template>
 
                     <ng-template pTemplate="body" let-t>
-                        <tr class="hover:bg-purple-50/40 transition-colors duration-150">
+                        <tr [class.p-datatable-row-selected]="isTransacaoMarcada(t)">
                             <td>
                                 <p-tableCheckbox [value]="t" />
                             </td>
@@ -282,7 +282,7 @@
                             <td class="max-w-[240px] lg:max-w-[320px]">
                                 <div class="flex items-center gap-1.5 py-0.5">
                                     <span class="font-semibold text-slate-800 text-sm truncate"
-                                        [pTooltip]="t.descricao" tooltipPosition="top">
+                                        [pTooltip]="t.descricao && t.descricao.length > 25 ? t.descricao : ''" tooltipPosition="top" [showDelay]="300">
                                         {{ t.descricao }}
                                     </span>
                                     @if (t.numeroParcela && t.totalParcelas) {
@@ -293,6 +293,7 @@
                                             styleClass="text-[11px] font-semibold cursor-pointer hover:opacity-80 transition-opacity shrink-0"
                                             pTooltip="Ver parcelas desta compra"
                                             tooltipPosition="top"
+                                            [showDelay]="300"
                                             (click)="abrirGrupoParcelamento(t)"></p-tag>
                                     }
                                     @if (t.marcador) {
@@ -317,8 +318,8 @@
                                     </span>
                                 } @else {
                                     <button type="button" (click)="confirmarPagamento(t)"
-                                        pTooltip="Clique para confirmar pagamento" tooltipPosition="top"
-                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 hover:shadow-xs hover:scale-[1.02] active:scale-95 transition-all cursor-pointer">
+                                        pTooltip="Clique para confirmar pagamento" tooltipPosition="top" [showDelay]="300"
+                                        class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-emerald-50 hover:text-emerald-700 hover:border-emerald-300 transition-colors cursor-pointer">
                                         <i class="pi pi-clock text-[10px]"></i> Pendente
                                     </button>
                                 }
@@ -332,12 +333,12 @@
                             <td class="pl-4! whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <p-button icon="pi pi-pencil"
-                                        pTooltip="Editar transação" tooltipPosition="top"
-                                        styleClass="text-[#7843cd]! bg-[#e8e2ff]! border-[#e8e2ff]! hover:bg-[#7843cd]! hover:text-white! hover:shadow-xs hover:scale-105 active:scale-95 transition-all! h-8 w-8 rounded-lg!"
+                                        pTooltip="Editar transação" tooltipPosition="top" [showDelay]="300"
+                                        styleClass="text-[#7843cd]! bg-white! border border-purple-200! shadow-2xs hover:bg-[#7843cd]! hover:text-white! hover:border-[#7843cd]! transition-colors! h-8 w-8 rounded-lg!"
                                         (onClick)="prepararEdicao(t)"></p-button>
                                     <p-button icon="pi pi-trash"
-                                        pTooltip="Excluir transação" tooltipPosition="top"
-                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! hover:bg-[#ef4444]! hover:text-white! hover:shadow-xs hover:scale-105 active:scale-95 transition-all! h-8 w-8 rounded-lg!"
+                                        pTooltip="Excluir transação" tooltipPosition="top" [showDelay]="300"
+                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! hover:bg-[#ef4444]! hover:text-white! transition-colors! h-8 w-8 rounded-lg!"
                                         (onClick)="abrirConfirmacaoExcluir(t)"></p-button>
                                 </div>
                             </td>

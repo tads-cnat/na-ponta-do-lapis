@@ -367,6 +367,11 @@ export class TransacoesComponent {
     return this.transacoesMarcadas.reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
   }
 
+  isTransacaoMarcada(t: ITransacoes): boolean {
+    if (!t?.id || this.transacoesMarcadas.length === 0) return false;
+    return this.transacoesMarcadas.some(m => m.id === t.id);
+  }
+
   alternarPainelFiltros() {
     this.painelFiltrosAberto = !this.painelFiltrosAberto;
   }
