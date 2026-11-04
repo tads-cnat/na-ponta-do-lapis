@@ -60,6 +60,7 @@ export class TransacoesComponent {
   transacaoParaExcluir: ITransacoes | null = null;
   exibirDialogExcluirIndividual: boolean = false;
   carregandoExclusaoIndividual: boolean = false;
+  codigoMoeda: string = 'BRL';
   carregando: boolean = false;
   carregandoConsentimento: boolean = false;
   carregandoGrupo: boolean = false;
@@ -257,6 +258,14 @@ export class TransacoesComponent {
   }
 
   ngOnInit(): void {
+    const moedaSalva = localStorage.getItem('npl_moeda');
+    if (!moedaSalva) {
+      localStorage.setItem('npl_moeda', 'BRL');
+      this.codigoMoeda = 'BRL';
+    } else {
+      this.codigoMoeda = moedaSalva;
+    }
+
     this.listarTransacoes()
     this.listarContas()
     this.listarCategorias()

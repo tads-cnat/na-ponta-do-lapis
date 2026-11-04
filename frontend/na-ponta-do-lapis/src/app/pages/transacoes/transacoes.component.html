@@ -182,17 +182,17 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="text-slate-400 font-medium">Receitas no filtro</span>
-                                    <span class="font-bold text-emerald-600 text-sm">{{ totalReceitasFiltradas | currency:'BRL' }}</span>
+                                    <span class="font-bold text-emerald-600 text-sm">+ {{ totalReceitasFiltradas | currency: codigoMoeda }}</span>
                                 </div>
                             </div>
 
                             <div class="flex items-center gap-2.5 px-2 sm:border-l sm:border-slate-100">
-                                <div class="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
+                                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-700">
                                     <i class="pi pi-arrow-up-right text-sm"></i>
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="text-slate-400 font-medium">Despesas no filtro</span>
-                                    <span class="font-bold text-rose-600 text-sm">{{ totalDespesasFiltradas | currency:'BRL' }}</span>
+                                    <span class="font-bold text-slate-800 text-sm">- {{ totalDespesasFiltradas | currency: codigoMoeda }}</span>
                                 </div>
                             </div>
 
@@ -203,7 +203,7 @@
                                 <div class="flex flex-col">
                                     <span class="text-slate-400 font-medium">Balanço do período</span>
                                     <span [class]="saldoFiltrado >= 0 ? 'font-bold text-emerald-600 text-sm' : 'font-bold text-rose-600 text-sm'">
-                                        {{ saldoFiltrado | currency:'BRL' }}
+                                        {{ saldoFiltrado | currency: codigoMoeda }}
                                     </span>
                                 </div>
                             </div>
@@ -221,7 +221,7 @@
                                         {{ transacoesMarcadas.length }} {{ transacoesMarcadas.length === 1 ? 'movimentação selecionada' : 'movimentações selecionadas' }}
                                     </span>
                                     <span class="text-xs text-slate-500">
-                                        Total selecionado: <span class="font-bold text-slate-700">{{ totalValorSelecionadas | currency:'BRL' }}</span>
+                                        Total selecionado: <span class="font-bold text-slate-700">{{ totalValorSelecionadas | currency: codigoMoeda }}</span>
                                     </span>
                                 </div>
                             </div>
@@ -326,7 +326,7 @@
                             <td class="text-right! whitespace-nowrap pr-8!">
                                 <span class="tabular-nums text-sm font-semibold"
                                     [class]="t.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-slate-800'">
-                                    {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency: 'BRL' }}
+                                    {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency: codigoMoeda }}
                                 </span>
                             </td>
                             <td class="pl-4! whitespace-nowrap">
@@ -1210,7 +1210,7 @@
                 </div>
                 <div class="flex justify-between items-center pt-2 border-t border-slate-200 mt-1">
                     <span class="text-xs text-slate-600 font-semibold">Valor a debitar</span>
-                    <span class="text-base font-bold text-emerald-600">{{ transacaoParaConfirmar.valor | currency:'BRL' }}</span>
+                    <span class="text-base font-bold text-emerald-600">{{ transacaoParaConfirmar.valor | currency: codigoMoeda }}</span>
                 </div>
             </div>
         </div>
@@ -1267,7 +1267,7 @@
                     Excluir {{ transacoesMarcadas.length }} {{ transacoesMarcadas.length === 1 ? 'movimentação' : 'movimentações' }}?
                 </span>
                 <span class="text-xs text-slate-500">
-                    Total: <strong class="text-slate-700">{{ totalValorSelecionadas | currency:'BRL' }}</strong> • O saldo das contas será estornado.
+                    Total: <strong class="text-slate-700">{{ totalValorSelecionadas | currency: codigoMoeda }}</strong> • O saldo das contas será estornado.
                 </span>
             </div>
         </div>
@@ -1296,7 +1296,7 @@
                         Excluir "{{ transacaoParaExcluir.descricao }}"?
                     </span>
                     <span class="text-xs text-slate-500">
-                        Valor: <strong class="text-slate-700">{{ transacaoParaExcluir.valor | currency:'BRL' }}</strong> • O saldo da conta será estornado.
+                        Valor: <strong class="text-slate-700">{{ transacaoParaExcluir.valor | currency: codigoMoeda }}</strong> • O saldo da conta será estornado.
                     </span>
                 </div>
             </div>
