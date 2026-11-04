@@ -1,0 +1,82 @@
+name: CI Status Gate
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: filter
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+              - '.github/workflows/ci-back.yml'
+            frontend:
+              - 'frontend/**'
+              - '.github/workflows/ci-front.yml'
+
+  # Aguarda a conclusão das verificações do Backend (se o backend foi alterado)
+  wait-backend:
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.backend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aguardar Workflow de Backend
+        uses: fountainhead/action-wait-for-check@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: 'Validação do build Docker (sem push)' # Nome do último job do Backend
+          ref: ${{ github.event.pull_request.head.sha }}
+          timeoutSeconds: 900 # 15 minutos de limite
+
+  # Aguarda a conclusão das verificações do Frontend (se o frontend foi alterado)
+  wait-frontend:
+    needs: check-changes
+    if: ${{ needs.check-changes.outputs.frontend == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aguardar Workflow de Frontend
+        uses: fountainhead/action-wait-for-check@v1.2.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          checkName: 'Validação do build Angular / Docker (sem push)' # Nome do job do Frontend
+          ref: ${{ github.event.pull_request.head.sha }}
+          timeoutSeconds: 900
+
+  # JOB FINAL (Este é o ÚNICO que você deve colocar na proteção da branch no GitHub)
+  ci-status:
+    name: Continuous Integration Gate
+    needs: [check-changes, wait-backend, wait-frontend]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar Execução
+        run: |
+          # Checa se o filtro falhou
+          if [[ "${{ needs.check-changes.result }}" == "failure" ]]; then
+            echo "Falha ao verificar alterações de arquivos."
+            exit 1
+          fi
+
+          # Checa se o backend foi alterado mas a validação falhou
+          if [[ "${{ needs.check-changes.outputs.backend }}" == "true" && "${{ needs.wait-backend.result }}" != "success" ]]; then
+            echo "A validação do Backend falhou ou expirou!"
+            exit 1
+          fi
+
+          # Checa se o frontend foi alterado mas a validação falhou
+          if [[ "${{ needs.check-changes.outputs.frontend }}" == "true" && "${{ needs.wait-frontend.result }}" != "success" ]]; then
+            echo "A validação do Frontend falhou ou expirou!"
+            exit 1
+          fi
+
+          echo "Todas as verificações aplicáveis foram concluídas com sucesso!"
