@@ -373,109 +373,141 @@
     </div>
 
     <form [formGroup]="formTransacao">
-        <p-dialog header="Transação" [(visible)]="exibirDialog" [modal]="true"
-            [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '50vw' }">
+        <p-dialog [header]="id ? 'Editar Movimentação' : 'Nova Movimentação'" [(visible)]="exibirDialog" [modal]="true"
+            (onHide)="fecharModalTransacao()" [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '46rem', maxWidth: '95vw' }">
 
-            <div class="flex flex-col items-center justify-center gap-2 mt-2">
-
+            <div class="flex flex-col items-center justify-center gap-1.5 mt-1">
                 <input type="hidden" formControlName="marcadorId">
-                <div class="relative inline-flex cursor-pointer" (click)="toggle($event)">
-                    <i class="pi pi-bookmark-fill text-4xl transition-colors duration-200"
-                        [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#64748b'">
+                <div class="relative inline-flex cursor-pointer hover:opacity-85 transition-opacity" (click)="toggle($event)">
+                    <i class="pi pi-bookmark-fill text-3xl transition-colors duration-200"
+                        [style.color]="marcadorSelecionado ? marcadorSelecionado.cor : '#94a3b8'">
                     </i>
                 </div>
 
-                <button pButton type="button"
-                    [label]="marcadorSelecionado ? marcadorSelecionado.nome : 'Selecionar Marcador'"
-                    (click)="toggle($event)" class="p-button-link p-0 font-medium"></button>
+                <div class="flex items-center gap-1.5">
+                    <button pButton type="button"
+                        [label]="marcadorSelecionado ? marcadorSelecionado.nome : 'Adicionar Marcador'"
+                        (click)="toggle($event)" class="p-button-link p-0 text-xs font-semibold text-slate-600 hover:text-slate-800"></button>
+                    @if (marcadorSelecionado) {
+                        <button type="button" (click)="removerMarcador($event)"
+                            class="w-4 h-4 rounded-full bg-slate-200 text-slate-500 hover:bg-slate-300 hover:text-slate-700 flex items-center justify-center text-[9px] cursor-pointer"
+                            pTooltip="Remover marcador" tooltipPosition="top" [showDelay]="300">
+                            <i class="pi pi-times"></i>
+                        </button>
+                    }
+                </div>
 
                 <p-popover #op>
-                    <div class="flex flex-col gap-4">
-                        <div>
-                            <span class="mb-2 font-bold text-surface-700">Marcadores</span>
-                            <ul class="list-none p-0 m-0 flex flex-col">
-                                @for (m of opcoesMarcador; track $index) {
-                                <li class="flex items-center gap-2 px-2 py-3 hover:bg-emphasis cursor-pointer rounded-border"
-                                    (click)="selecionarMarcador(m)">
-                                    <span class="font-medium text-surface-900">{{ m.nome }}</span>
-                                    <span class="inline-block rounded-full ml-auto" [style.background-color]="m.cor"
-                                        style="width: 15px; height: 15px; border: 1px solid #ddd;"></span>
+                    <div class="flex flex-col gap-2 min-w-[200px]">
+                        <span class="font-bold text-[11px] text-slate-400 uppercase tracking-wider px-2 pt-1">Marcadores</span>
+                        <ul class="list-none p-0 m-0 flex flex-col gap-0.5">
+                            @if (marcadorSelecionado) {
+                                <li class="flex items-center gap-2 px-2.5 py-2 hover:bg-rose-50 text-rose-600 cursor-pointer rounded-lg text-xs font-semibold transition-colors"
+                                    (click)="removerMarcador($event)">
+                                    <i class="pi pi-ban text-xs"></i>
+                                    <span>Sem marcador</span>
                                 </li>
-                                }
-                            </ul>
-                        </div>
+                            }
+                            @for (m of opcoesMarcador; track m.id) {
+                                <li class="flex items-center gap-2 px-2.5 py-2 hover:bg-slate-100 cursor-pointer rounded-lg text-xs font-medium transition-colors"
+                                    (click)="selecionarMarcador(m)">
+                                    <span class="w-3 h-3 rounded-full shrink-0 shadow-2xs" [style.backgroundColor]="m.cor"></span>
+                                    <span class="text-slate-800">{{ m.nome }}</span>
+                                    @if (marcadorSelecionado?.id === m.id) {
+                                        <i class="pi pi-check text-xs text-[#7843cd] ml-auto"></i>
+                                    }
+                                </li>
+                            }
+                        </ul>
                     </div>
                 </p-popover>
             </div>
 
-            <div class="flex flex-col gap-4 mt-4 px-2 sm:px-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+            <div class="flex flex-col gap-4 mt-3 px-2 sm:px-6">
+                <!-- Seletor Segmentado de Tipo: Despesa vs Receita -->
+                <div class="flex flex-col gap-1">
+                    <label class="font-bold text-xs text-slate-600 uppercase tracking-wider">Tipo de Movimentação</label>
+                    <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
+                        <button type="button" (click)="definirTipo('DESPESA')"
+                            [class]="formTransacao.get('tipo')?.value === 'DESPESA'
+                                ? 'bg-white text-slate-800 shadow-xs font-bold border border-slate-200/80'
+                                : 'text-slate-500 hover:text-slate-800 font-medium'"
+                            class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs sm:text-sm transition-all cursor-pointer">
+                            <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
+                            <span>Despesa</span>
+                        </button>
+                        <button type="button" (click)="definirTipo('RECEITA')"
+                            [class]="formTransacao.get('tipo')?.value === 'RECEITA'
+                                ? 'bg-white text-emerald-700 shadow-xs font-bold border border-emerald-200'
+                                : 'text-slate-500 hover:text-emerald-700 font-medium'"
+                            class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs sm:text-sm transition-all cursor-pointer">
+                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                            <span>Receita</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1">
                         <div class="flex justify-between items-center">
-                            <label class="font-bold text-sm">Descrição</label>
+                            <label class="font-bold text-sm text-slate-700">Descrição *</label>
                             <span class="text-xs text-slate-400 font-medium">
                                 {{ formTransacao.get('descricao')?.value?.length || 0 }}/100
                             </span>
                         </div>
-                        <input pInputText formControlName="descricao" maxlength="100" placeholder="Ex: Internet fibra" class="w-full" />
+                        <input pInputText formControlName="descricao" maxlength="100" placeholder="Ex: Internet, Aluguel, Supermercado..." class="w-full" />
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Valor</label>
+                        <label class="font-bold text-sm text-slate-700">Valor *</label>
                         <p-inputNumber formControlName="valor" mode="currency" [currency]="codigoMoeda" locale="pt-BR"
                             [minFractionDigits]="2" [maxFractionDigits]="2" (onFocus)="aoFocarValor($event)"
                             placeholder="R$ 0,00" styleClass="w-full" inputStyleClass="w-full" />
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Conta</label>
+                        <label class="font-bold text-sm text-slate-700">Conta *</label>
                         <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
-                            formControlName="idContaFinanceira" placeholder="Selecione" [appendTo]="'body'"
+                            formControlName="idContaFinanceira" placeholder="Selecione a conta" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Categoria</label>
+                        <label class="font-bold text-sm text-slate-700">Categoria *</label>
                         <p-select [options]="opcoesCategoria" optionLabel="nome" optionValue="id"
-                            formControlName="idCategoria" placeholder="Selecione" [appendTo]="'body'"
+                            formControlName="idCategoria" placeholder="Selecione a categoria" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Data</label>
+                        <label class="font-bold text-sm text-slate-700">Data *</label>
                         <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yy" showIcon="true"
-                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full" required="true"></p-datePicker>
+                            placeholder="Selecione a data" [appendTo]="'body'" styleClass="w-full"></p-datePicker>
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Estado</label>
+                        <label class="font-bold text-sm text-slate-700">Situação</label>
                         <p-select [options]="opcoesEstado" formControlName="estado" optionLabel="label"
-                            optionValue="value" placeholder="Selecione" [appendTo]="'body'"
+                            optionValue="value" placeholder="Selecione a situação" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
-                    </div>
-
-                    <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm">Tipo</label>
-                        <p-select [options]="opcoesTipo" formControlName="tipo" optionLabel="label" optionValue="value"
-                            placeholder="Selecione" [appendTo]="'body'" styleClass="w-full"></p-select>
                     </div>
                 </div>
 
                 @if (!editandoParcelada) {
-                <div class="flex flex-col gap-3">
+                <div class="flex flex-col gap-3 pt-1">
                     <div class="flex items-center gap-2">
                         <p-checkbox formControlName="parcelado" [binary]="true" inputId="parcelado"></p-checkbox>
-                        <label for="parcelado" class="font-bold text-sm cursor-pointer">Compra parcelada</label>
+                        <label for="parcelado" class="font-bold text-sm cursor-pointer text-slate-700">Compra parcelada</label>
                     </div>
 
                     @if (formTransacao.get('parcelado')?.value) {
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1">
-                            <label class="font-bold text-sm">Parcela atual</label>
+                            <label class="font-bold text-sm text-slate-700">Parcela atual</label>
                             <p-inputNumber formControlName="numeroParcela" [min]="1" [max]="formTransacao.get('totalParcelas')?.value || 60" [showButtons]="true"
                                 styleClass="w-full" inputStyleClass="w-full" />
                             @if (formTransacao.hasError('numeroMaiorQueTotal') || (formTransacao.get('numeroParcela')?.value > (formTransacao.get('totalParcelas')?.value || 60))) {
@@ -483,7 +515,7 @@
                             }
                         </div>
                         <div class="flex flex-col gap-1">
-                            <label class="font-bold text-sm">Número de parcelas</label>
+                            <label class="font-bold text-sm text-slate-700">Número de parcelas</label>
                             <p-inputNumber formControlName="totalParcelas" [min]="2" [max]="60" [showButtons]="true"
                                 styleClass="w-full" inputStyleClass="w-full" />
                         </div>
@@ -491,7 +523,7 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         @if (id) {
                         <div class="flex flex-col gap-1">
-                            <label class="font-bold text-sm">Valor total da compra (opcional)</label>
+                            <label class="font-bold text-sm text-slate-700">Valor total da compra (opcional)</label>
                             <p-inputNumber formControlName="valorTotalCompra" mode="currency" [currency]="codigoMoeda"
                                 locale="pt-BR" [minFractionDigits]="2" [maxFractionDigits]="2" (onFocus)="aoFocarValor($event)"
                                 placeholder="R$ 0,00" styleClass="w-full" inputStyleClass="w-full" />
@@ -501,7 +533,7 @@
                         <div class="flex items-center gap-2 sm:mt-6">
                             <p-checkbox formControlName="criarParcelasAnteriores" [binary]="true"
                                 inputId="criarParcelasAnteriores"></p-checkbox>
-                            <label for="criarParcelasAnteriores" class="text-sm cursor-pointer">
+                            <label for="criarParcelasAnteriores" class="text-sm cursor-pointer text-slate-600">
                                 Criar parcelas anteriores (realizadas, sem alterar o saldo)
                             </label>
                         </div>
@@ -514,7 +546,7 @@
                             <div>
                                 @if (!id && (formTransacao.get('valor')?.value > 0)) {
                                     <span class="font-semibold block text-purple-900">
-                                        Compra de {{ formTransacao.get('valor')?.value | currency:'BRL' }} dividida em {{ formTransacao.get('totalParcelas')?.value }}x de {{ ((formTransacao.get('valor')?.value || 0) / formTransacao.get('totalParcelas')?.value) | currency:'BRL' }}
+                                        Compra de {{ formTransacao.get('valor')?.value | currency: codigoMoeda }} dividida em {{ formTransacao.get('totalParcelas')?.value }}x de {{ ((formTransacao.get('valor')?.value || 0) / formTransacao.get('totalParcelas')?.value) | currency: codigoMoeda }}
                                     </span>
                                     <span class="text-purple-800 mt-0.5 block">
                                         Esta transação será a <strong>parcela {{ formTransacao.get('numeroParcela')?.value }} de {{ formTransacao.get('totalParcelas')?.value }}</strong>. As parcelas futuras serão agendadas nos próximos meses.
@@ -536,10 +568,23 @@
             </div>
 
             <ng-template pTemplate="footer">
-                <div class="flex justify-center w-full mb-2 mt-4">
-                    <p-button styleClass="w-full sm:w-60 h-12 rounded-xl! border-[#11b981]! bg-[#11b981]!"
-                        label="Salvar" [disabled]="formTransacao.invalid" severity="success"
-                        (onClick)="salvar()"></p-button>
+                <div class="flex items-center justify-between w-full pt-2">
+                    @if (id) {
+                        <p-button label="Excluir movimentação" icon="pi pi-trash" severity="danger" [text]="true"
+                            size="small" styleClass="text-rose-600 hover:bg-rose-50 rounded-xl! text-xs font-semibold"
+                            (onClick)="excluirDaEdicao()"></p-button>
+                    } @else {
+                        <div></div>
+                    }
+                    <div class="flex items-center gap-2">
+                        <p-button label="Cancelar" [outlined]="true" severity="secondary" size="small"
+                            styleClass="rounded-xl! text-xs px-4" (onClick)="fecharModalTransacao()"></p-button>
+                        <p-button [label]="id ? 'Salvar alterações' : 'Criar movimentação'" icon="pi pi-check"
+                            [loading]="salvandoTransacao" [disabled]="formTransacao.invalid || salvandoTransacao"
+                            severity="success" size="small"
+                            styleClass="rounded-xl! text-xs px-5 font-semibold bg-[#11b981]! border-[#11b981]!"
+                            (onClick)="salvar()"></p-button>
+                    </div>
                 </div>
             </ng-template>
         </p-dialog>
