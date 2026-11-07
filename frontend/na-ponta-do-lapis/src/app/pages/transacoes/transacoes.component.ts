@@ -510,6 +510,7 @@ export class TransacoesComponent {
     }
 
     this.transacoesDados = lista;
+    this.cardSaldo?.recalcular();
     this.cdr.detectChanges();
   }
 

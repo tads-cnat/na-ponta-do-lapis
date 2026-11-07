@@ -1,5 +1,9 @@
 <div class="w-full">
-    <app-card-saldo></app-card-saldo>
+    <app-card-saldo
+        [dataRange]="filtroDataRange"
+        [periodoRapido]="filtroPeriodoRapido"
+        [contaId]="filtroContaId">
+    </app-card-saldo>
 
     <div class="w-full">
         <p-toast />
@@ -187,12 +191,12 @@
                             </div>
 
                             <div class="flex items-center gap-2.5 px-2 sm:border-l sm:border-slate-100">
-                                <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-700">
+                                <div class="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
                                     <i class="pi pi-arrow-up-right text-sm"></i>
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="text-slate-400 font-medium">Despesas no filtro</span>
-                                    <span class="font-bold text-slate-800 text-sm">- {{ totalDespesasFiltradas | currency: codigoMoeda }}</span>
+                                    <span class="font-bold text-rose-600 text-sm">- {{ totalDespesasFiltradas | currency: codigoMoeda }}</span>
                                 </div>
                             </div>
 
@@ -326,7 +330,7 @@
                             </td>
                             <td class="text-right! whitespace-nowrap pr-8!">
                                 <span class="tabular-nums text-sm font-semibold"
-                                    [class]="t.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-slate-800'">
+                                    [class]="t.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-rose-600'">
                                     {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency: codigoMoeda }}
                                 </span>
                             </td>
@@ -430,19 +434,21 @@
                     <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
                         <button type="button" (click)="definirTipo('DESPESA')"
                             [class]="formTransacao.get('tipo')?.value === 'DESPESA'
-                                ? 'bg-white text-slate-800 shadow-xs font-bold border border-slate-200/80'
-                                : 'text-slate-500 hover:text-slate-800 font-medium'"
+                                ? 'bg-white text-rose-600 shadow-xs font-bold border border-rose-200'
+                                : 'text-slate-500 hover:text-rose-600 font-medium'"
                             class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs sm:text-sm transition-all cursor-pointer">
-                            <span class="w-2.5 h-2.5 rounded-full bg-slate-700"></span>
-                            <span>Despesa</span>
+                            <span class="w-2.5 h-2.5 rounded-full"
+                                [class]="formTransacao.get('tipo')?.value === 'DESPESA' ? 'bg-rose-500' : 'bg-slate-400'"></span>
+                            <span>- Despesa</span>
                         </button>
                         <button type="button" (click)="definirTipo('RECEITA')"
                             [class]="formTransacao.get('tipo')?.value === 'RECEITA'
                                 ? 'bg-white text-emerald-700 shadow-xs font-bold border border-emerald-200'
                                 : 'text-slate-500 hover:text-emerald-700 font-medium'"
                             class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs sm:text-sm transition-all cursor-pointer">
-                            <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
-                            <span>Receita</span>
+                            <span class="w-2.5 h-2.5 rounded-full"
+                                [class]="formTransacao.get('tipo')?.value === 'RECEITA' ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                            <span>+ Receita</span>
                         </button>
                     </div>
                 </div>
@@ -1181,8 +1187,8 @@
                                     </span>
                                 </td>
                                 <td class="text-right! pr-6! whitespace-nowrap">
-                                    <span class="tabular-nums text-xs font-semibold text-slate-800">
-                                        {{ p.valor | currency: codigoMoeda }}
+                                    <span class="tabular-nums text-xs font-semibold text-rose-600">
+                                        - {{ p.valor | currency: codigoMoeda }}
                                     </span>
                                 </td>
                                 <td class="text-center! whitespace-nowrap">
