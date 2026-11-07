@@ -16,8 +16,8 @@ import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.entity.Conquista;
+import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.entity.Marcador;
 import com.npl.na_ponta_do_lapis.entity.Meta;
 import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
@@ -30,8 +30,8 @@ import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
-import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.ConquistaRepository;
+import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.MarcadorRepository;
 import com.npl.na_ponta_do_lapis.repository.MetaRepository;
 import com.npl.na_ponta_do_lapis.repository.TipoCategoriaRepository;
@@ -83,7 +83,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         log.info("[DatabaseSeeder] Banco vazio detectado. Iniciando população de dados com valores e transações reais de um usuário comum...");
 
-        // 1. Categorias (gerenciadas pelo CategoriaInitializer)
+        // 1. Categorias (já inicializadas pelo CategoriaInitializer)
         TipoCategoria catAlimentacao = categoriaRepository.findByNome("Alimentação").orElseThrow();
         TipoCategoria catTransporte = categoriaRepository.findByNome("Transporte").orElseThrow();
         TipoCategoria catSaude = categoriaRepository.findByNome("Saúde").orElseThrow();
@@ -370,8 +370,9 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         metaRepository.saveAll(metas);
 
-        log.info("[DatabaseSeeder] Carga inicial de dados realistas finalizada com sucesso!");
+        log.info("[DatabaseSeeder] Carga inicial de dados finalizada com sucesso!");
     }
+
 
     private Usuario criarUsuario(String nome, String email, String username, String senha, String foto, Papel papel) {
         Usuario u = new Usuario();
