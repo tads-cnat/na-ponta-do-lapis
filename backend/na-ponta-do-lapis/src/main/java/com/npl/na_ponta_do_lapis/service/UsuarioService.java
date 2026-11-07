@@ -5,6 +5,7 @@ import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
+import com.npl.na_ponta_do_lapis.web.exception.BusinessException;
 import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
 import jakarta.transaction.Transactional;
 
@@ -62,11 +63,14 @@ public class UsuarioService {
             usuario.setEmail(dto.email().trim());
         }
 
-        // ALTERE ESTE BLOCO ABAIXO:
         if (dto.senha() != null && !dto.senha().trim().isEmpty()) {
-            // Criptografa a nova senha antes de atribuir ao usuário
+            if (dto.senhaAtual() == null || dto.senhaAtual().trim().isEmpty()
+                    || !passwordEncoder.matches(dto.senhaAtual(), usuario.getPassword())) {
+                throw new BusinessException("A senha atual está incorreta.");
+            }
+
             String senhaCriptografada = passwordEncoder.encode(dto.senha());
-            usuario.setSenha(senhaCriptografada); 
+            usuario.setSenha(senhaCriptografada);
         }
         return usuarioRepository.save(usuario);
     }
