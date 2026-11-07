@@ -12,3 +12,38 @@
     Esqueceu sua senha?
   </a>
 </div>
+
+<p-dialog
+  header="Confirmar alterações"
+  [(visible)]="confirmacaoVisivel"
+  [modal]="true"
+  [breakpoints]="{ '640px': '95vw' }"
+  [style]="{ width: '32rem', maxWidth: '95vw' }">
+  <div class="flex flex-col gap-2">
+    <span class="font-semibold text-slate-700">Salvar alterações do perfil?</span>
+    <p class="m-0 text-sm text-slate-500">
+      Confirme para atualizar os dados do seu perfil.
+    </p>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-2 w-full pt-2">
+      <p-button
+        label="Cancelar"
+        [outlined]="true"
+        severity="secondary"
+        size="small"
+        styleClass="rounded-xl! text-xs px-4"
+        (onClick)="cancelarSalvar()">
+      </p-button>
+      <p-button
+        label="Confirmar e salvar"
+        icon="pi pi-check"
+        severity="success"
+        size="small"
+        styleClass="rounded-xl! text-xs px-5 font-semibold bg-[#11b981]! border-[#11b981]!"
+        (onClick)="confirmarSalvar()">
+      </p-button>
+    </div>
+  </ng-template>
+</p-dialog>
