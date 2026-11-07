@@ -12,7 +12,7 @@
           +55
         </div>
         <input 
-          [type]="campo.type || 'text'" 
+          [type]="tipoDoCampo(campo)" 
           [placeholder]="campo.placeholder" 
           [formControlName]="campo.key"
           class="flex-1 h-full px-4 bg-[#EBEBEB] border-none rounded-xl text-black placeholder-[#9E9E9E] focus:outline-none focus:ring-2 focus:ring-[#6A1B9A] transition-all"
@@ -20,12 +20,23 @@
       </div>
 
       <ng-template #inputPadrao>
-        <input 
-          [type]="campo.type || 'text'" 
-          [placeholder]="campo.placeholder" 
-          [formControlName]="campo.key"
-          class="w-full h-12 px-4 bg-[#EBEBEB] border-none rounded-xl text-black placeholder-[#9E9E9E] focus:outline-none focus:ring-2 focus:ring-[#6A1B9A] transition-all"
-        />
+        <div class="relative w-full">
+          <input
+            [type]="tipoDoCampo(campo)"
+            [placeholder]="campo.placeholder"
+            [formControlName]="campo.key"
+            [class.pr-12]="campo.type === 'password'"
+            class="w-full h-12 px-4 bg-[#EBEBEB] border-none rounded-xl text-black placeholder-[#9E9E9E] focus:outline-none focus:ring-2 focus:ring-[#6A1B9A] transition-all"
+          />
+          <button
+            *ngIf="campo.type === 'password'"
+            type="button"
+            [attr.aria-label]="camposVisiveis[campo.key] ? 'Ocultar senha' : 'Mostrar senha'"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-[#757575] hover:text-[#5110A8] transition-colors"
+            (click)="alternarVisibilidade(campo)">
+            <i [class]="camposVisiveis[campo.key] ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+          </button>
+        </div>
       </ng-template>
     </div>
   </div>
