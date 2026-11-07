@@ -12,11 +12,18 @@ public record UsuarioUpdateDTO (
     String senhaAtual,
 
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres ")
+<<<<<<< HEAD
     String senha,
 
     Moeda moedaPadrao
 ) {
     public UsuarioUpdateDTO(String nome, String email, String senha) {
         this(nome, email, null, senha, null);
+=======
+    String senha
+) {
+    public UsuarioUpdateDTO(String nome, String email, String senha) {
+        this(nome, email, null, senha);
+>>>>>>> 2e41b15 (feat: add logic in backend to confirm that sent senhaAtual really is.)
     }
 }
