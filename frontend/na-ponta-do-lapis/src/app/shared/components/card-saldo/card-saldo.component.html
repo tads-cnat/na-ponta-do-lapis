@@ -7,15 +7,11 @@
             <div class="flex flex-col gap-2 mt-1 pr-16"> 
                 <div>
                     <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
-                    <span class="font-bold text-3xl tracking-tight text-gray-800">R$ 1.000,00</span>
+                    <span class="font-bold text-3xl tracking-tight text-gray-800">{{ saldoInicial | currency : 'BRL' }}</span>
                 </div> 
                 
                 <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
-                    <span class="flex items-center gap-1">
-                        <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5"> 
-                        <span class="text-red-500 font-semibold">4.3%</span>
-                    </span>
-                    <span class="text-gray-400">menos que abril</span>
+                    <span class="text-gray-400">Posição em 1º de {{ nomeMesAtual }}</span>
                 </div>
             </div>
         </p-card>
@@ -32,11 +28,21 @@
                 </div>
                 
                 <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
-                    <span class="flex items-center gap-1">
-                        <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5"> 
-                        <span class="text-green-500 font-semibold">2.1%</span>
-                    </span>
-                    <span class="text-gray-400">mais que ontem</span>
+                    @if (variacaoPercentual > 0) {
+                        <span class="flex items-center gap-1">
+                            <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5"> 
+                            <span class="text-emerald-500 font-semibold">+{{ variacaoPercentual | number:'1.1-1' }}%</span>
+                        </span>
+                        <span class="text-gray-400">no mês</span>
+                    } @else if (variacaoPercentual < 0) {
+                        <span class="flex items-center gap-1">
+                            <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5"> 
+                            <span class="text-rose-500 font-semibold">{{ variacaoPercentual | number:'1.1-1' }}%</span>
+                        </span>
+                        <span class="text-gray-400">no mês</span>
+                    } @else {
+                        <span class="text-gray-400">Sem variação no mês</span>
+                    }
                 </div>
             </div>
         </p-card>
