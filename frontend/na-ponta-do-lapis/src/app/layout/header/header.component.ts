@@ -13,7 +13,6 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
   selector: 'app-header',
   imports: [PrimeNGModuleModule, IconComponent],
   templateUrl: './header.component.html',
-  providers: [MessageService],
   styleUrl: './header.component.css',
 })
 export class HeaderComponent {
@@ -60,5 +59,5 @@ export class HeaderComponent {
     event.target.src = 'user_anonimo.png'
   }
 
-  
+
 }
