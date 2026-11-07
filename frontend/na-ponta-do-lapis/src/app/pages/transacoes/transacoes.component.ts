@@ -49,6 +49,8 @@ export class TransacoesComponent {
   exibirDialogRevisao: boolean = false;
   exibirDialogConsentimento: boolean = false;
   exibirDialogGrupo: boolean = false;
+  exibirDialogConfirmarEdicao: boolean = false;
+  transacaoOriginal: ITransacoes | null = null;
   exibirDialogConfirmarPagamento: boolean = false;
   transacaoParaConfirmar: ITransacoes | null = null;
   carregandoConfirmacao: boolean = false;
@@ -720,8 +722,14 @@ export class TransacoesComponent {
 
   fecharModalTransacao() {
     this.exibirDialog = false;
+    this.exibirDialogConfirmarEdicao = false;
     this.id = null;
+    this.transacaoOriginal = null;
     this.salvandoTransacao = false;
+  }
+
+  fecharDialogConfirmarEdicao() {
+    this.exibirDialogConfirmarEdicao = false;
   }
 
   excluirDaEdicao() {
@@ -1667,7 +1675,9 @@ export class TransacoesComponent {
 
   public prepararEdicao(transacao: ITransacoes) {
     this.id = transacao.id;
+    this.transacaoOriginal = transacao;
     this.salvandoTransacao = false;
+    this.exibirDialogConfirmarEdicao = false;
     this.exibirDialog = true;
 
     // Preenche o formulário com os dados da linha selecionada
@@ -1694,67 +1704,83 @@ export class TransacoesComponent {
 
   salvar() {
     if (this.formTransacao.valid) {
-      const dadosParaEnviar: any = { ...this.formTransacao.value };
-      this.salvandoTransacao = true;
-
       if (this.id) {
-        // Transação já parcelada: edição altera só esta parcela. Avulsa: pode virar parcelada.
-        if (this.editandoParcelada || !dadosParaEnviar.parcelado) {
-          delete dadosParaEnviar.parcelado;
-          delete dadosParaEnviar.totalParcelas;
-          delete dadosParaEnviar.numeroParcela;
-          delete dadosParaEnviar.valorTotalCompra;
-          delete dadosParaEnviar.criarParcelasAnteriores;
-        } else {
-          dadosParaEnviar.totalParcelas = Number(dadosParaEnviar.totalParcelas);
-          dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela);
-          dadosParaEnviar.valorTotalCompra = dadosParaEnviar.valorTotalCompra
-            ? Number(dadosParaEnviar.valorTotalCompra)
-            : null;
-          dadosParaEnviar.criarParcelasAnteriores =
-            !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1;
-        }
-        this.transacoesService.editarTransacao(this.id, dadosParaEnviar).subscribe({
-          next: () => {
-            this.salvandoTransacao = false;
-            this.exibirDialog = false;
-            this.sucessoAoSalvar('Transação atualizada');
-          },
-          error: (err: Error) => {
-            this.salvandoTransacao = false;
-            this.erroAoSalvar('Erro ao editar', err);
-          }
-        });
+        this.exibirDialogConfirmarEdicao = true;
       } else {
-        const parcelado = !!dadosParaEnviar.parcelado;
-        dadosParaEnviar.parcelado = parcelado;
-        delete dadosParaEnviar.valorTotalCompra;
-        if (parcelado) {
-          dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela);
-          dadosParaEnviar.criarParcelasAnteriores =
-            !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1;
-        } else {
-          delete dadosParaEnviar.numeroParcela;
-          delete dadosParaEnviar.criarParcelasAnteriores;
-        }
-        dadosParaEnviar.totalParcelas = parcelado ? Number(dadosParaEnviar.totalParcelas) : null;
-
-        this.transacoesService.adicionarTransacao(dadosParaEnviar).subscribe({
-          next: (res: ITransacoes[]) => {
-            this.salvandoTransacao = false;
-            this.exibirDialog = false;
-            this.sucessoAoSalvar(parcelado
-              ? `Compra parcelada em ${res.length} vez(es)`
-              : 'Transação criada!');
-          },
-          error: (error: HttpErrorResponse) => {
-            this.salvandoTransacao = false;
-            const corpo = error.error as FaturaErro | null;
-            this.erroAoSalvar(corpo?.error || 'Erro ao salvar', error);
-          }
-        });
+        this.executarCriacao();
       }
     }
+  }
+
+  executarEdicao() {
+    if (!this.id || this.formTransacao.invalid) return;
+
+    const dadosParaEnviar: any = { ...this.formTransacao.value };
+    this.salvandoTransacao = true;
+
+    // Transação já parcelada: edição altera só esta parcela. Avulsa: pode virar parcelada.
+    if (this.editandoParcelada || !dadosParaEnviar.parcelado) {
+      delete dadosParaEnviar.parcelado;
+      delete dadosParaEnviar.totalParcelas;
+      delete dadosParaEnviar.numeroParcela;
+      delete dadosParaEnviar.valorTotalCompra;
+      delete dadosParaEnviar.criarParcelasAnteriores;
+    } else {
+      dadosParaEnviar.totalParcelas = Number(dadosParaEnviar.totalParcelas);
+      dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela);
+      dadosParaEnviar.valorTotalCompra = dadosParaEnviar.valorTotalCompra
+        ? Number(dadosParaEnviar.valorTotalCompra)
+        : null;
+      dadosParaEnviar.criarParcelasAnteriores =
+        !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1;
+    }
+    this.transacoesService.editarTransacao(this.id, dadosParaEnviar).subscribe({
+      next: () => {
+        this.salvandoTransacao = false;
+        this.exibirDialogConfirmarEdicao = false;
+        this.exibirDialog = false;
+        this.sucessoAoSalvar('Transação atualizada');
+      },
+      error: (err: Error) => {
+        this.salvandoTransacao = false;
+        this.erroAoSalvar('Erro ao editar', err);
+      }
+    });
+  }
+
+  executarCriacao() {
+    if (this.formTransacao.invalid) return;
+
+    const dadosParaEnviar: any = { ...this.formTransacao.value };
+    this.salvandoTransacao = true;
+
+    const parcelado = !!dadosParaEnviar.parcelado;
+    dadosParaEnviar.parcelado = parcelado;
+    delete dadosParaEnviar.valorTotalCompra;
+    if (parcelado) {
+      dadosParaEnviar.numeroParcela = Number(dadosParaEnviar.numeroParcela);
+      dadosParaEnviar.criarParcelasAnteriores =
+        !!dadosParaEnviar.criarParcelasAnteriores && dadosParaEnviar.numeroParcela > 1;
+    } else {
+      delete dadosParaEnviar.numeroParcela;
+      delete dadosParaEnviar.criarParcelasAnteriores;
+    }
+    dadosParaEnviar.totalParcelas = parcelado ? Number(dadosParaEnviar.totalParcelas) : null;
+
+    this.transacoesService.adicionarTransacao(dadosParaEnviar).subscribe({
+      next: (res: ITransacoes[]) => {
+        this.salvandoTransacao = false;
+        this.exibirDialog = false;
+        this.sucessoAoSalvar(parcelado
+          ? `Compra parcelada em ${res.length} vez(es)`
+          : 'Transação criada!');
+      },
+      error: (error: HttpErrorResponse) => {
+        this.salvandoTransacao = false;
+        const corpo = error.error as FaturaErro | null;
+        this.erroAoSalvar(corpo?.error || 'Erro ao salvar', error);
+      }
+    });
   }
 
   private sucessoAoSalvar(mensagem: string) {

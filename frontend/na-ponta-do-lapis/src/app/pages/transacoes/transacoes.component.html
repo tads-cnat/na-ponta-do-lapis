@@ -1287,6 +1287,34 @@
         </ng-template>
     </p-dialog>
 
+    <p-dialog header="Confirmar Alterações" [(visible)]="exibirDialogConfirmarEdicao" [modal]="true"
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '420px' }" [closable]="!salvandoTransacao">
+        <div class="flex items-center gap-3 py-2">
+            <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center shrink-0">
+                <i class="pi pi-question-circle text-amber-600 text-lg"></i>
+            </div>
+            <div class="flex flex-col min-w-0">
+                <span class="text-sm font-semibold text-slate-800 truncate">
+                    Salvar alterações em "{{ formTransacao.get('descricao')?.value }}"?
+                </span>
+                <span class="text-xs text-slate-500">
+                    Tem certeza de que deseja atualizar as informações desta movimentação?
+                </span>
+            </div>
+        </div>
+
+        <ng-template pTemplate="footer">
+            <div class="flex justify-end gap-2 w-full pt-1">
+                <p-button label="Cancelar" severity="secondary" [outlined]="true"
+                    size="small" styleClass="rounded-xl! text-xs" [disabled]="salvandoTransacao"
+                    (onClick)="fecharDialogConfirmarEdicao()"></p-button>
+                <p-button label="Confirmar e Salvar" icon="pi pi-check" severity="success"
+                    size="small" styleClass="rounded-xl! text-xs border-[#11b981]! bg-[#11b981]!" [loading]="salvandoTransacao"
+                    (onClick)="executarEdicao()"></p-button>
+            </div>
+        </ng-template>
+    </p-dialog>
+
     <p-dialog header="Excluir Parcelamento" [(visible)]="exibirDialogExcluirParcelamento" [modal]="true"
         [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '420px' }" [closable]="!carregandoExclusao">
         <div class="flex items-center gap-3 py-2">
