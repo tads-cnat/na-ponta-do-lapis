@@ -8,6 +8,12 @@ public record UsuarioUpdateDTO (
     @Email(message = "O email deve ser válido")
     String email,
 
+    String senhaAtual,
+
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres ")
     String senha
-){}
+) {
+    public UsuarioUpdateDTO(String nome, String email, String senha) {
+        this(nome, email, null, senha);
+    }
+}
