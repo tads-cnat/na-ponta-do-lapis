@@ -1,47 +1,49 @@
 <div class="flex flex-col sm:flex-row gap-4 sm:gap-10 md:gap-16 lg:gap-24 justify-center items-start w-full max-w-7xl mx-auto px-4 md:px-8">
     
+    <!-- Card: Saldo Inicial -->
     <div class="w-full sm:w-[380px]">
-        <p-card header="Saldo inicial" styleClass="w-full relative">
+        <p-card header="Saldo inicial" styleClass="w-full relative shadow-sm">
             <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
             
             <div class="flex flex-col gap-2 mt-1 pr-16"> 
                 <div>
-                    <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
+                    <p class="text-xs text-gray-500 mb-0.5">{{ subtituloInicial }}</p>
                     <span class="font-bold text-3xl tracking-tight text-gray-800">{{ saldoInicial | currency : 'BRL' }}</span>
                 </div> 
                 
                 <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
-                    <span class="text-gray-400">Posição em 1º de {{ nomeMesAtual }}</span>
+                    <span class="text-gray-400">{{ rodapeInicial }}</span>
                 </div>
             </div>
         </p-card>
     </div>
 
+    <!-- Card: Saldo Atual / Final -->
     <div class="w-full sm:w-[380px]">
-        <p-card header="Saldo atual" styleClass="w-full relative">
-            <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+        <p-card [header]="headerFinal" styleClass="w-full relative shadow-sm">
+            <img src="Icon-pessoa.svg" alt="Pessoa" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
             
             <div class="flex flex-col gap-2 mt-1 pr-16"> 
                 <div>
-                    <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
-                    <span class="font-bold text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
+                    <p class="text-xs text-gray-500 mb-0.5">{{ subtituloFinal }}</p>
+                    <span class="font-bold text-3xl tracking-tight text-gray-900">{{ saldoFinal | currency : 'BRL' }}</span>
                 </div>
                 
                 <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
                     @if (variacaoPercentual > 0) {
                         <span class="flex items-center gap-1">
-                            <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5"> 
+                            <img src="ic-treding-up.svg" alt="icon alta" class="w-3.5 h-3.5"> 
                             <span class="text-emerald-500 font-semibold">+{{ variacaoPercentual | number:'1.1-1' }}%</span>
                         </span>
-                        <span class="text-gray-400">no mês</span>
+                        <span class="text-gray-400">no período</span>
                     } @else if (variacaoPercentual < 0) {
                         <span class="flex items-center gap-1">
-                            <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5"> 
+                            <img src="ic-trending-down.svg" alt="icon baixa" class="w-3.5 h-3.5"> 
                             <span class="text-rose-500 font-semibold">{{ variacaoPercentual | number:'1.1-1' }}%</span>
                         </span>
-                        <span class="text-gray-400">no mês</span>
+                        <span class="text-gray-400">no período</span>
                     } @else {
-                        <span class="text-gray-400">Sem variação no mês</span>
+                        <span class="text-gray-400">Sem variação no período</span>
                     }
                 </div>
             </div>
