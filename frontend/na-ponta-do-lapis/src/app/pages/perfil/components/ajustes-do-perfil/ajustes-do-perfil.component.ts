@@ -6,6 +6,7 @@ import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/f
 import { UsuarioService } from '../../service/perfil.services'; // Certifique-se de que este caminho aponta para o service correto
 import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-ajustes-do-perfil',
@@ -19,10 +20,33 @@ export class AjustesPerfilComponent implements OnInit {
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
 
+  get podeAbrirConfirmacao(): boolean {
+    const valores = this.perfilForm?.value ?? {};
+    const camposSenha = [
+      valores.senhaAtual,
+      valores.confirmarSenhaAtual,
+      valores.novaSenha,
+      valores.confirmarNovaSenha
+    ];
+    const alterandoSenha = camposSenha.some(this.temTexto);
+
+    if (alterandoSenha) {
+      return camposSenha.every(this.temTexto)
+        && valores.senhaAtual === valores.confirmarSenhaAtual
+        && valores.novaSenha === valores.confirmarNovaSenha;
+    }
+
+    return [valores.nome, valores.email].some(this.temTexto);
+  }
+
+  private readonly temTexto = (valor: unknown): boolean =>
+    typeof valor === 'string' && valor.trim() !== '';
+
   constructor(
     private fb: FormBuilder,
     private usuarioService: UsuarioService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private messageService: MessageService
   ) {
     this.inicializarFormulario();
   }
@@ -88,17 +112,59 @@ export class AjustesPerfilComponent implements OnInit {
       dadosParciaisPatch.email = valoresFormulario.email.trim();
     }
 
-    // 3. Validação e inclusão da senha se digitada
-    if (valoresFormulario.novaSenha && valoresFormulario.novaSenha.trim() !== '') {
-      if (valoresFormulario.novaSenha !== valoresFormulario.confirmarNovaSenha) {
-        return;
-      }
+    // 3. Validação e inclusão da senha se qualquer campo de senha foi digitado
+    const camposSenha = [
+      valoresFormulario.senhaAtual,
+      valoresFormulario.confirmarSenhaAtual,
+      valoresFormulario.novaSenha,
+      valoresFormulario.confirmarNovaSenha
+    ];
+    const alterandoSenha = camposSenha.some(this.temTexto);
+
+    if (alterandoSenha && !camposSenha.every(this.temTexto)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Dados incompletos',
+        detail: 'Preencha todos os campos para alterar a senha.',
+        life: 3000
+      });
+      return;
+    }
+
+    if (alterandoSenha && valoresFormulario.senhaAtual !== valoresFormulario.confirmarSenhaAtual) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'A confirmação da senha atual não confere.',
+        life: 3000
+      });
+      return;
+    }
+
+    if (alterandoSenha && valoresFormulario.novaSenha !== valoresFormulario.confirmarNovaSenha) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'As senhas não conferem.',
+        life: 3000
+      });
+      return;
+    }
+
+    if (alterandoSenha) {
       // Casando com o campo do record UsuarioUpdateDTO no Java
+      dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
       dadosParciaisPatch.senha = valoresFormulario.novaSenha;
     }
 
     // Se nenhum campo foi digitado, mata a execução e evita requisição desnecessária
     if (Object.keys(dadosParciaisPatch).length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Nenhuma alteração',
+        detail: 'Preencha pelo menos um campo para salvar.',
+        life: 3000
+      });
       return;
     }
 
@@ -113,11 +179,24 @@ export class AjustesPerfilComponent implements OnInit {
 
         this.perfilForm.reset();
         this.configurarCamposEstaticos(usuario.nome, usuario.email);
-        window.location.reload();
         this.cdr.detectChanges();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Alterações salvas com sucesso',
+          life: 2000
+        });
+        setTimeout(() => window.location.reload(), 2100);
       },
       error: (err) => {
         console.error('Erro ao salvar via PATCH:', err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao salvar alterações',
+          detail: typeof err.error === 'string'
+            ? err.error
+            : err.error?.message || 'Não foi possível atualizar o perfil.',
+          life: 4000
+        });
       }
     });
   }
