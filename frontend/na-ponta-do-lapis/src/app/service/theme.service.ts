@@ -30,7 +30,7 @@ const PALETA_ESCURA: PaletaGrafico = {
   texto: '#d4d4d8',
   textoSuave: '#a1a1aa',
   grade: 'rgba(63,63,70,0.6)',
-  superficie: '#18181b',
+  superficie: '#2a2830',
   borda: '#3f3f46',
   tooltipTitulo: '#fafafa',
   tooltipCorpo: '#a1a1aa',

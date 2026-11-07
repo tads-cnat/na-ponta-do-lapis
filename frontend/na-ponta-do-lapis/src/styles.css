@@ -95,10 +95,10 @@ main > *:not(p-toast):not(router-outlet) {
 .app-dark {
   color-scheme: dark;
 
-  --app-ground: #09090b;
-  --app-surface: #18181b;
+  --app-ground: #1A191E;
+  --app-surface: #121620;
   --app-surface-2: #1f1f23;
-  --app-panel: #18181b;
+  --app-panel: #2A2830;
   --app-input: #27272a;
   --app-hover: #27272a;
   --app-text: #fafafa;

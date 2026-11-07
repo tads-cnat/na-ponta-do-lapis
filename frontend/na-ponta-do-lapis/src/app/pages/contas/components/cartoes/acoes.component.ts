@@ -11,7 +11,7 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         label="Adicionar"
         icon="pi pi-plus"
         class="rounded-xl"
-        [style]="{ 'background-color': '#10b981', 'border-color': '#10b981' }"
+        [style]="{ 'background-color': '#10b981', 'border-color': '#10b981', color: '#ffffff' }"
         (click)="onAdicionar.emit()"
       >
       </p-button>
