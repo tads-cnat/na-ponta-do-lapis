@@ -1,0 +1,87 @@
+name: "Sugerir Melhoria"
+description: "Proponha uma melhoria de usabilidade, refatoração técnica, acessibilidade ou otimização em algo já existente"
+title: "[MELHORIA]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Identificou algo que já existe no **Na Ponta do Lápis**, mas que pode ser mais intuitivo, rápido ou bem estruturado?  
+        Descreva sua proposta de melhoria abaixo para avaliarmos no planejamento da equipe.
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: "Módulo Afetado"
+      description: "Qual área do projeto será aprimorada?"
+      options:
+        - "Frontend (Interface / Angular / Telas)"
+        - "Backend (Regra de Negócio / Spring Boot)"
+        - "Mobile"
+        - "Banco de Dados & Queries"
+        - "Relatórios & IA (Gemini / Métricas)"
+        - "Infra & DevOps"
+        - "Geral"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: improvement_type
+    attributes:
+      label: "Tipo de Melhoria"
+      description: "Qual o foco principal dessa melhoria?"
+      options:
+        - "Usabilidade & UX (Heurísticas de Nielsen / Experiência do Usuário)"
+        - "Design & Estilo (Feedback Visual / Responsividade / Temas)"
+        - "Performance & Otimização (Tempo de carregamento / Queries / Build)"
+        - "Refatoração Técnica (Clean Code / Arquitetura / Desacoplamento)"
+        - "Acessibilidade (a11y / Leitores de tela / Contraste)"
+        - "Outro"
+    validations:
+      required: true
+
+  - type: textarea
+    id: current_behavior
+    attributes:
+      label: "Como funciona atualmente? (Estado Atual)"
+      description: "Descreva o comportamento ou interface atual e por que há espaço para melhoria."
+      placeholder: "Ex: Ao editar uma movimentação e salvar, a alteração é aplicada diretamente sem confirmação prévia, o que pode causar alterações acidentais (5ª Heurística de Nielsen)."
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposed_improvement
+    attributes:
+      label: "Melhoria Proposta (Como deve ficar?)"
+      description: "Descreva em detalhes o que deve mudar e como deve funcionar após a melhoria."
+      placeholder: "Ex: Adicionar um modal simples de confirmação ao clicar em 'Salvar alterações', permitindo ao usuário revisar antes de persistir."
+    validations:
+      required: true
+
+  - type: textarea
+    id: benefit
+    attributes:
+      label: "Benefício Esperado / Justificativa"
+      description: "Qual impacto positivo essa melhoria trará para o usuário ou para a equipe de desenvolvimento?"
+      placeholder: "Ex: Prevenção de erros do usuário, maior confiança no uso do sistema e atendimento às heurísticas de usabilidade."
+    validations:
+      required: true
+
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: "Critérios de Aceitação"
+      description: "Checklist com os itens necessários para considerar a melhoria concluída."
+      placeholder: |
+        - [ ] Modal de confirmação exibido ao clicar em Salvar
+        - [ ] Botão de cancelar mantém os dados do formulário abertos
+        - [ ] Botão de confirmar persiste a alteração no backend
+    validations:
+      required: false
+
+  - type: textarea
+    id: media
+    attributes:
+      label: "Evidências / Mockups (Screenshots ou Vídeos)"
+      description: "Arraste prints, protótipos do Figma ou vídeos ilustrando o antes e o depois proposto."
+

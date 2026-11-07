@@ -1,0 +1,70 @@
+name: "Tarefa Técnica / Engenharia"
+description: "Registre atividades internas de engenharia (testes automatizados, CI/CD, documentação técnica, infraestrutura ou manutenção)"
+title: "[CHORE]: "
+labels: ["chore"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Utilize este modelo para registrar tarefas técnicas internas que não sejam bugs diretos de usuário ou novas funcionalidades de negócio.
+
+  - type: dropdown
+    id: category
+    attributes:
+      label: "Categoria da Tarefa"
+      description: "Qual a natureza principal desta atividade técnica?"
+      options:
+        - "Testes Automatizados (Unitários / Integração / E2E)"
+        - "CI/CD & Pipeline (GitHub Actions / Workflows)"
+        - "Infraestrutura & Containers (Docker / Compose / Coolify)"
+        - "Documentação Técnica (Arquitetura / CDUs / README)"
+        - "Débito Técnico & Manutenção (Dependências / Configurações / Clean Code)"
+        - "Outro"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: module
+    attributes:
+      label: "Módulo Afetado"
+      description: "Em qual parte do projeto a tarefa será executada?"
+      options:
+        - "Frontend (Angular)"
+        - "Backend (Spring Boot)"
+        - "Banco de Dados (PostgreSQL / Migrations)"
+        - "DevOps / Infraestrutura"
+        - "Documentação"
+        - "Geral"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: "Descrição da Tarefa"
+      description: "Explique o que precisa ser feito de forma clara e objetiva."
+      placeholder: "Ex: Criar suíte de testes unitários para a classe CategoriaInitializer cobrindo cenários com e sem categorias no banco."
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: "Motivação / Contexto"
+      description: "Por que essa tarefa técnica precisa ser realizada agora?"
+      placeholder: "Ex: Elevar a cobertura de código no JaCoCo e prevenir regressões durante a esteira de CI/CD."
+    validations:
+      required: true
+
+  - type: textarea
+    id: checklist
+    attributes:
+      label: "Checklist de Execução"
+      description: "Etapas para concluir a tarefa com sucesso."
+      placeholder: |
+        - [ ] Implementar classe de testes com Mockito
+        - [ ] Validar execução local com ./mvnw test
+        - [ ] Checar se a pipeline do GitHub Actions passou
+    validations:
+      required: false
+
