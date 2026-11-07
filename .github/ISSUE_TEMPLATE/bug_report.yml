@@ -20,6 +20,7 @@ body:
         - "Banco de Dados (PostgreSQL / Migrations)"
         - "Deploy & Infraestrutura (Coolify / Docker / VPS)"
         - "Documentação (Manuais / README / Diagramas)"
+        - "Inteligência Artificial (Leitura de Faturas / Upload)"
         - "Mobile"
         - "Outro / Não sei identificar"
     validations:
