@@ -18,7 +18,7 @@ body:
         - "Frontend (Interface / UX / Telas)"
         - "Backend (Regra de Negócio / Endpoints)"
         - "Mobile"
-        - "Relatórios & IA (Gemini / Métricas)"
+        - "Relatórios & IA (Leitura de Faturas / Métricas)"
         - "Infra / DevOps"
         - "Documentação (Guias / Especificações)"
         - "Geral"
