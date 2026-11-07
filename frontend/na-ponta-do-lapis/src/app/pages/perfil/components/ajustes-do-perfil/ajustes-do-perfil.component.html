@@ -43,8 +43,15 @@
     </div>
   </div>
 
+<<<<<<< HEAD
   <!-- Conteúdo Aba 1: Dados do Perfil -->
   <div *ngIf="abaAtiva === 'dados'" [formGroup]="perfilForm" class="flex flex-col w-full">
+=======
+  <app-botoes-acao 
+    [podeAbrirConfirmacao]="podeAbrirConfirmacao"
+    (cliqueSalvar)="salvarMudancas()">
+  </app-botoes-acao>
+>>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
 
     <div class="flex flex-col gap-6 w-full">
 

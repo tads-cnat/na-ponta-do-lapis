@@ -18,8 +18,11 @@ import { UsuarioService } from '../../service/perfil.services';
 import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
 import { MessageService } from 'primeng/api';
+<<<<<<< HEAD
 import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/preferencia-moeda.service';
 import { Usuario } from '../../../../model/IUsuario.models';
+=======
+>>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
 
 @Component({
   selector: 'app-ajustes-do-perfil',
@@ -48,6 +51,7 @@ export class AjustesPerfilComponent implements OnInit {
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
 
+<<<<<<< HEAD
   get opcoesMoeda(): OpcaoMoeda[] {
     return this.preferenciaMoedaService.opcoesMoeda;
   }
@@ -86,6 +90,25 @@ export class AjustesPerfilComponent implements OnInit {
     );
 
     return !!alterouNome || !!alterouEmail || !!alterouMoeda || !!alterouSenha;
+=======
+  get podeAbrirConfirmacao(): boolean {
+    const valores = this.perfilForm?.value ?? {};
+    const camposSenha = [
+      valores.senhaAtual,
+      valores.confirmarSenhaAtual,
+      valores.novaSenha,
+      valores.confirmarNovaSenha
+    ];
+    const alterandoSenha = camposSenha.some(this.temTexto);
+
+    if (alterandoSenha) {
+      return camposSenha.every(this.temTexto)
+        && valores.senhaAtual === valores.confirmarSenhaAtual
+        && valores.novaSenha === valores.confirmarNovaSenha;
+    }
+
+    return [valores.nome, valores.email].some(this.temTexto);
+>>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
   }
 
   private readonly temTexto = (valor: unknown): boolean =>
@@ -95,6 +118,7 @@ export class AjustesPerfilComponent implements OnInit {
     private fb: FormBuilder,
     private usuarioService: UsuarioService,
 <<<<<<< HEAD
+<<<<<<< HEAD
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     private preferenciaMoedaService: PreferenciaMoedaService
@@ -102,6 +126,10 @@ export class AjustesPerfilComponent implements OnInit {
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+    private cdr: ChangeDetectorRef,
+    private messageService: MessageService
+>>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
   ) {
     this.inicializarFormulario();
   }
@@ -278,11 +306,67 @@ export class AjustesPerfilComponent implements OnInit {
     const valoresFormulario = this.perfilForm.value;
     const dadosParciaisPatch: any = {};
 
+<<<<<<< HEAD
     // 1. Verifica se o nome foi alterado
     if (this.editandoDados && valoresFormulario.nome && valoresFormulario.nome.trim() !== '') {
       if (valoresFormulario.nome.trim() !== this.usuarioLogado?.nome) {
         dadosParciaisPatch.nome = valoresFormulario.nome.trim();
       }
+=======
+    // 1. Verifica se o nome foi digitado
+    if (valoresFormulario.nome && valoresFormulario.nome.trim() !== '') {
+      dadosParciaisPatch.nome = valoresFormulario.nome.trim();
+    }
+
+    // 2. Verifica se o e-mail foi digitado
+    if (valoresFormulario.email && valoresFormulario.email.trim() !== '') {
+      dadosParciaisPatch.email = valoresFormulario.email.trim();
+    }
+
+    // 3. Validação e inclusão da senha se qualquer campo de senha foi digitado
+    const camposSenha = [
+      valoresFormulario.senhaAtual,
+      valoresFormulario.confirmarSenhaAtual,
+      valoresFormulario.novaSenha,
+      valoresFormulario.confirmarNovaSenha
+    ];
+    const alterandoSenha = camposSenha.some(this.temTexto);
+
+    if (alterandoSenha && !camposSenha.every(this.temTexto)) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Dados incompletos',
+        detail: 'Preencha todos os campos para alterar a senha.',
+        life: 3000
+      });
+      return;
+    }
+
+    if (alterandoSenha && valoresFormulario.senhaAtual !== valoresFormulario.confirmarSenhaAtual) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'A confirmação da senha atual não confere.',
+        life: 3000
+      });
+      return;
+    }
+
+    if (alterandoSenha && valoresFormulario.novaSenha !== valoresFormulario.confirmarNovaSenha) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Erro',
+        detail: 'As senhas não conferem.',
+        life: 3000
+      });
+      return;
+    }
+
+    if (alterandoSenha) {
+      // Casando com o campo do record UsuarioUpdateDTO no Java
+      dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
+      dadosParciaisPatch.senha = valoresFormulario.novaSenha;
+>>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
     }
 
     // 2. Verifica se o e-mail foi alterado
@@ -347,7 +431,11 @@ export class AjustesPerfilComponent implements OnInit {
       this.messageService.add({
         severity: 'warn',
         summary: 'Nenhuma alteração',
+<<<<<<< HEAD
         detail: 'Altere pelo menos um campo ou a moeda para salvar.',
+=======
+        detail: 'Preencha pelo menos um campo para salvar.',
+>>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
         life: 3000
       });
       return;
@@ -380,10 +468,16 @@ export class AjustesPerfilComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Alterações salvas com sucesso',
+<<<<<<< HEAD
           detail: dadosParciaisPatch.moedaPadrao ? `Moeda padrão atualizada para ${dadosParciaisPatch.moedaPadrao}.` : undefined,
           life: 2000
         });
         setTimeout(() => window.location.reload(), 1500);
+=======
+          life: 2000
+        });
+        setTimeout(() => window.location.reload(), 2100);
+>>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
       },
       error: (err) => {
         console.error('Erro ao salvar via PATCH:', err);
