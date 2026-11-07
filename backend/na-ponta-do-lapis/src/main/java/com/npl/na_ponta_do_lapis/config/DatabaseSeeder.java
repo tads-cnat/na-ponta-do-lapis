@@ -72,13 +72,13 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         log.info("[DatabaseSeeder] Banco vazio detectado. Iniciando população de dados de desenvolvimento...");
 
-        // 1. Categorias
-        TipoCategoria catAlimentacao = criarCategoria("Alimentação");
-        TipoCategoria catTransporte = criarCategoria("Transporte");
-        TipoCategoria catSaude = criarCategoria("Saúde");
-        TipoCategoria catEducacao = criarCategoria("Educação");
-        TipoCategoria catLazer = criarCategoria("Lazer");
-        TipoCategoria catOutros = criarCategoria("Outros");
+        // 1. Categorias (já inicializadas pelo CategoriaInitializer)
+        TipoCategoria catAlimentacao = categoriaRepository.findByNome("Alimentação").orElseThrow();
+        TipoCategoria catTransporte = categoriaRepository.findByNome("Transporte").orElseThrow();
+        TipoCategoria catSaude = categoriaRepository.findByNome("Saúde").orElseThrow();
+        TipoCategoria catEducacao = categoriaRepository.findByNome("Educação").orElseThrow();
+        TipoCategoria catLazer = categoriaRepository.findByNome("Lazer").orElseThrow();
+        TipoCategoria catOutros = categoriaRepository.findByNome("Outros").orElseThrow();
 
         // Senha padrão para todos os usuários de teste: 123456
         String senhaPadrao = "$2a$12$1L8X.JQ/ZSm1Id90KjnZPOL3CFE1VjyZSXGEk5YPMAsUJSIohV8Y6";
@@ -194,11 +194,6 @@ public class DatabaseSeeder implements CommandLineRunner {
         log.info("[DatabaseSeeder] Carga inicial de dados finalizada com sucesso!");
     }
 
-    private TipoCategoria criarCategoria(String nome) {
-        TipoCategoria c = new TipoCategoria();
-        c.setNome(nome);
-        return categoriaRepository.save(c);
-    }
 
     private Usuario criarUsuario(String nome, String email, String username, String senha, String foto, Papel papel) {
         Usuario u = new Usuario();
