@@ -1,6 +1,7 @@
-import { Component, Input, OnChanges } from "@angular/core";
-import { ChartModule } from "primeng/chart";
-import { Categoria, ITransacoes } from "../../../../model/ITransacoes.model";
+import { Component, Input, OnChanges, effect, inject, untracked } from '@angular/core';
+import { ChartModule } from 'primeng/chart';
+import { Categoria, ITransacoes } from '../../../../model/ITransacoes.model';
+import { ThemeService } from '../../../../service/theme.service';
 
 // ─── Paleta de cores ──────────────────────────────────────────────────────────
 // Não há mais nomes fixos: as categorias são as que vêm de GET /categorias
@@ -8,17 +9,33 @@ import { Categoria, ITransacoes } from "../../../../model/ITransacoes.model";
 // categoria é atribuída pela posição (id ou índice) dentro desta paleta,
 // repetindo em ciclo caso existam mais categorias do que cores aqui.
 const PALETA_CORES: string[] = [
-  '#E74C3C', '#E67E22', '#F1C40F', '#2ECC71', '#3498DB',
-  '#9B59B6', '#1ABC9C', '#95A5A6', '#E91E63', '#FF5722',
-  '#00BCD4', '#8BC34A', '#673AB7', '#FF9800', '#009688',
-  '#F06292', '#26C6DA', '#FFA726', '#AB47BC', '#5C6BC0',
+  '#E74C3C',
+  '#E67E22',
+  '#F1C40F',
+  '#2ECC71',
+  '#3498DB',
+  '#9B59B6',
+  '#1ABC9C',
+  '#95A5A6',
+  '#E91E63',
+  '#FF5722',
+  '#00BCD4',
+  '#8BC34A',
+  '#673AB7',
+  '#FF9800',
+  '#009688',
+  '#F06292',
+  '#26C6DA',
+  '#FFA726',
+  '#AB47BC',
+  '#5C6BC0',
 ];
 
 interface CategoriaVM {
-  id:         number | null;
-  nome:       string;
-  cor:        string;
-  valor:      number;
+  id: number | null;
+  nome: string;
+  cor: string;
+  valor: number;
   percentual: string;
 }
 
@@ -28,32 +45,32 @@ interface CategoriaVM {
   imports: [ChartModule],
   template: `
     <div class="bg-white rounded-2xl p-5 shadow-sm h-full flex flex-col">
-
-      <h2 class="text-base font-bold text-gray-800 text-center mb-4">
-        Gastos por categoria
-      </h2>
+      <h2 class="text-base font-bold text-gray-800 text-center mb-4">Gastos por categoria</h2>
 
       <div class="flex items-start gap-4 flex-1 min-h-0">
-
         <!-- Doughnut chart -->
-        <div class="flex-shrink-0 flex items-center justify-center"
-             style="width:185px; height:185px;">
+        <div
+          class="flex-shrink-0 flex items-center justify-center"
+          style="width:185px; height:185px;"
+        >
           @if (temDados) {
             <p-chart
               type="doughnut"
               [data]="chartData"
               [options]="chartOptions"
-              [style]="{ height: '185px', width: '185px' }">
+              [style]="{ height: '185px', width: '185px' }"
+            >
             </p-chart>
           } @else {
             <!--
               Quando não há despesas: mantém o visual do donut vazio
               mas exibe todas as categorias na legenda com 0%.
             -->
-            <div class="w-full h-full rounded-full flex items-center justify-center"
-                 style="border: 26px solid #f1f5f9;">
+            <div
+              class="w-full h-full rounded-full flex items-center justify-center border-[26px] border-slate-100"
+            >
               <span class="text-[11px] text-gray-400 text-center leading-snug">
-                Sem<br>despesas
+                Sem<br />despesas
               </span>
             </div>
           }
@@ -67,8 +84,7 @@ interface CategoriaVM {
         <div class="flex-1 overflow-y-auto min-w-0 pr-0.5" style="max-height: 185px;">
           @for (cat of categorias; track cat.nome) {
             <div class="flex items-center gap-1.5 py-[3px]">
-              <span class="w-2 h-2 rounded-full flex-shrink-0"
-                    [style.background-color]="cat.cor">
+              <span class="w-2 h-2 rounded-full flex-shrink-0" [style.background-color]="cat.cor">
               </span>
               <span class="text-[11px] text-gray-600 flex-1 min-w-0 truncate">
                 {{ cat.nome }}
@@ -79,20 +95,30 @@ interface CategoriaVM {
             </div>
           }
         </div>
-
       </div>
     </div>
   `,
 })
 export class GastosCategoriaComponent implements OnChanges {
-
   @Input() transacoes: ITransacoes[] = [];
   @Input() categorias_disponiveis: Categoria[] = [];
 
-  chartData:    any;
+  private tema = inject(ThemeService);
+
+  chartData: any;
   chartOptions: any;
-  categorias:   CategoriaVM[] = [];
-  temDados:     boolean = false;
+  categorias: CategoriaVM[] = [];
+  temDados: boolean = false;
+
+  constructor() {
+    // Recalcula o gráfico quando o tema muda (a cor da borda das fatias acompanha o card).
+    effect(() => {
+      this.tema.paletaGrafico();
+      untracked(() => {
+        if (this.chartData) this.calcularGastos();
+      });
+    });
+  }
 
   ngOnChanges(): void {
     this.calcularGastos();
@@ -107,14 +133,14 @@ export class GastosCategoriaComponent implements OnChanges {
     const totalPorId: Record<number, number> = {};
 
     this.transacoes
-      .filter(t => t.tipo === 'DESPESA' && t.estado !== 'PENDENTE' && t.categoria != null)
-      .forEach(t => {
+      .filter((t) => t.tipo === 'DESPESA' && t.estado !== 'PENDENTE' && t.categoria != null)
+      .forEach((t) => {
         const id = t.categoria!.id;
         totalPorId[id] = (totalPorId[id] ?? 0) + t.valor;
       });
 
     const totalGeral = Object.values(totalPorId).reduce((a, b) => a + b, 0);
-    this.temDados    = totalGeral > 0;
+    this.temDados = totalGeral > 0;
 
     // Base de categorias: usa a lista real vinda de GET /categorias quando
     // disponível; se ainda não tiver chegado, cai de volta para as categorias
@@ -126,27 +152,27 @@ export class GastosCategoriaComponent implements OnChanges {
     this.categorias = baseCategorias.map((cat, index) => {
       const valor = totalPorId[cat.id] ?? 0;
       return {
-        id:   cat.id,
+        id: cat.id,
         nome: cat.nome,
-        cor:  PALETA_CORES[index % PALETA_CORES.length],
+        cor: PALETA_CORES[index % PALETA_CORES.length],
         valor,
-        percentual: totalGeral > 0
-          ? (valor / totalGeral * 100).toFixed(1) + '%'
-          : '0%',
+        percentual: totalGeral > 0 ? ((valor / totalGeral) * 100).toFixed(1) + '%' : '0%',
       };
     });
 
     if (this.temDados) {
       this.chartData = {
-        labels:   this.categorias.map(c => c.nome),
-        datasets: [{
-          // Categorias com valor 0: sem fatia visual no chart (correto).
-          // A legenda customizada mostra todas independentemente.
-          data:            this.categorias.map(c => c.valor),
-          backgroundColor: this.categorias.map(c => c.cor),
-          borderColor:     '#ffffff',
-          borderWidth:     2,
-        }]
+        labels: this.categorias.map((c) => c.nome),
+        datasets: [
+          {
+            // Categorias com valor 0: sem fatia visual no chart (correto).
+            // A legenda customizada mostra todas independentemente.
+            data: this.categorias.map((c) => c.valor),
+            backgroundColor: this.categorias.map((c) => c.cor),
+            borderColor: this.tema.paletaGrafico().superficie,
+            borderWidth: 2,
+          },
+        ],
       };
     } else {
       this.chartData = null;
@@ -159,8 +185,8 @@ export class GastosCategoriaComponent implements OnChanges {
   private extrairCategoriasDasTransacoes(): Categoria[] {
     const vistos = new Map<number, Categoria>();
     this.transacoes
-      .filter(t => t.categoria != null)
-      .forEach(t => vistos.set(t.categoria!.id, t.categoria!));
+      .filter((t) => t.categoria != null)
+      .forEach((t) => vistos.set(t.categoria!.id, t.categoria!));
     return [...vistos.values()];
   }
 
@@ -168,21 +194,23 @@ export class GastosCategoriaComponent implements OnChanges {
 
   private configurarOpcoes(): void {
     this.chartOptions = {
-      responsive:          true,
+      responsive: true,
       maintainAspectRatio: false,
-      cutout:              '62%',
+      cutout: '62%',
       plugins: {
-        legend: { display: false },   // legenda customizada na template
+        legend: { display: false }, // legenda customizada na template
         tooltip: {
           callbacks: {
             label: (ctx: any) => {
-              const val = (ctx.parsed as number)
-                .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+              const val = (ctx.parsed as number).toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+              });
               return ` ${ctx.label}: R$ ${val}`;
-            }
-          }
-        }
-      }
+            },
+          },
+        },
+      },
     };
   }
 }

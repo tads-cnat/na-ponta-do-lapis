@@ -1,5 +1,3 @@
-*{
-    background: #F4F4F4;
-    
+* {
+  background: var(--app-ground, #F4F4F4);
 }
-
