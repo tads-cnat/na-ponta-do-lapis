@@ -19,7 +19,7 @@ body:
         - "Backend (Regra de Negócio / Spring Boot)"
         - "Mobile"
         - "Banco de Dados & Queries"
-        - "Relatórios & IA (Leitura de Faturas / Métricas)"
+        - "Relatórios & IA (Gemini / Métricas)"
         - "Infra & DevOps"
         - "Geral"
     validations:
