@@ -1,33 +1,40 @@
 <div class="w-full">
-    
+
     <!-- VISÃO GERAL (TODAS AS CONTAS) — TRÍADE FINANCEIRA -->
     @if (contaId === null) {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-            
-            <!-- Card 1: Dinheiro em Contas -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-                            <i class="pi pi-wallet text-base"></i>
-                        </div>
-                        <div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Dinheiro em Contas</span>
-                            <p class="text-[11px] text-slate-400">Total disponível no banco</p>
-                        </div>
-                    </div>
+
+            <div class="flex flex-col gap-2 mt-1 pr-16">
+                <div>
+                    <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
+                    <span class="font-bold text-3xl tracking-tight text-gray-800">{{ saldoInicial | currency : 'BRL' }}</span>
+                </div>
+
+                <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
+                    <span class="text-gray-400">Posição em 1º de {{ nomeMesAtual }}</span>
                 </div>
 
                 <div>
-                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-emerald-700 block truncate">
-                        {{ totalDinheiroContas | appMoeda }}
-                    </span>
-                    <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5 min-h-5">
-                        <span>Disponível em contas</span>
-                        @if (totalReceitasPendentes > 0) {
-                            <span class="text-emerald-600 font-semibold">• (+ {{ totalReceitasPendentes | appMoeda }} a receber)</span>
-                        }
-                    </div>
+                    <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
+                    <span class="font-bold text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
+                </div>
+
+                <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
+                    @if (variacaoPercentual > 0) {
+                        <span class="flex items-center gap-1">
+                            <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5">
+                            <span class="text-emerald-500 font-semibold">+{{ variacaoPercentual | number:'1.1-1' }}%</span>
+                        </span>
+                        <span class="text-gray-400">no mês</span>
+                    } @else if (variacaoPercentual < 0) {
+                        <span class="flex items-center gap-1">
+                            <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5">
+                            <span class="text-rose-500 font-semibold">{{ variacaoPercentual | number:'1.1-1' }}%</span>
+                        </span>
+                        <span class="text-gray-400">no mês</span>
+                    } @else {
+                        <span class="text-gray-400">Sem variação no mês</span>
+                    }
                 </div>
             </div>
 
@@ -101,11 +108,11 @@
 
     <!-- VISÃO CONTEXTUAL DE UMA CONTA ESPECÍFICA -->
     @if (contaId !== null) {
-        
+
         <!-- SE A CONTA SELECIONADA FOR UM CARTÃO DE CRÉDITO -->
         @if (contaSelecionadaEhCartao) {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-                
+
                 <!-- Card 1: Fatura Fechada (A Pagar Agora) -->
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
                     <div class="flex items-center justify-between mb-3">
@@ -182,7 +189,7 @@
         } @else {
             <!-- SE A CONTA SELECIONADA FOR CONTA BANCÁRIA / CORRENTE (TAMBÉM EM 3 CARDS PADRONIZADOS) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-                
+
                 <!-- Card 1: Saldo Inicial -->
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
                     <div class="flex items-center justify-between mb-3">
