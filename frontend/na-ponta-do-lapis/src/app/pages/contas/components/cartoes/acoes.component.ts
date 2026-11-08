@@ -1,10 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 
 @Component({
   selector: 'app-acoes-cartoes',
   standalone: true,
-  imports: [PrimeNGModuleModule],
+  imports: [CommonModule, PrimeNGModuleModule],
   template: `
     <div class="flex flex-wrap gap-3">
 
@@ -33,11 +34,21 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
       </p-button>
 
       <p-button
-        label="Open Finance"
+        *ngIf="openFinanceConectado"
+        label="Sincronizar"
         icon="pi pi-sync"
         class="rounded-xl"
         [loading]="sincronizandoOpenFinance"
         [style]="{'background-color': '#e0e7ff', 'color': '#4338ca', 'border-color': '#4338ca'}"
+        (click)="onSincronizarOpenFinance.emit()">
+      </p-button>
+
+      <p-button
+        *ngIf="!openFinanceConectado"
+        label="Conectar Banco"
+        icon="pi pi-link"
+        class="rounded-xl"
+        [style]="{'background-color': '#f8fafc', 'color': '#475569', 'border-color': '#cbd5e1'}"
         (click)="onSincronizarOpenFinance.emit()">
       </p-button>
 
@@ -47,13 +58,11 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 export class AcoesCartoesComponent {
 
   @Input() sincronizandoOpenFinance: boolean = false;
+  @Input() openFinanceConectado: boolean = false;
 
   @Output() onAdicionar = new EventEmitter<void>();
-
   @Output() onEditar = new EventEmitter<void>();
-
   @Output() onExcluir = new EventEmitter<void>();
-
   @Output() onSincronizarOpenFinance = new EventEmitter<void>();
 
 }

@@ -85,8 +85,11 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
 
                     <div class="min-w-0 flex-1">
                       @if (conta.sincronizada) {
-                        <span class="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
-                          ⚡ Open Finance
+                        <span class="inline-flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
+                          <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
+                          </svg>
+                          <span>Open Finance</span>
                         </span>
                       }
                       <h3 class="text-2xl font-bold mt-2 leading-snug line-clamp-2 break-words"

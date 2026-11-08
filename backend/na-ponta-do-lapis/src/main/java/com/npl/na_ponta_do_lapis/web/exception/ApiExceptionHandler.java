@@ -26,6 +26,12 @@ public class ApiExceptionHandler {
                 .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Erro interno do servidor. Tente novamente mais tarde."));
     }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Parâmetros inválidos."));
+    }
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
         return ResponseEntity.status(HttpStatus.FORBIDDEN)

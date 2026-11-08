@@ -69,6 +69,7 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
             [contaProxima]="contaProxima"
             [carregando]="carregandoContas"
             [sincronizandoOpenFinance]="sincronizandoOpenFinance"
+            [openFinanceConectado]="openFinanceConectado"
             (onAdicionar)="abrirDialog()"
             (onEditar)="editarConta(contaSelecionada)"
             (onExcluir)="abrirDialogExcluir(contaSelecionada)"
@@ -303,6 +304,7 @@ export class ContasComponent implements OnInit {
 
   carregandoContas: boolean = true;
   sincronizandoOpenFinance: boolean = false;
+  openFinanceConectado: boolean = false;
   contaFinanceiraDados: IContas[] = [];
   contaSelecionadaIndex: number = 0;
   contaAnterior: number = 0;
@@ -359,6 +361,20 @@ export class ContasComponent implements OnInit {
 
   ngOnInit(): void {
     this.listarContas();
+    this.verificarStatusOpenFinance();
+  }
+
+  verificarStatusOpenFinance(): void {
+    this.integracoesService.obterStatusOpenFinance().subscribe({
+      next: (status) => {
+        this.openFinanceConectado = !!status.conectado;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.openFinanceConectado = this.contaFinanceiraDados.some(c => c.sincronizada);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // =========================================
@@ -495,6 +511,17 @@ export class ContasComponent implements OnInit {
   }
 
   sincronizarOpenFinance(): void {
+    if (!this.openFinanceConectado) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Conectar Open Finance',
+        detail: 'Redirecionando para Integrações para conectar seu banco...',
+        life: 2500
+      });
+      this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes' } });
+      return;
+    }
+
     if (this.sincronizandoOpenFinance) return;
 
     this.sincronizandoOpenFinance = true;
@@ -512,20 +539,21 @@ export class ContasComponent implements OnInit {
       },
       error: (err) => {
         this.sincronizandoOpenFinance = false;
-        if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta'))) {
+        if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta')) || (err.error?.error && err.error.error.includes('Nenhuma conta'))) {
+          this.openFinanceConectado = false;
           this.messageService.add({
             severity: 'info',
             summary: 'Conectar Open Finance',
             detail: 'Nenhuma conta bancária conectada. Redirecionando para Integrações...',
-            life: 4000
+            life: 3000
           });
           setTimeout(() => {
-            this.router.navigate(['/perfil'], { queryParams: { aba: 'integracoes' } });
-          }, 1200);
+            this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes' } });
+          }, 1000);
           return;
         }
 
-        const msg = err.error?.message || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
+        const msg = err.error?.message || err.error?.error || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
         this.messageService.add({
           severity: 'error',
           summary: 'Erro na sincronização',
@@ -669,6 +697,9 @@ export class ContasComponent implements OnInit {
           return;
         }
         this.contaFinanceiraDados  = [...res].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+        if (this.contaFinanceiraDados.some(c => c.sincronizada)) {
+          this.openFinanceConectado = true;
+        }
         this.contaSelecionadaIndex = 0;
         this.atualizarIndicesCarrossel();
         this.carregandoContas = false;

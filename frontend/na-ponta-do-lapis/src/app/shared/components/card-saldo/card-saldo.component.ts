@@ -35,7 +35,11 @@ export class CardSaldoComponent implements OnInit, OnChanges {
 
   totalDinheiroContas: number = 0;
   totalFaturasCartoes: number = 0;
+  totalDespesasPendentes: number = 0;
+  totalReceitasPendentes: number = 0;
+  totalSaldoDevedor: number = 0;
   balancoLiquido: number = 0;
+  balancoProjetado: number = 0;
   contaSelecionadaEhCartao: boolean = false;
   contaSelecionadaNome: string = '';
   faturaFechadaSelecionada: number = 0;
@@ -103,7 +107,15 @@ export class CardSaldoComponent implements OnInit, OnChanges {
 
     this.totalDinheiroContas = contasCorrentes.reduce((acc, c) => acc + (Number(c.saldo) || 0), 0);
     this.totalFaturasCartoes = contasCartao.reduce((acc, c) => acc + (Number(c.saldo) || 0), 0);
-    this.balancoLiquido = this.totalDinheiroContas - this.totalFaturasCartoes;
+    this.totalDespesasPendentes = this.todasTransacoes
+      .filter(t => t.tipo !== 'RECEITA' && t.estado === 'PENDENTE')
+      .reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
+    this.totalReceitasPendentes = this.todasTransacoes
+      .filter(t => t.tipo === 'RECEITA' && t.estado === 'PENDENTE')
+      .reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
+    this.totalSaldoDevedor = this.totalFaturasCartoes + this.totalDespesasPendentes;
+    this.balancoLiquido = this.totalDinheiroContas - this.totalSaldoDevedor;
+    this.balancoProjetado = this.balancoLiquido + this.totalReceitasPendentes;
 
     if (this.contaId !== null) {
       const contaSelecionada = this.contas.find(c => c.id === this.contaId);

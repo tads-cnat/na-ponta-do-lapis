@@ -22,11 +22,16 @@
                     <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-emerald-700">
                         {{ totalDinheiroContas | currency : 'BRL' }}
                     </span>
-                    <p class="text-xs text-slate-500 mt-1">Soma de contas correntes</p>
+                    <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5">
+                        <span>Disponível em contas</span>
+                        @if (totalReceitasPendentes > 0) {
+                            <span class="text-emerald-600 font-semibold">• (+ {{ totalReceitasPendentes | currency : 'BRL' }} a receber)</span>
+                        }
+                    </div>
                 </div>
             </div>
 
-            <!-- Card 2: Saldo Devedor Pendente (Faturas) -->
+            <!-- Card 2: Saldo Devedor Pendente (Faturas + Contas a Pagar) -->
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-rose-100 flex flex-col justify-between relative overflow-hidden">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
@@ -35,16 +40,21 @@
                         </div>
                         <div>
                             <span class="text-xs font-bold uppercase tracking-wider text-rose-800">Saldo Devedor Pendente</span>
-                            <p class="text-[11px] text-slate-400">Total a pagar nos cartões</p>
+                            <p class="text-[11px] text-slate-400">Total a pagar nos cartões e contas</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-1">
                     <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-rose-600">
-                        - {{ totalFaturasCartoes | currency : 'BRL' }}
+                        - {{ totalSaldoDevedor | currency : 'BRL' }}
                     </span>
-                    <p class="text-xs text-slate-500 mt-1">Faturas acumuladas em aberto</p>
+                    <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5">
+                        <span>Faturas: {{ totalFaturasCartoes | currency : 'BRL' }}</span>
+                        @if (totalDespesasPendentes > 0) {
+                            <span>• Pendentes: {{ totalDespesasPendentes | currency : 'BRL' }}</span>
+                        }
+                    </div>
                 </div>
             </div>
 
@@ -67,19 +77,20 @@
                           [ngClass]="balancoLiquido >= 0 ? 'text-slate-900' : 'text-rose-600'">
                         {{ balancoLiquido | currency : 'BRL' }}
                     </span>
-                    <div class="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                    <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 mt-1 gap-1">
+                        @if (totalReceitasPendentes > 0) {
+                            <span class="font-medium text-emerald-600">Proj.: {{ balancoProjetado | currency : 'BRL' }}</span>
+                        } @else {
+                            <span>Líquido atual</span>
+                        }
                         @if (variacaoPercentual > 0) {
                             <span class="text-emerald-600 font-semibold flex items-center gap-0.5">
                                 <i class="pi pi-arrow-up-right text-[10px]"></i>+{{ variacaoPercentual | number:'1.1-1' }}%
                             </span>
-                            <span>no período</span>
                         } @else if (variacaoPercentual < 0) {
                             <span class="text-rose-600 font-semibold flex items-center gap-0.5">
                                 <i class="pi pi-arrow-down-right text-[10px]"></i>{{ variacaoPercentual | number:'1.1-1' }}%
                             </span>
-                            <span>no período</span>
-                        } @else {
-                            <span>Sem variação no período</span>
                         }
                     </div>
                 </div>

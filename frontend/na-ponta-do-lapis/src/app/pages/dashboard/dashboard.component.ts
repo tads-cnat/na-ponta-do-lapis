@@ -6,7 +6,7 @@ import { CardsResumoComponent } from './components/cards/cards-resumo.component'
 import { RelatorioComponent } from './components/relatorio/relatorio.component';
 import { GastosCategoriaComponent } from './components/gastos-categoria/gastos.component';
 import { MetasDashboardComponent } from './components/metas/metas.component';
-import { IContas } from '../../model/IContas.models';
+import { IContas, ehCartaoCredito } from '../../model/IContas.models';
 import { ITransacoes } from '../../model/ITransacoes.model';
 import { MetaRequest, MetaResponse } from '../../model/IMetas.models';
 import { ContaFinanceiraService } from '../contas/service/contas.service';
@@ -131,13 +131,18 @@ export class DashboardComponent implements OnInit {
     this.buscarCategorias();
   }
 
+  private atualizarSaldoRelatorio(): void {
+    const dinheiro = this.contas.filter(c => !ehCartaoCredito(c)).reduce((total, conta) => total + (Number(conta.saldo) || 0), 0);
+    const faturas = this.contas.filter(c => ehCartaoCredito(c)).reduce((total, conta) => total + (Number(conta.saldo) || 0), 0);
+    const pendentes = this.transacoes.filter(t => t.tipo !== 'RECEITA' && t.estado === 'PENDENTE').reduce((acc, t) => acc + (Number(t.valor) || 0), 0);
+    this.saldoAtual = dinheiro - (faturas + pendentes);
+  }
+
   buscarContas(): void {
     this.contaService.listarContasUsuario().subscribe({
       next: (res: IContas[]) => {
         this.contas = res;
-        console.log(this.contas);
-        this.saldoAtual = this.contas.reduce( (total, conta) =>
-                            total + conta.saldo, 0);
+        this.atualizarSaldoRelatorio();
         this.cdr.detectChanges();
       },
       error: (err:Error) => {
@@ -157,7 +162,7 @@ export class DashboardComponent implements OnInit {
     this.transacaoService.listarTransacoes().subscribe({
       next: (res: ITransacoes[]) => {
         this.transacoes = res;
-        console.log(this.transacoes);
+        this.atualizarSaldoRelatorio();
         this.cdr.detectChanges();
       },
       error: (err: Error) => {
