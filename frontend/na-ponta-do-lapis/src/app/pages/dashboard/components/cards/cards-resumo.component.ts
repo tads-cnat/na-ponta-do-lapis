@@ -1,9 +1,13 @@
 import { Component, Input } from "@angular/core";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { CommonModule, DecimalPipe } from "@angular/common";
 =======
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+import { CommonModule, CurrencyPipe, DecimalPipe } from "@angular/common";
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
 import { IContas, ehCartaoCredito } from "../../../../model/IContas.models";
 import { ITransacoes } from "../../../../model/ITransacoes.model";
 import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
@@ -11,6 +15,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 @Component({
   selector: 'app-cards-resumo',
   standalone: true,
+<<<<<<< HEAD
   imports: [CommonModule, DecimalPipe, AppMoedaPipe],
   template: `
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
@@ -26,22 +31,46 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
               <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Dinheiro em Contas</span>
               <p class="text-[11px] text-slate-400">Total disponível no banco</p>
             </div>
+=======
+  imports: [CommonModule, CurrencyPipe, DecimalPipe],
+  template: `
+    <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+
+      <!-- Card 1: Dinheiro em Contas -->
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px]">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Dinheiro em Contas</span>
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
           </div>
         </div>
         <div>
           <span class="text-2xl lg:text-3xl font-extrabold text-emerald-700 tracking-tight block truncate">
+<<<<<<< HEAD
             {{ totalDinheiroContas | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs min-h-5 text-slate-500">
             <span class="truncate">Disponível em contas</span>
             @if (totalReceitasPendentes > 0) {
               <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalReceitasPendentes | appMoeda }} a receber</span>
+=======
+            {{ totalDinheiroContas | currency : 'BRL' }}
+          </span>
+          <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
+            <span class="truncate">Disponível em contas</span>
+            @if (totalReceitasPendentes > 0) {
+              <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalReceitasPendentes | currency : 'BRL' }} a receber</span>
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
             }
           </div>
         </div>
       </div>
 
       <!-- Card 2: Saldo Devedor Pendente -->
+<<<<<<< HEAD
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-3">
@@ -63,6 +92,26 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
             @if (totalDespesasPendentes > 0) {
               <span class="truncate">Faturas: {{ totalFaturasCartoes | appMoeda }}</span>
               <span class="text-[#C24E4E] font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalDespesasPendentes | appMoeda }} a pagar</span>
+=======
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-rose-100 flex flex-col justify-between min-h-[136px]">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-rose-800">Saldo Devedor Pendente</span>
+          <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+            </svg>
+          </div>
+        </div>
+        <div>
+          <span class="text-2xl lg:text-3xl font-extrabold text-rose-600 tracking-tight block truncate">
+            - {{ totalSaldoDevedor | currency : 'BRL' }}
+          </span>
+          <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500"
+               [title]="'Faturas: ' + (totalFaturasCartoes | currency:'BRL') + ' | Pendentes: ' + (totalDespesasPendentes | currency:'BRL') + ' | Balanço Projetado: ' + (balancoProjetado | currency:'BRL')">
+            @if (totalDespesasPendentes > 0) {
+              <span class="truncate">Faturas: {{ totalFaturasCartoes | currency : 'BRL' }}</span>
+              <span class="text-rose-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalDespesasPendentes | currency : 'BRL' }} a pagar</span>
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
             } @else {
               <span class="truncate">Faturas em aberto</span>
               <span class="text-slate-400 whitespace-nowrap shrink-0 ml-1">Sem pendências</span>
@@ -72,6 +121,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
       </div>
 
       <!-- Card 3: Receita (Mês Atual) -->
+<<<<<<< HEAD
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-3">
@@ -82,10 +132,20 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
               <span class="text-xs font-bold uppercase tracking-wider text-[#7843CD]">Receita ({{ mesAtualNome }})</span>
               <p class="text-[11px] text-slate-400">Entradas realizadas no mês</p>
             </div>
+=======
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between min-h-[136px]">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-600">Receita ({{ mesAtualNome }})</span>
+          <div class="w-10 h-10 rounded-xl bg-green-100 text-green-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+            </svg>
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
           </div>
         </div>
         <div>
           <span class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight block truncate">
+<<<<<<< HEAD
             {{ receitaMesAtualRealizada | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs min-h-5 text-slate-500">
@@ -95,6 +155,17 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
             } @else if (variacaoReceita !== null) {
               <span class="truncate">vs mês anterior</span>
               <span class="whitespace-nowrap shrink-0 ml-1 font-semibold" [ngClass]="variacaoReceita >= 0 ? 'text-emerald-600' : 'text-[#C24E4E]'">
+=======
+            {{ receitaMesAtualRealizada | currency : 'BRL' }}
+          </span>
+          <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
+            @if (receitaMesAtualPendente > 0) {
+              <span class="truncate">Realizado</span>
+              <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ receitaMesAtualPendente | currency : 'BRL' }} a receber</span>
+            } @else if (variacaoReceita !== null) {
+              <span class="truncate">vs mês anterior</span>
+              <span class="whitespace-nowrap shrink-0 ml-1 font-semibold" [ngClass]="variacaoReceita >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
                 {{ variacaoReceita >= 0 ? '↑' : '↓' }} {{ (variacaoReceita >= 0 ? variacaoReceita : -variacaoReceita) | number:'1.0-1' }}%
               </span>
             } @else {
@@ -105,6 +176,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
       </div>
 
       <!-- Card 4: Despesa (Mês Atual) -->
+<<<<<<< HEAD
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F9DB70] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-3">
@@ -115,10 +187,20 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
               <span class="text-xs font-bold uppercase tracking-wider text-[#B45309]">Despesa ({{ mesAtualNome }})</span>
               <p class="text-[11px] text-slate-400">Saídas realizadas no mês</p>
             </div>
+=======
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 flex flex-col justify-between min-h-[136px]">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-600">Despesa ({{ mesAtualNome }})</span>
+          <div class="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
+            </svg>
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
           </div>
         </div>
         <div>
           <span class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight block truncate">
+<<<<<<< HEAD
             {{ despesaMesAtualRealizada | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs min-h-5 text-slate-500">
@@ -128,6 +210,17 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
             } @else if (variacaoDespesa !== null) {
               <span class="truncate">vs mês anterior</span>
               <span class="whitespace-nowrap shrink-0 ml-1 font-semibold" [ngClass]="variacaoDespesa <= 0 ? 'text-emerald-600' : 'text-[#C24E4E]'">
+=======
+            {{ despesaMesAtualRealizada | currency : 'BRL' }}
+          </span>
+          <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
+            @if (despesaMesAtualPendente > 0) {
+              <span class="truncate">Realizado</span>
+              <span class="text-amber-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ despesaMesAtualPendente | currency : 'BRL' }} a pagar</span>
+            } @else if (variacaoDespesa !== null) {
+              <span class="truncate">vs mês anterior</span>
+              <span class="whitespace-nowrap shrink-0 ml-1 font-semibold" [ngClass]="variacaoDespesa <= 0 ? 'text-emerald-600' : 'text-rose-600'">
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
                 {{ variacaoDespesa <= 0 ? '↓' : '↑' }} {{ (variacaoDespesa >= 0 ? variacaoDespesa : -variacaoDespesa) | number:'1.0-1' }}%
               </span>
             } @else {
@@ -143,6 +236,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 export class CardsResumoComponent {
   @Input() contas: IContas[] = [];
   @Input() transacoes: ITransacoes[] = [];
+<<<<<<< HEAD
 
   readonly mesesNomes = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -153,15 +247,31 @@ export class CardsResumoComponent {
   get mesAtualNome(): string {
     return this.mesesNomes[new Date().getMonth()];
 =======
+=======
+  @Input() cotacaoDolar?: ICotacao;
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
   @Input() cotacaoEuro?: ICotacao;
 
-  get saldoTotal(): number {
-    const dinheiro = this.contas
+  readonly mesesNomes = [
+    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+  ];
+
+  get mesAtualNome(): string {
+    return this.mesesNomes[new Date().getMonth()];
+  }
+
+  get totalDinheiroContas(): number {
+    return this.contas
       .filter(c => !ehCartaoCredito(c))
       .reduce((total, conta) => total + (Number(conta.saldo) || 0), 0);
-    const faturas = this.contas
+  }
+
+  get totalFaturasCartoes(): number {
+    return this.contas
       .filter(c => ehCartaoCredito(c))
       .reduce((total, conta) => total + (Number(conta.saldo) || 0), 0);
+<<<<<<< HEAD
     return dinheiro - faturas;
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   }
@@ -186,6 +296,18 @@ export class CardsResumoComponent {
 
   get totalReceitasPendentes(): number {
     return this.transacoes
+=======
+  }
+
+  get totalDespesasPendentes(): number {
+    return this.transacoes
+      .filter(t => t.tipo !== 'RECEITA' && t.estado === 'PENDENTE')
+      .reduce((sum, t) => sum + (Number(t.valor) || 0), 0);
+  }
+
+  get totalReceitasPendentes(): number {
+    return this.transacoes
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
       .filter(t => t.tipo === 'RECEITA' && t.estado === 'PENDENTE')
       .reduce((sum, t) => sum + (Number(t.valor) || 0), 0);
   }

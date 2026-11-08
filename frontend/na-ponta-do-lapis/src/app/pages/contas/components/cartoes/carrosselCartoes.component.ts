@@ -1,23 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-<<<<<<< HEAD
-import { NgClass } from '@angular/common';
-import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
-import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
-import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
-import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/utils/banco-icon.helper';
-=======
 import { NgClass, CurrencyPipe } from '@angular/common';
 import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
 @Component({
   selector: 'app-carrossel-cartoes',
   standalone: true,
-<<<<<<< HEAD
-  imports: [NgClass, AppMoedaPipe, IconeBancoComponent],
-=======
   imports: [NgClass, CurrencyPipe],
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   template: `
     <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 overflow-hidden">
 
@@ -88,11 +76,7 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
               <div
                 class="relative w-[400px] max-w-[82vw] h-[220px] rounded-[2rem] overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]"
                 [title]="conta.nome"
-<<<<<<< HEAD
-                [style.background]="obterCorCartao(conta)">
-=======
                 [style.background]="conta.cor">
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
                 <!-- EFEITOS -->
                 <div class="absolute top-[-30px] right-[-20px] w-52 h-52 rounded-full border border-white/20"></div>
@@ -107,6 +91,7 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
                     <div class="min-w-0 flex-1">
                       @if (conta.sincronizada) {
 <<<<<<< HEAD
+<<<<<<< HEAD
                         <span class="inline-flex items-center gap-1.5 text-[11px] bg-[#EEC046] text-slate-900 px-2.5 py-0.5 rounded-full font-bold tracking-wide shadow-xs">
                           <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
@@ -116,6 +101,13 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
                         <span class="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
                           ⚡ Open Finance
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+                        <span class="inline-flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
+                          <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
+                          </svg>
+                          <span>Open Finance</span>
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
                         </span>
                       }
                       <h3 class="text-2xl font-bold mt-2 leading-snug line-clamp-2 break-words"

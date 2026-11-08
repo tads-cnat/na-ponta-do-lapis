@@ -21,11 +21,7 @@ import { ThemeService } from '../../service/theme.service';
 
 import { ContaFinanceiraService } from './service/contas.service';
 import { IntegracoesService } from '../../service/integracoes.service';
-<<<<<<< HEAD
-import { IContas, IContasRequest, Moeda, TipoConta } from '../../model/IContas.models';
-=======
 import { IContas, IContasRequest, Moeda } from '../../model/IContas.models';
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
 import { AcoesCartoesComponent } from './components/cartoes/acoes.component';
 import { CartaoContaComponent }  from './components/cartoes/cartoes.component';
@@ -101,14 +97,12 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
             [contaAnterior]="contaAnterior"
             [contaProxima]="contaProxima"
             [carregando]="carregandoContas"
-<<<<<<< HEAD
-=======
             [sincronizandoOpenFinance]="sincronizandoOpenFinance"
+            [openFinanceConectado]="openFinanceConectado"
             (onAdicionar)="abrirDialog()"
             (onEditar)="editarConta(contaSelecionada)"
             (onExcluir)="abrirDialogExcluir(contaSelecionada)"
             (onSincronizarOpenFinance)="sincronizarOpenFinance()"
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
             (onContaSelecionada)="selecionarConta($event)"
             (onAnterior)="selecionarAnterior()"
             (onProxima)="selecionarProxima()"
@@ -336,21 +330,6 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                 <label class="font-semibold text-slate-700 text-sm">Saldo Inicial</label>
                 <app-input-moeda
                   formControlName="saldo"
-<<<<<<< HEAD
-                  [moeda]="formContaFinanceira.get('moeda')?.value"
-                  [disabled]="!!(modoEdicao && contaSelecionada?.sincronizada)"
-                  tamanho="md"
-                  placeholder="0,00">
-                </app-input-moeda>
-                @if (modoEdicao && contaSelecionada?.sincronizada) {
-                  <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2 mt-1">
-                    <i class="pi pi-info-circle text-amber-600"></i>
-                    <span>Conta sincronizada via Open Finance. Saldo atualizado pelo banco.</span>
-                  </div>
-                }
-              </div>
-            }
-=======
                   locale="pt-BR"
                   mode="decimal"
                   [minFractionDigits]="2"
@@ -363,7 +342,6 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                 </div>
               }
             </div>
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
             <!-- PALETA DE CORES RÁPIDAS + SELETOR DE COR DESTACADO -->
             <div class="flex flex-col gap-2">
@@ -532,9 +510,13 @@ export class ContasComponent implements OnInit {
   carregandoContas: boolean = true;
   sincronizandoOpenFinance: boolean = false;
 <<<<<<< HEAD
+<<<<<<< HEAD
   openFinanceConectado: boolean = false;
 =======
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+  openFinanceConectado: boolean = false;
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
   contaFinanceiraDados: IContas[] = [];
   contaSelecionadaIndex: number = 0;
   contaAnterior: number = 0;
@@ -900,6 +882,9 @@ export class ContasComponent implements OnInit {
 
   sincronizarOpenFinance(): void {
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
     if (!this.openFinanceConectado) {
       this.messageService.add({
         severity: 'info',
@@ -907,12 +892,19 @@ export class ContasComponent implements OnInit {
         detail: 'Redirecionando para Integrações para conectar seu banco...',
         life: 2500
       });
+<<<<<<< HEAD
       this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes', secao: 'bancos' } });
       return;
     }
 
 =======
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+      this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes' } });
+      return;
+    }
+
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
     if (this.sincronizandoOpenFinance) return;
 
     this.sincronizandoOpenFinance = true;
@@ -939,15 +931,21 @@ export class ContasComponent implements OnInit {
       error: (err) => {
         this.sincronizandoOpenFinance = false;
 <<<<<<< HEAD
+<<<<<<< HEAD
         if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta')) || (err.error?.error && err.error.error.includes('Nenhuma conta'))) {
           this.openFinanceConectado = false;
 =======
         if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta'))) {
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+        if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta')) || (err.error?.error && err.error.error.includes('Nenhuma conta'))) {
+          this.openFinanceConectado = false;
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
           this.messageService.add({
             severity: 'info',
             summary: 'Conectar Open Finance',
             detail: 'Nenhuma conta bancária conectada. Redirecionando para Integrações...',
+<<<<<<< HEAD
 <<<<<<< HEAD
             life: 3000
           });
@@ -960,15 +958,22 @@ export class ContasComponent implements OnInit {
         const msg = err.error?.message || err.error?.error || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
 =======
             life: 4000
+=======
+            life: 3000
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
           });
           setTimeout(() => {
-            this.router.navigate(['/perfil'], { queryParams: { aba: 'integracoes' } });
-          }, 1200);
+            this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes' } });
+          }, 1000);
           return;
         }
 
+<<<<<<< HEAD
         const msg = err.error?.message || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+        const msg = err.error?.message || err.error?.error || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
         this.messageService.add({
           severity: 'error',
           summary: 'Erro na sincronização',

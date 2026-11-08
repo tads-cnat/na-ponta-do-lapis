@@ -9,9 +9,6 @@ import { CarrosselCartoesComponent } from './carrosselCartoes.component';
   imports: [AcoesCartoesComponent, CarrosselCartoesComponent],
   template: `
     <div class="flex flex-col gap-5">
-<<<<<<< HEAD
-      <!-- CARROSSEL DE CONTAS -->
-=======
 
       <!-- HEADER -->
       <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
@@ -28,6 +25,7 @@ import { CarrosselCartoesComponent } from './carrosselCartoes.component';
         <!-- AÇÕES -->
         <app-acoes-cartoes
           [sincronizandoOpenFinance]="sincronizandoOpenFinance"
+          [openFinanceConectado]="openFinanceConectado"
           (onAdicionar)="onAdicionar.emit()"
           (onEditar)="onEditar.emit()"
           (onExcluir)="onExcluir.emit()"
@@ -37,7 +35,6 @@ import { CarrosselCartoesComponent } from './carrosselCartoes.component';
       </div>
 
       <!-- CARROSSEL -->
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
       <app-carrossel-cartoes
         [contas]="contas"
         [contaSelecionadaIndex]="contaSelecionadaIndex"
@@ -64,9 +61,13 @@ export class CartaoContaComponent {
   @Input() carregando: boolean = true;
   @Input() sincronizandoOpenFinance: boolean = false;
 <<<<<<< HEAD
+<<<<<<< HEAD
   @Input() openFinanceConectado: boolean = false;
 =======
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+  @Input() openFinanceConectado: boolean = false;
+>>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
 
   // =========================================
   // OUTPUTS
