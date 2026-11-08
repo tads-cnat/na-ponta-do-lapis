@@ -1,0 +1,366 @@
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IntegracoesService } from '../../../../service/integracoes.service';
+import {
+  IChaveIaRequest,
+  IChaveIaResponse,
+  IOpenFinanceItem,
+  IOpenFinanceStatus,
+  ProvedorIa
+} from '../../../../model/IIntegracoes.models';
+
+@Component({
+  selector: 'app-integracoes-perfil',
+  standalone: true,
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+  templateUrl: './integracoes-perfil.component.html',
+  styleUrl: './integracoes-perfil.component.css'
+})
+export class IntegracoesPerfilComponent implements OnInit {
+  // Open Finance
+  public openFinanceStatus: IOpenFinanceStatus | null = null;
+  public openFinanceForm!: FormGroup;
+  public carregandoOpenFinance = false;
+  public sincronizandoOpenFinance = false;
+  public openFinanceMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
+
+  // Itens Bancários Conectados
+  public itensConectados: IOpenFinanceItem[] = [];
+  public carregandoItens = false;
+  public novoItemId = '';
+  public salvandoItem = false;
+
+  // Chaves de IA
+  public chavesIa: IChaveIaResponse[] = [];
+  public carregandoChavesIa = false;
+  public modalNovaChaveAberta = false;
+  public novaChaveForm!: FormGroup;
+  public salvandoChaveIa = false;
+  public chaveIaMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
+
+  public provedoresDisponiveis: { valor: ProvedorIa; label: string }[] = [
+    { valor: 'GEMINI', label: 'Google Gemini' },
+    { valor: 'CLAUDE', label: 'Anthropic Claude' },
+    { valor: 'OPENAI', label: 'OpenAI (GPT)' },
+    { valor: 'DEEPSEEK', label: 'DeepSeek' },
+    { valor: 'GROQ', label: 'Groq (Llama / Mixtral)' }
+  ];
+
+  constructor(
+    private integracoesService: IntegracoesService,
+    private fb: FormBuilder,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+    this.inicializarFormularios();
+    this.carregarOpenFinance();
+    this.carregarChavesIa();
+  }
+
+  private inicializarFormularios(): void {
+    this.openFinanceForm = this.fb.group({
+      clientId: ['', [Validators.required]],
+      clientSecret: ['', [Validators.required]],
+      itemIds: ['']
+    });
+
+    this.novaChaveForm = this.fb.group({
+      apelido: ['', [Validators.required, Validators.maxLength(50)]],
+      provedor: ['GEMINI', [Validators.required]],
+      apiKey: ['', [Validators.required]],
+      padrao: [false]
+    });
+  }
+
+  // --- Open Finance ---
+  public carregarOpenFinance(): void {
+    this.carregandoOpenFinance = true;
+    this.integracoesService.obterStatusOpenFinance().subscribe({
+      next: (status) => {
+        this.openFinanceStatus = status;
+        this.carregandoOpenFinance = false;
+        if (status.conectado) {
+          this.carregarItensConectados();
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao carregar status do Open Finance:', err);
+        this.carregandoOpenFinance = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  public carregarItensConectados(): void {
+    this.carregandoItens = true;
+    this.integracoesService.listarItensOpenFinance().subscribe({
+      next: (itens) => {
+        this.itensConectados = itens;
+        this.carregandoItens = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao listar itens conectados:', err);
+        this.carregandoItens = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  public salvarNovoItemPorId(): void {
+    if (!this.novoItemId.trim()) {
+      return;
+    }
+
+    this.salvandoItem = true;
+    this.openFinanceMensagem = null;
+
+    this.integracoesService.adicionarItemOpenFinance(this.novoItemId.trim()).subscribe({
+      next: (status) => {
+        this.openFinanceStatus = status;
+        this.salvandoItem = false;
+        this.novoItemId = '';
+        this.openFinanceMensagem = {
+          tipo: 'sucesso',
+          texto: 'Banco adicionado com sucesso! Contas e lançamentos sincronizados.'
+        };
+        this.carregarItensConectados();
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao adicionar item por ID:', err);
+        this.salvandoItem = false;
+        const msg = err.error?.message || 'Item ID não encontrado na sua conta Pluggy. Verifique no Meu Pluggy.';
+        this.openFinanceMensagem = { tipo: 'erro', texto: msg };
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  public removerItemConectado(item: IOpenFinanceItem): void {
+    if (!confirm(`Deseja desvincular a conexão com "${item.nomeInstituicao}"?`)) {
+      return;
+    }
+
+    this.integracoesService.removerItemOpenFinance(item.itemId).subscribe({
+      next: () => {
+        this.openFinanceMensagem = {
+          tipo: 'sucesso',
+          texto: `Conexão com "${item.nomeInstituicao}" desvinculada.`
+        };
+        this.carregarItensConectados();
+        this.sincronizarAgora();
+      },
+      error: (err) => {
+        console.error('Erro ao remover item:', err);
+        this.openFinanceMensagem = { tipo: 'erro', texto: 'Não foi possível desvincular a conexão.' };
+      }
+    });
+  }
+
+  public conectarOpenFinance(): void {
+    if (this.openFinanceForm.invalid) {
+      this.openFinanceForm.markAllAsTouched();
+      return;
+    }
+
+    this.carregandoOpenFinance = true;
+    this.openFinanceMensagem = null;
+
+    const payload = this.openFinanceForm.value;
+    this.integracoesService.conectarOpenFinance(payload).subscribe({
+      next: (status) => {
+        this.openFinanceStatus = status;
+        this.openFinanceForm.reset();
+        this.carregarItensConectados();
+        this.openFinanceMensagem = {
+          tipo: 'sucesso',
+          texto: 'Pluggy conectada com sucesso! Suas contas e transações foram sincronizadas.'
+        };
+        this.carregandoOpenFinance = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao conectar Open Finance:', err);
+        const msg = err.error?.message || 'Falha ao autenticar com as credenciais informadas. Verifique seu Client ID e Client Secret.';
+        this.openFinanceMensagem = { tipo: 'erro', texto: msg };
+        this.carregandoOpenFinance = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  public sincronizarAgora(): void {
+    if (!this.openFinanceStatus?.conectado || this.sincronizandoOpenFinance) {
+      return;
+    }
+
+    this.sincronizandoOpenFinance = true;
+    this.openFinanceMensagem = null;
+
+    this.integracoesService.sincronizarOpenFinanceManual().subscribe({
+      next: (status) => {
+        this.openFinanceStatus = status;
+        this.carregarItensConectados();
+        this.openFinanceMensagem = {
+          tipo: 'sucesso',
+          texto: 'Sincronização manual concluída! Contas e lançamentos atualizados.'
+        };
+        this.sincronizandoOpenFinance = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro na sincronização manual:', err);
+        const msg = err.error?.message || err.error || 'Limite diário de sincronizações manuais atingido ou erro de conexão.';
+        this.openFinanceMensagem = { tipo: 'erro', texto: typeof msg === 'string' ? msg : 'Erro ao sincronizar.' };
+        this.sincronizandoOpenFinance = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  public desconectarOpenFinance(): void {
+    if (!confirm('Deseja realmente desconectar a integração com a Pluggy? Suas contas e transações já registradas serão preservadas.')) {
+      return;
+    }
+
+    this.carregandoOpenFinance = true;
+    this.openFinanceMensagem = null;
+
+    this.integracoesService.desconectarOpenFinance().subscribe({
+      next: () => {
+        this.openFinanceStatus = {
+          conectado: false,
+          ultimaSincronizacao: null,
+          syncsRestantesHoje: 5,
+          limiteDiario: 5,
+          totalContasSincronizadas: 0
+        };
+        this.itensConectados = [];
+        this.openFinanceMensagem = {
+          tipo: 'sucesso',
+          texto: 'Integração desconectada com sucesso.'
+        };
+        this.carregandoOpenFinance = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao desconectar:', err);
+        this.openFinanceMensagem = { tipo: 'erro', texto: 'Não foi possível desconectar a integração.' };
+        this.carregandoOpenFinance = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  // --- Chaves de IA ---
+  public carregarChavesIa(): void {
+    this.carregandoChavesIa = true;
+    this.integracoesService.listarChavesIa().subscribe({
+      next: (chaves) => {
+        this.chavesIa = chaves;
+        this.carregandoChavesIa = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Erro ao listar chaves de IA:', err);
+        this.carregandoChavesIa = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  public abrirModalNovaChave(): void {
+    this.novaChaveForm.reset({
+      apelido: '',
+      provedor: 'GEMINI',
+      apiKey: '',
+      padrao: this.chavesIa.length === 0
+    });
+    this.chaveIaMensagem = null;
+    this.modalNovaChaveAberta = true;
+  }
+
+  public fecharModalNovaChave(): void {
+    this.modalNovaChaveAberta = false;
+    this.novaChaveForm.reset();
+  }
+
+  public salvarNovaChave(): void {
+    if (this.novaChaveForm.invalid) {
+      this.novaChaveForm.markAllAsTouched();
+      return;
+    }
+
+    this.salvandoChaveIa = true;
+    this.chaveIaMensagem = null;
+
+    const payload: IChaveIaRequest = {
+      apelido: this.novaChaveForm.value.apelido,
+      provedor: this.novaChaveForm.value.provedor,
+      apiKey: this.novaChaveForm.value.apiKey,
+      padrao: !!this.novaChaveForm.value.padrao
+    };
+
+    this.integracoesService.cadastrarChaveIa(payload).subscribe({
+      next: () => {
+        this.salvandoChaveIa = false;
+        this.fecharModalNovaChave();
+        this.chaveIaMensagem = { tipo: 'sucesso', texto: 'Chave de IA cadastrada com sucesso!' };
+        this.carregarChavesIa();
+      },
+      error: (err) => {
+        console.error('Erro ao salvar chave de IA:', err);
+        this.salvandoChaveIa = false;
+        const msg = err.error?.message || (typeof err.error === 'string' ? err.error : null) || 'Erro ao salvar chave de IA. Verifique se os dados estão corretos.';
+        this.chaveIaMensagem = { tipo: 'erro', texto: msg };
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  public definirChavePadrao(chave: IChaveIaResponse): void {
+    if (chave.padrao) return;
+
+    this.integracoesService.definirChaveIaPadrao(chave.id).subscribe({
+      next: () => {
+        this.chaveIaMensagem = { tipo: 'sucesso', texto: `Chave "${chave.apelido}" definida como padrão.` };
+        this.carregarChavesIa();
+      },
+      error: (err) => {
+        console.error('Erro ao definir chave padrão:', err);
+        this.chaveIaMensagem = { tipo: 'erro', texto: 'Erro ao definir como chave padrão.' };
+      }
+    });
+  }
+
+  public excluirChave(chave: IChaveIaResponse): void {
+    if (!confirm(`Deseja excluir a chave "${chave.apelido}"?`)) {
+      return;
+    }
+
+    this.integracoesService.excluirChaveIa(chave.id).subscribe({
+      next: () => {
+        this.chaveIaMensagem = { tipo: 'sucesso', texto: 'Chave excluída com sucesso.' };
+        this.carregarChavesIa();
+      },
+      error: (err) => {
+        console.error('Erro ao excluir chave:', err);
+        this.chaveIaMensagem = { tipo: 'erro', texto: 'Erro ao excluir chave.' };
+      }
+    });
+  }
+
+  public formatarData(dataStr?: string | null): string {
+    if (!dataStr) return 'Nunca sincronizado';
+    try {
+      const d = new Date(dataStr);
+      return d.toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+    } catch {
+      return dataStr;
+    }
+  }
+}

@@ -160,19 +160,34 @@
                                     </p-select>
                                 </div>
 
+                                <div class="flex flex-col gap-1">
+                                    <label class="text-xs font-semibold text-slate-600">Parcelamentos</label>
+                                    <p-select [options]="opcoesFiltroParcelamento" optionLabel="label" optionValue="value"
+                                        [(ngModel)]="filtroParcelamento" (onChange)="aplicarFiltros()"
+                                        styleClass="w-full text-sm" [appendTo]="'body'"></p-select>
+                                </div>
+
                                 <div class="flex flex-col gap-1 sm:col-span-2">
                                     <label class="text-xs font-semibold text-slate-600">Intervalo de datas personalizado</label>
                                     <p-datePicker [(ngModel)]="filtroDataRange" selectionMode="range" [readonlyInput]="true"
                                         dateFormat="dd/mm/yy" placeholder="Selecione início e fim"
                                         (onSelect)="aoMudarDataRange()" styleClass="w-full text-sm" [appendTo]="'body'"></p-datePicker>
                                 </div>
+                            </div>
 
-                                <div class="flex items-end justify-end gap-2 pt-1 sm:col-span-1">
-                                    <p-button label="Limpar filtros" icon="pi pi-trash" [outlined]="true" severity="secondary"
-                                        size="small" styleClass="rounded-xl! text-xs w-full sm:w-auto"
-                                        [disabled]="qtdFiltrosAtivos === 0 && !textoBusca"
-                                        (onClick)="limparFiltros()"></p-button>
-                                </div>
+                            <!-- Rodapé de Ações do Painel de Filtros -->
+                            <div class="flex items-center justify-between pt-3 border-t border-slate-100">
+                                <span class="text-xs text-slate-500 font-medium">
+                                    @if (qtdFiltrosAtivos > 0 || textoBusca) {
+                                        <span class="text-[#7843cd] font-semibold">{{ qtdFiltrosAtivos }} filtro(s) ativo(s)</span>
+                                    } @else {
+                                        Nenhum filtro ativo
+                                    }
+                                </span>
+                                <p-button label="Limpar filtros" icon="pi pi-trash" [outlined]="true" severity="secondary"
+                                    size="small" styleClass="rounded-xl! text-xs"
+                                    [disabled]="qtdFiltrosAtivos === 0 && !textoBusca"
+                                    (onClick)="limparFiltros()"></p-button>
                             </div>
                         </div>
                     }
@@ -265,10 +280,10 @@
                             <th pSortableColumn="estado" class="bg-[#F8F8FC]! text-slate-700! w-[120px] cursor-pointer">
                                 Situação <p-sortIcon field="estado"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="valor" class="bg-[#F8F8FC]! text-slate-700! w-[150px] cursor-pointer text-right! pr-8!">
+                            <th pSortableColumn="valorComSinal" class="bg-[#F8F8FC]! text-slate-700! w-[150px] cursor-pointer text-right! pr-8!">
                                 <div class="flex items-center justify-end gap-1.5 w-full">
                                     <span>Valor</span>
-                                    <p-sortIcon field="valor"></p-sortIcon>
+                                    <p-sortIcon field="valorComSinal"></p-sortIcon>
                                 </div>
                             </th>
                             <th class="bg-[#F8F8FC]! text-slate-700! w-[110px] text-center! pl-4!">Ações</th>
@@ -659,71 +674,123 @@
             </label>
 
             <div class="w-full border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col gap-3.5">
-                <div class="flex items-center gap-2">
-                    <i class="pi pi-sparkles text-[#7843cd] text-base"></i>
-                    <span class="font-semibold text-slate-800 text-sm">Leitura Inteligente por IA</span>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <i class="pi pi-sparkles text-[#7843cd] text-base"></i>
+                        <span class="font-semibold text-slate-800 text-sm">Leitura Inteligente por IA</span>
+                    </div>
+                    <a routerLink="/perfil" [queryParams]="{ aba: 'integracoes' }"
+                       class="text-xs text-[#7843cd] hover:underline font-semibold flex items-center gap-1">
+                        <span>Gerenciar chaves</span>
+                        <i class="pi pi-external-link text-[10px]"></i>
+                    </a>
                 </div>
                 <p class="text-xs text-slate-500 m-0 leading-relaxed">
                     Extração inteligente de transações com privacidade e mascaramento de dados pessoais.
                 </p>
 
-                <div class="flex flex-col gap-3">
-                    <div class="flex flex-col gap-1.5">
-                        <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                            <span>Serviço de IA</span>
-                            <i class="pi pi-question-circle text-slate-400 cursor-help text-[11px]"
-                                pTooltip="Escolha o provedor da sua chave de API (Gemini, Claude, OpenAI, DeepSeek ou Groq) para ler a fatura."
-                                tooltipPosition="top"></i>
+                <!-- Alternador de Modo de Chave se houver chaves salvas -->
+                @if (chavesIaSalvas.length > 0) {
+                    <div class="flex items-center gap-3 border-b border-slate-200 pb-2">
+                        <label class="text-xs font-semibold cursor-pointer flex items-center gap-1.5"
+                               [ngClass]="modoChaveIa === 'salva' ? 'text-[#7843cd]' : 'text-slate-500'">
+                            <input type="radio" name="modoChaveIa" value="salva" [(ngModel)]="modoChaveIa" />
+                            <span>Usar chave salva</span>
                         </label>
-                        <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
-                            [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
+                        <label class="text-xs font-semibold cursor-pointer flex items-center gap-1.5"
+                               [ngClass]="modoChaveIa === 'avulsa' ? 'text-[#7843cd]' : 'text-slate-500'">
+                            <input type="radio" name="modoChaveIa" value="avulsa" [(ngModel)]="modoChaveIa" />
+                            <span>Usar outra chave avulsa</span>
+                        </label>
+                    </div>
+                }
+
+                <!-- MODO CHAVE SALVA -->
+                @if (modoChaveIa === 'salva' && chavesIaSalvas.length > 0) {
+                    <div class="flex flex-col gap-2">
+                        <label class="text-xs font-semibold text-slate-700">Selecione a Chave de IA</label>
+                        <select [(ngModel)]="chaveIaSelecionadaId"
+                                class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7843cd] text-slate-800">
+                            <option *ngFor="let c of chavesIaSalvas" [value]="c.id">
+                                {{ c.apelido }} ({{ c.provedor }}) - {{ c.chaveMascarada }}{{ c.padrao ? ' (Padrão)' : '' }}
+                            </option>
+                        </select>
+                        <span class="text-[11px] text-slate-500">
+                            Chave descriptografada com segurança diretamente no servidor no momento do processamento.
+                        </span>
+                    </div>
+                }
+
+                <!-- MODO CHAVE AVULSA OU SEM CHAVES SALVAS -->
+                @if (modoChaveIa === 'avulsa' || chavesIaSalvas.length === 0) {
+                    <div class="flex flex-col gap-3">
+                        <div class="flex flex-col gap-1.5">
+                            <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
+                                <span>Serviço de IA</span>
+                                <i class="pi pi-question-circle text-slate-400 cursor-help text-[11px]"
+                                    pTooltip="Escolha o provedor da sua chave de API (Gemini, Claude, OpenAI, DeepSeek ou Groq) para ler a fatura."
+                                    tooltipPosition="top"></i>
+                            </label>
+                            <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
+                                [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5 w-full">
+                            <div class="flex items-center justify-between flex-wrap gap-2">
+                                <div class="flex items-center gap-2">
+                                    <label class="text-xs font-semibold text-slate-700">Chave de acesso (API Key)</label>
+                                    @if (temChaveSalva) {
+                                        <span class="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                            ✓ Salva na sessão
+                                        </span>
+                                    }
+                                </div>
+                                <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
+                                   class="text-xs font-medium text-[#7843cd] hover:text-[#5d2fa8] hover:underline flex items-center gap-1 transition-colors"
+                                   [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top" tooltipStyleClass="whitespace-pre-line text-xs">
+                                    <span>{{ linkApiKeyProvedor.label }}</span>
+                                    <i class="pi pi-external-link text-[10px]"></i>
+                                </a>
+                            </div>
+                            <div class="w-full">
+                                <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
+                                    (onBlur)="apiKeyIaTocada = true"
+                                    [placeholder]="temChaveSalva ? 'Usando chave salva (' + (provedorSalvo || provedorSelecionado) + ') — digite para trocar' : 'Cole sua chave de API aqui...'"
+                                    styleClass="w-full" inputStyleClass="w-full text-xs"></p-password>
+                            </div>
+                            @if (apiKeyIaTocada && !temChaveSalva && !apiKeyIa.trim()) {
+                                <span class="text-[11px] text-amber-600 flex items-center gap-1 mt-0.5">
+                                    <i class="pi pi-exclamation-circle text-[10px]"></i>
+                                    <span>Informe uma chave de API para habilitar a análise da fatura.</span>
+                                </span>
+                            }
+                        </div>
+
+                        <!-- Checkbox para salvar chave no perfil permanentemente -->
+                        <div class="flex items-center gap-2 pt-1">
+                            <p-checkbox [(ngModel)]="salvarChaveTemporaria" [binary]="true" inputId="salvarChavePerfil"></p-checkbox>
+                            <label for="salvarChavePerfil" class="text-xs text-slate-700 cursor-pointer select-none">
+                                Salvar esta chave permanentemente no meu perfil
+                            </label>
+                        </div>
                     </div>
 
-                    <div class="flex flex-col gap-1.5">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <label class="text-xs font-semibold text-slate-700">Chave de acesso (API Key)</label>
-                                @if (temChaveSalva) {
-                                    <span class="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                                        ✓ Salva na sessão
-                                    </span>
-                                }
-                            </div>
-                            <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
-                               class="text-xs font-medium text-[#7843cd] hover:text-[#5d2fa8] hover:underline flex items-center gap-1 transition-colors"
-                               [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top" tooltipStyleClass="whitespace-pre-line text-xs">
-                                <span>{{ linkApiKeyProvedor.label }}</span>
-                                <i class="pi pi-external-link text-[10px]"></i>
-                            </a>
+                    <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200">
+                        <div class="flex items-center gap-2">
+                            <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"></p-checkbox>
+                            <label for="manterSessao" class="text-xs text-slate-600 cursor-pointer select-none">
+                                Lembrar chave nesta sessão
+                            </label>
                         </div>
-                        <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                            (onBlur)="apiKeyIaTocada = true"
-                            [placeholder]="temChaveSalva ? 'Usando chave salva (' + (provedorSalvo || provedorSelecionado) + ') — digite para trocar' : 'Cole sua chave de API aqui...'"
-                            styleClass="w-full" inputStyleClass="w-full"></p-password>
-                        @if (apiKeyIaTocada && !temChaveSalva && !apiKeyIa.trim()) {
-                            <span class="text-[11px] text-amber-600 flex items-center gap-1 mt-0.5">
-                                <i class="pi pi-exclamation-circle text-[10px]"></i>
-                                <span>Informe uma chave de API para habilitar a análise da fatura.</span>
-                            </span>
+                        @if (temChaveSalva) {
+                            <button type="button" (click)="esquecerChaveIa()"
+                                class="text-xs text-slate-400 hover:text-red-600 flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 transition-colors">
+                                <i class="pi pi-trash text-[11px]"></i>
+                                <span>Apagar chave salva</span>
+                            </button>
                         }
                     </div>
-                </div>
-
-                <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200">
-                    <div class="flex items-center gap-2">
-                        <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"></p-checkbox>
-                        <label for="manterSessao" class="text-xs text-slate-600 cursor-pointer select-none">
-                            Lembrar chave nesta sessão
-                        </label>
-                    </div>
-                    @if (temChaveSalva) {
-                        <button type="button" (click)="esquecerChaveIa()"
-                            class="text-xs text-slate-400 hover:text-red-600 flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 transition-colors">
-                            <i class="pi pi-trash text-[11px]"></i>
-                            <span>Apagar chave salva</span>
-                        </button>
-                    }
-                </div>
+                }
             </div>
 
             @if (precisaSenhaPdf) {

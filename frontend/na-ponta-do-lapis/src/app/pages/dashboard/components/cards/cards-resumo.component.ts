@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { CurrencyPipe, DecimalPipe } from "@angular/common";
-import { IContas } from "../../../../model/IContas.models";
+import { IContas, ehCartaoCredito } from "../../../../model/IContas.models";
 import { ITransacoes } from "../../../../model/ITransacoes.model";
 import { ICotacao } from "../../../../model/ICotacao.models";
 
@@ -121,7 +121,13 @@ export class CardsResumoComponent {
   @Input() cotacaoEuro?: ICotacao;
 
   get saldoTotal(): number {
-    return this.contas.reduce((total, conta) => total + conta.saldo, 0);
+    const dinheiro = this.contas
+      .filter(c => !ehCartaoCredito(c))
+      .reduce((total, conta) => total + (Number(conta.saldo) || 0), 0);
+    const faturas = this.contas
+      .filter(c => ehCartaoCredito(c))
+      .reduce((total, conta) => total + (Number(conta.saldo) || 0), 0);
+    return dinheiro - faturas;
   }
 
   get transacoesReceita(): number {

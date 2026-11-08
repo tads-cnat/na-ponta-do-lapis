@@ -24,9 +24,11 @@ import { CarrosselCartoesComponent } from './carrosselCartoes.component';
 
         <!-- AÇÕES -->
         <app-acoes-cartoes
+          [sincronizandoOpenFinance]="sincronizandoOpenFinance"
           (onAdicionar)="onAdicionar.emit()"
           (onEditar)="onEditar.emit()"
-          (onExcluir)="onExcluir.emit()">
+          (onExcluir)="onExcluir.emit()"
+          (onSincronizarOpenFinance)="onSincronizarOpenFinance.emit()">
         </app-acoes-cartoes>
 
       </div>
@@ -57,6 +59,7 @@ export class CartaoContaComponent {
   @Input() contaAnterior: number = 0;
   @Input() contaProxima: number = 0;
   @Input() carregando: boolean = true;
+  @Input() sincronizandoOpenFinance: boolean = false;
 
   // =========================================
   // OUTPUTS
@@ -65,6 +68,7 @@ export class CartaoContaComponent {
   @Output() onAdicionar = new EventEmitter<void>();
   @Output() onEditar = new EventEmitter<void>();
   @Output() onExcluir = new EventEmitter<void>();
+  @Output() onSincronizarOpenFinance = new EventEmitter<void>();
   @Output() onContaSelecionada = new EventEmitter<number>();
   @Output() onAnterior = new EventEmitter<void>();
   @Output() onProxima = new EventEmitter<void>();

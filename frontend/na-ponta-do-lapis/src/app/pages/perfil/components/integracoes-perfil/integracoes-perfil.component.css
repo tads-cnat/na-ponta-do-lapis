@@ -1,0 +1,6 @@
+/* Estilos específicos para o componente de Integrações do Perfil */
+:host {
+  display: block;
+  width: 100%;
+}
+

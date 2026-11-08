@@ -19,6 +19,7 @@ import { ColorPickerModule } from 'primeng/colorpicker';
 import { ChartModule } from 'primeng/chart';
 
 import { ContaFinanceiraService } from './service/contas.service';
+import { IntegracoesService } from '../../service/integracoes.service';
 import { IContas, IContasRequest, Moeda } from '../../model/IContas.models';
 
 import { CartaoContaComponent }  from './components/cartoes/cartoes.component';
@@ -67,9 +68,11 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
             [contaAnterior]="contaAnterior"
             [contaProxima]="contaProxima"
             [carregando]="carregandoContas"
+            [sincronizandoOpenFinance]="sincronizandoOpenFinance"
             (onAdicionar)="abrirDialog()"
             (onEditar)="editarConta(contaSelecionada)"
             (onExcluir)="abrirDialogExcluir(contaSelecionada)"
+            (onSincronizarOpenFinance)="sincronizarOpenFinance()"
             (onContaSelecionada)="selecionarConta($event)"
             (onAnterior)="selecionarAnterior()"
             (onProxima)="selecionarProxima()">
@@ -154,6 +157,12 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2">
               </p-inputNumber>
+              @if (modoEdicao && contaSelecionada?.sincronizada) {
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2">
+                  <span>ℹ️</span>
+                  <span>Esta conta é sincronizada via Open Finance. O saldo é atualizado automaticamente pelo banco.</span>
+                </div>
+              }
             </div>
 
             <!-- COR -->
@@ -293,6 +302,7 @@ export class ContasComponent implements OnInit {
   // =========================================
 
   carregandoContas: boolean = true;
+  sincronizandoOpenFinance: boolean = false;
   contaFinanceiraDados: IContas[] = [];
   contaSelecionadaIndex: number = 0;
   contaAnterior: number = 0;
@@ -329,6 +339,7 @@ export class ContasComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private contaFinanceiraService: ContaFinanceiraService,
+    private integracoesService: IntegracoesService,
     private cdr: ChangeDetectorRef,
     private transacoesService: TransacoesService,
     private router: Router,
@@ -460,6 +471,7 @@ export class ContasComponent implements OnInit {
   abrirDialog(): void {
     this.modoEdicao = false;
     this.idContaEdicao = null;
+    this.formContaFinanceira.get('saldo')?.enable();
     this.formContaFinanceira.reset({ nome: '', saldo: 0, cor: 'FFDE59', moeda: 'BRL' });
     this.exibirDialog = true;
   }
@@ -468,6 +480,11 @@ export class ContasComponent implements OnInit {
     if (!conta) return;
     this.modoEdicao    = true;
     this.idContaEdicao = conta.id ?? null;
+    if (conta.sincronizada) {
+      this.formContaFinanceira.get('saldo')?.disable();
+    } else {
+      this.formContaFinanceira.get('saldo')?.enable();
+    }
     this.formContaFinanceira.patchValue({
       nome:  conta.nome,
       saldo: conta.saldo,
@@ -475,6 +492,48 @@ export class ContasComponent implements OnInit {
       moeda: conta.moeda
     });
     this.exibirDialog = true;
+  }
+
+  sincronizarOpenFinance(): void {
+    if (this.sincronizandoOpenFinance) return;
+
+    this.sincronizandoOpenFinance = true;
+    this.integracoesService.sincronizarOpenFinanceManual().subscribe({
+      next: (status) => {
+        this.sincronizandoOpenFinance = false;
+        const restantes = status.syncsRestantesHoje ?? status.sincronizacoesRestantesHoje ?? 0;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sincronização concluída',
+          detail: `Contas e transações atualizadas! Restantes hoje: ${restantes}/${status.limiteDiario}`,
+          life: 4000
+        });
+        this.listarContas();
+      },
+      error: (err) => {
+        this.sincronizandoOpenFinance = false;
+        if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta'))) {
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Conectar Open Finance',
+            detail: 'Nenhuma conta bancária conectada. Redirecionando para Integrações...',
+            life: 4000
+          });
+          setTimeout(() => {
+            this.router.navigate(['/perfil'], { queryParams: { aba: 'integracoes' } });
+          }, 1200);
+          return;
+        }
+
+        const msg = err.error?.message || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro na sincronização',
+          detail: typeof msg === 'string' ? msg : 'Erro ao sincronizar contas.',
+          life: 5000
+        });
+      }
+    });
   }
 
   // =========================================

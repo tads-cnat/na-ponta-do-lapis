@@ -71,6 +71,8 @@ export class TransacoesService {
     if (opcoes.provedor) formData.append('provedor', opcoes.provedor);
     if (opcoes.apiKey) formData.append('apiKey', opcoes.apiKey);
     if (opcoes.senha) formData.append('senha', opcoes.senha);
+    if (opcoes.chaveIaId) formData.append('chaveIaId', String(opcoes.chaveIaId));
+    if (opcoes.salvarChave !== undefined) formData.append('salvarChave', String(opcoes.salvarChave));
     formData.append('manterNaSessao', String(opcoes.manterNaSessao ?? false));
     formData.append('usarIa', String(opcoes.usarIa ?? false));
     formData.append('enviarPdfParaIa', String(opcoes.enviarPdfParaIa ?? false));
