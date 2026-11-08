@@ -1,12 +1,19 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+<<<<<<< HEAD
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+=======
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 import { ActivatedRoute } from '@angular/router';
 import { BotoesAcaoComponent } from '../botoes-acao/botoes-acao.component';
 import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/formulario-secao.component';
 import { IntegracoesPerfilComponent } from '../integracoes-perfil/integracoes-perfil.component';
+<<<<<<< HEAD
 import { ConquistasPerfilComponent } from '../conquistas-perfil/conquistas-perfil.component';
 import { IconeBandeiraComponent } from '../../../../shared/components/icone-bandeira/icone-bandeira.component';
+=======
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 import { UsuarioService } from '../../service/perfil.services';
 import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
@@ -17,11 +24,16 @@ import { Usuario } from '../../../../model/IUsuario.models';
 @Component({
   selector: 'app-ajustes-do-perfil',
   standalone: true,
+<<<<<<< HEAD
   imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
+=======
+  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent],
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   templateUrl: './ajustes-do-perfil.component.html'
 })
 export class AjustesPerfilComponent implements OnInit {
   public perfilForm!: FormGroup;
+<<<<<<< HEAD
   public abaAtiva: 'dados' | 'conquistas' | 'integracoes' = 'dados';
   public moedaOriginalUsuario: string = 'BRL';
   public usuarioLogado: Usuario | null = null;
@@ -29,6 +41,9 @@ export class AjustesPerfilComponent implements OnInit {
   // Controle de modo de edição (dados e senha iniciam recolhidos/em modo de leitura)
   public editandoDados: boolean = false;
   public editandoSenha: boolean = false;
+=======
+  public abaAtiva: 'dados' | 'integracoes' = 'dados';
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
@@ -79,9 +94,14 @@ export class AjustesPerfilComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private usuarioService: UsuarioService,
+<<<<<<< HEAD
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     private preferenciaMoedaService: PreferenciaMoedaService
+=======
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   ) {
     this.inicializarFormulario();
   }
@@ -89,10 +109,14 @@ export class AjustesPerfilComponent implements OnInit {
   ngOnInit(): void {
     this.carregarDadosIniciais();
     this.route.queryParams.subscribe((params) => {
+<<<<<<< HEAD
       if (params['aba'] === 'conquistas' || params['tab'] === 'conquistas') {
         this.abaAtiva = 'conquistas';
         this.cdr.detectChanges();
       } else if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes' || params['aba'] === 'ia' || params['secao'] === 'ia') {
+=======
+      if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes') {
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
         this.abaAtiva = 'integracoes';
         this.cdr.detectChanges();
       }

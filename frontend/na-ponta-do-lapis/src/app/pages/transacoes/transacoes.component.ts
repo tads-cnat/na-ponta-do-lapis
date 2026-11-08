@@ -40,7 +40,11 @@ interface GrupoParcelamentoResumo {
 
 @Component({
   selector: 'app-transacoes',
+<<<<<<< HEAD
   imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
+=======
+  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',

@@ -19,6 +19,7 @@ export interface IChaveIaRequest {
 export interface IOpenFinanceStatus {
   conectado: boolean;
   ultimaSincronizacao: string | null;
+<<<<<<< HEAD
   syncsRestantesHoje?: number;
   sincronizacoesRestantesHoje?: number;
   limiteDiario?: number;
@@ -26,6 +27,13 @@ export interface IOpenFinanceStatus {
   totalContasSincronizadas?: number;
   totalItensConectados?: number;
   limiteItensConexao?: number;
+=======
+  syncsRestantesHoje: number;
+  sincronizacoesRestantesHoje?: number;
+  limiteDiario: number;
+  clientIdMascarado?: string | null;
+  totalContasSincronizadas?: number;
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 }
 
 export interface IOpenFinanceConectarRequest {

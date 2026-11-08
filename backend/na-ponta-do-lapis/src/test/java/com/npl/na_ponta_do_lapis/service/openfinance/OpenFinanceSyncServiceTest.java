@@ -116,17 +116,30 @@ class OpenFinanceSyncServiceTest {
     }
 
     @Test
+<<<<<<< HEAD
     @DisplayName("Deve bloquear sincronização manual em caso de flood consecutivo (cooldown de 15 segundos)")
     void deveBloquearCooldownManual() {
         UsuarioPluggyIntegracao integracao = new UsuarioPluggyIntegracao();
         integracao.setUsuario(usuario);
         integracao.setUltimaSincronizacao(java.time.LocalDateTime.now().minusSeconds(5));
+=======
+    @DisplayName("Deve bloquear sincronização manual quando atingir limite de 5x ao dia")
+    void deveBloquearLimiteManual() {
+        UsuarioPluggyIntegracao integracao = new UsuarioPluggyIntegracao();
+        integracao.setUsuario(usuario);
+        integracao.setDataContadorManual(LocalDate.now());
+        integracao.setSincronizacoesManuaisHoje(5);
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
         when(integracaoRepository.findByUsuarioId(1L)).thenReturn(Optional.of(integracao));
 
         ResponseStatusException ex = assertThrows(ResponseStatusException.class, () -> syncService.sincronizarManual(usuario));
         assertEquals(org.springframework.http.HttpStatus.TOO_MANY_REQUESTS, ex.getStatusCode());
+<<<<<<< HEAD
         assertTrue(ex.getReason().contains("segundo(s) antes de sincronizar novamente"));
+=======
+        assertTrue(ex.getReason().contains("limite de 5 sincronizações"));
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
     }
 
     @Test
@@ -179,8 +192,12 @@ class OpenFinanceSyncServiceTest {
 
         assertNotNull(status);
         assertEquals(2, integracao.getSincronizacoesManuaisHoje());
+<<<<<<< HEAD
         assertTrue(status.conectado());
         assertEquals(5, status.limiteItensConexao());
+=======
+        assertEquals(3, status.sincronizacoesRestantesHoje());
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
         verify(transacaoRepository).save(argThat(t ->
                 t.getPluggyTransactionId().equals("tx-pluggy-100") &&

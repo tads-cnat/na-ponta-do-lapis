@@ -1,5 +1,9 @@
 import { Component, Input } from "@angular/core";
+<<<<<<< HEAD
 import { CommonModule, DecimalPipe } from "@angular/common";
+=======
+import { CurrencyPipe, DecimalPipe } from "@angular/common";
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 import { IContas, ehCartaoCredito } from "../../../../model/IContas.models";
 import { ITransacoes } from "../../../../model/ITransacoes.model";
 import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
@@ -145,8 +149,21 @@ export class CardsResumoComponent {
     'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
   ];
 
+<<<<<<< HEAD
   get mesAtualNome(): string {
     return this.mesesNomes[new Date().getMonth()];
+=======
+  @Input() cotacaoEuro?: ICotacao;
+
+  get saldoTotal(): number {
+    const dinheiro = this.contas
+      .filter(c => !ehCartaoCredito(c))
+      .reduce((total, conta) => total + (Number(conta.saldo) || 0), 0);
+    const faturas = this.contas
+      .filter(c => ehCartaoCredito(c))
+      .reduce((total, conta) => total + (Number(conta.saldo) || 0), 0);
+    return dinheiro - faturas;
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   }
 
   get totalDinheiroContas(): number {

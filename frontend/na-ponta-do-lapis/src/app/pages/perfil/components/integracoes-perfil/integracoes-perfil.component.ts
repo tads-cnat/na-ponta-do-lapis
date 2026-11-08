@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+<<<<<<< HEAD
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
@@ -8,6 +9,10 @@ import { ButtonModule } from 'primeng/button';
 import { IntegracoesService } from '../../../../service/integracoes.service';
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 import { mapearNomeBanco } from '../../../../shared/utils/banco-icon.helper';
+=======
+import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { IntegracoesService } from '../../../../service/integracoes.service';
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 import {
   IChaveIaRequest,
   IChaveIaResponse,
@@ -19,7 +24,11 @@ import {
 @Component({
   selector: 'app-integracoes-perfil',
   standalone: true,
+<<<<<<< HEAD
   imports: [CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, DialogModule, ButtonModule, IconeBancoComponent],
+=======
+  imports: [CommonModule, FormsModule, ReactiveFormsModule],
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   templateUrl: './integracoes-perfil.component.html',
   styleUrl: './integracoes-perfil.component.css'
 })
@@ -30,7 +39,10 @@ export class IntegracoesPerfilComponent implements OnInit {
   public carregandoOpenFinance = false;
   public sincronizandoOpenFinance = false;
   public openFinanceMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
+<<<<<<< HEAD
   public mostrarTutorialConectado = false;
+=======
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
   // Itens Bancários Conectados
   public itensConectados: IOpenFinanceItem[] = [];
@@ -46,9 +58,12 @@ export class IntegracoesPerfilComponent implements OnInit {
   public salvandoChaveIa = false;
   public chaveIaMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
 
+<<<<<<< HEAD
   // Sub-aba ativa (Open Finance vs IA)
   public subabaAtiva: 'bancos' | 'ia' = 'bancos';
 
+=======
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   public provedoresDisponiveis: { valor: ProvedorIa; label: string }[] = [
     { valor: 'GEMINI', label: 'Google Gemini' },
     { valor: 'CLAUDE', label: 'Anthropic Claude' },
@@ -60,6 +75,7 @@ export class IntegracoesPerfilComponent implements OnInit {
   constructor(
     private integracoesService: IntegracoesService,
     private fb: FormBuilder,
+<<<<<<< HEAD
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute
   ) {}
@@ -75,6 +91,12 @@ export class IntegracoesPerfilComponent implements OnInit {
       }
     });
 
+=======
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit(): void {
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
     this.inicializarFormularios();
     this.carregarOpenFinance();
     this.carregarChavesIa();
@@ -131,10 +153,13 @@ export class IntegracoesPerfilComponent implements OnInit {
     });
   }
 
+<<<<<<< HEAD
   public getNomeBancoFormatado(nome?: string): string {
     return mapearNomeBanco(nome).nomeExibicao;
   }
 
+=======
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   public salvarNovoItemPorId(): void {
     if (!this.novoItemId.trim()) {
       return;
@@ -379,6 +404,7 @@ export class IntegracoesPerfilComponent implements OnInit {
     });
   }
 
+<<<<<<< HEAD
   public get provedorSelecionado(): ProvedorIa {
     return this.novaChaveForm?.get('provedor')?.value || 'GEMINI';
   }
@@ -481,6 +507,8 @@ export class IntegracoesPerfilComponent implements OnInit {
     };
   }
 
+=======
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   public formatarData(dataStr?: string | null): string {
     if (!dataStr) return 'Nunca sincronizado';
     try {

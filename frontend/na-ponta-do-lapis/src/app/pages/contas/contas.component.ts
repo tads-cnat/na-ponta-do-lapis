@@ -21,7 +21,11 @@ import { ThemeService } from '../../service/theme.service';
 
 import { ContaFinanceiraService } from './service/contas.service';
 import { IntegracoesService } from '../../service/integracoes.service';
+<<<<<<< HEAD
 import { IContas, IContasRequest, Moeda, TipoConta } from '../../model/IContas.models';
+=======
+import { IContas, IContasRequest, Moeda } from '../../model/IContas.models';
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
 import { AcoesCartoesComponent } from './components/cartoes/acoes.component';
 import { CartaoContaComponent }  from './components/cartoes/cartoes.component';
@@ -97,6 +101,14 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
             [contaAnterior]="contaAnterior"
             [contaProxima]="contaProxima"
             [carregando]="carregandoContas"
+<<<<<<< HEAD
+=======
+            [sincronizandoOpenFinance]="sincronizandoOpenFinance"
+            (onAdicionar)="abrirDialog()"
+            (onEditar)="editarConta(contaSelecionada)"
+            (onExcluir)="abrirDialogExcluir(contaSelecionada)"
+            (onSincronizarOpenFinance)="sincronizarOpenFinance()"
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
             (onContaSelecionada)="selecionarConta($event)"
             (onAnterior)="selecionarAnterior()"
             (onProxima)="selecionarProxima()"
@@ -324,6 +336,7 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                 <label class="font-semibold text-slate-700 text-sm">Saldo Inicial</label>
                 <app-input-moeda
                   formControlName="saldo"
+<<<<<<< HEAD
                   [moeda]="formContaFinanceira.get('moeda')?.value"
                   [disabled]="!!(modoEdicao && contaSelecionada?.sincronizada)"
                   tamanho="md"
@@ -337,6 +350,20 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                 }
               </div>
             }
+=======
+                  locale="pt-BR"
+                  mode="decimal"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2">
+              </p-inputNumber>
+              @if (modoEdicao && contaSelecionada?.sincronizada) {
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2">
+                  <span>ℹ️</span>
+                  <span>Esta conta é sincronizada via Open Finance. O saldo é atualizado automaticamente pelo banco.</span>
+                </div>
+              }
+            </div>
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 
             <!-- PALETA DE CORES RÁPIDAS + SELETOR DE COR DESTACADO -->
             <div class="flex flex-col gap-2">
@@ -504,7 +531,10 @@ export class ContasComponent implements OnInit {
 
   carregandoContas: boolean = true;
   sincronizandoOpenFinance: boolean = false;
+<<<<<<< HEAD
   openFinanceConectado: boolean = false;
+=======
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   contaFinanceiraDados: IContas[] = [];
   contaSelecionadaIndex: number = 0;
   contaAnterior: number = 0;
@@ -821,6 +851,7 @@ export class ContasComponent implements OnInit {
   abrirDialog(): void {
     this.modoEdicao = false;
     this.idContaEdicao = null;
+<<<<<<< HEAD
     this.bancoDetectado = null;
     this.corCustomizadaManualmente = false;
     this.formContaFinanceira.get('saldo')?.enable();
@@ -834,6 +865,10 @@ export class ContasComponent implements OnInit {
       limiteTotal: null
     });
     this.atualizarStringsExibicaoMonetaria();
+=======
+    this.formContaFinanceira.get('saldo')?.enable();
+    this.formContaFinanceira.reset({ nome: '', saldo: 0, cor: 'FFDE59', moeda: 'BRL' });
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
     this.exibirDialog = true;
   }
 
@@ -841,8 +876,11 @@ export class ContasComponent implements OnInit {
     if (!conta) return;
     this.modoEdicao = true;
     this.idContaEdicao = conta.id ?? null;
+<<<<<<< HEAD
     this.corCustomizadaManualmente = true;
     this.bancoDetectado = conta.nome ? mapearNomeBanco(conta.nome) : null;
+=======
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
     if (conta.sincronizada) {
       this.formContaFinanceira.get('saldo')?.disable();
     } else {
@@ -861,6 +899,7 @@ export class ContasComponent implements OnInit {
   }
 
   sincronizarOpenFinance(): void {
+<<<<<<< HEAD
     if (!this.openFinanceConectado) {
       this.messageService.add({
         severity: 'info',
@@ -872,28 +911,44 @@ export class ContasComponent implements OnInit {
       return;
     }
 
+=======
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
     if (this.sincronizandoOpenFinance) return;
 
     this.sincronizandoOpenFinance = true;
     this.integracoesService.sincronizarOpenFinanceManual().subscribe({
       next: (status) => {
         this.sincronizandoOpenFinance = false;
+<<<<<<< HEAD
         this.messageService.add({
           severity: 'success',
           summary: 'Sincronização concluída',
           detail: 'Contas e transações bancárias atualizadas com sucesso via Open Finance!',
           life: 3500
+=======
+        const restantes = status.syncsRestantesHoje ?? status.sincronizacoesRestantesHoje ?? 0;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sincronização concluída',
+          detail: `Contas e transações atualizadas! Restantes hoje: ${restantes}/${status.limiteDiario}`,
+          life: 4000
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
         });
         this.listarContas();
       },
       error: (err) => {
         this.sincronizandoOpenFinance = false;
+<<<<<<< HEAD
         if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta')) || (err.error?.error && err.error.error.includes('Nenhuma conta'))) {
           this.openFinanceConectado = false;
+=======
+        if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta'))) {
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
           this.messageService.add({
             severity: 'info',
             summary: 'Conectar Open Finance',
             detail: 'Nenhuma conta bancária conectada. Redirecionando para Integrações...',
+<<<<<<< HEAD
             life: 3000
           });
           setTimeout(() => {
@@ -903,6 +958,17 @@ export class ContasComponent implements OnInit {
         }
 
         const msg = err.error?.message || err.error?.error || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
+=======
+            life: 4000
+          });
+          setTimeout(() => {
+            this.router.navigate(['/perfil'], { queryParams: { aba: 'integracoes' } });
+          }, 1200);
+          return;
+        }
+
+        const msg = err.error?.message || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
         this.messageService.add({
           severity: 'error',
           summary: 'Erro na sincronização',

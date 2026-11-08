@@ -25,7 +25,13 @@ export interface IContas {
 
 export function ehCartaoCredito(conta?: IContas | null): boolean {
   if (!conta) return false;
+<<<<<<< HEAD
   return conta.tipoConta === 'CARTAO_CREDITO';
+=======
+  if (conta.tipoConta === 'CARTAO_CREDITO') return true;
+  const n = (conta.nome || '').toLowerCase();
+  return n.includes('cartão') || n.includes('cartao') || n.includes('credit') || n.includes('card');
+>>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 }
 
 export interface IContasRequest {

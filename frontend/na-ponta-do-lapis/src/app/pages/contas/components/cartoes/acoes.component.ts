@@ -1,5 +1,4 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
 import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 
 @Component({
@@ -12,9 +11,8 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
       <p-button
         label="Nova Conta"
         icon="pi pi-plus"
-        pTooltip="Cadastrar nova conta manual"
-        tooltipPosition="bottom"
-        styleClass="h-9 px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap btn-npl-primary shadow-xs"
+        class="rounded-xl"
+        [style]="{'background-color': '#10b981', 'border-color': '#10b981'}"
         (click)="onAdicionar.emit()">
       </p-button>
 
@@ -37,23 +35,11 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
       </p-button>
 
       <p-button
-        *ngIf="openFinanceConectado"
-        label="Sincronizar"
+        label="Open Finance"
         icon="pi pi-sync"
-        pTooltip="Sincronizar dados das contas via Open Finance"
-        tooltipPosition="bottom"
+        class="rounded-xl"
         [loading]="sincronizandoOpenFinance"
-        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap btn-soft-edit-npl shadow-2xs"
-        (click)="onSincronizarOpenFinance.emit()">
-      </p-button>
-
-      <p-button
-        *ngIf="!openFinanceConectado"
-        label="Conectar Banco"
-        icon="pi pi-link"
-        pTooltip="Conectar banco via Open Finance"
-        tooltipPosition="bottom"
-        styleClass="h-9 px-3.5 py-1.5 text-xs sm:text-sm font-bold rounded-xl! whitespace-nowrap bg-[#FEF9E7]! text-[#B45309]! border-[#EEC046]! hover:bg-[#FDF3D0]! shadow-xs"
+        [style]="{'background-color': '#e0e7ff', 'color': '#4338ca', 'border-color': '#4338ca'}"
         (click)="onSincronizarOpenFinance.emit()">
       </p-button>
 
@@ -63,11 +49,12 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 export class AcoesCartoesComponent {
 
   @Input() sincronizandoOpenFinance: boolean = false;
-  @Input() openFinanceConectado: boolean = false;
 
   @Output() onAdicionar = new EventEmitter<void>();
   @Output() onEditar = new EventEmitter<void>();
   @Output() onExcluir = new EventEmitter<void>();
+  @Output() onSincronizarOpenFinance = new EventEmitter<void>();
+
   @Output() onSincronizarOpenFinance = new EventEmitter<void>();
 
 }
