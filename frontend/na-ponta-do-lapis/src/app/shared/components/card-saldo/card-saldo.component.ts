@@ -2,7 +2,7 @@ import { ChangeDetectorRef, Component, inject, Input, OnChanges, OnInit, SimpleC
 import { PrimeNGModuleModule } from '../../primeNg.module';
 import { ContaFinanceiraService } from '../../../pages/contas/service/contas.service';
 import { TransacoesService } from '../../../pages/transacoes/service/transacoes.service';
-import { IContas } from '../../../model/IContas.models';
+import { IContas, ehCartaoCredito } from '../../../model/IContas.models';
 import { ITransacoes } from '../../../model/ITransacoes.model';
 import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
@@ -33,7 +33,18 @@ export class CardSaldoComponent implements OnInit, OnChanges {
   saldoFinal: number = 0;
   variacaoPercentual: number = 0;
 
-  headerFinal: string = 'Saldo atual';
+  totalDinheiroContas: number = 0;
+  totalFaturasCartoes: number = 0;
+  balancoLiquido: number = 0;
+  contaSelecionadaEhCartao: boolean = false;
+  contaSelecionadaNome: string = '';
+  faturaFechadaSelecionada: number = 0;
+  faturaAbertaSelecionada: number = 0;
+  vencimentoFaturaSelecionada: string | null = null;
+  limiteDisponivelSelecionado: number | null = null;
+  limiteTotalSelecionado: number | null = null;
+
+  headerFinal: string = 'Balanço líquido atual';
   subtituloInicial: string = 'Referente ao início do período';
   subtituloFinal: string = 'Disponível em suas contas';
   rodapeInicial: string = '';
@@ -87,19 +98,39 @@ export class CardSaldoComponent implements OnInit, OnChanges {
     let saldoBaseAtual = 0;
     let transacoesFiltradas = this.todasTransacoes;
 
+    const contasCorrentes = this.contas.filter(c => !ehCartaoCredito(c));
+    const contasCartao = this.contas.filter(c => ehCartaoCredito(c));
+
+    this.totalDinheiroContas = contasCorrentes.reduce((acc, c) => acc + (Number(c.saldo) || 0), 0);
+    this.totalFaturasCartoes = contasCartao.reduce((acc, c) => acc + (Number(c.saldo) || 0), 0);
+    this.balancoLiquido = this.totalDinheiroContas - this.totalFaturasCartoes;
+
     if (this.contaId !== null) {
       const contaSelecionada = this.contas.find(c => c.id === this.contaId);
-      saldoBaseAtual = contaSelecionada ? Number(contaSelecionada.saldo) || 0 : 0;
+      this.contaSelecionadaNome = contaSelecionada?.nome || 'Conta';
+      this.contaSelecionadaEhCartao = ehCartaoCredito(contaSelecionada);
+      if (this.contaSelecionadaEhCartao) {
+        this.faturaFechadaSelecionada = Number(contaSelecionada?.valorFaturaFechada ?? contaSelecionada?.saldo ?? 0);
+        this.faturaAbertaSelecionada = Number(contaSelecionada?.valorFaturaAberta ?? 0);
+        this.vencimentoFaturaSelecionada = contaSelecionada?.dataVencimentoFatura ?? null;
+        this.limiteDisponivelSelecionado = contaSelecionada?.limiteDisponivel ?? null;
+        this.limiteTotalSelecionado = contaSelecionada?.limiteTotal ?? null;
+        saldoBaseAtual = -(Number(contaSelecionada?.saldo) || 0);
+      } else {
+        saldoBaseAtual = contaSelecionada ? Number(contaSelecionada.saldo) || 0 : 0;
+      }
       transacoesFiltradas = this.todasTransacoes.filter(t => t.conta?.id === this.contaId);
     } else {
-      saldoBaseAtual = this.contas.reduce((acc, c) => acc + (Number(c.saldo) || 0), 0);
+      this.contaSelecionadaEhCartao = false;
+      this.contaSelecionadaNome = '';
+      saldoBaseAtual = this.balancoLiquido;
     }
 
     if (this.contas.length === 0) {
       this.saldoInicial = 0;
       this.saldoFinal = 0;
       this.variacaoPercentual = 0;
-      this.headerFinal = 'Saldo atual';
+      this.headerFinal = 'Balanço líquido atual';
       this.subtituloInicial = 'Referente ao início do período';
       this.subtituloFinal = 'Disponível em suas contas';
       this.rodapeInicial = 'Sem contas cadastradas';
@@ -183,8 +214,13 @@ export class CardSaldoComponent implements OnInit, OnChanges {
     // Saldo Final: se o período encerrou no passado, desfaz movimentações após dataFim
     if (dataFim === null || dataFim >= agora) {
       this.saldoFinal = saldoBaseAtual;
-      this.headerFinal = 'Saldo atual';
-      this.subtituloFinal = this.contaId !== null ? 'Disponível na conta selecionada' : 'Disponível em suas contas';
+      if (this.contaId !== null) {
+        this.headerFinal = this.contaSelecionadaEhCartao ? 'Fatura atual' : 'Saldo atual';
+        this.subtituloFinal = this.contaSelecionadaEhCartao ? 'Fatura acumulada no cartão' : 'Disponível na conta selecionada';
+      } else {
+        this.headerFinal = 'Balanço líquido atual';
+        this.subtituloFinal = 'Dinheiro em contas menos faturas';
+      }
     } else {
       let receitasAposFim = 0;
       let despesasAposFim = 0;
@@ -199,7 +235,7 @@ export class CardSaldoComponent implements OnInit, OnChanges {
         }
       });
       this.saldoFinal = saldoBaseAtual - receitasAposFim + despesasAposFim;
-      this.headerFinal = 'Saldo final';
+      this.headerFinal = 'Balanço final';
       this.subtituloFinal = `Posição em ${this.formatarData(dataFim)}`;
     }
 

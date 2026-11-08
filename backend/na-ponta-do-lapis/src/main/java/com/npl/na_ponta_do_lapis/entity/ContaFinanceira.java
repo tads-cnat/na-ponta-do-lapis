@@ -1,9 +1,11 @@
 package com.npl.na_ponta_do_lapis.entity;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 
 import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
+import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,6 +58,31 @@ public class ContaFinanceira {
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
+
+    @Column(name = "sincronizada", nullable = false, columnDefinition = "boolean default false")
+    private boolean sincronizada = false;
+
+    @Column(name = "pluggy_account_id", length = 100)
+    private String pluggyAccountId;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "tipo_conta", length = 30)
+    private TipoConta tipoConta = TipoConta.CONTA_CORRENTE;
+
+    @Column(name = "limite_total", precision = 19, scale = 2)
+    private BigDecimal limiteTotal;
+
+    @Column(name = "limite_disponivel", precision = 19, scale = 2)
+    private BigDecimal limiteDisponivel;
+
+    @Column(name = "valor_fatura_fechada", precision = 19, scale = 2)
+    private BigDecimal valorFaturaFechada;
+
+    @Column(name = "valor_fatura_aberta", precision = 19, scale = 2)
+    private BigDecimal valorFaturaAberta;
+
+    @Column(name = "data_vencimento_fatura")
+    private LocalDate dataVencimentoFatura;
 
     @Override
     public boolean equals(Object o) {
@@ -115,6 +142,70 @@ public class ContaFinanceira {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    public boolean isSincronizada() {
+        return sincronizada;
+    }
+
+    public void setSincronizada(boolean sincronizada) {
+        this.sincronizada = sincronizada;
+    }
+
+    public String getPluggyAccountId() {
+        return pluggyAccountId;
+    }
+
+    public void setPluggyAccountId(String pluggyAccountId) {
+        this.pluggyAccountId = pluggyAccountId;
+    }
+
+    public TipoConta getTipoConta() {
+        return tipoConta;
+    }
+
+    public void setTipoConta(TipoConta tipoConta) {
+        this.tipoConta = tipoConta;
+    }
+
+    public BigDecimal getLimiteTotal() {
+        return limiteTotal;
+    }
+
+    public void setLimiteTotal(BigDecimal limiteTotal) {
+        this.limiteTotal = limiteTotal;
+    }
+
+    public BigDecimal getLimiteDisponivel() {
+        return limiteDisponivel;
+    }
+
+    public void setLimiteDisponivel(BigDecimal limiteDisponivel) {
+        this.limiteDisponivel = limiteDisponivel;
+    }
+
+    public BigDecimal getValorFaturaFechada() {
+        return valorFaturaFechada;
+    }
+
+    public void setValorFaturaFechada(BigDecimal valorFaturaFechada) {
+        this.valorFaturaFechada = valorFaturaFechada;
+    }
+
+    public BigDecimal getValorFaturaAberta() {
+        return valorFaturaAberta;
+    }
+
+    public void setValorFaturaAberta(BigDecimal valorFaturaAberta) {
+        this.valorFaturaAberta = valorFaturaAberta;
+    }
+
+    public LocalDate getDataVencimentoFatura() {
+        return dataVencimentoFatura;
+    }
+
+    public void setDataVencimentoFatura(LocalDate dataVencimentoFatura) {
+        this.dataVencimentoFatura = dataVencimentoFatura;
     }
 
     @Override

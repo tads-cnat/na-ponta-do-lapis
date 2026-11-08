@@ -1,29 +1,52 @@
-<div [formGroup]="perfilForm" class="w-full h-full bg-[#ffffff] rounded-[20px] p-10 flex flex-col font-sans shadow-sm justify-between">
-  
-  <h1 class="text-black font-extrabold text-3xl tracking-tight mb-8">
-    Ajustes do perfil
-  </h1>
+<div class="w-full min-h-full bg-[#ffffff] rounded-[20px] p-8 md:p-10 flex flex-col font-sans shadow-sm"
+     [ngClass]="abaAtiva === 'dados' ? 'justify-between' : 'justify-start gap-8'">
 
-  <div class="flex-1 flex flex-col justify-between w-full mb-8">
-    
-    <app-formulario-secao 
-      titulo="Detalhes" 
-      [campos]="camposDetalhes"
-      [formGroupPai]="perfilForm"
-      class="w-full block [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2">
-    </app-formulario-secao>
+  <div class="w-full flex flex-col">
+    <!-- Tabs Header -->
+    <div class="flex items-center gap-6 border-b border-slate-200 mb-8">
+      <button type="button"
+              (click)="abaAtiva = 'dados'"
+              [ngClass]="abaAtiva === 'dados' ? 'text-slate-900 border-indigo-600 font-extrabold' : 'text-slate-400 border-transparent font-medium hover:text-slate-600'"
+              class="pb-3 text-xl md:text-2xl tracking-tight border-b-2 transition-all cursor-pointer">
+        Ajustes do perfil
+      </button>
 
-    <app-formulario-secao 
-      titulo="Senha" 
-      [campos]="camposSenha"
-      [formGroupPai]="perfilForm"
-      class="w-full block [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2">
-    </app-formulario-secao>
-    
+      <button type="button"
+              (click)="abaAtiva = 'integracoes'"
+              [ngClass]="abaAtiva === 'integracoes' ? 'text-slate-900 border-indigo-600 font-extrabold' : 'text-slate-400 border-transparent font-medium hover:text-slate-600'"
+              class="pb-3 text-xl md:text-2xl tracking-tight border-b-2 transition-all cursor-pointer flex items-center gap-2">
+        <span>Conexões & IA</span>
+        <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">Novo</span>
+      </button>
+    </div>
+
+    <!-- Conteúdo Aba 1: Dados do Perfil -->
+    <div *ngIf="abaAtiva === 'dados'" [formGroup]="perfilForm" class="flex flex-col justify-between w-full">
+      <div class="flex-1 flex flex-col justify-between w-full mb-8">
+        <app-formulario-secao 
+          titulo="Detalhes" 
+          [campos]="camposDetalhes"
+          [formGroupPai]="perfilForm"
+          class="w-full block [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2">
+        </app-formulario-secao>
+
+        <app-formulario-secao 
+          titulo="Senha" 
+          [campos]="camposSenha"
+          [formGroupPai]="perfilForm"
+          class="w-full block [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2">
+        </app-formulario-secao>
+      </div>
+
+      <app-botoes-acao 
+        (cliqueSalvar)="salvarMudancas()">
+      </app-botoes-acao>
+    </div>
+
+    <!-- Conteúdo Aba 2: Integrações e Chaves de API -->
+    <div *ngIf="abaAtiva === 'integracoes'" class="w-full">
+      <app-integracoes-perfil></app-integracoes-perfil>
+    </div>
   </div>
-
-  <app-botoes-acao 
-    (cliqueSalvar)="salvarMudancas()">
-  </app-botoes-acao>
 
 </div>

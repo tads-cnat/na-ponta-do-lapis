@@ -1,53 +1,221 @@
-<div class="flex flex-col sm:flex-row gap-4 sm:gap-10 md:gap-16 lg:gap-24 justify-center items-start w-full max-w-7xl mx-auto px-4 md:px-8">
+<div class="w-full max-w-7xl mx-auto px-4 md:px-8">
     
-    <!-- Card: Saldo Inicial -->
-    <div class="w-full sm:w-[380px]">
-        <p-card header="Saldo inicial" styleClass="w-full relative shadow-sm">
-            <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
+    <!-- VISÃO GERAL (TODAS AS CONTAS) — TRÍADE FINANCEIRA -->
+    @if (contaId === null) {
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
             
-            <div class="flex flex-col gap-2 mt-1 pr-16"> 
-                <div>
-                    <p class="text-xs text-gray-500 mb-0.5">{{ subtituloInicial }}</p>
-                    <span class="font-bold text-3xl tracking-tight text-gray-800">{{ saldoInicial | currency : 'BRL' }}</span>
-                </div> 
-                
-                <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
-                    <span class="text-gray-400">{{ rodapeInicial }}</span>
+            <!-- Card 1: Dinheiro em Contas -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                            <i class="pi pi-wallet text-base"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Dinheiro em Contas</span>
+                            <p class="text-[11px] text-slate-400">Total disponível no banco</p>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </p-card>
-    </div>
 
-    <!-- Card: Saldo Atual / Final -->
-    <div class="w-full sm:w-[380px]">
-        <p-card [header]="headerFinal" styleClass="w-full relative shadow-sm">
-            <img src="Icon-pessoa.svg" alt="Pessoa" class="absolute top-1/2 -translate-y-1/2 right-6 w-10 h-10 opacity-80">
-            
-            <div class="flex flex-col gap-2 mt-1 pr-16"> 
-                <div>
-                    <p class="text-xs text-gray-500 mb-0.5">{{ subtituloFinal }}</p>
-                    <span class="font-bold text-3xl tracking-tight text-gray-900">{{ saldoFinal | currency : 'BRL' }}</span>
-                </div>
-                
-                <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
-                    @if (variacaoPercentual > 0) {
-                        <span class="flex items-center gap-1">
-                            <img src="ic-treding-up.svg" alt="icon alta" class="w-3.5 h-3.5"> 
-                            <span class="text-emerald-500 font-semibold">+{{ variacaoPercentual | number:'1.1-1' }}%</span>
-                        </span>
-                        <span class="text-gray-400">no período</span>
-                    } @else if (variacaoPercentual < 0) {
-                        <span class="flex items-center gap-1">
-                            <img src="ic-trending-down.svg" alt="icon baixa" class="w-3.5 h-3.5"> 
-                            <span class="text-rose-500 font-semibold">{{ variacaoPercentual | number:'1.1-1' }}%</span>
-                        </span>
-                        <span class="text-gray-400">no período</span>
-                    } @else {
-                        <span class="text-gray-400">Sem variação no período</span>
-                    }
+                <div class="mt-1">
+                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-emerald-700">
+                        {{ totalDinheiroContas | currency : 'BRL' }}
+                    </span>
+                    <p class="text-xs text-slate-500 mt-1">Soma de contas correntes</p>
                 </div>
             </div>
-        </p-card>
-    </div>
+
+            <!-- Card 2: Saldo Devedor Pendente (Faturas) -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-rose-100 flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
+                            <i class="pi pi-credit-card text-base"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-rose-800">Saldo Devedor Pendente</span>
+                            <p class="text-[11px] text-slate-400">Total a pagar nos cartões</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-1">
+                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-rose-600">
+                        - {{ totalFaturasCartoes | currency : 'BRL' }}
+                    </span>
+                    <p class="text-xs text-slate-500 mt-1">Faturas acumuladas em aberto</p>
+                </div>
+            </div>
+
+            <!-- Card 3: Balanço Líquido -->
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between relative overflow-hidden">
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <div class="w-9 h-9 rounded-xl bg-purple-100 text-[#7843cd] flex items-center justify-center">
+                            <i class="pi pi-chart-line text-base"></i>
+                        </div>
+                        <div>
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#7843cd]">Balanço Líquido</span>
+                            <p class="text-[11px] text-slate-400">Patrimônio líquido real</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-1">
+                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight"
+                          [ngClass]="balancoLiquido >= 0 ? 'text-slate-900' : 'text-rose-600'">
+                        {{ balancoLiquido | currency : 'BRL' }}
+                    </span>
+                    <div class="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                        @if (variacaoPercentual > 0) {
+                            <span class="text-emerald-600 font-semibold flex items-center gap-0.5">
+                                <i class="pi pi-arrow-up-right text-[10px]"></i>+{{ variacaoPercentual | number:'1.1-1' }}%
+                            </span>
+                            <span>no período</span>
+                        } @else if (variacaoPercentual < 0) {
+                            <span class="text-rose-600 font-semibold flex items-center gap-0.5">
+                                <i class="pi pi-arrow-down-right text-[10px]"></i>{{ variacaoPercentual | number:'1.1-1' }}%
+                            </span>
+                            <span>no período</span>
+                        } @else {
+                            <span>Sem variação no período</span>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    }
+
+    <!-- VISÃO CONTEXTUAL DE UMA CONTA ESPECÍFICA -->
+    @if (contaId !== null) {
+        
+        <!-- SE A CONTA SELECIONADA FOR UM CARTÃO DE CRÉDITO -->
+        @if (contaSelecionadaEhCartao) {
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
+                
+                <!-- Card 1: Fatura Fechada (A Pagar Agora) -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-rose-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+                                <i class="pi pi-exclamation-circle text-xs"></i>
+                                Fatura Fechada (A Pagar)
+                            </span>
+                            <span class="text-[10px] font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full">
+                                Pagar Agora
+                            </span>
+                        </div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-rose-600">
+                            - {{ faturaFechadaSelecionada | currency : 'BRL' }}
+                        </span>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-rose-100 text-xs text-rose-600 flex items-center justify-between">
+                        <span>{{ vencimentoFaturaSelecionada ? ('Vencimento: ' + (vencimentoFaturaSelecionada | date:'dd/MM/yyyy')) : 'Aguardando vencimento' }}</span>
+                        <i class="pi pi-calendar text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Card 2: Fatura em Aberto (Próximo Mês) -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-amber-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
+                                <i class="pi pi-clock text-xs"></i>
+                                Fatura em Aberto (Próximo Mês)
+                            </span>
+                            <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">
+                                Em Aberto
+                            </span>
+                        </div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-amber-900">
+                            - {{ faturaAbertaSelecionada | currency : 'BRL' }}
+                        </span>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-amber-100 text-xs text-amber-700 flex items-center justify-between">
+                        <span>Lançamentos para o próximo ciclo</span>
+                        <i class="pi pi-shopping-bag text-xs"></i>
+                    </div>
+                </div>
+
+                <!-- Card 3: Total Devedor & Limite Disponível -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#7843cd] flex items-center gap-1.5">
+                                <i class="pi pi-credit-card text-xs"></i>
+                                Total Devedor & Limite
+                            </span>
+                            <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
+                                Consolidado
+                            </span>
+                        </div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900">
+                            - {{ (faturaFechadaSelecionada + faturaAbertaSelecionada) | currency : 'BRL' }}
+                        </span>
+                    </div>
+                    <div class="mt-3 pt-2 border-t border-purple-100 text-xs text-slate-600 flex items-center justify-between">
+                        <span>Disp.: <strong class="text-emerald-600">{{ (limiteDisponivelSelecionado ?? (limiteTotalSelecionado ? limiteTotalSelecionado - (faturaFechadaSelecionada + faturaAbertaSelecionada) : 0)) | currency : 'BRL' }}</strong></span>
+                        @if (limiteTotalSelecionado) {
+                            <span class="text-slate-400">Total: {{ limiteTotalSelecionado | currency : 'BRL' }}</span>
+                        }
+                    </div>
+                </div>
+
+            </div>
+        } @else {
+            <!-- SE A CONTA SELECIONADA FOR CONTA BANCÁRIA / CORRENTE -->
+            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-stretch max-w-4xl mx-auto">
+                
+                <!-- Card: Saldo Inicial -->
+                <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ subtituloInicial }}</p>
+                        <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-semibold">Inicial</span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-800">
+                            {{ saldoInicial | currency : 'BRL' }}
+                        </span>
+                        <p class="text-xs text-slate-400 mt-1">{{ rodapeInicial }}</p>
+                    </div>
+                </div>
+
+                <!-- Card: Saldo Atual da Conta -->
+                <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
+                    <div class="flex items-center justify-between mb-2">
+                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
+                            {{ headerFinal }} ({{ contaSelecionadaNome }})
+                        </p>
+                        <span class="text-xs px-2 py-0.5 rounded-md font-semibold bg-emerald-100 text-emerald-700">
+                            Saldo Atual
+                        </span>
+                    </div>
+                    <div class="mt-2">
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900">
+                            {{ saldoFinal | currency : 'BRL' }}
+                        </span>
+                        <div class="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                            @if (variacaoPercentual > 0) {
+                                <span class="text-emerald-600 font-semibold flex items-center gap-0.5">
+                                    <i class="pi pi-arrow-up-right text-[10px]"></i>+{{ variacaoPercentual | number:'1.1-1' }}%
+                                </span>
+                                <span>no período</span>
+                            } @else if (variacaoPercentual < 0) {
+                                <span class="text-rose-600 font-semibold flex items-center gap-0.5">
+                                    <i class="pi pi-arrow-down-right text-[10px]"></i>{{ variacaoPercentual | number:'1.1-1' }}%
+                                </span>
+                                <span>no período</span>
+                            } @else {
+                                <span>Sem variação no período</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        }
+    }
 
 </div>

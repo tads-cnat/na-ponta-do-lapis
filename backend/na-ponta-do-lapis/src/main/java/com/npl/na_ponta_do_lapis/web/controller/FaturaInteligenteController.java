@@ -14,15 +14,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.npl.na_ponta_do_lapis.entity.ChaveIaUsuario;
+import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.service.ChaveIaService;
 import com.npl.na_ponta_do_lapis.service.fatura.CredencialIa;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseService;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaSessionCookieHelper;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.ProvedorIa;
+import com.npl.na_ponta_do_lapis.web.dto.ChaveIaRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FaturaAnaliseResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FaturaErroDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FaturaSessaoDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FaturaValidacaoPreviaDTO;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -40,11 +45,14 @@ public class FaturaInteligenteController {
 
     private final FaturaAnaliseService faturaAnaliseService;
     private final FaturaSessionCookieHelper cookieHelper;
+    private final ChaveIaService chaveIaService;
 
     public FaturaInteligenteController(FaturaAnaliseService faturaAnaliseService,
-                                       FaturaSessionCookieHelper cookieHelper) {
+                                       FaturaSessionCookieHelper cookieHelper,
+                                       ChaveIaService chaveIaService) {
         this.faturaAnaliseService = faturaAnaliseService;
         this.cookieHelper = cookieHelper;
+        this.chaveIaService = chaveIaService;
     }
 
     @Operation(summary = "Extrair transações de uma fatura PDF",
@@ -70,11 +78,15 @@ public class FaturaInteligenteController {
             @RequestParam("arquivo") MultipartFile arquivo,
             @RequestParam(value = "provedor", required = false) String provedor,
             @RequestParam(value = "apiKey", required = false) String apiKey,
+            @RequestParam(value = "chaveIaId", required = false) Long chaveIaId,
+            @RequestParam(value = "salvarChave", defaultValue = "false") boolean salvarChave,
+            @RequestParam(value = "apelidoChave", required = false) String apelidoChave,
             @RequestParam(value = "manterNaSessao", defaultValue = "false") boolean manterNaSessao,
             @RequestParam(value = "usarIa", defaultValue = "false") boolean usarIa,
             @RequestParam(value = "enviarPdfParaIa", defaultValue = "false") boolean enviarPdfParaIa,
             @RequestParam(value = "consentimentoLgpd", defaultValue = "false") boolean consentimentoLgpd,
             @RequestParam(value = "senha", required = false) String senha,
+            @AuthenticationPrincipal Usuario usuario,
             HttpServletRequest request,
             HttpServletResponse response) {
 
@@ -95,18 +107,35 @@ public class FaturaInteligenteController {
             String chaveEfetiva;
             boolean chaveVeioDoCookie = false;
 
-            if (chaveInformada) {
+            if (chaveIaId != null && usuario != null) {
+                ChaveIaUsuario chaveSalva = chaveIaService.obterEntidade(usuario, chaveIaId);
+                provedorEfetivo = chaveSalva.getProvedor();
+                chaveEfetiva = chaveIaService.obterChaveDecifrada(usuario, chaveIaId);
+            } else if (chaveInformada) {
                 provedorEfetivo = provedorRequisicao != null
                         ? provedorRequisicao
                         : credencial.map(CredencialIa::provedor).orElse(ProvedorIa.GEMINI);
                 chaveEfetiva = apiKey;
-            } else if (podeUsarCredencialDaSessao) {
-                provedorEfetivo = credencial.get().provedor();
-                chaveEfetiva = credencial.get().apiKey();
-                chaveVeioDoCookie = true;
+
+                if (salvarChave && usuario != null) {
+                    String apelido = (apelidoChave != null && !apelidoChave.isBlank())
+                            ? apelidoChave.trim()
+                            : "Chave " + provedorEfetivo.getNomeExibicao();
+                    chaveIaService.cadastrarChave(usuario, new ChaveIaRequestDTO(apelido, provedorEfetivo, apiKey, false));
+                }
             } else {
-                provedorEfetivo = provedorRequisicao != null ? provedorRequisicao : ProvedorIa.GEMINI;
-                chaveEfetiva = null;
+                Optional<ChaveIaUsuario> chavePadrao = usuario != null ? chaveIaService.obterChavePadrao(usuario) : Optional.empty();
+                if (chavePadrao.isPresent()) {
+                    provedorEfetivo = chavePadrao.get().getProvedor();
+                    chaveEfetiva = chaveIaService.obterChaveDecifrada(usuario, chavePadrao.get().getId());
+                } else if (podeUsarCredencialDaSessao) {
+                    provedorEfetivo = credencial.get().provedor();
+                    chaveEfetiva = credencial.get().apiKey();
+                    chaveVeioDoCookie = true;
+                } else {
+                    provedorEfetivo = provedorRequisicao != null ? provedorRequisicao : ProvedorIa.GEMINI;
+                    chaveEfetiva = null;
+                }
             }
 
             FaturaAnaliseResponseDTO resposta = faturaAnaliseService.analisar(
@@ -133,10 +162,18 @@ public class FaturaInteligenteController {
         }
     }
 
-    @Operation(summary = "Verifica se há chave de IA salva na sessão atual")
+    @Operation(summary = "Verifica se há chave de IA salva na sessão atual ou perfil")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     @GetMapping("/sessao")
-    public ResponseEntity<FaturaSessaoDTO> obterSessao(HttpServletRequest request) {
+    public ResponseEntity<FaturaSessaoDTO> obterSessao(
+            HttpServletRequest request,
+            @AuthenticationPrincipal Usuario usuario) {
+        if (usuario != null) {
+            Optional<ChaveIaUsuario> chavePadrao = chaveIaService.obterChavePadrao(usuario);
+            if (chavePadrao.isPresent()) {
+                return ResponseEntity.ok(new FaturaSessaoDTO(true, chavePadrao.get().getProvedor().name()));
+            }
+        }
         Optional<CredencialIa> credencial = cookieHelper.ler(request);
         return ResponseEntity.ok(new FaturaSessaoDTO(
                 credencial.isPresent(),

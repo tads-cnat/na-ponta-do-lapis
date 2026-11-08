@@ -1,5 +1,5 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
@@ -24,6 +24,8 @@ import { CardSaldoComponent } from '../../shared/components/card-saldo/card-sald
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MarcadorDlgComponent } from '../marcador-dlg/marcador-dlg.component';
+import { IntegracoesService } from '../../service/integracoes.service';
+import { IChaveIaResponse } from '../../model/IIntegracoes.models';
 
 interface GrupoParcelamentoResumo {
   grupoId: string;
@@ -35,7 +37,7 @@ interface GrupoParcelamentoResumo {
 
 @Component({
   selector: 'app-transacoes',
-  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule],
+  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
@@ -76,6 +78,10 @@ export class TransacoesComponent {
   temChaveSalva: boolean = false;
   provedorSalvo: ProvedorIa | null = null;
   carregandoSessaoIa: boolean = false;
+  chavesIaSalvas: IChaveIaResponse[] = [];
+  chaveIaSelecionadaId: number | null = null;
+  modoChaveIa: 'salva' | 'avulsa' = 'salva';
+  salvarChaveTemporaria: boolean = false;
   erroConsentimento: string | null = null;
   arquivoSelecionado: File | null = null;
 
@@ -86,7 +92,10 @@ export class TransacoesComponent {
     if (this.codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA' || !this.faturaPreviaValida) {
       return false;
     }
-    return this.temChaveSalva || !!this.apiKeyIa?.trim();
+    if (this.modoChaveIa === 'salva') {
+      return !!this.chaveIaSelecionadaId || this.temChaveSalva || !!this.apiKeyIa?.trim();
+    }
+    return !!this.apiKeyIa?.trim();
   }
 
   projetarParcelasFuturas: boolean = true;
@@ -183,6 +192,7 @@ export class TransacoesComponent {
   constructor(
     private fb: FormBuilder,
     private transacoesService: TransacoesService,
+    private integracoesService: IntegracoesService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
     private router: Router
@@ -309,6 +319,7 @@ export class TransacoesComponent {
   textoBusca: string = '';
   filtroTipo: 'TODOS' | 'RECEITA' | 'DESPESA' = 'TODOS';
   filtroEstado: 'TODOS' | 'REALIZADA' | 'PENDENTE' = 'TODOS';
+  filtroParcelamento: 'TODOS' | 'PARCELADAS' | 'AVISTA' = 'TODOS';
   filtroContaId: number | null = null;
   filtroCategoriaId: number | null = null;
   filtroMarcadorId: number | null = null;
@@ -325,6 +336,12 @@ export class TransacoesComponent {
     { label: 'Todos os estados', value: 'TODOS' },
     { label: 'Pagas / Realizadas', value: 'REALIZADA' },
     { label: 'Pendentes', value: 'PENDENTE' }
+  ];
+
+  opcoesFiltroParcelamento = [
+    { label: 'Todos os lançamentos', value: 'TODOS' },
+    { label: 'Apenas parceladas', value: 'PARCELADAS' },
+    { label: 'À vista (não parceladas)', value: 'AVISTA' }
   ];
 
   get opcoesFiltroConta(): { id: number | null; nome: string }[] {
@@ -351,6 +368,7 @@ export class TransacoesComponent {
     let count = 0;
     if (this.filtroTipo !== 'TODOS') count++;
     if (this.filtroEstado !== 'TODOS') count++;
+    if (this.filtroParcelamento !== 'TODOS') count++;
     if (this.filtroContaId !== null) count++;
     if (this.filtroCategoriaId !== null) count++;
     if (this.filtroMarcadorId !== null) count++;
@@ -425,6 +443,7 @@ export class TransacoesComponent {
     this.textoBusca = '';
     this.filtroTipo = 'TODOS';
     this.filtroEstado = 'TODOS';
+    this.filtroParcelamento = 'TODOS';
     this.filtroContaId = null;
     this.filtroCategoriaId = null;
     this.filtroMarcadorId = null;
@@ -477,6 +496,13 @@ export class TransacoesComponent {
       lista = lista.filter(t => t.estado === this.filtroEstado);
     }
 
+    // Parcelamentos
+    if (this.filtroParcelamento === 'PARCELADAS') {
+      lista = lista.filter(t => (t.totalParcelas && t.totalParcelas > 1) || (t.numeroParcela && t.numeroParcela > 0) || !!t.grupoParcelamento);
+    } else if (this.filtroParcelamento === 'AVISTA') {
+      lista = lista.filter(t => (!t.totalParcelas || t.totalParcelas <= 1) && !t.numeroParcela && !t.grupoParcelamento);
+    }
+
     // Conta
     if (this.filtroContaId !== null) {
       lista = lista.filter(t => t.conta?.id === this.filtroContaId);
@@ -519,6 +545,10 @@ export class TransacoesComponent {
   public listarTransacoes(): any {
     this.transacoesService.listarTransacoes().subscribe({
       next: (res: ITransacoes[]) => {
+        res.forEach(t => {
+          const v = typeof t.valor === 'number' ? t.valor : parseFloat(String(t.valor || 0));
+          t.valorComSinal = t.tipo === 'DESPESA' ? -v : v;
+        });
         this.transacoesTodas = res;
         if (this.transacoesMarcadas.length > 0) {
           const idsExistentes = new Set(res.map(r => r.id));
@@ -949,12 +979,29 @@ export class TransacoesComponent {
 
   carregarSessaoIa() {
     this.carregandoSessaoIa = true;
+
+    this.integracoesService.listarChavesIa().subscribe({
+      next: (chaves) => {
+        this.chavesIaSalvas = chaves;
+        if (chaves.length > 0) {
+          const padrao = chaves.find(c => c.padrao) || chaves[0];
+          this.chaveIaSelecionadaId = padrao.id;
+          this.modoChaveIa = 'salva';
+          this.provedorSelecionado = padrao.provedor;
+        } else {
+          this.modoChaveIa = 'avulsa';
+        }
+        this.cdr.detectChanges();
+      },
+      error: () => {}
+    });
+
     this.transacoesService.obterSessaoIa().subscribe({
       next: (res) => {
         this.carregandoSessaoIa = false;
         this.temChaveSalva = res.temChaveSalva;
         this.provedorSalvo = res.provedor;
-        if (this.temChaveSalva && res.provedor) {
+        if (this.temChaveSalva && res.provedor && !this.chaveIaSelecionadaId) {
           this.provedorSelecionado = res.provedor;
         }
         this.cdr.detectChanges();
@@ -1080,7 +1127,9 @@ export class TransacoesComponent {
 
     const opcoes: FaturaAnaliseOpcoes = {
       provedor: this.provedorSelecionado,
-      apiKey: this.apiKeyIa?.trim() || undefined,
+      apiKey: this.modoChaveIa === 'avulsa' ? (this.apiKeyIa?.trim() || undefined) : undefined,
+      chaveIaId: this.modoChaveIa === 'salva' ? (this.chaveIaSelecionadaId ?? undefined) : undefined,
+      salvarChave: this.modoChaveIa === 'avulsa' ? this.salvarChaveTemporaria : false,
       senha: this.senhaPdf?.trim() || undefined,
       manterNaSessao: this.manterNaSessao,
       usarIa: this.usarIa,

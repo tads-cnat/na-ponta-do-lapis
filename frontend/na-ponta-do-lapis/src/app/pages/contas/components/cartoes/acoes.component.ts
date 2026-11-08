@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 
 @Component({
@@ -11,9 +11,8 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         label="Adicionar"
         icon="pi pi-plus"
         class="rounded-xl"
-        [style]="{ 'background-color': '#10b981', 'border-color': '#10b981', color: '#ffffff' }"
-        (click)="onAdicionar.emit()"
-      >
+        [style]="{'background-color': '#10b981', 'border-color': '#10b981'}"
+        (click)="onAdicionar.emit()">
       </p-button>
 
       <p-button
@@ -41,13 +40,29 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         (click)="onExcluir.emit()"
       >
       </p-button>
+
+      <p-button
+        label="Open Finance"
+        icon="pi pi-sync"
+        class="rounded-xl"
+        [loading]="sincronizandoOpenFinance"
+        [style]="{'background-color': '#e0e7ff', 'color': '#4338ca', 'border-color': '#4338ca'}"
+        (click)="onSincronizarOpenFinance.emit()">
+      </p-button>
+
     </div>
   `,
 })
 export class AcoesCartoesComponent {
+
+  @Input() sincronizandoOpenFinance: boolean = false;
+
   @Output() onAdicionar = new EventEmitter<void>();
 
   @Output() onEditar = new EventEmitter<void>();
 
   @Output() onExcluir = new EventEmitter<void>();
+
+  @Output() onSincronizarOpenFinance = new EventEmitter<void>();
+
 }

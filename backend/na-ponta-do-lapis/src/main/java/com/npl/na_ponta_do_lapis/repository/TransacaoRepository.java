@@ -26,4 +26,8 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
     List<Transacao> buscarTransacoesDaFamiliaPorDescricao(@Param("familiaId") Long familiaId, @Param("descricao") String descricao);
 
     List<Transacao> findByGrupoParcelamentoOrderByNumeroParcelaAsc(String grupoParcelamento);
+
+    boolean existsByPluggyTransactionId(String pluggyTransactionId);
+
+    java.util.Optional<Transacao> findByPluggyTransactionId(String pluggyTransactionId);
 }
