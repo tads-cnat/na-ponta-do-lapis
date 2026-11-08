@@ -38,5 +38,12 @@ export const routes: Routes = [
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
+    // Redirecionamentos de conveniência para rotas internas
+    { path: 'perfil', redirectTo: 'app/perfil' },
+    { path: 'dashboard', redirectTo: 'app/dashboard' },
+    { path: 'transacoes', redirectTo: 'app/transacoes' },
+    { path: 'contas', redirectTo: 'app/contas' },
+    { path: 'metas', redirectTo: 'app/metas' },
+    { path: 'familia', redirectTo: 'app/familia' },
     { path: '**', component: NotFoundComponent }
 ];

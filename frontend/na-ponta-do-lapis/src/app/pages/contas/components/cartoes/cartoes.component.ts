@@ -25,6 +25,7 @@ import { CarrosselCartoesComponent } from './carrosselCartoes.component';
         <!-- AÇÕES -->
         <app-acoes-cartoes
           [sincronizandoOpenFinance]="sincronizandoOpenFinance"
+          [openFinanceConectado]="openFinanceConectado"
           (onAdicionar)="onAdicionar.emit()"
           (onEditar)="onEditar.emit()"
           (onExcluir)="onExcluir.emit()"
@@ -60,6 +61,7 @@ export class CartaoContaComponent {
   @Input() contaProxima: number = 0;
   @Input() carregando: boolean = true;
   @Input() sincronizandoOpenFinance: boolean = false;
+  @Input() openFinanceConectado: boolean = false;
 
   // =========================================
   // OUTPUTS
