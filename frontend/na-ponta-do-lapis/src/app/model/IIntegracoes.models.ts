@@ -19,11 +19,13 @@ export interface IChaveIaRequest {
 export interface IOpenFinanceStatus {
   conectado: boolean;
   ultimaSincronizacao: string | null;
-  syncsRestantesHoje: number;
+  syncsRestantesHoje?: number;
   sincronizacoesRestantesHoje?: number;
-  limiteDiario: number;
+  limiteDiario?: number;
   clientIdMascarado?: string | null;
   totalContasSincronizadas?: number;
+  totalItensConectados?: number;
+  limiteItensConexao?: number;
 }
 
 export interface IOpenFinanceConectarRequest {
