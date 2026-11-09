@@ -36,7 +36,8 @@ import java.util.regex.Pattern;
 public class OpenFinanceSyncService {
 
     private static final Logger log = LoggerFactory.getLogger(OpenFinanceSyncService.class);
-    private static final int LIMITE_MANUAL_DIARIO = 5;
+    public static final int COTA_GRATUITA_BANCOS = 5;
+    private static final int COOLDOWN_SEGUNDOS_ENTRE_SYNCS = 15;
 
     private static final Pattern PADRAO_PARCELA_FINAL = Pattern.compile("(?i)(?:^|[\\s\\(\\[\\-])(?:parcela\\s+|parc\\.?\\s*)?(\\d{1,2})\\s*[/]\\s*(\\d{1,2})\\s*[\\)\\]]?\\s*$");
     private static final Pattern PADRAO_PARCELA_TEXTO = Pattern.compile("(?i)(?:parcela|parc\\.?)\\s*(\\d{1,2})\\s*(?:de|[/])\\s*(\\d{1,2})");
@@ -74,14 +75,14 @@ public class OpenFinanceSyncService {
     public OpenFinanceStatusResponseDTO obterStatus(Usuario usuario) {
         Optional<UsuarioPluggyIntegracao> opt = integracaoRepository.findByUsuarioId(usuario.getId());
         if (opt.isEmpty()) {
-            return new OpenFinanceStatusResponseDTO(false, null, LIMITE_MANUAL_DIARIO, LIMITE_MANUAL_DIARIO);
+            return new OpenFinanceStatusResponseDTO(false, null, 99, 99, null, 0, 0, COTA_GRATUITA_BANCOS);
         }
 
         UsuarioPluggyIntegracao integracao = opt.get();
-        int restantes = calcularRestantesHoje(integracao);
         String maskedClient = obterClientIdMascarado(integracao);
         int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
-        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), restantes, LIMITE_MANUAL_DIARIO, maskedClient, totalContas);
+        int totalItens = integracao.getItemIds().size();
+        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
     }
 
     @Transactional(readOnly = true)
@@ -132,6 +133,7 @@ public class OpenFinanceSyncService {
         } catch (Exception e) {
             log.warn("[OpenFinanceSyncService] Conexão Pluggy salva com sucesso, mas a primeira sincronização falhou ou ainda não há contas vinculadas: {}", e.getMessage());
 <<<<<<< HEAD
+<<<<<<< HEAD
             String maskedClient = obterClientIdMascarado(integracao);
             int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
             int totalItens = integracao.getItemIds().size();
@@ -142,6 +144,18 @@ public class OpenFinanceSyncService {
             int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
             return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), restantes, LIMITE_MANUAL_DIARIO, maskedClient, totalContas);
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+            String maskedClient = obterClientIdMascarado(integracao);
+            int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
+            int totalItens = integracao.getItemIds().size();
+            return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
+        }
+    }
+
+    @Transactional
+    public void desconectar(Usuario usuario) {
+        integracaoRepository.findByUsuarioId(usuario.getId()).ifPresent(integracaoRepository::delete);
+>>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
     }
 
     @Transactional
@@ -238,6 +252,9 @@ public class OpenFinanceSyncService {
         resetarContadorSeNecessario(integracao);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
         // Proteção contra múltiplos cliques rápidos em sequência (cooldown de 15s)
         if (integracao.getUltimaSincronizacao() != null) {
             long segundosDesdeUltima = java.time.Duration.between(integracao.getUltimaSincronizacao(), LocalDateTime.now()).getSeconds();
@@ -247,12 +264,15 @@ public class OpenFinanceSyncService {
                         org.springframework.http.HttpStatus.TOO_MANY_REQUESTS,
                         "Por favor, aguarde " + espera + " segundo(s) antes de sincronizar novamente.");
             }
+<<<<<<< HEAD
 =======
         if (integracao.getSincronizacoesManuaisHoje() >= LIMITE_MANUAL_DIARIO) {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.TOO_MANY_REQUESTS,
                     "Você atingiu o limite de " + LIMITE_MANUAL_DIARIO + " sincronizações manuais por hoje. Suas contas serão sincronizadas automaticamente de madrugada.");
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+>>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
         }
 
                 executarSincronizacao(integracao, false);
@@ -529,6 +549,7 @@ public class OpenFinanceSyncService {
         integracaoRepository.save(integracao);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         String maskedClient = obterClientIdMascarado(integracao);
         int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
         int totalItens = integracao.getItemIds().size();
@@ -539,6 +560,12 @@ public class OpenFinanceSyncService {
         int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
         return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), restantes, LIMITE_MANUAL_DIARIO, maskedClient, totalContas);
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+        String maskedClient = obterClientIdMascarado(integracao);
+        int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
+        int totalItens = integracao.getItemIds().size();
+        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
+>>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
     }
 
     private void processarTransacaoPluggy(JsonNode txNode, ContaFinanceira conta) {

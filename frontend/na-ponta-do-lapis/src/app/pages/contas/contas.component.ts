@@ -1062,6 +1062,7 @@ export class ContasComponent implements OnInit {
       next: (status) => {
         this.sincronizandoOpenFinance = false;
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.messageService.add({
           severity: 'success',
           summary: 'Sincronização concluída',
@@ -1075,6 +1076,13 @@ export class ContasComponent implements OnInit {
           detail: `Contas e transações atualizadas! Restantes hoje: ${restantes}/${status.limiteDiario}`,
           life: 4000
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sincronização concluída',
+          detail: 'Contas e transações bancárias atualizadas com sucesso via Open Finance!',
+          life: 3500
+>>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
         });
         this.listarContas();
       },
