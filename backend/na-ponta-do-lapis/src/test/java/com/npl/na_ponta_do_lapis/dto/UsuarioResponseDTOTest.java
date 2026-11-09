@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.dto;
 
 import com.npl.na_ponta_do_lapis.entity.Familia;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
 import org.junit.jupiter.api.Test;
@@ -23,7 +24,8 @@ class UsuarioResponseDTOTest {
 				() -> assertEquals("brunonatanael", dto.username()),
 				() -> assertEquals("foto.png", dto.fotoPerfil()),
 				() -> assertEquals("USUARIO", dto.papel()),
-				() -> assertNull(dto.idFamilia())
+				() -> assertNull(dto.idFamilia()),
+				() -> assertEquals(Moeda.BRL, dto.moedaPadrao())
 		);
 	}
 

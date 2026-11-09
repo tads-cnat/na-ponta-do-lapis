@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 
 import jakarta.persistence.Column;
@@ -63,6 +64,18 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "papel")
     private Papel papel;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "moeda_padrao", length = 3, nullable = false, columnDefinition = "varchar(3) default 'BRL'")
+    private Moeda moedaPadrao = Moeda.BRL;
+
+    public Moeda getMoedaPadrao() {
+        return moedaPadrao != null ? moedaPadrao : Moeda.BRL;
+    }
+
+    public void setMoedaPadrao(Moeda moedaPadrao) {
+        this.moedaPadrao = moedaPadrao != null ? moedaPadrao : Moeda.BRL;
+    }
 
     public String getTelefone() {
         return telefone;

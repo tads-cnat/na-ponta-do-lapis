@@ -14,10 +14,11 @@ import { DatePicker } from 'primeng/datepicker';
 import { Select } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { Textarea } from 'primeng/textarea';
+import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
 
 @Component({
   selector: 'app-metas',
-  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, InputNumber, DatePicker, Select, Textarea, ToastModule],
+  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, InputNumber, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent],
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
 })

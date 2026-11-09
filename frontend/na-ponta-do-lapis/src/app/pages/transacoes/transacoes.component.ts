@@ -21,6 +21,7 @@ import { Marcador, MarcadorRequest } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
+import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MarcadorDlgComponent } from '../marcador-dlg/marcador-dlg.component';
@@ -37,7 +38,7 @@ interface GrupoParcelamentoResumo {
 
 @Component({
   selector: 'app-transacoes',
-  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
+  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
