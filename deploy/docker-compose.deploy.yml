@@ -22,8 +22,9 @@ services:
     environment:
       # Defaults seguros: se a variável não existir no Coolify, não cai no profile local
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
-      # Homolog: update | Produção: validate (o projeto ainda não usa Flyway/Liquibase)
-      SPRING_JPA_HIBERNATE_DDLAUTO: ${SPRING_JPA_HIBERNATE_DDLAUTO:-validate}
+      # Homolog e Produção (pré-lançamento): update por padrão para aplicar novos campos de conta/cartão/IA
+      SPRING_JPA_HIBERNATE_DDLAUTO: ${SPRING_JPA_HIBERNATE_DDLAUTO:-update}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-${SPRING_JPA_HIBERNATE_DDLAUTO:-update}}
       # Homolog: true | Produção: false (evita criar usuários de teste em banco vazio)
       APP_SEED_ENABLED: ${APP_SEED_ENABLED:-false}
       # URL pública do frontend (usada em redirects e na página de erro da API)
