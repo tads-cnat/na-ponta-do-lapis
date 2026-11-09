@@ -154,6 +154,35 @@
             </button>
           </div>
         </div>
+
+        <!-- Tutorial Passo a Passo (Sempre disponível para consulta e novos bancos) -->
+        <div class="mt-2 rounded-2xl border border-indigo-100 bg-indigo-50/40 overflow-hidden transition-all">
+          <button type="button" 
+                  (click)="mostrarTutorialConectado = !mostrarTutorialConectado"
+                  class="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-indigo-50/70 transition-colors cursor-pointer">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-indigo-950">Guia Passo a Passo: Como vincular novos bancos ou obter Item IDs</p>
+                <p class="text-[11px] text-indigo-700">Consulte o tutorial completo para conectar novas contas pelo Meu Pluggy e Dashboard.</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 shrink-0">
+              <span>{{ mostrarTutorialConectado ? 'Ocultar Tutorial' : 'Ver Tutorial Completo' }}</span>
+              <svg class="w-4 h-4 transition-transform duration-200" [class.rotate-180]="mostrarTutorialConectado" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+
+          <div *ngIf="mostrarTutorialConectado" class="p-4 pt-1 border-t border-indigo-100 bg-white/70">
+            <ng-container *ngTemplateOutlet="tutorialOpenFinance"></ng-container>
+          </div>
+        </div>
       </div>
 
       <!-- Barra de Ações Inferior -->
@@ -193,39 +222,7 @@
     <div *ngIf="!carregandoOpenFinance && !openFinanceStatus?.conectado" class="mt-6 flex flex-col gap-6">
 
       <!-- Guia Passo a Passo Intuitivo -->
-      <div class="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex flex-col gap-3">
-        <h4 class="text-sm font-bold text-indigo-950 flex items-center gap-2">
-          <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
-          Como configurar em 3 passos simples:
-        </h4>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs text-indigo-900">
-          <div class="bg-white/80 p-3 rounded-xl border border-indigo-100/80">
-            <span class="inline-block w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold text-center leading-5 mb-1.5">1</span>
-            <p class="font-bold text-slate-900">Conecte seus bancos</p>
-            <p class="text-slate-600 mt-1 leading-relaxed">
-              Acesse o <a href="https://meu.pluggy.ai" target="_blank" rel="noopener noreferrer" class="underline font-semibold text-indigo-600 hover:text-indigo-800">meu.pluggy.ai</a> gratuitamente e vincule suas contas bancárias.
-            </p>
-          </div>
-
-          <div class="bg-white/80 p-3 rounded-xl border border-indigo-100/80">
-            <span class="inline-block w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold text-center leading-5 mb-1.5">2</span>
-            <p class="font-bold text-slate-900">Copie suas chaves</p>
-            <p class="text-slate-600 mt-1 leading-relaxed">
-              No menu de desenvolvedor ou configurações do Pluggy, copie seu <strong>Client ID</strong> e <strong>Client Secret</strong>.
-            </p>
-          </div>
-
-          <div class="bg-white/80 p-3 rounded-xl border border-indigo-100/80">
-            <span class="inline-block w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold text-center leading-5 mb-1.5">3</span>
-            <p class="font-bold text-slate-900">Cole e Conecte</p>
-            <p class="text-slate-600 mt-1 leading-relaxed">
-              Preencha os campos abaixo com as credenciais e os <strong>Item IDs</strong> dos bancos para sincronizar imediatamente.
-            </p>
-          </div>
-        </div>
-      </div>
+      <ng-container *ngTemplateOutlet="tutorialOpenFinance"></ng-container>
 
       <!-- Formulário de Conexão -->
       <form [formGroup]="openFinanceForm" (ngSubmit)="conectarOpenFinance()" class="flex flex-col gap-4">
@@ -284,6 +281,89 @@
         </div>
       </form>
     </div>
+
+    <!-- TEMPLATE DO TUTORIAL PASSO A PASSO (Reutilizado antes e depois da conexão) -->
+    <ng-template #tutorialOpenFinance>
+      <div class="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h4 class="text-sm font-bold text-indigo-950 flex items-center gap-2">
+            <svg class="w-4 h-4 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Como configurar e conectar seus bancos passo a passo:
+          </h4>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs text-indigo-900">
+          <!-- Passo 1 -->
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100 flex flex-col justify-between shadow-2xs">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold items-center justify-center shrink-0">1</span>
+                <p class="font-bold text-slate-900">Conecte no Meu Pluggy</p>
+              </div>
+              <p class="text-slate-600 leading-relaxed text-[11px]">
+                Acesse o <a href="https://meu.pluggy.ai" target="_blank" rel="noopener noreferrer" class="underline font-semibold text-indigo-600 hover:text-indigo-800">meu.pluggy.ai</a>, crie sua conta e conecte as contas bancárias e cartões que deseja sincronizar.
+              </p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-2 font-medium">Ambiente do usuário (grátis)</span>
+          </div>
+
+          <!-- Passo 2 -->
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100 flex flex-col justify-between shadow-2xs">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold items-center justify-center shrink-0">2</span>
+                <p class="font-bold text-slate-900">Crie o App no Dashboard</p>
+              </div>
+              <p class="text-slate-600 leading-relaxed text-[11px]">
+                Acesse <a href="https://dashboard.pluggy.ai" target="_blank" rel="noopener noreferrer" class="underline font-semibold text-indigo-600 hover:text-indigo-800">dashboard.pluggy.ai</a>, no menu lateral vá em <strong>Aplicações</strong> e clique em <strong>Novo</strong>. Crie a aplicação e copie o <strong>Client ID</strong> e <strong>Client Secret</strong>.
+              </p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-2 font-medium">Menu Lateral > Aplicações > Novo</span>
+          </div>
+
+          <!-- Passo 3 -->
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100 flex flex-col justify-between shadow-2xs">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold items-center justify-center shrink-0">3</span>
+                <p class="font-bold text-slate-900">Dê Play ▶️ e Conecte</p>
+              </div>
+              <p class="text-slate-600 leading-relaxed text-[11px]">
+                No Dashboard da Pluggy, clique no botão de <strong>Play ▶️</strong>, selecione <strong>"Conectar conta"</strong>, escolha o conector <strong>"Meu Pluggy"</strong>, faça login e selecione o banco.
+              </p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-2 font-medium">Gera a conexão da conta</span>
+          </div>
+
+          <!-- Passo 4 -->
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100 flex flex-col justify-between shadow-2xs">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="inline-flex w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold items-center justify-center shrink-0">4</span>
+                <p class="font-bold text-slate-900">Copie o Item ID</p>
+              </div>
+              <p class="text-slate-600 leading-relaxed text-[11px]">
+                Clique no item recém-conectado na lista para abrir os detalhes. O <strong>Item ID</strong> é o código que fica no cabeçalho, logo acima do título <em>"Meu Pluggy"</em>. Copie e cole aqui!
+              </p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-2 font-medium">Código UUID no cabeçalho</span>
+          </div>
+        </div>
+
+        <!-- Dica prática para adicionar bancos adicionais -->
+        <div class="p-3 bg-white/90 rounded-xl border border-indigo-100 text-[11px] text-indigo-950 flex items-start gap-2.5">
+          <svg class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+          </svg>
+          <div class="leading-relaxed">
+            <strong>Quer adicionar outro banco no futuro?</strong>
+            Vincule o novo banco no <a href="https://meu.pluggy.ai" target="_blank" class="underline font-semibold text-indigo-600">meu.pluggy.ai</a>, repita o <strong>Passo 3</strong> dando <strong>Play ▶️</strong> no dashboard da Pluggy para gerar o novo conector, abra os detalhes, copie o novo <strong>Item ID</strong> do cabeçalho e adicione no campo <em>"Vincular Novo Banco por Item ID"</em>.
+          </div>
+        </div>
+      </div>
+    </ng-template>
   </div>
 
 
@@ -458,12 +538,36 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-700 mb-1">Chave de Acesso (API Key)</label>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-700">Chave de Acesso (API Key) *</label>
+            <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
+               class="text-xs font-medium text-purple-600 hover:text-purple-800 hover:underline flex items-center gap-1 transition-colors"
+               [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top" tooltipStyleClass="whitespace-pre-line text-xs">
+              <span>{{ linkApiKeyProvedor.label }}</span>
+              <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+            </a>
+          </div>
           <input type="password"
                  formControlName="apiKey"
                  placeholder="••••••••••••••••"
                  class="w-full px-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono text-slate-800" />
-          <p class="text-[11px] text-slate-400 mt-1">Armazenada com criptografia AES-256 no servidor.</p>
+          
+          <!-- Mini tutorial dinâmico do provedor selecionado -->
+          <div class="mt-2.5 p-3 bg-purple-50/70 border border-purple-100 rounded-xl text-xs flex flex-col gap-1.5">
+            <p class="font-bold text-purple-950 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Como obter sua chave do {{ linkApiKeyProvedor.provedorNome }}:
+            </p>
+            <ol class="list-decimal list-inside space-y-0.5 text-[11px] text-purple-900 leading-relaxed">
+              <li *ngFor="let passo of linkApiKeyProvedor.passos">{{ passo }}</li>
+            </ol>
+          </div>
+
+          <p class="text-[11px] text-slate-400 mt-1.5">Armazenada com criptografia simétrica AES-256 no servidor.</p>
           <span *ngIf="novaChaveForm.get('apiKey')?.touched && novaChaveForm.get('apiKey')?.hasError('required')"
                 class="text-xs text-rose-500 mt-1 block">A chave de acesso é obrigatória.</span>
         </div>
