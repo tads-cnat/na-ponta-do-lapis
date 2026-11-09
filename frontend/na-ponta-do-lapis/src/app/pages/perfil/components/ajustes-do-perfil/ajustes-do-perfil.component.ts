@@ -9,6 +9,7 @@ import { UsuarioService } from '../../service/perfil.services';
 import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
 import { MessageService } from 'primeng/api';
+import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/preferencia-moeda.service';
 
 @Component({
   selector: 'app-ajustes-do-perfil',
@@ -19,9 +20,14 @@ import { MessageService } from 'primeng/api';
 export class AjustesPerfilComponent implements OnInit {
   public perfilForm!: FormGroup;
   public abaAtiva: 'dados' | 'integracoes' = 'dados';
+  public moedaOriginalUsuario: string = 'BRL';
 
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
+
+  get opcoesMoeda(): OpcaoMoeda[] {
+    return this.preferenciaMoedaService.opcoesMoeda;
+  }
 
   get podeAbrirConfirmacao(): boolean {
     const valores = this.perfilForm?.value ?? {};
@@ -39,7 +45,8 @@ export class AjustesPerfilComponent implements OnInit {
         && valores.novaSenha === valores.confirmarNovaSenha;
     }
 
-    return [valores.nome, valores.email].some(this.temTexto);
+    const alterouMoeda = valores.moedaPadrao && valores.moedaPadrao !== this.moedaOriginalUsuario;
+    return [valores.nome, valores.email].some(this.temTexto) || !!alterouMoeda;
   }
 
   private readonly temTexto = (valor: unknown): boolean =>
@@ -50,7 +57,8 @@ export class AjustesPerfilComponent implements OnInit {
     private usuarioService: UsuarioService,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private preferenciaMoedaService: PreferenciaMoedaService
   ) {
     this.inicializarFormulario();
   }
@@ -66,16 +74,29 @@ export class AjustesPerfilComponent implements OnInit {
   }
 
   private inicializarFormulario(): void {
+    const moedaInicial = this.preferenciaMoedaService.obterMoedaAtiva();
+    this.moedaOriginalUsuario = moedaInicial;
     this.perfilForm = this.fb.group({
       nome: [''],
       email: [''],
       senhaAtual: [''],
       confirmarSenhaAtual: [''],
       novaSenha: [''],
-      confirmarNovaSenha: ['']
+      confirmarNovaSenha: [''],
+      moedaPadrao: [moedaInicial]
     });
 
     this.configurarCamposEstaticos();
+  }
+
+  public selecionarMoedaPadrao(codigo: string): void {
+    this.perfilForm.get('moedaPadrao')?.setValue(codigo);
+    this.perfilForm.markAsDirty();
+    this.cdr.detectChanges();
+  }
+
+  public obterSimboloMoeda(moeda?: string): string {
+    return this.preferenciaMoedaService.obterSimboloMoeda(moeda);
   }
 
   private configurarCamposEstaticos(nome = ' ', email = ' '): void {
@@ -95,12 +116,16 @@ export class AjustesPerfilComponent implements OnInit {
   private carregarDadosIniciais(): void {
     this.usuarioService.obterPerfilCompleto().subscribe({
       next: (usuario) => {
-        // Removida a necessidade de guardar o usuarioId localmente
+        if (usuario.moedaPadrao) {
+          this.moedaOriginalUsuario = usuario.moedaPadrao;
+          this.perfilForm.get('moedaPadrao')?.setValue(usuario.moedaPadrao);
+          this.preferenciaMoedaService.definirMoedaPadrao(usuario.moedaPadrao);
+        }
         this.configurarCamposEstaticos(
           usuario.nome,
           usuario.email
         );
-        this.cdr.detectChanges(); // Força a atualização da view após a mudança de estado
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Erro ao alimentar os placeholders da tela de ajustes:', err);
@@ -122,7 +147,12 @@ export class AjustesPerfilComponent implements OnInit {
       dadosParciaisPatch.email = valoresFormulario.email.trim();
     }
 
-    // 3. Validação e inclusão da senha se qualquer campo de senha foi digitado
+    // 3. Verifica se a moeda padrão foi alterada
+    if (valoresFormulario.moedaPadrao && valoresFormulario.moedaPadrao !== this.moedaOriginalUsuario) {
+      dadosParciaisPatch.moedaPadrao = valoresFormulario.moedaPadrao;
+    }
+
+    // 4. Validação e inclusão da senha se qualquer campo de senha foi digitado
     const camposSenha = [
       valoresFormulario.senhaAtual,
       valoresFormulario.confirmarSenhaAtual,
@@ -162,23 +192,22 @@ export class AjustesPerfilComponent implements OnInit {
     }
 
     if (alterandoSenha) {
-      // Casando com o campo do record UsuarioUpdateDTO no Java
       dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
       dadosParciaisPatch.senha = valoresFormulario.novaSenha;
     }
 
-    // Se nenhum campo foi digitado, mata a execução e evita requisição desnecessária
+    // Se nenhum campo foi alterado, emite aviso
     if (Object.keys(dadosParciaisPatch).length === 0) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Nenhuma alteração',
-        detail: 'Preencha pelo menos um campo para salvar.',
+        detail: 'Altere pelo menos um campo ou a moeda para salvar.',
         life: 3000
       });
       return;
     }
 
-    // 4. Dispara a requisição PATCH para /usuario/me (Sem passar ID na URL)
+    // Dispara a requisição PATCH para /usuario/me
     this.usuarioService.atualizarParcial(dadosParciaisPatch).subscribe({
       next: (res: any) => {
         if (res.token) {
@@ -187,15 +216,26 @@ export class AjustesPerfilComponent implements OnInit {
 
         const usuario = res.usuario ?? res;
 
-        this.perfilForm.reset();
+        if (dadosParciaisPatch.moedaPadrao) {
+          this.moedaOriginalUsuario = dadosParciaisPatch.moedaPadrao;
+          this.preferenciaMoedaService.definirMoedaPadrao(dadosParciaisPatch.moedaPadrao);
+        }
+
+        this.perfilForm.patchValue({
+          senhaAtual: '',
+          confirmarSenhaAtual: '',
+          novaSenha: '',
+          confirmarNovaSenha: ''
+        });
         this.configurarCamposEstaticos(usuario.nome, usuario.email);
         this.cdr.detectChanges();
         this.messageService.add({
           severity: 'success',
           summary: 'Alterações salvas com sucesso',
+          detail: dadosParciaisPatch.moedaPadrao ? `Moeda padrão atualizada para ${dadosParciaisPatch.moedaPadrao}.` : undefined,
           life: 2000
         });
-        setTimeout(() => window.location.reload(), 2100);
+        setTimeout(() => window.location.reload(), 1500);
       },
       error: (err) => {
         console.error('Erro ao salvar via PATCH:', err);

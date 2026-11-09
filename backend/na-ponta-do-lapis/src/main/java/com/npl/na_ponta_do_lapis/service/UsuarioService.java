@@ -72,6 +72,11 @@ public class UsuarioService {
             String senhaCriptografada = passwordEncoder.encode(dto.senha());
             usuario.setSenha(senhaCriptografada);
         }
+
+        if (dto.moedaPadrao() != null) {
+            usuario.setMoedaPadrao(dto.moedaPadrao());
+        }
+
         return usuarioRepository.save(usuario);
     }
 
