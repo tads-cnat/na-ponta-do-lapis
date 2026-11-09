@@ -28,18 +28,28 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
 
           <button
             type="button"
-            (click)="onAnterior.emit()"
-            class="w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-200 transition flex items-center justify-center"
-            [style]="{'background-color': '#e56809'}">
-            <i class="pi pi-chevron-left text-white text-slate-700"></i>
+            [disabled]="contas.length <= 1"
+            (click)="contas.length > 1 && onAnterior.emit()"
+            [ngClass]="contas.length <= 1
+              ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
+              : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+            class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
+            [attr.aria-disabled]="contas.length <= 1"
+            [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Conta anterior'">
+            <i class="pi pi-chevron-left text-base"></i>
           </button>
 
           <button
             type="button"
-            (click)="onProxima.emit()"
-            class="w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-700 transition flex items-center justify-center"
-            [style]="{'background-color': '#e56809'}">
-            <i class="pi pi-chevron-right text-white text-slate-700"></i>
+            [disabled]="contas.length <= 1"
+            (click)="contas.length > 1 && onProxima.emit()"
+            [ngClass]="contas.length <= 1
+              ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
+              : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+            class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
+            [attr.aria-disabled]="contas.length <= 1"
+            [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Próxima conta'">
+            <i class="pi pi-chevron-right text-base"></i>
           </button>
 
         </div>
@@ -56,18 +66,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             <div
               (click)="onContaSelecionada.emit(i)"
               class="absolute transition-all duration-500 ease-in-out cursor-pointer"
-              [ngClass]="{
-                'z-30 opacity-100 scale-100 translate-x-0':
-                  i === contaSelecionadaIndex,
-                'z-20 opacity-40 scale-90 -translate-x-[72%]':
-                  i === contaAnterior,
-                'z-20 opacity-40 scale-90 translate-x-[72%]':
-                  i === contaProxima,
-                'opacity-0 scale-75 pointer-events-none':
-                  i !== contaSelecionadaIndex
-                  && i !== contaAnterior
-                  && i !== contaProxima
-              }">
+              [ngClass]="obterClassesPosicao(i)">
 
               <!-- CARD -->
               <div
@@ -100,19 +99,19 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                       </h3>
                     </div>
 
-                    @if (temBanco(conta.nome)) {
-                      <div class="shrink-0 p-[2px] rounded-xl bg-white shadow-md ring-1 ring-white/40 flex items-center justify-center transition-transform hover:scale-105">
+                    <div class="shrink-0 flex items-center justify-center transition-transform hover:scale-105 select-none filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]">
+                      @if (temBanco(conta.nome)) {
                         <app-icone-banco
                           [nome]="conta.nome"
-                          [tamanho]="48"
+                          [tamanho]="46"
                           [formato]="'quadrado'">
                         </app-icone-banco>
-                      </div>
-                    } @else {
-                      <div class="shrink-0 w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-md flex items-center justify-center text-white transition-transform hover:scale-105">
-                        <i [class]="(ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet') + ' text-2xl text-white drop-shadow-sm'"></i>
-                      </div>
-                    }
+                      } @else {
+                        <div class="w-11 h-11 flex items-center justify-center text-white">
+                          <i [class]="(ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet') + ' text-3xl text-white'"></i>
+                        </div>
+                      }
+                    </div>
 
                   </div>
 
@@ -199,6 +198,36 @@ export class CarrosselCartoesComponent {
 
   temBanco(nome?: string | null): boolean {
     return temBancoDetectado(nome);
+  }
+
+  obterClassesPosicao(i: number): Record<string, boolean> {
+    // 1 conta: sempre no centro absoluto
+    if (this.contas.length <= 1) {
+      return {
+        'z-30 opacity-100 scale-100 translate-x-0': true
+      };
+    }
+
+    // 2 contas: a selecionada fica no centro e a outra fica à direita
+    if (this.contas.length === 2) {
+      const isSelecionada = i === this.contaSelecionadaIndex;
+      return {
+        'z-30 opacity-100 scale-100 translate-x-0': isSelecionada,
+        'z-20 opacity-40 scale-90 translate-x-[72%]': !isSelecionada
+      };
+    }
+
+    // 3 ou mais contas: carrossel tridimensional com esquerda, centro e direita
+    const isSelecionada = i === this.contaSelecionadaIndex;
+    const isAnterior = i === this.contaAnterior;
+    const isProxima = i === this.contaProxima;
+
+    return {
+      'z-30 opacity-100 scale-100 translate-x-0': isSelecionada,
+      'z-20 opacity-40 scale-90 -translate-x-[72%]': isAnterior && !isSelecionada,
+      'z-20 opacity-40 scale-90 translate-x-[72%]': isProxima && !isSelecionada && !isAnterior,
+      'opacity-0 scale-75 pointer-events-none': !isSelecionada && !isAnterior && !isProxima
+    };
   }
 
   obterCorCartao(conta: IContas): string {
