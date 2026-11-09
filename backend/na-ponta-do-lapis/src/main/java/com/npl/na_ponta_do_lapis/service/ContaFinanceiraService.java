@@ -62,6 +62,16 @@ public class ContaFinanceiraService {
         conta.setSaldo(contaDTO.saldo());
         conta.setCor(contaDTO.cor());
         conta.setMoeda(contaDTO.moeda());
+        if (contaDTO.tipoConta() != null) {
+            conta.setTipoConta(contaDTO.tipoConta());
+        }
+        if (contaDTO.limiteTotal() != null) {
+            conta.setLimiteTotal(contaDTO.limiteTotal());
+            if (conta.getTipoConta() == com.npl.na_ponta_do_lapis.entity.enums.TipoConta.CARTAO_CREDITO) {
+                java.math.BigDecimal gasto = conta.getSaldo() != null ? conta.getSaldo().abs() : java.math.BigDecimal.ZERO;
+                conta.setLimiteDisponivel(contaDTO.limiteTotal().subtract(gasto));
+            }
+        }
 
         try {
             contaFinanceiraRepository.save(conta);

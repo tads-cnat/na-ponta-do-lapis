@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { IntegracoesService } from '../../../../service/integracoes.service';
@@ -43,6 +44,9 @@ export class IntegracoesPerfilComponent implements OnInit {
   public salvandoChaveIa = false;
   public chaveIaMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
 
+  // Sub-aba ativa (Open Finance vs IA)
+  public subabaAtiva: 'bancos' | 'ia' = 'bancos';
+
   public provedoresDisponiveis: { valor: ProvedorIa; label: string }[] = [
     { valor: 'GEMINI', label: 'Google Gemini' },
     { valor: 'CLAUDE', label: 'Anthropic Claude' },
@@ -54,10 +58,21 @@ export class IntegracoesPerfilComponent implements OnInit {
   constructor(
     private integracoesService: IntegracoesService,
     private fb: FormBuilder,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
+    this.route.queryParams.subscribe((params) => {
+      if (params['secao'] === 'ia' || params['aba'] === 'ia' || params['subaba'] === 'ia') {
+        this.subabaAtiva = 'ia';
+        this.cdr.detectChanges();
+      } else if (params['secao'] === 'bancos' || params['secao'] === 'openfinance') {
+        this.subabaAtiva = 'bancos';
+        this.cdr.detectChanges();
+      }
+    });
+
     this.inicializarFormularios();
     this.carregarOpenFinance();
     this.carregarChavesIa();

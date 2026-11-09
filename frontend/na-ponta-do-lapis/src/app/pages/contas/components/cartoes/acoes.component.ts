@@ -7,29 +7,32 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
   standalone: true,
   imports: [CommonModule, PrimeNGModuleModule],
   template: `
-    <div class="flex flex-wrap gap-3">
+    <div class="flex flex-wrap items-center gap-2 sm:justify-end">
 
       <p-button
         label="Adicionar"
         icon="pi pi-plus"
-        class="rounded-xl"
-        [style]="{'background-color': '#10b981', 'border-color': '#10b981'}"
+        pTooltip="Cadastrar nova conta manual"
+        tooltipPosition="bottom"
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-[#10b981]! border-[#10b981]! text-white! hover:bg-[#059669]! shadow-xs"
         (click)="onAdicionar.emit()">
       </p-button>
 
       <p-button
         label="Editar"
         icon="pi pi-pencil"
-        class="rounded-xl"
-        [style]="{'background-color': '#f3e8ff', 'color': '#7843cd', 'border-color': '#7843cd'}"
+        pTooltip="Editar conta selecionada"
+        tooltipPosition="bottom"
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-[#f3e8ff]! text-[#7843cd]! border-[#7843cd]! hover:bg-[#e9d5ff]! shadow-xs"
         (click)="onEditar.emit()">
       </p-button>
 
       <p-button
         label="Excluir"
         icon="pi pi-trash"
-        class="rounded-xl"
-        [style]="{'background-color': '#fee2e2', 'color': '#ef4444', 'border-color': '#ef4444'}"
+        pTooltip="Excluir conta selecionada"
+        tooltipPosition="bottom"
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-[#fee2e2]! text-[#ef4444]! border-[#ef4444]! hover:bg-[#fecaca]! shadow-xs"
         (click)="onExcluir.emit()">
       </p-button>
 
@@ -37,9 +40,10 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         *ngIf="openFinanceConectado"
         label="Sincronizar"
         icon="pi pi-sync"
-        class="rounded-xl"
+        pTooltip="Sincronizar dados das contas via Open Finance"
+        tooltipPosition="bottom"
         [loading]="sincronizandoOpenFinance"
-        [style]="{'background-color': '#e0e7ff', 'color': '#4338ca', 'border-color': '#4338ca'}"
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-indigo-50! text-[#4338ca]! border-[#4338ca]! hover:bg-indigo-100! shadow-xs"
         (click)="onSincronizarOpenFinance.emit()">
       </p-button>
 
@@ -47,8 +51,9 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         *ngIf="!openFinanceConectado"
         label="Conectar Banco"
         icon="pi pi-link"
-        class="rounded-xl"
-        [style]="{'background-color': '#f8fafc', 'color': '#475569', 'border-color': '#cbd5e1'}"
+        pTooltip="Conectar banco via Open Finance"
+        tooltipPosition="bottom"
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-white! text-slate-700! border-slate-300! hover:bg-slate-50! shadow-xs"
         (click)="onSincronizarOpenFinance.emit()">
       </p-button>
 

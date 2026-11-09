@@ -25,9 +25,7 @@ export interface IContas {
 
 export function ehCartaoCredito(conta?: IContas | null): boolean {
   if (!conta) return false;
-  if (conta.tipoConta === 'CARTAO_CREDITO') return true;
-  const n = (conta.nome || '').toLowerCase();
-  return n.includes('cartão') || n.includes('cartao') || n.includes('credit') || n.includes('card');
+  return conta.tipoConta === 'CARTAO_CREDITO';
 }
 
 export interface IContasRequest {
@@ -35,4 +33,6 @@ export interface IContasRequest {
     saldo: number;
     cor: string;
     moeda: Moeda;
+    tipoConta?: TipoConta;
+    limiteTotal?: number | null;
 }
