@@ -38,7 +38,11 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             (click)="contas.length > 1 && onAnterior.emit()"
             [ngClass]="contas.length <= 1
               ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
+<<<<<<< HEAD
               : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+=======
+              : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+>>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
             class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
             [attr.aria-disabled]="contas.length <= 1"
             [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Conta anterior'">
@@ -51,7 +55,11 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             (click)="contas.length > 1 && onProxima.emit()"
             [ngClass]="contas.length <= 1
               ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
+<<<<<<< HEAD
               : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+=======
+              : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+>>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
             class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
             [attr.aria-disabled]="contas.length <= 1"
             [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Próxima conta'">
@@ -114,6 +122,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 
                     <div class="shrink-0 flex items-center justify-center transition-transform hover:scale-105 select-none filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]">
                       @if (temBanco(conta.nome)) {
@@ -147,11 +156,16 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
 =======
                     @if (temBanco(conta.nome)) {
                       <div class="shrink-0 p-[2px] rounded-xl bg-white shadow-md ring-1 ring-white/40 flex items-center justify-center transition-transform hover:scale-105">
+=======
+                    <div class="shrink-0 flex items-center justify-center transition-transform hover:scale-105 select-none filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]">
+                      @if (temBanco(conta.nome)) {
+>>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
                         <app-icone-banco
                           [nome]="conta.nome"
-                          [tamanho]="48"
+                          [tamanho]="46"
                           [formato]="'quadrado'">
                         </app-icone-banco>
+<<<<<<< HEAD
                       </div>
                     } @else {
                       <div class="shrink-0 w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-md flex items-center justify-center text-white transition-transform hover:scale-105">
@@ -159,6 +173,14 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                       </div>
                     }
 >>>>>>> af0ef81 (fix(contas): exibe icone translucido e contraste elegante para cartoes sem banco detectado)
+=======
+                      } @else {
+                        <div class="w-11 h-11 flex items-center justify-center text-white">
+                          <i [class]="(ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet') + ' text-3xl text-white'"></i>
+                        </div>
+                      }
+                    </div>
+>>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
 
                   </div>
 
@@ -245,6 +267,36 @@ export class CarrosselCartoesComponent {
 
   temBanco(nome?: string | null): boolean {
     return temBancoDetectado(nome);
+  }
+
+  obterClassesPosicao(i: number): Record<string, boolean> {
+    // 1 conta: sempre no centro absoluto
+    if (this.contas.length <= 1) {
+      return {
+        'z-30 opacity-100 scale-100 translate-x-0': true
+      };
+    }
+
+    // 2 contas: a selecionada fica no centro e a outra fica à direita
+    if (this.contas.length === 2) {
+      const isSelecionada = i === this.contaSelecionadaIndex;
+      return {
+        'z-30 opacity-100 scale-100 translate-x-0': isSelecionada,
+        'z-20 opacity-40 scale-90 translate-x-[72%]': !isSelecionada
+      };
+    }
+
+    // 3 ou mais contas: carrossel tridimensional com esquerda, centro e direita
+    const isSelecionada = i === this.contaSelecionadaIndex;
+    const isAnterior = i === this.contaAnterior;
+    const isProxima = i === this.contaProxima;
+
+    return {
+      'z-30 opacity-100 scale-100 translate-x-0': isSelecionada,
+      'z-20 opacity-40 scale-90 -translate-x-[72%]': isAnterior && !isSelecionada,
+      'z-20 opacity-40 scale-90 translate-x-[72%]': isProxima && !isSelecionada && !isAnterior,
+      'opacity-0 scale-75 pointer-events-none': !isSelecionada && !isAnterior && !isProxima
+    };
   }
 
   obterCorCartao(conta: IContas): string {
