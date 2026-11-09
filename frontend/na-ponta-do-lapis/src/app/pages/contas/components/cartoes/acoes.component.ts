@@ -12,8 +12,9 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
       <p-button
         label="Nova Conta"
         icon="pi pi-plus"
-        class="rounded-xl"
-        [style]="{'background-color': '#10b981', 'border-color': '#10b981'}"
+        pTooltip="Cadastrar nova conta manual"
+        tooltipPosition="bottom"
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-[#10b981]! border-[#10b981]! text-white! hover:bg-[#059669]! shadow-xs"
         (click)="onAdicionar.emit()">
       </p-button>
 
@@ -22,7 +23,11 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         icon="pi pi-pencil"
         pTooltip="Editar conta selecionada"
         tooltipPosition="bottom"
+<<<<<<< HEAD
         styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap btn-soft-edit-npl shadow-2xs"
+=======
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-[#f3e8ff]! text-[#7843cd]! border-[#7843cd]! hover:bg-[#e9d5ff]! shadow-xs"
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
         (click)="onEditar.emit()">
       </p-button>
 
@@ -31,7 +36,11 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         icon="pi pi-trash"
         pTooltip="Excluir conta selecionada"
         tooltipPosition="bottom"
+<<<<<<< HEAD
         styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap btn-soft-delete-npl shadow-2xs"
+=======
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-[#fee2e2]! text-[#ef4444]! border-[#ef4444]! hover:bg-[#fecaca]! shadow-xs"
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
         (click)="onExcluir.emit()">
       </p-button>
 
@@ -39,9 +48,10 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         *ngIf="openFinanceConectado"
         label="Sincronizar"
         icon="pi pi-sync"
-        class="rounded-xl"
+        pTooltip="Sincronizar dados das contas via Open Finance"
+        tooltipPosition="bottom"
         [loading]="sincronizandoOpenFinance"
-        [style]="{'background-color': '#e0e7ff', 'color': '#4338ca', 'border-color': '#4338ca'}"
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-indigo-50! text-[#4338ca]! border-[#4338ca]! hover:bg-indigo-100! shadow-xs"
         (click)="onSincronizarOpenFinance.emit()">
       </p-button>
 
@@ -49,8 +59,9 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         *ngIf="!openFinanceConectado"
         label="Conectar Banco"
         icon="pi pi-link"
-        class="rounded-xl"
-        [style]="{'background-color': '#f8fafc', 'color': '#475569', 'border-color': '#cbd5e1'}"
+        pTooltip="Conectar banco via Open Finance"
+        tooltipPosition="bottom"
+        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-white! text-slate-700! border-slate-300! hover:bg-slate-50! shadow-xs"
         (click)="onSincronizarOpenFinance.emit()">
       </p-button>
 

@@ -21,7 +21,7 @@ import { ThemeService } from '../../service/theme.service';
 
 import { ContaFinanceiraService } from './service/contas.service';
 import { IntegracoesService } from '../../service/integracoes.service';
-import { IContas, IContasRequest, Moeda } from '../../model/IContas.models';
+import { IContas, IContasRequest, Moeda, TipoConta } from '../../model/IContas.models';
 
 import { AcoesCartoesComponent } from './components/cartoes/acoes.component';
 import { CartaoContaComponent }  from './components/cartoes/cartoes.component';
@@ -29,10 +29,14 @@ import { InformacoesComponent }  from './components/informacoes/informacoes.comp
 import { GraficoComponent }      from './components/grafico/grafico.component';
 import { TransacoesComponent }   from './components/transacoes/transacoes.component';
 import { IconeBancoComponent }    from '../../shared/components/icone-banco/icone-banco.component';
+<<<<<<< HEAD
 import { InputMoedaComponent }    from '../../shared/components/input-moeda/input-moeda.component';
 import { AppMoedaPipe }          from '../../shared/pipes/app-moeda.pipe';
 import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
 import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectado } from '../../shared/utils/banco-icon.helper';
+=======
+import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../shared/utils/banco-icon.helper';
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
 
 @Component({
   selector: 'app-Contas',
@@ -51,9 +55,13 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
     InformacoesComponent,
     GraficoComponent,
     TransacoesComponent,
+<<<<<<< HEAD
     IconeBancoComponent,
     InputMoedaComponent,
     AppMoedaPipe
+=======
+    IconeBancoComponent
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
   ],
   template: `
     <!-- TOAST — deve ficar no nível raiz para sobrepor qualquer conteúdo -->
@@ -64,11 +72,19 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
       <!-- HEADER PRINCIPAL DA PÁGINA (largura total: título e ações sem competir por espaço) -->
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div class="min-w-0">
+<<<<<<< HEAD
           <h1 class="page-title-npl m-0">
             Contas
           </h1>
           <p class="page-subtitle-npl">
             Gestão de contas financeiras e cartões
+=======
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            Contas
+          </h1>
+          <p class="text-slate-500 mt-1 text-xs sm:text-sm">
+            Gestão de contas financeiras
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
           </p>
         </div>
 
@@ -97,12 +113,6 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
             [contaAnterior]="contaAnterior"
             [contaProxima]="contaProxima"
             [carregando]="carregandoContas"
-            [sincronizandoOpenFinance]="sincronizandoOpenFinance"
-            [openFinanceConectado]="openFinanceConectado"
-            (onAdicionar)="abrirDialog()"
-            (onEditar)="editarConta(contaSelecionada)"
-            (onExcluir)="abrirDialogExcluir(contaSelecionada)"
-            (onSincronizarOpenFinance)="sincronizarOpenFinance()"
             (onContaSelecionada)="selecionarConta($event)"
             (onAnterior)="selecionarAnterior()"
             (onProxima)="selecionarProxima()"
@@ -165,6 +175,7 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
 
           <div class="flex flex-col gap-6 py-2">
 
+<<<<<<< HEAD
             <!-- PREVIEW EM TEMPO REAL DO CARTÃO / CONTA (FIEL AO CARROSSEL) -->
             <div class="flex justify-center w-full py-1">
               <div
@@ -225,6 +236,41 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
             </div>
 
             <!-- TIPO DE CONTA -->
+=======
+            <!-- TIPO DE CONTA -->
+            <div class="flex flex-col gap-2">
+              <label class="font-semibold text-slate-700">Tipo de Conta</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  (click)="formContaFinanceira.get('tipoConta')?.setValue('CONTA_CORRENTE')"
+                  [class]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE'
+                    ? 'flex items-center gap-3 p-3.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/60 text-indigo-900 font-semibold transition-all'
+                    : 'flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-all'">
+                  <i class="pi pi-wallet text-xl" [class.text-indigo-600]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE'"></i>
+                  <div class="flex flex-col text-left">
+                    <span class="text-sm leading-tight">Conta Bancária</span>
+                    <span class="text-xs text-slate-500 font-normal">Corrente ou Carteira</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  (click)="formContaFinanceira.get('tipoConta')?.setValue('CARTAO_CREDITO')"
+                  [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO'
+                    ? 'flex items-center gap-3 p-3.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/60 text-indigo-900 font-semibold transition-all'
+                    : 'flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-all'">
+                  <i class="pi pi-credit-card text-xl" [class.text-indigo-600]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO'"></i>
+                  <div class="flex flex-col text-left">
+                    <span class="text-sm leading-tight">Cartão de Crédito</span>
+                    <span class="text-xs text-slate-500 font-normal">Fatura e limites</span>
+                  </div>
+                </button>
+              </div>
+            </div>
+
+            <!-- NOME -->
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
             <div class="flex flex-col gap-2">
               <label class="font-semibold text-slate-700 text-sm">Tipo de Conta</label>
               <div class="grid grid-cols-2 gap-3">
@@ -274,7 +320,11 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                 formControlName="nome"
                 (input)="aoDigitarNomeConta()"
                 placeholder="Ex: Nubank, Santander, Inter, Itaú..."
+<<<<<<< HEAD
                 class="w-full text-base h-[42px]" />
+=======
+                class="w-full" />
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
 
               @if (bancoDetectado?.chave) {
                 <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 animate-in fade-in">
@@ -285,7 +335,11 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                   <button
                     type="button"
                     (click)="aplicarCorOficialBanco()"
+<<<<<<< HEAD
                     class="text-xs font-semibold text-[#7843CD] hover:text-[#6214CC] flex items-center gap-1.5 shrink-0 cursor-pointer">
+=======
+                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 shrink-0 cursor-pointer">
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
                     <span class="w-3.5 h-3.5 rounded-full border border-slate-300 shadow-2xs" [style.backgroundColor]="'#' + formContaFinanceira.get('cor')?.value"></span>
                     <span>Cor oficial aplicada</span>
                   </button>
@@ -293,6 +347,7 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
               }
             </div>
 
+<<<<<<< HEAD
             <!-- VALORES: SALDO E LIMITE (PADRÃO ESTÉTICO INTEGRADO) -->
             @if (formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO') {
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -329,12 +384,23 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
               <div class="flex flex-col gap-1.5">
                 <label class="font-semibold text-slate-700 text-sm">Saldo Inicial</label>
                 <app-input-moeda
+=======
+            <!-- SALDO -->
+            <div class="flex flex-col gap-2">
+              <label class="font-semibold text-slate-700">
+                {{ formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'Fatura Atual / Saldo Devedor' : 'Saldo Inicial' }}
+              </label>
+              <p-inputNumber
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
                   formControlName="saldo"
                   locale="pt-BR"
                   mode="decimal"
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2">
               </p-inputNumber>
+              @if (formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO') {
+                <span class="text-xs text-slate-500">Valor gasto na fatura atual (use 0 se não houver gastos pendentes).</span>
+              }
               @if (modoEdicao && contaSelecionada?.sincronizada) {
                 <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2">
                   <span>ℹ️</span>
@@ -343,6 +409,7 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
               }
             </div>
 
+<<<<<<< HEAD
             <!-- PALETA DE CORES RÁPIDAS + SELETOR DE COR DESTACADO -->
             <div class="flex flex-col gap-2">
               <div class="flex items-center justify-between">
@@ -350,6 +417,56 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                 <div class="flex items-center gap-1.5 text-xs text-slate-500 font-mono">
                   <span>#{{ formContaFinanceira.get('cor')?.value }}</span>
                 </div>
+=======
+            <!-- LIMITE TOTAL (Cartão de Crédito) -->
+            @if (formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO') {
+              <div class="flex flex-col gap-2">
+                <label class="font-semibold text-slate-700">Limite Total do Cartão</label>
+                <p-inputNumber
+                  formControlName="limiteTotal"
+                  locale="pt-BR"
+                  mode="decimal"
+                  placeholder="Ex: 5000,00"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2">
+                </p-inputNumber>
+                <span class="text-xs text-slate-500">Limite concedido para acompanhamento do limite disponível.</span>
+              </div>
+            }
+
+            <!-- COR -->
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <label class="font-semibold text-slate-700">Cor do cartão</label>
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-lg border border-slate-300 shadow-2xs inline-block" [style.backgroundColor]="'#' + formContaFinanceira.get('cor')?.value"></span>
+                  <span class="text-xs font-mono text-slate-500">#{{ formContaFinanceira.get('cor')?.value }}</span>
+                </div>
+              </div>
+              <p-colorpicker
+                formControlName="cor"
+                (onChange)="corCustomizadaManualmente = true">
+              </p-colorpicker>
+            </div>
+
+            <!-- MOEDA -->
+            <div class="bg-slate-50 border border-slate-100 rounded-2xl p-5">
+
+              <span class="text-slate-700 font-bold">
+                Moeda
+              </span>
+
+              <div class="mt-3 flex flex-col">
+                <p-select
+                  [options]="moedas"
+                  optionLabel="label"
+                  optionValue="value"
+                  formControlName="moeda"
+                  formControlName="moeda"
+                  placeholder="Selecione a moeda"
+                  [appendTo]="'body'">
+                </p-select>
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
               </div>
 
               <div class="flex flex-wrap items-center gap-2">
@@ -480,6 +597,7 @@ export class ContasComponent implements OnInit {
   contaExcluir: IContas | null = null;
   bancoDetectado: BancoResolvido | null = null;
   corCustomizadaManualmente: boolean = false;
+<<<<<<< HEAD
 
   // =========================================
   // VALORES MONETÁRIOS FLUIDOS (DIGITAÇÃO ESTILO FINTECH)
@@ -502,6 +620,8 @@ export class ContasComponent implements OnInit {
     { nome: 'Esmeralda', hex: '059669' },
     { nome: 'Escuro', hex: '1E293B' },
   ];
+=======
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
 
   // =========================================
   // DADOS
@@ -733,6 +853,7 @@ export class ContasComponent implements OnInit {
   }
 
   // =========================================
+<<<<<<< HEAD
   // VALORES MONETÁRIOS FLUIDOS (DIGITAÇÃO ESTILO FINTECH)
   // =========================================
 
@@ -827,12 +948,15 @@ export class ContasComponent implements OnInit {
   }
 
   // =========================================
+=======
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
   // CRUD — ABERTURA DE DIALOGS
   // =========================================
 
   abrirDialog(): void {
     this.modoEdicao = false;
     this.idContaEdicao = null;
+<<<<<<< HEAD
 <<<<<<< HEAD
     this.bancoDetectado = null;
     this.corCustomizadaManualmente = false;
@@ -851,6 +975,19 @@ export class ContasComponent implements OnInit {
     this.formContaFinanceira.get('saldo')?.enable();
     this.formContaFinanceira.reset({ nome: '', saldo: 0, cor: 'FFDE59', moeda: 'BRL' });
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+    this.bancoDetectado = null;
+    this.corCustomizadaManualmente = false;
+    this.formContaFinanceira.get('saldo')?.enable();
+    this.formContaFinanceira.reset({
+      nome: '',
+      saldo: 0,
+      cor: '4F46E5',
+      moeda: 'BRL',
+      tipoConta: 'CONTA_CORRENTE',
+      limiteTotal: null
+    });
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
     this.exibirDialog = true;
   }
 
@@ -859,10 +996,15 @@ export class ContasComponent implements OnInit {
     this.modoEdicao = true;
     this.idContaEdicao = conta.id ?? null;
 <<<<<<< HEAD
+<<<<<<< HEAD
     this.corCustomizadaManualmente = true;
     this.bancoDetectado = conta.nome ? mapearNomeBanco(conta.nome) : null;
 =======
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+    this.corCustomizadaManualmente = true;
+    this.bancoDetectado = conta.nome ? mapearNomeBanco(conta.nome) : null;
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
     if (conta.sincronizada) {
       this.formContaFinanceira.get('saldo')?.disable();
     } else {
@@ -872,7 +1014,11 @@ export class ContasComponent implements OnInit {
       nome:        conta.nome,
       saldo:       conta.saldo,
       cor:         conta.cor.replace('#', ''),
+<<<<<<< HEAD
       moeda:       conta.moeda || this.preferenciaMoedaService.obterMoedaAtiva(),
+=======
+      moeda:       conta.moeda,
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
       tipoConta:   conta.tipoConta ?? 'CONTA_CORRENTE',
       limiteTotal: conta.limiteTotal ?? null
     });
@@ -893,6 +1039,7 @@ export class ContasComponent implements OnInit {
         life: 2500
       });
 <<<<<<< HEAD
+<<<<<<< HEAD
       this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes', secao: 'bancos' } });
       return;
     }
@@ -901,6 +1048,9 @@ export class ContasComponent implements OnInit {
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 =======
       this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes' } });
+=======
+      this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes', secao: 'bancos' } });
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
       return;
     }
 
@@ -951,6 +1101,7 @@ export class ContasComponent implements OnInit {
           });
           setTimeout(() => {
             this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes', secao: 'bancos' } });
+<<<<<<< HEAD
           }, 1000);
           return;
         }
@@ -964,6 +1115,8 @@ export class ContasComponent implements OnInit {
           });
           setTimeout(() => {
             this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes' } });
+=======
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
           }, 1000);
           return;
         }
@@ -997,7 +1150,11 @@ export class ContasComponent implements OnInit {
       nome:        formValue.nome,
       saldo:       formValue.saldo,
       cor:         `#${String(formValue.cor).replace('#', '')}`,
+<<<<<<< HEAD
       moeda:       moedaFinal,
+=======
+      moeda:       formValue.moeda,
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
       tipoConta:   formValue.tipoConta,
       limiteTotal: formValue.tipoConta === 'CARTAO_CREDITO' ? formValue.limiteTotal : null,
     };
@@ -1018,12 +1175,20 @@ export class ContasComponent implements OnInit {
           this.formContaFinanceira.reset({
             nome: '',
             saldo: 0,
+<<<<<<< HEAD
             cor: '4F46E5',
             moeda: this.preferenciaMoedaService.obterMoedaAtiva(),
             tipoConta: 'CONTA_CORRENTE',
             limiteTotal: null
           });
           this.atualizarStringsExibicaoMonetaria();
+=======
+            cor: 'FFDE59',
+            moeda: 'BRL',
+            tipoConta: 'CONTA_CORRENTE',
+            limiteTotal: null
+          });
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
           this.listarContas();
         },
         error: (e: Error) => {
@@ -1050,12 +1215,20 @@ export class ContasComponent implements OnInit {
         this.formContaFinanceira.reset({
           nome: '',
           saldo: 0,
+<<<<<<< HEAD
           cor: '4F46E5',
           moeda: this.preferenciaMoedaService.obterMoedaAtiva(),
           tipoConta: 'CONTA_CORRENTE',
           limiteTotal: null
         });
         this.atualizarStringsExibicaoMonetaria();
+=======
+          cor: 'FFDE59',
+          moeda: 'BRL',
+          tipoConta: 'CONTA_CORRENTE',
+          limiteTotal: null
+        });
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
         this.listarContas();
       },
       error: (e: Error) => {

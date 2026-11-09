@@ -110,6 +110,7 @@ export class AjustesPerfilComponent implements OnInit {
     this.carregarDadosIniciais();
     this.route.queryParams.subscribe((params) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
       if (params['aba'] === 'conquistas' || params['tab'] === 'conquistas') {
         this.abaAtiva = 'conquistas';
         this.cdr.detectChanges();
@@ -117,6 +118,9 @@ export class AjustesPerfilComponent implements OnInit {
 =======
       if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes') {
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+      if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes' || params['aba'] === 'ia' || params['secao'] === 'ia') {
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
         this.abaAtiva = 'integracoes';
         this.cdr.detectChanges();
       }

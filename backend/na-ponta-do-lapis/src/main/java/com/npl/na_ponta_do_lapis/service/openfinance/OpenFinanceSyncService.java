@@ -364,11 +364,15 @@ public class OpenFinanceSyncService {
                         String rawType = accNode.path("type").asText("").trim().toUpperCase();
                         String rawSubtype = accNode.path("subtype").asText("").trim().toUpperCase();
 <<<<<<< HEAD
+<<<<<<< HEAD
                         boolean ehCartao = "CREDIT".equals(rawType) || "CREDIT_CARD".equals(rawSubtype);
 =======
                         boolean ehCartao = "CREDIT".equals(rawType) || "CREDIT_CARD".equals(rawSubtype)
                                 || (rawName != null && (rawName.toLowerCase().contains("cartão") || rawName.toLowerCase().contains("cartao") || rawName.toLowerCase().contains("credit")));
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+                        boolean ehCartao = "CREDIT".equals(rawType) || "CREDIT_CARD".equals(rawSubtype);
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
                         conta.setTipoConta(ehCartao ? TipoConta.CARTAO_CREDITO : TipoConta.CONTA_CORRENTE);
 
                         // Extrai limites de cartão se presentes em creditData
@@ -692,10 +696,14 @@ public class OpenFinanceSyncService {
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         boolean ehCartao = conta.getTipoConta() == TipoConta.CARTAO_CREDITO
 =======
         boolean ehCartao = (conta.getNome() != null && (conta.getNome().toLowerCase().contains("cartão") || conta.getNome().toLowerCase().contains("cartao")))
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+        boolean ehCartao = conta.getTipoConta() == TipoConta.CARTAO_CREDITO
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
                 || txNode.hasNonNull("billId")
                 || txNode.hasNonNull("creditCardMetadata");
 

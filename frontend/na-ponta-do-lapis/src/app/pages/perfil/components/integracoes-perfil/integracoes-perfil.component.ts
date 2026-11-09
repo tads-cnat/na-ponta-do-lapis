@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { IntegracoesService } from '../../../../service/integracoes.service';
@@ -44,7 +45,10 @@ export class IntegracoesPerfilComponent implements OnInit {
   public salvandoChaveIa = false;
   public chaveIaMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
   // Sub-aba ativa (Open Finance vs IA)
   public subabaAtiva: 'bancos' | 'ia' = 'bancos';
 
@@ -65,6 +69,18 @@ export class IntegracoesPerfilComponent implements OnInit {
 
 
   ngOnInit(): void {
+<<<<<<< HEAD
+=======
+    this.route.queryParams.subscribe((params) => {
+      if (params['secao'] === 'ia' || params['aba'] === 'ia' || params['subaba'] === 'ia') {
+        this.subabaAtiva = 'ia';
+        this.cdr.detectChanges();
+      } else if (params['secao'] === 'bancos' || params['secao'] === 'openfinance') {
+        this.subabaAtiva = 'bancos';
+        this.cdr.detectChanges();
+      }
+    });
+>>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
 
     this.inicializarFormularios();
     this.carregarOpenFinance();
