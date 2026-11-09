@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { RouterLink, RouterLinkActive } from '@angular/router'
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { SidebarService } from '../../service/sidebar-service.service';
-
+import { ThemeService } from '../../service/theme.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,26 +13,26 @@ import { SidebarService } from '../../service/sidebar-service.service';
 })
 export class SidebarComponent implements OnInit {
   aberto: boolean = true;
-  items: MenuItem[] | undefined ;
+  items: MenuItem[] | undefined;
   sidebarService: SidebarService = inject(SidebarService);
+  themeService: ThemeService = inject(ThemeService);
   isMobile: boolean = false;
 
   ngOnInit(): void {
     this.items = [
-      {label: 'Dashboard', icon:'dashboard', routerLink:'/app/dashboard'},
-      {label: 'Transações', icon: 'transacao', routerLink:'/app/transacoes'},
-      {label: 'Contas', icon: 'conta', routerLink:'/app/contas'},
-      {label: 'Metas', icon: 'meta', routerLink:'/app/metas'},
-      {label: 'Familia', icon: 'familia', routerLink:'/app/familia'},
-      {label: 'Perfil', icon:'ajuste', routerLink:'/app/perfil'},
-    ]
+      { label: 'Dashboard', icon: 'dashboard', routerLink: '/app/dashboard' },
+      { label: 'Transações', icon: 'transacao', routerLink: '/app/transacoes' },
+      { label: 'Contas', icon: 'conta', routerLink: '/app/contas' },
+      { label: 'Metas', icon: 'meta', routerLink: '/app/metas' },
+      { label: 'Familia', icon: 'familia', routerLink: '/app/familia' },
+      { label: 'Perfil', icon: 'ajuste', routerLink: '/app/perfil' },
+    ];
     if (window.innerWidth < 769) {
       this.isMobile = true;
     }
   }
 
-  toggleSidebar(){
+  toggleSidebar() {
     this.aberto = !this.aberto;
   }
-
 }

@@ -4,6 +4,9 @@
 @import "tailwindcss-primeui";
 @import "primeicons/primeicons.css";
 
+/* Habilita as classes `dark:` do Tailwind quando <html> tem .app-dark */
+@custom-variant dark (&:where(.app-dark, .app-dark *));
+
 :root {
   color-scheme: light;
 }
@@ -54,4 +57,192 @@ main > *:not(p-toast):not(router-outlet) {
 /* Previne que overlays flutuantes de tooltip interceptem eventos do ponteiro e travem o hover */
 .p-tooltip {
   pointer-events: none !important;
+}
+
+/* ==========================================================================
+   TEMA (claro / escuro)
+   --------------------------------------------------------------------------
+   O ThemeService liga a classe `.app-dark` no <html> (só na área interna).
+   PrimeNG segue essa classe via `darkModeSelector`. Para as classes Tailwind
+   já espalhadas pelos templates, o tema escuro funciona de duas formas:
+     1) a escala slate/gray (e tons pastel) é remapeada nas variáveis
+        `--color-*` do Tailwind: `text-slate-700`, `bg-slate-100`,
+        `border-slate-200` etc. viram automaticamente as versões escuras;
+     2) as classes que não passam por variável (`bg-white`, `bg-[#F8F8FC]!`,
+        `text-[#1A1A1A]`...) são sobrescritas no bloco `@layer utilities`
+        mais abaixo.
+   ========================================================================== */
+
+:root {
+  --app-ground: #F4F4F4;
+  --app-surface: #ffffff;
+  --app-surface-2: #F8F8FC;
+  --app-panel: #f8f8f8;
+  --app-input: #EBEBEB;
+  --app-hover: #e8e8e8;
+  --app-text: #1A1A1A;
+  --app-muted: #808080;
+  --app-border: #e2e8f0;
+  --app-accent-text: #7843CD;
+  --app-accent-text-hover: #5110A8;
+  --app-row-selected: #ede9fe;
+  --app-row-hover: #f1f5f9;
+  --app-row-selected-hover: #ddd6fe;
+  --app-chip-purple-bg: #f3e8ff;
+  --app-chip-red-bg: #fee2e2;
+}
+
+.app-dark {
+  color-scheme: dark;
+
+  --app-ground: #1A191E;
+  --app-surface: #121620;
+  --app-surface-2: #1f1f23;
+  --app-panel: #2A2830;
+  --app-input: #27272a;
+  --app-hover: #27272a;
+  --app-text: #fafafa;
+  --app-muted: #a1a1aa;
+  --app-border: #3f3f46;
+  --app-accent-text: #b79cff;
+  --app-accent-text-hover: #d4c4ff;
+  --app-row-selected: #2e2150;
+  --app-row-hover: #1f1f23;
+  --app-row-selected-hover: #3a2a66;
+  --app-chip-purple-bg: rgba(168, 85, 247, 0.18);
+  --app-chip-red-bg: rgba(239, 68, 68, 0.18);
+
+  color: var(--app-text);
+
+  /* Escala neutra invertida (50 = quase fundo, 950 = quase branco) */
+  --color-slate-50: #1c1c1f;
+  --color-slate-100: #232326;
+  --color-slate-200: #2e2e33;
+  --color-slate-300: #3f3f46;
+  --color-slate-400: #71717a;
+  --color-slate-500: #a1a1aa;
+  --color-slate-600: #b4b4bd;
+  --color-slate-700: #d4d4d8;
+  --color-slate-800: #e4e4e7;
+  --color-slate-900: #f4f4f5;
+  --color-slate-950: #fafafa;
+  --color-gray-50: #1c1c1f;
+  --color-gray-100: #232326;
+  --color-gray-200: #2e2e33;
+  --color-gray-300: #3f3f46;
+  --color-gray-400: #71717a;
+  --color-gray-500: #a1a1aa;
+  --color-gray-600: #b4b4bd;
+  --color-gray-700: #d4d4d8;
+  --color-gray-800: #e4e4e7;
+  --color-gray-900: #f4f4f5;
+  --color-gray-950: #fafafa;
+
+  /* Fundos pastel viram tintas translúcidas; textos escuros ficam claros */
+  --color-amber-50: rgba(245, 158, 11, 0.12);
+  --color-amber-100: rgba(245, 158, 11, 0.18);
+  --color-amber-200: rgba(245, 158, 11, 0.35);
+  --color-amber-600: #fbbf24;
+  --color-amber-700: #fcd34d;
+  --color-amber-800: #fde68a;
+  --color-amber-900: #fef3c7;
+  --color-yellow-100: rgba(234, 179, 8, 0.18);
+  --color-red-50: rgba(239, 68, 68, 0.12);
+  --color-red-100: rgba(239, 68, 68, 0.18);
+  --color-red-200: rgba(239, 68, 68, 0.35);
+  --color-red-700: #fca5a5;
+  --color-green-50: rgba(34, 197, 94, 0.12);
+  --color-green-100: rgba(34, 197, 94, 0.18);
+  --color-emerald-50: rgba(16, 185, 129, 0.12);
+  --color-emerald-100: rgba(16, 185, 129, 0.18);
+  --color-emerald-200: rgba(16, 185, 129, 0.35);
+  --color-emerald-300: rgba(16, 185, 129, 0.5);
+  --color-emerald-600: #34d399;
+  --color-emerald-700: #6ee7b7;
+  --color-purple-50: rgba(168, 85, 247, 0.12);
+  --color-purple-100: rgba(168, 85, 247, 0.2);
+  --color-purple-200: rgba(168, 85, 247, 0.35);
+  --color-purple-700: #c4b5fd;
+  --color-purple-800: #ddd6fe;
+  --color-purple-900: #ede9fe;
+  --color-purple-950: #f5f3ff;
+  --color-blue-50: rgba(59, 130, 246, 0.12);
+  --color-blue-200: rgba(59, 130, 246, 0.35);
+  --color-indigo-50: rgba(99, 102, 241, 0.12);
+}
+
+.app-dark body {
+  color: var(--app-text);
+  background-color: var(--app-ground);
+}
+
+@layer utilities {
+  /* `:where()` zera a especificidade do seletor: as variantes hover:/focus:
+     dos próprios templates continuam ganhando delas. */
+
+  /* ---- Superfícies ---- */
+  .app-dark :where(.bg-white, [class~="bg-[#ffffff]" i]) {
+    background-color: var(--app-surface);
+  }
+  .app-dark :where(.bg-white\!, [class~="bg-white!"]) {
+    background-color: var(--app-surface) !important;
+  }
+  .app-dark :where([class~="bg-[#F5F6FA]" i]) {
+    background-color: var(--app-ground);
+  }
+  .app-dark :where([class~="bg-[#F8F8FC]" i]) {
+    background-color: var(--app-surface-2);
+  }
+  .app-dark :where([class~="bg-[#F8F8FC]!" i], [class~="bg-[#fafafa]!" i]) {
+    background-color: var(--app-surface-2) !important;
+  }
+  .app-dark :where([class~="bg-[#F8FAFC]!" i]) {
+    background-color: var(--app-surface) !important;
+  }
+  .app-dark :where([class~="bg-[#EBEBEB]" i]) {
+    background-color: var(--app-input);
+  }
+  .app-dark :where([class~="border-[#e2e4e4]!" i]) {
+    border-color: var(--app-border) !important;
+  }
+
+  /* ---- Botões pastel de ação destrutiva ---- */
+  .app-dark :where([class~="bg-[#fee2e2]!" i]) {
+    background-color: var(--app-chip-red-bg) !important;
+  }
+  .app-dark :where([class~="border-[#fee2e2]!" i]) {
+    border-color: transparent !important;
+  }
+
+  /* ---- Texto ---- */
+  .app-dark :where(.text-black, [class~="text-[#000000]" i], [class~="text-[#1A1A1A]" i]) {
+    color: var(--app-text);
+  }
+  .app-dark :where(.text-black\!, [class~="text-black!"]) {
+    color: var(--app-text) !important;
+  }
+  .app-dark :where([class~="text-[#808080]" i], [class~="text-[#757575]" i], [class~="text-[#9E9E9E]" i]) {
+    color: var(--app-muted);
+  }
+  .app-dark :where([class~="text-[#4A4A4A]" i], [class~="text-[#313131]" i]) {
+    color: #d4d4d8;
+  }
+  .app-dark :where([class~="text-[#7843cd]" i]) {
+    color: var(--app-accent-text);
+  }
+  .app-dark :where([class~="text-[#7843cd]!" i]) {
+    color: var(--app-accent-text) !important;
+  }
+  .app-dark :where([class~="text-[#1976d2]!" i]) {
+    color: #60a5fa !important;
+  }
+  .app-dark :where([class~="hover:text-[#7843CD]" i], [class~="hover:text-[#5d2fa8]" i], [class~="hover:text-[#5110A8]" i]):hover {
+    color: var(--app-accent-text-hover);
+  }
+  .app-dark :where([class~="hover:text-[#1A1A1A]" i]):hover {
+    color: var(--app-text);
+  }
+  .app-dark :where([class~="hover:bg-[#fef2f2]!" i]):hover {
+    background-color: var(--app-chip-red-bg) !important;
+  }
 }

@@ -1,101 +1,153 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
 * {
-    font-family: 'Poppins', sans-serif;
+  font-family: 'Poppins', sans-serif;
 }
 
 .sidebar {
-    gap: 14px;
-    width: 74px;
-    transition: width 0.3s ease, padding 0.3s ease;
-    padding: 28px 12px;
+  gap: 14px;
+  width: 74px;
+  transition: width 0.3s ease, padding 0.3s ease;
+  padding: 28px 12px;
 }
 
 .menu-header{
-    align-items: center;
-    justify-content: space-around;
-    margin-bottom: 64px;
-    height: 35px;
+  align-items: center;
+  justify-content: space-around;
+  margin-bottom: 64px;
+  height: 35px;
 }
 .menu-btn{
-    height: 20px;
-    cursor: pointer;
+  height: 20px;
+  cursor: pointer;
 }
 .sidebar .logo{
-    display: none;
+  display: none;
 }
 
 .sidebar.aberta .logo{
-    display: block;
-    height: 55px;
+  display: block;
+  height: 55px;
 }
 
 .adicionar {
-    border-radius: 9px;
-    padding: 14px 0;
-    justify-content: center;
-    align-items: center;
-    height: 52px;
-    width: 100%;
+  border-radius: 9px;
+  padding: 14px 0;
+  justify-content: center;
+  align-items: center;
+  height: 52px;
+  width: 100%;
 }
 
 .menuitem {
-    border-radius: 9px;
-    padding: 14px 0;
-    justify-content: center;
-    align-items: center;
-    height: 52px;
+  border-radius: 9px;
+  padding: 14px 0;
+  justify-content: center;
+  align-items: center;
+  height: 52px;
 }
 
 .menuitem:hover {
-    background-color: #e8e8e8;
+  background-color: var(--app-hover, #e8e8e8);
 }
 
 .menuitem.ativo {
-    color: #7843CD;
-    font-weight:bold;
+  color: var(--app-accent-text, #7843CD);
+  font-weight:bold;
 }
 .menulabel{
-    display: none;
+  display: none;
 }
 
 .sidebar.aberta .menulabel{
-    display: flex;
+  display: flex;
 }
 
 .sidebar.aberta {
-    width: 230px;
+  width: 230px;
 }
 
 .sidebar.aberta .menuitem {
-    padding: 14px 36px;
-    justify-content: start;
+  padding: 14px 36px;
+  justify-content: start;
 }
 
 .botao-adicionar {
-    width: 44px;
-    height: 44px;
-    transition: width 0.3s ease, padding 0.3s ease;
+  width: 44px;
+  height: 44px;
+  transition: width 0.3s ease, padding 0.3s ease;
 }
 
 .sidebar.aberta .botao-adicionar {
-    width: 100%;
-    height: auto;
-    padding: 10px 16px;
+  width: 100%;
+  height: auto;
+  padding: 10px 16px;
+}
+
+/* ---------- Botão de tema (sol <-> lua) ---------- */
+.theme-toggle {
+  margin-top: auto;
+  width: 100%;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+}
+
+.theme-icon {
+  position: relative;
+  display: block;
+  flex: 0 0 auto;
+  width: 1.375rem;
+  height: 1.375rem;
+}
+
+.theme-icon app-icon {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
+}
+
+.theme-sol {
+  color: #f59e0b;
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-lua {
+  color: #a78bfa;
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.4);
+}
+
+.theme-icon.escuro .theme-sol {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.4);
+}
+
+.theme-icon.escuro .theme-lua {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .theme-icon app-icon {
+    transition: none;
+  }
 }
 
 @media (max-width: 768px) {
-    .sidebar {
-        width: 0;
-        position: fixed;
-        z-index: 1100;
-        padding: 28px 0;
-        overflow: hidden;
-    }
-    .sidebar.aberta {
-        width: 100dvw;
-        position: fixed;
-        z-index: 1100;
-        overflow: visible;
-    }
+  .sidebar {
+    width: 0;
+    position: fixed;
+    z-index: 1100;
+    padding: 28px 0;
+    overflow: hidden;
+  }
+  .sidebar.aberta {
+    width: 100dvw;
+    position: fixed;
+    z-index: 1100;
+    overflow: visible;
+  }
 }
