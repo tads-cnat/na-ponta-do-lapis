@@ -910,6 +910,7 @@ public class OpenFinanceSyncService {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     private int calcularRestantesHoje(UsuarioPluggyIntegracao integracao) {
         resetarContadorSeNecessario(integracao);
@@ -917,6 +918,8 @@ public class OpenFinanceSyncService {
     }
 
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+>>>>>>> b5d8fff (fix(open-finance): remove metodo obsoleto calcularRestantesHoje)
     private String obterClientIdMascarado(UsuarioPluggyIntegracao integracao) {
         try {
             if (integracao.getClientIdCriptografado() == null) {
