@@ -1,30 +1,20 @@
-<<<<<<< HEAD
 import { Component, Input, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.models';
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-moeda.service';
-=======
-import { Component, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.models';
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+
 
 @Component({
   selector: 'app-informacoes-conta',
   standalone: true,
-<<<<<<< HEAD
   imports: [CommonModule, IconeBancoComponent, AppMoedaPipe],
-=======
-  imports: [CommonModule],
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
   template: `
     @if (conta) {
       <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col gap-5">
 
         <div class="flex items-center justify-between">
-<<<<<<< HEAD
           <div class="flex items-center gap-3">
             <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'" [fallbackIcon]="ehCartao ? 'pi pi-credit-card' : 'pi pi-wallet'"></app-icone-banco>
             <div>
@@ -35,7 +25,6 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
                 {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
               </p>
             </div>
-=======
           <div>
             <h2 class="text-2xl font-bold text-slate-900">
               Informações da Conta
@@ -43,7 +32,16 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
             <p class="text-slate-500 text-sm">
               {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
             </p>
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+          <div class="flex items-center gap-3">
+            <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'"></app-icone-banco>
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900">
+                Informações da Conta
+              </h2>
+              <p class="text-slate-500 text-sm">
+                {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
+              </p>
+            </div>
           </div>
 
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
@@ -60,26 +58,8 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
           @if (ehCartao) {
             <!-- DISCRIMINAÇÃO: FATURA FECHADA vs FATURA EM ABERTO -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              
+
               <!-- Card: Fatura Fechada (A Pagar Agora) -->
-<<<<<<< HEAD
-              <div class="bg-[#FDF4F4] border border-[#F5D5D5] rounded-2xl p-4 flex flex-col justify-between">
-                <div>
-                  <div class="flex items-center justify-between mb-1.5">
-                    <span class="text-xs font-bold text-[#9E3636] uppercase tracking-wider flex items-center gap-1">
-                      <i class="pi pi-exclamation-circle text-xs"></i>
-                      Fatura Fechada (A Pagar)
-                    </span>
-                    <span class="text-[10px] font-bold bg-[#FCE8E8] text-[#9E3636] px-2 py-0.5 rounded-full border border-[#F5D5D5]">
-                      Pagar Agora
-                    </span>
-                  </div>
-                  <span class="text-2xl font-extrabold text-[#C24E4E] tracking-tight">
-                    - {{ (conta.valorFaturaFechada ?? conta.saldo) | appMoeda }}
-                  </span>
-                </div>
-                <div class="mt-3 pt-2 border-t border-[#F5D5D5] text-xs text-[#C24E4E] flex items-center justify-between">
-=======
               <div class="bg-rose-50/60 border border-rose-200/80 rounded-2xl p-4 flex flex-col justify-between">
                 <div>
                   <div class="flex items-center justify-between mb-1.5">
@@ -96,7 +76,6 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
                   </span>
                 </div>
                 <div class="mt-3 pt-2 border-t border-rose-200/60 text-xs text-rose-600 flex items-center justify-between">
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                   <span>{{ conta.dataVencimentoFatura ? ('Vencimento: ' + (conta.dataVencimentoFatura | date:'dd/MM/yyyy')) : 'Aguardando vencimento' }}</span>
                   <i class="pi pi-calendar text-xs"></i>
                 </div>
@@ -115,11 +94,7 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
                     </span>
                   </div>
                   <span class="text-2xl font-extrabold text-amber-900 tracking-tight">
-<<<<<<< HEAD
-                    - {{ (conta.valorFaturaAberta ?? 0) | appMoeda }}
-=======
                     - {{ (conta.valorFaturaAberta ?? 0) | currency: conta.moeda }}
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                   </span>
                 </div>
                 <div class="mt-3 pt-2 border-t border-amber-200/60 text-xs text-amber-700 flex items-center justify-between">
@@ -137,11 +112,7 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
                 Total Devedor Acumulado (Fechada + Aberta):
               </span>
               <span class="font-bold text-slate-900 text-sm">
-<<<<<<< HEAD
-                - {{ conta.saldo | appMoeda }}
-=======
                 - {{ conta.saldo | currency: conta.moeda }}
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
               </span>
             </div>
           } @else {
@@ -157,16 +128,12 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
               </div>
 
               <span class="text-3xl font-extrabold text-slate-900 break-words leading-tight">
-<<<<<<< HEAD
-                {{ conta.saldo | appMoeda }}
-=======
                 {{
                   conta.saldo.toLocaleString(
                     localeDaMoeda(conta.moeda),
                     { style: 'currency', currency: conta.moeda }
                   )
                 }}
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
               </span>
             </div>
           }
@@ -190,35 +157,22 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
               <div class="w-full h-3 bg-slate-200 rounded-full overflow-hidden">
                 <div class="h-full rounded-full transition-all duration-500"
                      [style.width.%]="percentualLimiteConsumido ?? 50"
-<<<<<<< HEAD
-                     [ngClass]="(percentualLimiteConsumido ?? 0) > 85 ? 'bg-[#C24E4E]' : ((percentualLimiteConsumido ?? 0) > 60 ? 'bg-amber-500' : 'bg-[#7843cd]')">
-=======
                      [ngClass]="(percentualLimiteConsumido ?? 0) > 85 ? 'bg-rose-500' : ((percentualLimiteConsumido ?? 0) > 60 ? 'bg-amber-500' : 'bg-[#7843cd]')">
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                 </div>
               </div>
 
               <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 text-xs">
                 <div class="flex flex-col">
                   <span class="text-slate-400 font-medium">Limite Consumido</span>
-<<<<<<< HEAD
-                  <span class="font-bold text-[#C24E4E] text-sm">
-                    {{ (limiteConsumidoCalculado) | appMoeda }}
-=======
                   <span class="font-bold text-rose-600 text-sm">
                     {{ (limiteConsumidoCalculado) | currency: conta.moeda }}
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                   </span>
                 </div>
 
                 <div class="flex flex-col">
                   <span class="text-slate-400 font-medium">Limite Disponível</span>
                   <span class="font-bold text-emerald-600 text-sm">
-<<<<<<< HEAD
-                    {{ (limiteDisponivelCalculado) | appMoeda }}
-=======
                     {{ (limiteDisponivelCalculado) | currency: conta.moeda }}
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                   </span>
                 </div>
 
@@ -226,11 +180,7 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
                   <div class="flex flex-col col-span-2 sm:col-span-1">
                     <span class="text-slate-400 font-medium">Limite Total</span>
                     <span class="font-bold text-slate-700 text-sm">
-<<<<<<< HEAD
-                      {{ limiteTotalCalculado | appMoeda }}
-=======
                       {{ limiteTotalCalculado | currency: conta.moeda }}
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                     </span>
                   </div>
                 }
@@ -245,13 +195,8 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
             </p>
 
             <div class="flex items-center gap-3">
-<<<<<<< HEAD
-              <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-[#FEF9E7] text-[#B45309] border border-[#F9DB70] text-base font-bold shrink-0">
-                {{ preferenciaMoedaService.obterSimboloMoeda() }}
-=======
               <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-orange-100 text-orange-600 text-base font-bold shrink-0">
                 {{ simboloMoeda(conta.moeda) }}
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
               </span>
 
               <div class="flex flex-col min-w-0">
@@ -266,24 +211,15 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
           </div>
 
           @if (conta.sincronizada) {
-<<<<<<< HEAD
-            <div class="bg-[#F3E8FF]/60 border border-[#D1C4FF] rounded-2xl p-4 flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
-=======
             <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 flex items-center gap-3">
               <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
                 </svg>
               </div>
               <div>
-<<<<<<< HEAD
-                <p class="text-xs font-bold text-[#7843CD]">Sincronizada via Open Finance</p>
-=======
                 <p class="text-xs font-bold text-indigo-900">Conta Sincronizada via Open Finance</p>
                 <p class="text-[11px] text-indigo-700">O saldo e as faturas são atualizados automaticamente pela integração bancária.</p>
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
               </div>
             </div>
           }
@@ -338,11 +274,7 @@ export class InformacoesComponent {
     return Math.min(100, Math.max(0, pct));
   }
 
-<<<<<<< HEAD
-  localeDaMoeda(moeda: string | null): string {
-=======
   localeDaMoeda(moeda: Moeda | null): string {
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
     switch (moeda) {
       case 'USD': return 'en-US';
       case 'EUR': return 'de-DE';

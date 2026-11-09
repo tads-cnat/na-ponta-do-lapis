@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NgClass, CurrencyPipe } from '@angular/common';
 import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
+import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 
 @Component({
   selector: 'app-carrossel-cartoes',
   standalone: true,
-  imports: [NgClass, CurrencyPipe],
+  imports: [NgClass, CurrencyPipe, IconeBancoComponent],
   template: `
     <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 overflow-hidden">
 
@@ -90,24 +91,18 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
 
                     <div class="min-w-0 flex-1">
                       @if (conta.sincronizada) {
-<<<<<<< HEAD
-<<<<<<< HEAD
                         <span class="inline-flex items-center gap-1.5 text-[11px] bg-[#EEC046] text-slate-900 px-2.5 py-0.5 rounded-full font-bold tracking-wide shadow-xs">
                           <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
                           </svg>
                           <span>Open Finance</span>
-=======
                         <span class="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
                           ⚡ Open Finance
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
                         <span class="inline-flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
                           <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
                           </svg>
                           <span>Open Finance</span>
->>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
                         </span>
                       }
                       <h3 class="text-2xl font-bold mt-2 leading-snug line-clamp-2 break-words"
@@ -116,7 +111,7 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
                       </h3>
                     </div>
 
-<<<<<<< HEAD
+
                     <div class="shrink-0 flex items-center justify-center transition-transform hover:scale-105 select-none filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]">
                       @if (temBanco(conta.nome)) {
                         <app-icone-banco
@@ -133,6 +128,15 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
                     <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
                       <i [class]="ehCartao(conta) ? 'pi pi-credit-card text-xl' : 'pi pi-wallet text-xl'"></i>
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+                    <div class="shrink-0 flex items-center justify-center">
+                      <app-icone-banco
+                        [nome]="conta.nome"
+                        [tamanho]="50"
+                        [formato]="'quadrado'"
+                        [fallbackIcon]="ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet'">
+                      </app-icone-banco>
+>>>>>>> adae5de (feat(frontend): exibir logotipos oficiais dos bancos e ajustar proporcoes dos icones)
                     </div>
 
                   </div>
@@ -144,21 +148,13 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
                         {{ ehCartao(conta) ? 'Fatura Atual' : 'Saldo Disponível' }}
                       </p>
                       <p class="text-xl font-bold tracking-tight">
-<<<<<<< HEAD
-                        {{ ehCartao(conta) ? '-' : '' }} {{ conta.saldo | appMoeda }}
-=======
                         {{ ehCartao(conta) ? '-' : '' }} {{ conta.saldo | currency: conta.moeda }}
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                       </p>
                     </div>
                     @if (ehCartao(conta) && (conta.limiteDisponivel || conta.limiteTotal)) {
                       <div class="text-right text-[11px] text-white/90">
                         <span class="opacity-80">Disp.: </span>
-<<<<<<< HEAD
-                        <span class="font-bold">{{ (conta.limiteDisponivel ?? (conta.limiteTotal! - conta.saldo)) | appMoeda }}</span>
-=======
                         <span class="font-bold">{{ (conta.limiteDisponivel ?? (conta.limiteTotal! - conta.saldo)) | currency: conta.moeda }}</span>
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
                       </div>
                     }
                   </div>
@@ -226,55 +222,4 @@ export class CarrosselCartoesComponent {
     return ehCartaoCredito(conta);
   }
 
-<<<<<<< HEAD
-  temBanco(nome?: string | null): boolean {
-    return temBancoDetectado(nome);
-  }
-
-  obterClassesPosicao(i: number): Record<string, boolean> {
-    // 1 conta: sempre no centro absoluto
-    if (this.contas.length <= 1) {
-      return {
-        'z-30 opacity-100 scale-100 translate-x-0': true
-      };
-    }
-
-    // 2 contas: a selecionada fica no centro e a outra fica à direita
-    if (this.contas.length === 2) {
-      const isSelecionada = i === this.contaSelecionadaIndex;
-      return {
-        'z-30 opacity-100 scale-100 translate-x-0': isSelecionada,
-        'z-20 opacity-40 scale-90 translate-x-[72%]': !isSelecionada
-      };
-    }
-
-    // 3 ou mais contas: carrossel tridimensional com esquerda, centro e direita
-    const isSelecionada = i === this.contaSelecionadaIndex;
-    const isAnterior = i === this.contaAnterior;
-    const isProxima = i === this.contaProxima;
-
-    return {
-      'z-30 opacity-100 scale-100 translate-x-0': isSelecionada,
-      'z-20 opacity-40 scale-90 -translate-x-[72%]': isAnterior && !isSelecionada,
-      'z-20 opacity-40 scale-90 translate-x-[72%]': isProxima && !isSelecionada && !isAnterior,
-      'opacity-0 scale-75 pointer-events-none': !isSelecionada && !isAnterior && !isProxima
-    };
-  }
-
-  obterCorCartao(conta: IContas): string {
-    const corAtual = conta.cor ? conta.cor.toUpperCase().replace('#', '') : '';
-    // Se tiver cor customizada que não seja o amarelo padrão antigo (FFDE59)
-    if (corAtual && corAtual !== 'FFDE59') {
-      return `#${corAtual}`;
-    }
-    // Busca a cor oficial da marca do banco
-    const corOficial = obterCorOficialBanco(conta.nome);
-    if (corOficial) {
-      return corOficial;
-    }
-    return conta.cor ? (conta.cor.startsWith('#') ? conta.cor : `#${conta.cor}`) : '#4F46E5';
-  }
-
-=======
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 }
