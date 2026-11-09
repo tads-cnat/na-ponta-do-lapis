@@ -503,7 +503,7 @@ export class ContasComponent implements OnInit {
   }
 
   selecionarAnterior(): void {
-    if (!this.contaFinanceiraDados.length) return;
+    if (this.contaFinanceiraDados.length <= 1) return;
     this.contaSelecionadaIndex =
       this.contaSelecionadaIndex === 0
         ? this.contaFinanceiraDados.length - 1
@@ -513,7 +513,7 @@ export class ContasComponent implements OnInit {
   }
 
   selecionarProxima(): void {
-    if (!this.contaFinanceiraDados.length) return;
+    if (this.contaFinanceiraDados.length <= 1) return;
     this.contaSelecionadaIndex =
       this.contaSelecionadaIndex === this.contaFinanceiraDados.length - 1
         ? 0
