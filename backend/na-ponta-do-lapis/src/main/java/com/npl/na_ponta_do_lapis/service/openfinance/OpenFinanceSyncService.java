@@ -875,11 +875,6 @@ public class OpenFinanceSyncService {
         }
     }
 
-    private int calcularRestantesHoje(UsuarioPluggyIntegracao integracao) {
-        resetarContadorSeNecessario(integracao);
-        return Math.max(0, LIMITE_MANUAL_DIARIO - integracao.getSincronizacoesManuaisHoje());
-    }
-
     private String obterClientIdMascarado(UsuarioPluggyIntegracao integracao) {
         try {
             if (integracao.getClientIdCriptografado() == null) {
