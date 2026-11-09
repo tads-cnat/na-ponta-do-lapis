@@ -357,6 +357,7 @@
           <small class="text-red-500 text-xs">Digite um nome com pelo menos 3 caracteres</small>
           }
         </div>
+<<<<<<< HEAD
 
         <div class="flex flex-col gap-1.5"
           [ngClass]="(!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') ? 'sm:col-span-3' : 'sm:col-span-5'">
@@ -364,6 +365,16 @@
             {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Valor Limite' : 'Valor Alvo' }}
           </label>
           <app-input-moeda formControlName="valor" inputId="valor" tamanho="md" placeholder="0,00">
+=======
+        
+        <div class="flex flex-col gap-2 flex-1">
+          <label for="valor">Valor</label>
+          <app-input-moeda 
+            formControlName="valor" 
+            inputId="valor" 
+            tamanho="md" 
+            placeholder="0,00">
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
           </app-input-moeda>
           @if (metaForm.get('valor')?.invalid && metaForm.get('valor')?.touched) {
           <small class="text-red-500 text-xs">Informe um valor maior que zero</small>

@@ -17,6 +17,7 @@ import { DatePicker } from 'primeng/datepicker';
 import { Select } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { Textarea } from 'primeng/textarea';
+<<<<<<< HEAD
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
@@ -43,6 +44,13 @@ import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem
     AppMoedaPipe,
     IlustracaoMetaComponent,
   ],
+=======
+import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
+
+@Component({
+  selector: 'app-metas',
+  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, InputNumber, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent],
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
 })

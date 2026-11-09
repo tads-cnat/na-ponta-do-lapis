@@ -19,10 +19,14 @@ import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
 import { MessageService } from 'primeng/api';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/preferencia-moeda.service';
 import { Usuario } from '../../../../model/IUsuario.models';
 =======
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
+=======
+import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/preferencia-moeda.service';
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
 
 @Component({
   selector: 'app-ajustes-do-perfil',
@@ -46,16 +50,24 @@ export class AjustesPerfilComponent implements OnInit {
   public editandoSenha: boolean = false;
 =======
   public abaAtiva: 'dados' | 'integracoes' = 'dados';
+<<<<<<< HEAD
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+  public moedaOriginalUsuario: string = 'BRL';
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
 
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
   get opcoesMoeda(): OpcaoMoeda[] {
     return this.preferenciaMoedaService.opcoesMoeda;
   }
 
+<<<<<<< HEAD
   get podeAbrirConfirmacao(): boolean {
     const valores = this.perfilForm?.value ?? {};
     
@@ -91,6 +103,8 @@ export class AjustesPerfilComponent implements OnInit {
 
     return !!alterouNome || !!alterouEmail || !!alterouMoeda || !!alterouSenha;
 =======
+=======
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
   get podeAbrirConfirmacao(): boolean {
     const valores = this.perfilForm?.value ?? {};
     const camposSenha = [
@@ -107,8 +121,13 @@ export class AjustesPerfilComponent implements OnInit {
         && valores.novaSenha === valores.confirmarNovaSenha;
     }
 
+<<<<<<< HEAD
     return [valores.nome, valores.email].some(this.temTexto);
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
+=======
+    const alterouMoeda = valores.moedaPadrao && valores.moedaPadrao !== this.moedaOriginalUsuario;
+    return [valores.nome, valores.email].some(this.temTexto) || !!alterouMoeda;
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
   }
 
   private readonly temTexto = (valor: unknown): boolean =>
@@ -128,8 +147,13 @@ export class AjustesPerfilComponent implements OnInit {
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 =======
     private cdr: ChangeDetectorRef,
+<<<<<<< HEAD
     private messageService: MessageService
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
+=======
+    private messageService: MessageService,
+    private preferenciaMoedaService: PreferenciaMoedaService
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
   ) {
     this.inicializarFormulario();
   }
@@ -170,6 +194,7 @@ export class AjustesPerfilComponent implements OnInit {
     this.configurarCamposEstaticos();
   }
 
+<<<<<<< HEAD
   public iniciarEdicaoDados(): void {
     this.editandoDados = true;
     this.perfilForm.patchValue({
@@ -201,6 +226,8 @@ export class AjustesPerfilComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+=======
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
   public selecionarMoedaPadrao(codigo: string): void {
     this.perfilForm.get('moedaPadrao')?.setValue(codigo);
     this.perfilForm.markAsDirty();
@@ -211,6 +238,7 @@ export class AjustesPerfilComponent implements OnInit {
     return this.preferenciaMoedaService.obterSimboloMoeda(moeda);
   }
 
+<<<<<<< HEAD
   public descartarAlteracoes(): void {
     this.editandoDados = false;
     this.editandoSenha = false;
@@ -233,6 +261,9 @@ export class AjustesPerfilComponent implements OnInit {
   }
 
   private configurarCamposEstaticos(nome = '', email = ''): void {
+=======
+  private configurarCamposEstaticos(nome = ' ', email = ' '): void {
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
     this.camposDetalhes = [
       { 
         key: 'nome', 
@@ -283,17 +314,27 @@ export class AjustesPerfilComponent implements OnInit {
   private carregarDadosIniciais(): void {
     this.usuarioService.obterPerfilCompleto().subscribe({
       next: (usuario) => {
+<<<<<<< HEAD
         this.usuarioLogado = usuario;
+=======
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
         if (usuario.moedaPadrao) {
           this.moedaOriginalUsuario = usuario.moedaPadrao;
           this.perfilForm.get('moedaPadrao')?.setValue(usuario.moedaPadrao);
           this.preferenciaMoedaService.definirMoedaPadrao(usuario.moedaPadrao);
         }
+<<<<<<< HEAD
         this.perfilForm.patchValue({
           nome: usuario.nome || '',
           email: usuario.email || ''
         });
         this.configurarCamposEstaticos(usuario.nome, usuario.email);
+=======
+        this.configurarCamposEstaticos(
+          usuario.nome,
+          usuario.email
+        );
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -323,7 +364,12 @@ export class AjustesPerfilComponent implements OnInit {
       dadosParciaisPatch.email = valoresFormulario.email.trim();
     }
 
-    // 3. Validação e inclusão da senha se qualquer campo de senha foi digitado
+    // 3. Verifica se a moeda padrão foi alterada
+    if (valoresFormulario.moedaPadrao && valoresFormulario.moedaPadrao !== this.moedaOriginalUsuario) {
+      dadosParciaisPatch.moedaPadrao = valoresFormulario.moedaPadrao;
+    }
+
+    // 4. Validação e inclusão da senha se qualquer campo de senha foi digitado
     const camposSenha = [
       valoresFormulario.senhaAtual,
       valoresFormulario.confirmarSenhaAtual,
@@ -363,12 +409,12 @@ export class AjustesPerfilComponent implements OnInit {
     }
 
     if (alterandoSenha) {
-      // Casando com o campo do record UsuarioUpdateDTO no Java
       dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
       dadosParciaisPatch.senha = valoresFormulario.novaSenha;
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
     }
 
+<<<<<<< HEAD
     // 2. Verifica se o e-mail foi alterado
     if (this.editandoDados && valoresFormulario.email && valoresFormulario.email.trim() !== '') {
       if (valoresFormulario.email.trim() !== this.usuarioLogado?.email) {
@@ -426,16 +472,22 @@ export class AjustesPerfilComponent implements OnInit {
       }
     }
 
+=======
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
     // Se nenhum campo foi alterado, emite aviso
     if (Object.keys(dadosParciaisPatch).length === 0) {
       this.messageService.add({
         severity: 'warn',
         summary: 'Nenhuma alteração',
 <<<<<<< HEAD
+<<<<<<< HEAD
         detail: 'Altere pelo menos um campo ou a moeda para salvar.',
 =======
         detail: 'Preencha pelo menos um campo para salvar.',
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
+=======
+        detail: 'Altere pelo menos um campo ou a moeda para salvar.',
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
         life: 3000
       });
       return;
@@ -456,10 +508,16 @@ export class AjustesPerfilComponent implements OnInit {
           this.preferenciaMoedaService.definirMoedaPadrao(dadosParciaisPatch.moedaPadrao);
         }
 
+<<<<<<< HEAD
         this.editandoDados = false;
         this.editandoSenha = false;
         this.perfilForm.patchValue({
           senhaAtual: '',
+=======
+        this.perfilForm.patchValue({
+          senhaAtual: '',
+          confirmarSenhaAtual: '',
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
           novaSenha: '',
           confirmarNovaSenha: ''
         });
@@ -468,6 +526,7 @@ export class AjustesPerfilComponent implements OnInit {
         this.messageService.add({
           severity: 'success',
           summary: 'Alterações salvas com sucesso',
+<<<<<<< HEAD
 <<<<<<< HEAD
           detail: dadosParciaisPatch.moedaPadrao ? `Moeda padrão atualizada para ${dadosParciaisPatch.moedaPadrao}.` : undefined,
           life: 2000
@@ -478,6 +537,12 @@ export class AjustesPerfilComponent implements OnInit {
         });
         setTimeout(() => window.location.reload(), 2100);
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
+=======
+          detail: dadosParciaisPatch.moedaPadrao ? `Moeda padrão atualizada para ${dadosParciaisPatch.moedaPadrao}.` : undefined,
+          life: 2000
+        });
+        setTimeout(() => window.location.reload(), 1500);
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
       },
       error: (err) => {
         console.error('Erro ao salvar via PATCH:', err);

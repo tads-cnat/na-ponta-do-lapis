@@ -86,9 +86,13 @@ public class UsuarioService {
             usuario.setMoedaPadrao(dto.moedaPadrao());
         }
 
+<<<<<<< HEAD
         Usuario salvo = usuarioRepository.save(usuario);
         usuarioAuthCacheService.evict(emailAnterior, usernameAnterior, salvo.getEmail(), salvo.getUsername());
         return salvo;
+=======
+        return usuarioRepository.save(usuario);
+>>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
     }
 
     @Transactional
