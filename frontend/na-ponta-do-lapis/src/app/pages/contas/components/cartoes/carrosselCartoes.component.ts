@@ -2,7 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NgClass, CurrencyPipe } from '@angular/common';
 import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
-import { obterCorOficialBanco } from '../../../../shared/utils/banco-icon.helper';
+import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/utils/banco-icon.helper';
 
 @Component({
   selector: 'app-carrossel-cartoes',
@@ -100,14 +100,19 @@ import { obterCorOficialBanco } from '../../../../shared/utils/banco-icon.helper
                       </h3>
                     </div>
 
-                    <div class="shrink-0 p-[2px] rounded-xl bg-white shadow-md ring-1 ring-white/40 flex items-center justify-center transition-transform hover:scale-105">
-                      <app-icone-banco
-                        [nome]="conta.nome"
-                        [tamanho]="48"
-                        [formato]="'quadrado'"
-                        [fallbackIcon]="ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet'">
-                      </app-icone-banco>
-                    </div>
+                    @if (temBanco(conta.nome)) {
+                      <div class="shrink-0 p-[2px] rounded-xl bg-white shadow-md ring-1 ring-white/40 flex items-center justify-center transition-transform hover:scale-105">
+                        <app-icone-banco
+                          [nome]="conta.nome"
+                          [tamanho]="48"
+                          [formato]="'quadrado'">
+                        </app-icone-banco>
+                      </div>
+                    } @else {
+                      <div class="shrink-0 w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-md flex items-center justify-center text-white transition-transform hover:scale-105">
+                        <i [class]="(ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet') + ' text-2xl text-white drop-shadow-sm'"></i>
+                      </div>
+                    }
 
                   </div>
 
@@ -190,6 +195,10 @@ export class CarrosselCartoesComponent {
 
   ehCartao(conta: IContas): boolean {
     return ehCartaoCredito(conta);
+  }
+
+  temBanco(nome?: string | null): boolean {
+    return temBancoDetectado(nome);
   }
 
   obterCorCartao(conta: IContas): string {

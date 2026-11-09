@@ -9,14 +9,20 @@ public record OpenFinanceStatusResponseDTO(
         int sincronizacoesRestantesHoje,
         int limiteDiario,
         String clientIdMascarado,
-        int totalContasSincronizadas
+        int totalContasSincronizadas,
+        int totalItensConectados,
+        int limiteItensConexao
 ) {
     public OpenFinanceStatusResponseDTO(boolean conectado, LocalDateTime ultimaSincronizacao, int sincronizacoesRestantesHoje, int limiteDiario) {
-        this(conectado, ultimaSincronizacao, sincronizacoesRestantesHoje, limiteDiario, null, 0);
+        this(conectado, ultimaSincronizacao, sincronizacoesRestantesHoje, limiteDiario, null, 0, 0, 5);
     }
 
     public OpenFinanceStatusResponseDTO(boolean conectado, LocalDateTime ultimaSincronizacao, int sincronizacoesRestantesHoje, int limiteDiario, String clientIdMascarado) {
-        this(conectado, ultimaSincronizacao, sincronizacoesRestantesHoje, limiteDiario, clientIdMascarado, 0);
+        this(conectado, ultimaSincronizacao, sincronizacoesRestantesHoje, limiteDiario, clientIdMascarado, 0, 0, 5);
+    }
+
+    public OpenFinanceStatusResponseDTO(boolean conectado, LocalDateTime ultimaSincronizacao, int sincronizacoesRestantesHoje, int limiteDiario, String clientIdMascarado, int totalContasSincronizadas) {
+        this(conectado, ultimaSincronizacao, sincronizacoesRestantesHoje, limiteDiario, clientIdMascarado, totalContasSincronizadas, 0, 5);
     }
 
     @JsonProperty("syncsRestantesHoje")

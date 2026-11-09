@@ -36,7 +36,8 @@ import java.util.regex.Pattern;
 public class OpenFinanceSyncService {
 
     private static final Logger log = LoggerFactory.getLogger(OpenFinanceSyncService.class);
-    private static final int LIMITE_MANUAL_DIARIO = 5;
+    public static final int COTA_GRATUITA_BANCOS = 5;
+    private static final int COOLDOWN_SEGUNDOS_ENTRE_SYNCS = 15;
 
     private static final Pattern PADRAO_PARCELA_FINAL = Pattern.compile("(?i)(?:^|[\\s\\(\\[\\-])(?:parcela\\s+|parc\\.?\\s*)?(\\d{1,2})\\s*[/]\\s*(\\d{1,2})\\s*[\\)\\]]?\\s*$");
     private static final Pattern PADRAO_PARCELA_TEXTO = Pattern.compile("(?i)(?:parcela|parc\\.?)\\s*(\\d{1,2})\\s*(?:de|[/])\\s*(\\d{1,2})");
@@ -74,14 +75,14 @@ public class OpenFinanceSyncService {
     public OpenFinanceStatusResponseDTO obterStatus(Usuario usuario) {
         Optional<UsuarioPluggyIntegracao> opt = integracaoRepository.findByUsuarioId(usuario.getId());
         if (opt.isEmpty()) {
-            return new OpenFinanceStatusResponseDTO(false, null, LIMITE_MANUAL_DIARIO, LIMITE_MANUAL_DIARIO);
+            return new OpenFinanceStatusResponseDTO(false, null, 99, 99, null, 0, 0, COTA_GRATUITA_BANCOS);
         }
 
         UsuarioPluggyIntegracao integracao = opt.get();
-        int restantes = calcularRestantesHoje(integracao);
         String maskedClient = obterClientIdMascarado(integracao);
         int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
-        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), restantes, LIMITE_MANUAL_DIARIO, maskedClient, totalContas);
+        int totalItens = integracao.getItemIds().size();
+        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
     }
 
     @Transactional(readOnly = true)
@@ -131,10 +132,10 @@ public class OpenFinanceSyncService {
             return executarSincronizacao(integracao, false);
         } catch (Exception e) {
             log.warn("[OpenFinanceSyncService] Conexão Pluggy salva com sucesso, mas a primeira sincronização falhou ou ainda não há contas vinculadas: {}", e.getMessage());
-            int restantes = calcularRestantesHoje(integracao);
             String maskedClient = obterClientIdMascarado(integracao);
             int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
-            return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), restantes, LIMITE_MANUAL_DIARIO, maskedClient, totalContas);
+            int totalItens = integracao.getItemIds().size();
+            return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
         }
     }
 
@@ -237,10 +238,15 @@ public class OpenFinanceSyncService {
 
         resetarContadorSeNecessario(integracao);
 
-        if (integracao.getSincronizacoesManuaisHoje() >= LIMITE_MANUAL_DIARIO) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.TOO_MANY_REQUESTS,
-                    "Você atingiu o limite de " + LIMITE_MANUAL_DIARIO + " sincronizações manuais por hoje. Suas contas serão sincronizadas automaticamente de madrugada.");
+        // Proteção contra múltiplos cliques rápidos em sequência (cooldown de 15s)
+        if (integracao.getUltimaSincronizacao() != null) {
+            long segundosDesdeUltima = java.time.Duration.between(integracao.getUltimaSincronizacao(), LocalDateTime.now()).getSeconds();
+            if (segundosDesdeUltima >= 0 && segundosDesdeUltima < COOLDOWN_SEGUNDOS_ENTRE_SYNCS) {
+                long espera = COOLDOWN_SEGUNDOS_ENTRE_SYNCS - segundosDesdeUltima;
+                throw new org.springframework.web.server.ResponseStatusException(
+                        org.springframework.http.HttpStatus.TOO_MANY_REQUESTS,
+                        "Por favor, aguarde " + espera + " segundo(s) antes de sincronizar novamente.");
+            }
         }
 
         integracao.setSincronizacoesManuaisHoje(integracao.getSincronizacoesManuaisHoje() + 1);
@@ -523,10 +529,10 @@ public class OpenFinanceSyncService {
         integracao.setUltimaSincronizacao(LocalDateTime.now());
         integracaoRepository.save(integracao);
 
-        int restantes = calcularRestantesHoje(integracao);
         String maskedClient = obterClientIdMascarado(integracao);
         int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
-        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), restantes, LIMITE_MANUAL_DIARIO, maskedClient, totalContas);
+        int totalItens = integracao.getItemIds().size();
+        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
     }
 
     private void processarTransacaoPluggy(JsonNode txNode, ContaFinanceira conta) {
@@ -867,11 +873,6 @@ public class OpenFinanceSyncService {
             integracao.setDataContadorManual(LocalDate.now());
             integracao.setSincronizacoesManuaisHoje(0);
         }
-    }
-
-    private int calcularRestantesHoje(UsuarioPluggyIntegracao integracao) {
-        resetarContadorSeNecessario(integracao);
-        return Math.max(0, LIMITE_MANUAL_DIARIO - integracao.getSincronizacoesManuaisHoje());
     }
 
     private String obterClientIdMascarado(UsuarioPluggyIntegracao integracao) {
