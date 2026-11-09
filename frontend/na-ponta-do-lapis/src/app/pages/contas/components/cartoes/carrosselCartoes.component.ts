@@ -1,11 +1,13 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { NgClass } from '@angular/common';
-import { IContas } from '../../../../model/IContas.models';
+import { NgClass, CurrencyPipe } from '@angular/common';
+import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
+import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
+import { obterCorOficialBanco } from '../../../../shared/utils/banco-icon.helper';
 
 @Component({
   selector: 'app-carrossel-cartoes',
   standalone: true,
-  imports: [NgClass],
+  imports: [NgClass, CurrencyPipe, IconeBancoComponent],
   template: `
     <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 overflow-hidden">
 
@@ -69,8 +71,9 @@ import { IContas } from '../../../../model/IContas.models';
 
               <!-- CARD -->
               <div
-                class="relative w-[400px] max-w-[82vw] h-[220px] rounded-[2rem] overflow-hidden shadow-2xl"
-                [style.background]="conta.cor">
+                class="relative w-[400px] max-w-[82vw] h-[220px] rounded-[2rem] overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]"
+                [title]="conta.nome"
+                [style.background]="obterCorCartao(conta)">
 
                 <!-- EFEITOS -->
                 <div class="absolute top-[-30px] right-[-20px] w-52 h-52 rounded-full border border-white/20"></div>
@@ -80,18 +83,50 @@ import { IContas } from '../../../../model/IContas.models';
                 <!-- CONTEÚDO -->
                 <div class="relative z-10 h-full p-7 flex flex-col justify-between text-white">
 
-                  <div class="flex items-start justify-between">
+                  <div class="flex items-start justify-between gap-4">
 
-                    <div class="min-w-0">
-                      <h3 class="text-3xl font-bold mt-2 truncate">
+                    <div class="min-w-0 flex-1">
+                      @if (conta.sincronizada) {
+                        <span class="inline-flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
+                          <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
+                          </svg>
+                          <span>Open Finance</span>
+                        </span>
+                      }
+                      <h3 class="text-2xl font-bold mt-2 leading-snug line-clamp-2 break-words"
+                          [title]="conta.nome">
                         {{ conta.nome }}
                       </h3>
                     </div>
 
-                    <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-                      <i class="pi pi-wallet text-xl"></i>
+                    <div class="shrink-0 p-[2px] rounded-xl bg-white shadow-md ring-1 ring-white/40 flex items-center justify-center transition-transform hover:scale-105">
+                      <app-icone-banco
+                        [nome]="conta.nome"
+                        [tamanho]="48"
+                        [formato]="'quadrado'"
+                        [fallbackIcon]="ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet'">
+                      </app-icone-banco>
                     </div>
 
+                  </div>
+
+                  <!-- RODAPÉ DO CARD: SALDO / FATURA -->
+                  <div class="flex items-end justify-between pt-2 border-t border-white/20">
+                    <div>
+                      <p class="text-[11px] font-medium text-white/80 uppercase tracking-wider">
+                        {{ ehCartao(conta) ? 'Fatura Atual' : 'Saldo Disponível' }}
+                      </p>
+                      <p class="text-xl font-bold tracking-tight">
+                        {{ ehCartao(conta) ? '-' : '' }} {{ conta.saldo | currency: conta.moeda }}
+                      </p>
+                    </div>
+                    @if (ehCartao(conta) && (conta.limiteDisponivel || conta.limiteTotal)) {
+                      <div class="text-right text-[11px] text-white/90">
+                        <span class="opacity-80">Disp.: </span>
+                        <span class="font-bold">{{ (conta.limiteDisponivel ?? (conta.limiteTotal! - conta.saldo)) | currency: conta.moeda }}</span>
+                      </div>
+                    }
                   </div>
 
                 </div>
@@ -152,5 +187,23 @@ export class CarrosselCartoesComponent {
   @Output() onContaSelecionada = new EventEmitter<number>();
   @Output() onAnterior = new EventEmitter<void>();
   @Output() onProxima = new EventEmitter<void>();
+
+  ehCartao(conta: IContas): boolean {
+    return ehCartaoCredito(conta);
+  }
+
+  obterCorCartao(conta: IContas): string {
+    const corAtual = conta.cor ? conta.cor.toUpperCase().replace('#', '') : '';
+    // Se tiver cor customizada que não seja o amarelo padrão antigo (FFDE59)
+    if (corAtual && corAtual !== 'FFDE59') {
+      return `#${corAtual}`;
+    }
+    // Busca a cor oficial da marca do banco
+    const corOficial = obterCorOficialBanco(conta.nome);
+    if (corOficial) {
+      return corOficial;
+    }
+    return conta.cor ? (conta.cor.startsWith('#') ? conta.cor : `#${conta.cor}`) : '#4F46E5';
+  }
 
 }

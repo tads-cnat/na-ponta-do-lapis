@@ -19,12 +19,16 @@ import { ColorPickerModule } from 'primeng/colorpicker';
 import { ChartModule } from 'primeng/chart';
 
 import { ContaFinanceiraService } from './service/contas.service';
-import { IContas, IContasRequest, Moeda } from '../../model/IContas.models';
+import { IntegracoesService } from '../../service/integracoes.service';
+import { IContas, IContasRequest, Moeda, TipoConta } from '../../model/IContas.models';
 
+import { AcoesCartoesComponent } from './components/cartoes/acoes.component';
 import { CartaoContaComponent }  from './components/cartoes/cartoes.component';
 import { InformacoesComponent }  from './components/informacoes/informacoes.component';
 import { GraficoComponent }      from './components/grafico/grafico.component';
 import { TransacoesComponent }   from './components/transacoes/transacoes.component';
+import { IconeBancoComponent }    from '../../shared/components/icone-banco/icone-banco.component';
+import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../shared/utils/banco-icon.helper';
 
 @Component({
   selector: 'app-Contas',
@@ -38,38 +42,56 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
     PrimeNGModuleModule,
     ColorPickerModule,
     ChartModule,
+    AcoesCartoesComponent,
     CartaoContaComponent,
     InformacoesComponent,
     GraficoComponent,
-    TransacoesComponent
+    TransacoesComponent,
+    IconeBancoComponent
   ],
   template: `
 
     <!-- TOAST — deve ficar no nível raiz para sobrepor qualquer conteúdo -->
     <p-toast position="top-right" [life]="3000" />
 
-    <div
-      class="bg-[#F5F6FA]
-             p-6 2xl:p-8
-             h-[calc(100vh-64px)]
-             overflow-y-auto
-             overflow-x-hidden">
+    <div class="w-full flex flex-col gap-6 pb-8">
 
-      <div class="grid grid-cols-1 2xl:grid-cols-12 gap-6 min-h-full">
+      <!-- HEADER PRINCIPAL DA PÁGINA (largura total: título e ações sem competir por espaço) -->
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div class="min-w-0">
+          <h1 class="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+            Contas
+          </h1>
+          <p class="text-slate-500 mt-1 text-xs sm:text-sm">
+            Gestão de contas financeiras
+          </p>
+        </div>
+
+        <!-- AÇÕES -->
+        <app-acoes-cartoes
+          class="shrink-0"
+          [sincronizandoOpenFinance]="sincronizandoOpenFinance"
+          [openFinanceConectado]="openFinanceConectado"
+          (onAdicionar)="abrirDialog()"
+          (onEditar)="editarConta(contaSelecionada)"
+          (onExcluir)="abrirDialogExcluir(contaSelecionada)"
+          (onSincronizarOpenFinance)="sincronizarOpenFinance()">
+        </app-acoes-cartoes>
+      </div>
+
+      <!-- GRID PRINCIPAL (em telas xl e superiores fica em 2 colunas: 5 e 7; abaixo de xl fica em coluna única) -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 w-full items-start">
 
         <!-- COLUNA ESQUERDA -->
-        <div class="2xl:col-span-5 flex flex-col gap-6 min-w-0">
+        <div class="xl:col-span-5 flex flex-col gap-6 min-w-0">
 
-          <!-- CARTÕES (header + ações + carrossel) -->
+          <!-- CARTÕES (carrossel) -->
           <app-cartoes-contas
             [contas]="contaFinanceiraDados"
             [contaSelecionadaIndex]="contaSelecionadaIndex"
             [contaAnterior]="contaAnterior"
             [contaProxima]="contaProxima"
             [carregando]="carregandoContas"
-            (onAdicionar)="abrirDialog()"
-            (onEditar)="editarConta(contaSelecionada)"
-            (onExcluir)="abrirDialogExcluir(contaSelecionada)"
             (onContaSelecionada)="selecionarConta($event)"
             (onAnterior)="selecionarAnterior()"
             (onProxima)="selecionarProxima()">
@@ -83,7 +105,7 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
         </div>
 
         <!-- COLUNA DIREITA -->
-        <div class="2xl:col-span-7 flex flex-col gap-6 min-w-0 min-h-0">
+        <div class="xl:col-span-7 flex flex-col gap-6 min-w-0">
 
           <!-- GRÁFICO -->
           <app-grafico-conta
@@ -130,9 +152,42 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
           [draggable]="false"
           [resizable]="false"
           styleClass="rounded-3xl!"
-          [style]="{ width: '42rem' }">
+          [style]="{ width: '42rem', maxWidth: '95vw' }"
+          [breakpoints]="{ '960px': '85vw', '640px': '95vw' }">
 
           <div class="flex flex-col gap-8 py-4">
+
+            <!-- TIPO DE CONTA -->
+            <div class="flex flex-col gap-2">
+              <label class="font-semibold text-slate-700">Tipo de Conta</label>
+              <div class="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  (click)="formContaFinanceira.get('tipoConta')?.setValue('CONTA_CORRENTE')"
+                  [class]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE'
+                    ? 'flex items-center gap-3 p-3.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/60 text-indigo-900 font-semibold transition-all'
+                    : 'flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-all'">
+                  <i class="pi pi-wallet text-xl" [class.text-indigo-600]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE'"></i>
+                  <div class="flex flex-col text-left">
+                    <span class="text-sm leading-tight">Conta Bancária</span>
+                    <span class="text-xs text-slate-500 font-normal">Corrente ou Carteira</span>
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  (click)="formContaFinanceira.get('tipoConta')?.setValue('CARTAO_CREDITO')"
+                  [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO'
+                    ? 'flex items-center gap-3 p-3.5 rounded-xl border-2 border-indigo-600 bg-indigo-50/60 text-indigo-900 font-semibold transition-all'
+                    : 'flex items-center gap-3 p-3.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-all'">
+                  <i class="pi pi-credit-card text-xl" [class.text-indigo-600]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO'"></i>
+                  <div class="flex flex-col text-left">
+                    <span class="text-sm leading-tight">Cartão de Crédito</span>
+                    <span class="text-xs text-slate-500 font-normal">Fatura e limites</span>
+                  </div>
+                </button>
+              </div>
+            </div>
 
             <!-- NOME -->
             <div class="flex flex-col gap-2">
@@ -140,13 +195,32 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
               <input
                 pInputText
                 formControlName="nome"
-                placeholder="Ex: Santander"
+                (input)="aoDigitarNomeConta()"
+                placeholder="Ex: Nubank, Santander, Inter, Itaú..."
                 class="w-full" />
+
+              @if (bancoDetectado?.chave) {
+                <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 animate-in fade-in">
+                  <div class="flex items-center gap-2 min-w-0">
+                    <app-icone-banco [nome]="bancoDetectado?.nomeExibicao" [tamanho]="26" [formato]="'quadrado'"></app-icone-banco>
+                    <span class="truncate">Banco detectado: <strong>{{ bancoDetectado?.nomeExibicao }}</strong></span>
+                  </div>
+                  <button
+                    type="button"
+                    (click)="aplicarCorOficialBanco()"
+                    class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 shrink-0 cursor-pointer">
+                    <span class="w-3.5 h-3.5 rounded-full border border-slate-300 shadow-2xs" [style.backgroundColor]="'#' + formContaFinanceira.get('cor')?.value"></span>
+                    <span>Cor oficial aplicada</span>
+                  </button>
+                </div>
+              }
             </div>
 
             <!-- SALDO -->
             <div class="flex flex-col gap-2">
-              <label class="font-semibold text-slate-700">Saldo</label>
+              <label class="font-semibold text-slate-700">
+                {{ formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'Fatura Atual / Saldo Devedor' : 'Saldo Inicial' }}
+              </label>
               <p-inputNumber
                   formControlName="saldo"
                   locale="pt-BR"
@@ -154,14 +228,45 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
                   [minFractionDigits]="2"
                   [maxFractionDigits]="2">
               </p-inputNumber>
+              @if (formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO') {
+                <span class="text-xs text-slate-500">Valor gasto na fatura atual (use 0 se não houver gastos pendentes).</span>
+              }
+              @if (modoEdicao && contaSelecionada?.sincronizada) {
+                <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2">
+                  <span>ℹ️</span>
+                  <span>Esta conta é sincronizada via Open Finance. O saldo é atualizado automaticamente pelo banco.</span>
+                </div>
+              }
             </div>
 
+            <!-- LIMITE TOTAL (Cartão de Crédito) -->
+            @if (formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO') {
+              <div class="flex flex-col gap-2">
+                <label class="font-semibold text-slate-700">Limite Total do Cartão</label>
+                <p-inputNumber
+                  formControlName="limiteTotal"
+                  locale="pt-BR"
+                  mode="decimal"
+                  placeholder="Ex: 5000,00"
+                  [minFractionDigits]="2"
+                  [maxFractionDigits]="2">
+                </p-inputNumber>
+                <span class="text-xs text-slate-500">Limite concedido para acompanhamento do limite disponível.</span>
+              </div>
+            }
+
             <!-- COR -->
-            <div class="flex flex-col gap-4">
-              <label class="font-semibold text-slate-700">Cor do cartão</label>
+            <div class="flex flex-col gap-3">
+              <div class="flex items-center justify-between">
+                <label class="font-semibold text-slate-700">Cor do cartão</label>
+                <div class="flex items-center gap-2">
+                  <span class="w-5 h-5 rounded-lg border border-slate-300 shadow-2xs inline-block" [style.backgroundColor]="'#' + formContaFinanceira.get('cor')?.value"></span>
+                  <span class="text-xs font-mono text-slate-500">#{{ formContaFinanceira.get('cor')?.value }}</span>
+                </div>
+              </div>
               <p-colorpicker
                 formControlName="cor"
-                >
+                (onChange)="corCustomizadaManualmente = true">
               </p-colorpicker>
             </div>
 
@@ -217,7 +322,8 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
           [draggable]="false"
           [resizable]="false"
           styleClass="rounded-3xl!"
-          [style]="{ width: '32rem' }">
+          [style]="{ width: '32rem', maxWidth: '95vw' }"
+          [breakpoints]="{ '640px': '95vw' }">
 
           <div class="flex flex-col gap-6 py-4">
 
@@ -287,12 +393,16 @@ export class ContasComponent implements OnInit {
   idContaEdicao: number | null = null;
   excluirDialog: boolean = false;
   contaExcluir: IContas | null = null;
+  bancoDetectado: BancoResolvido | null = null;
+  corCustomizadaManualmente: boolean = false;
 
   // =========================================
   // DADOS
   // =========================================
 
   carregandoContas: boolean = true;
+  sincronizandoOpenFinance: boolean = false;
+  openFinanceConectado: boolean = false;
   contaFinanceiraDados: IContas[] = [];
   contaSelecionadaIndex: number = 0;
   contaAnterior: number = 0;
@@ -329,16 +439,19 @@ export class ContasComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private contaFinanceiraService: ContaFinanceiraService,
+    private integracoesService: IntegracoesService,
     private cdr: ChangeDetectorRef,
     private transacoesService: TransacoesService,
     private router: Router,
     private messageService: MessageService
   ) {
     this.formContaFinanceira = this.fb.group({
-      nome:  ['', [Validators.required, Validators.minLength(3)]],
-      saldo: [0,  [Validators.required]],
-      cor:   ['', [Validators.required, Validators.maxLength(7)]],
-      moeda: ['', [Validators.required]]
+      nome:        ['', [Validators.required, Validators.minLength(3)]],
+      saldo:       [0,  [Validators.required]],
+      cor:         ['', [Validators.required, Validators.maxLength(7)]],
+      moeda:       ['', [Validators.required]],
+      tipoConta:   ['CONTA_CORRENTE', [Validators.required]],
+      limiteTotal: [null]
     });
   }
 
@@ -348,6 +461,20 @@ export class ContasComponent implements OnInit {
 
   ngOnInit(): void {
     this.listarContas();
+    this.verificarStatusOpenFinance();
+  }
+
+  verificarStatusOpenFinance(): void {
+    this.integracoesService.obterStatusOpenFinance().subscribe({
+      next: (status) => {
+        this.openFinanceConectado = !!status.conectado;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.openFinanceConectado = this.contaFinanceiraDados.some(c => c.sincronizada);
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   // =========================================
@@ -454,13 +581,51 @@ export class ContasComponent implements OnInit {
   }
 
   // =========================================
+  // DETECÇÃO AUTOMÁTICA DE BANCO E COR
+  // =========================================
+
+  aoDigitarNomeConta(): void {
+    const nome = this.formContaFinanceira.get('nome')?.value;
+    if (!nome || !nome.trim()) {
+      this.bancoDetectado = null;
+      return;
+    }
+    const banco = mapearNomeBanco(nome);
+    if (banco.chave) {
+      this.bancoDetectado = banco;
+      if (!this.corCustomizadaManualmente && banco.corFundo) {
+        this.formContaFinanceira.get('cor')?.setValue(banco.corFundo.replace('#', ''));
+      }
+    } else {
+      this.bancoDetectado = null;
+    }
+  }
+
+  aplicarCorOficialBanco(): void {
+    if (this.bancoDetectado?.corFundo) {
+      this.formContaFinanceira.get('cor')?.setValue(this.bancoDetectado.corFundo.replace('#', ''));
+      this.corCustomizadaManualmente = false;
+    }
+  }
+
+  // =========================================
   // CRUD — ABERTURA DE DIALOGS
   // =========================================
 
   abrirDialog(): void {
     this.modoEdicao = false;
     this.idContaEdicao = null;
-    this.formContaFinanceira.reset({ nome: '', saldo: 0, cor: 'FFDE59', moeda: 'BRL' });
+    this.bancoDetectado = null;
+    this.corCustomizadaManualmente = false;
+    this.formContaFinanceira.get('saldo')?.enable();
+    this.formContaFinanceira.reset({
+      nome: '',
+      saldo: 0,
+      cor: '4F46E5',
+      moeda: 'BRL',
+      tipoConta: 'CONTA_CORRENTE',
+      limiteTotal: null
+    });
     this.exibirDialog = true;
   }
 
@@ -468,13 +633,76 @@ export class ContasComponent implements OnInit {
     if (!conta) return;
     this.modoEdicao    = true;
     this.idContaEdicao = conta.id ?? null;
+    this.corCustomizadaManualmente = true;
+    this.bancoDetectado = conta.nome ? mapearNomeBanco(conta.nome) : null;
+    if (conta.sincronizada) {
+      this.formContaFinanceira.get('saldo')?.disable();
+    } else {
+      this.formContaFinanceira.get('saldo')?.enable();
+    }
     this.formContaFinanceira.patchValue({
-      nome:  conta.nome,
-      saldo: conta.saldo,
-      cor:   conta.cor.replace('#', ''),
-      moeda: conta.moeda
+      nome:        conta.nome,
+      saldo:       conta.saldo,
+      cor:         conta.cor.replace('#', ''),
+      moeda:       conta.moeda,
+      tipoConta:   conta.tipoConta ?? 'CONTA_CORRENTE',
+      limiteTotal: conta.limiteTotal ?? null
     });
     this.exibirDialog = true;
+  }
+
+  sincronizarOpenFinance(): void {
+    if (!this.openFinanceConectado) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Conectar Open Finance',
+        detail: 'Redirecionando para Integrações para conectar seu banco...',
+        life: 2500
+      });
+      this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes', secao: 'bancos' } });
+      return;
+    }
+
+    if (this.sincronizandoOpenFinance) return;
+
+    this.sincronizandoOpenFinance = true;
+    this.integracoesService.sincronizarOpenFinanceManual().subscribe({
+      next: (status) => {
+        this.sincronizandoOpenFinance = false;
+        const restantes = status.syncsRestantesHoje ?? status.sincronizacoesRestantesHoje ?? 0;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Sincronização concluída',
+          detail: `Contas e transações atualizadas! Restantes hoje: ${restantes}/${status.limiteDiario}`,
+          life: 4000
+        });
+        this.listarContas();
+      },
+      error: (err) => {
+        this.sincronizandoOpenFinance = false;
+        if (err.status === 400 || (err.error?.message && err.error.message.includes('Nenhuma conta')) || (err.error?.error && err.error.error.includes('Nenhuma conta'))) {
+          this.openFinanceConectado = false;
+          this.messageService.add({
+            severity: 'info',
+            summary: 'Conectar Open Finance',
+            detail: 'Nenhuma conta bancária conectada. Redirecionando para Integrações...',
+            life: 3000
+          });
+          setTimeout(() => {
+            this.router.navigate(['/app/perfil'], { queryParams: { aba: 'integracoes', secao: 'bancos' } });
+          }, 1000);
+          return;
+        }
+
+        const msg = err.error?.message || err.error?.error || err.error || 'Não foi possível sincronizar agora. Verifique suas credenciais ou limite diário.';
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro na sincronização',
+          detail: typeof msg === 'string' ? msg : 'Erro ao sincronizar contas.',
+          life: 5000
+        });
+      }
+    });
   }
 
   // =========================================
@@ -486,10 +714,12 @@ export class ContasComponent implements OnInit {
 
     const formValue = this.formContaFinanceira.getRawValue();
     const payload: IContasRequest = {
-      nome:  formValue.nome,
-      saldo: formValue.saldo,
-      cor:   `#${String(formValue.cor).replace('#', '')}`,
-      moeda: formValue.moeda,
+      nome:        formValue.nome,
+      saldo:       formValue.saldo,
+      cor:         `#${String(formValue.cor).replace('#', '')}`,
+      moeda:       formValue.moeda,
+      tipoConta:   formValue.tipoConta,
+      limiteTotal: formValue.tipoConta === 'CARTAO_CREDITO' ? formValue.limiteTotal : null,
     };
 
     this.exibirDialog = false;
@@ -505,7 +735,14 @@ export class ContasComponent implements OnInit {
           });
           this.modoEdicao    = false;
           this.idContaEdicao = null;
-          this.formContaFinanceira.reset();
+          this.formContaFinanceira.reset({
+            nome: '',
+            saldo: 0,
+            cor: 'FFDE59',
+            moeda: 'BRL',
+            tipoConta: 'CONTA_CORRENTE',
+            limiteTotal: null
+          });
           this.listarContas();
         },
         error: (e: Error) => {
@@ -529,7 +766,14 @@ export class ContasComponent implements OnInit {
           detail:   `"${payload.nome}" foi adicionada com sucesso.`,
           life:     3000
         });
-        this.formContaFinanceira.reset({ nome: '', saldo: 0, cor: '', moeda: 'BRL' });
+        this.formContaFinanceira.reset({
+          nome: '',
+          saldo: 0,
+          cor: 'FFDE59',
+          moeda: 'BRL',
+          tipoConta: 'CONTA_CORRENTE',
+          limiteTotal: null
+        });
         this.listarContas();
       },
       error: (e: Error) => {
@@ -610,6 +854,9 @@ export class ContasComponent implements OnInit {
           return;
         }
         this.contaFinanceiraDados  = [...res].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+        if (this.contaFinanceiraDados.some(c => c.sincronizada)) {
+          this.openFinanceConectado = true;
+        }
         this.contaSelecionadaIndex = 0;
         this.atualizarIndicesCarrossel();
         this.carregandoContas = false;

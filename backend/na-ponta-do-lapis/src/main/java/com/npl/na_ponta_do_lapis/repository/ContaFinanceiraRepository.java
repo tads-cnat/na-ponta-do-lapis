@@ -14,4 +14,10 @@ public interface ContaFinanceiraRepository extends JpaRepository<ContaFinanceira
 
     @Query("SELECT c FROM ContaFinanceira c WHERE c.usuario.familia.id = :familiaId")
     List<ContaFinanceira> findByFamilia(Long familiaId);
+
+    java.util.Optional<ContaFinanceira> findByPluggyAccountIdAndUsuarioId(String pluggyAccountId, Long usuarioId);
+
+    int countByUsuarioIdAndSincronizadaTrue(Long usuarioId);
+
+    List<ContaFinanceira> findAllByUsuarioIdAndSincronizadaTrue(Long usuarioId);
 }

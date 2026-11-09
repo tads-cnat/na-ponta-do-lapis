@@ -1,0 +1,676 @@
+<div class="w-full flex flex-col gap-6">
+
+  <!-- SELETOR DE SUB-ABAS (Open Finance vs Assistente de IA) -->
+  <div class="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl w-fit border border-slate-200/80">
+    <button type="button"
+            (click)="subabaAtiva = 'bancos'"
+            [ngClass]="subabaAtiva === 'bancos' ? 'bg-white text-indigo-950 font-bold shadow-xs' : 'text-slate-600 font-medium hover:text-slate-900'"
+            class="px-4 py-2 text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center gap-2">
+      <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z" />
+      </svg>
+      <span>Open Finance (Bancos)</span>
+      <span *ngIf="openFinanceStatus?.conectado" class="w-2 h-2 rounded-full bg-emerald-500" title="Conectado"></span>
+    </button>
+
+    <button type="button"
+            (click)="subabaAtiva = 'ia'"
+            [ngClass]="subabaAtiva === 'ia' ? 'bg-white text-purple-950 font-bold shadow-xs' : 'text-slate-600 font-medium hover:text-slate-900'"
+            class="px-4 py-2 text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center gap-2">
+      <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+      </svg>
+      <span>Assistente de IA (Chaves)</span>
+      <span *ngIf="chavesIa.length > 0" class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-bold">
+        {{ chavesIa.length }}
+      </span>
+    </button>
+  </div>
+
+  <!-- ================= SEÇÃO CONEXÃO BANCÁRIA (OPEN FINANCE) ================= -->
+  <div *ngIf="subabaAtiva === 'bancos'" class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+      <div>
+        <div class="flex items-center gap-3">
+          <div
+            class="w-10 h-10 min-w-10 min-h-10 shrink-0 aspect-square rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+            <!-- Ícone SVG de instituição bancária -->
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900">Sincronização Bancária (Open Finance)</h2>
+            <p class="text-xs text-slate-500">Conecte sua conta do Meu Pluggy para importar contas e extratos bancários
+              de forma 100% segura.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span *ngIf="openFinanceStatus?.conectado"
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span> Conectado
+        </span>
+        <span *ngIf="!openFinanceStatus?.conectado"
+          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-slate-100 text-slate-600 border border-slate-200">
+          <span class="w-2 h-2 rounded-full bg-slate-400"></span> Não Conectado
+        </span>
+      </div>
+    </div>
+
+    <!-- Feedback Mensagens -->
+    <div *ngIf="openFinanceMensagem" class="mt-4 p-4 rounded-xl text-sm font-medium"
+      [ngClass]="openFinanceMensagem.tipo === 'sucesso' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'">
+      {{ openFinanceMensagem.texto }}
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="carregandoOpenFinance" class="py-12 flex justify-center items-center text-slate-400 text-sm">
+      <svg class="animate-spin h-5 w-5 mr-2 text-indigo-600" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+      </svg>
+      Verificando conexão bancária...
+    </div>
+
+    <!-- ESTADO: CONECTADO -->
+    <div *ngIf="!carregandoOpenFinance && openFinanceStatus?.conectado" class="mt-6 flex flex-col gap-6">
+
+      <!-- Métricas Resumo -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+          <p class="text-xs text-slate-500 font-medium">Contas Sincronizadas</p>
+          <p class="text-sm font-bold text-slate-800 mt-1">
+            {{ openFinanceStatus?.totalContasSincronizadas ?? 0 }} conta(s) ativa(s)
+          </p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+          <p class="text-xs text-slate-500 font-medium">Client ID Conectado</p>
+          <p class="text-sm font-mono font-semibold text-slate-800 mt-1">{{ openFinanceStatus?.clientIdMascarado ||
+            '••••••••' }}</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+          <p class="text-xs text-slate-500 font-medium">Última Sincronização</p>
+          <p class="text-sm font-semibold text-slate-800 mt-1">{{ formatarData(openFinanceStatus?.ultimaSincronizacao)
+            }}</p>
+        </div>
+
+        <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+          <p class="text-xs text-slate-500 font-medium">Sincronizações Manuais Hoje</p>
+          <p class="text-sm font-bold text-slate-800 mt-1">
+            {{ openFinanceStatus?.syncsRestantesHoje ?? 0 }} de {{ openFinanceStatus?.limiteDiario ?? 5 }} restantes
+          </p>
+        </div>
+      </div>
+
+      <!-- Seção Bancos Conectados -->
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-sm font-bold text-slate-900">Bancos e Contas Conectadas</h3>
+            <p class="text-xs text-slate-500">Cada conexão bancária ativa no Meu Pluggy é identificada por um Item ID.
+            </p>
+          </div>
+        </div>
+
+        <!-- Lista de Bancos Conectados -->
+        <div *ngIf="itensConectados.length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div *ngFor="let item of itensConectados"
+            class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 flex items-center justify-between gap-3 shadow-xs">
+            <div class="flex items-center gap-3 min-w-0">
+              <app-icone-banco [nome]="item.nomeInstituicao" [fallbackLogoUrl]="item.logoUrl" [tamanho]="40"
+                [formato]="'quadrado'"></app-icone-banco>
+              <div class="min-w-0">
+                <p class="text-xs font-bold text-slate-800 truncate">{{ getNomeBancoFormatado(item.nomeInstituicao) }}
+                </p>
+                <p class="text-[11px] font-mono text-slate-400 truncate" title="{{ item.itemId }}">ID: {{ item.itemId }}
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+              <span
+                class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                Ativo
+              </span>
+              <button (click)="removerItemConectado(item)" type="button" title="Desvincular Conexão"
+                class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div *ngIf="itensConectados.length === 0"
+          class="p-5 rounded-xl border border-dashed border-amber-300 bg-amber-50/50 text-xs text-amber-900 flex items-start gap-3">
+          <svg class="w-5 h-5 text-amber-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+          </svg>
+          <div>
+            <p class="font-bold">Nenhum banco vinculado a esta conta ainda</p>
+            <p class="text-[11px] text-amber-800 mt-0.5">
+              Conecte sua conta bancária no <a href="https://meu.pluggy.ai" target="_blank"
+                class="underline font-semibold text-amber-950">meu.pluggy.ai</a>, copie o Item ID gerado e adicione no
+              campo abaixo para importar seus saldos e extratos.
+            </p>
+          </div>
+        </div>
+
+        <!-- Adicionar Novo Banco Inline (Simples, sem modal) -->
+        <div class="mt-2 p-4 rounded-xl bg-slate-50 border border-slate-200">
+          <label class="block text-xs font-bold text-slate-800 mb-1.5">Vincular Novo Banco por Item ID</label>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <input type="text" [(ngModel)]="novoItemId" (keyup.enter)="salvarNovoItemPorId()"
+              placeholder="Cole aqui o Item ID do Meu Pluggy (ex: e062ab2b-9006-45e8-b689-defabba53647)"
+              class="flex-1 px-4 py-2 text-xs font-mono bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500 text-slate-800" />
+            <button type="button" (click)="salvarNovoItemPorId()" [disabled]="salvandoItem || !novoItemId.trim()"
+              class="inline-flex items-center justify-center gap-1.5 px-5 py-2 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 rounded-xl shadow-xs transition-all cursor-pointer shrink-0">
+              <svg *ngIf="salvandoItem" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+                </circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <svg *ngIf="!salvandoItem" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              </svg>
+              <span>{{ salvandoItem ? 'Vinculando...' : 'Vincular Banco' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Tutorial Passo a Passo (Sempre disponível para consulta e novos bancos) -->
+        <div class="mt-2 rounded-2xl border border-indigo-100 bg-indigo-50/40 overflow-hidden transition-all">
+          <button type="button" (click)="mostrarTutorialConectado = !mostrarTutorialConectado"
+            class="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-indigo-50/70 transition-colors cursor-pointer">
+            <div class="flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                </svg>
+              </div>
+              <div>
+                <p class="text-xs font-bold text-indigo-950">Guia Passo a Passo: Como vincular novos bancos ou obter
+                  Item IDs</p>
+                <p class="text-[11px] text-indigo-700">Consulte o tutorial completo para conectar novas contas pelo Meu
+                  Pluggy e Dashboard.</p>
+              </div>
+            </div>
+            <div class="flex items-center gap-1.5 text-xs font-semibold text-indigo-600 shrink-0">
+              <span>{{ mostrarTutorialConectado ? 'Ocultar Tutorial' : 'Ver Tutorial Completo' }}</span>
+              <svg class="w-4 h-4 transition-transform duration-200" [class.rotate-180]="mostrarTutorialConectado"
+                fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </button>
+
+          <div *ngIf="mostrarTutorialConectado" class="p-4 pt-1 border-t border-indigo-100 bg-white/70">
+            <ng-container *ngTemplateOutlet="tutorialOpenFinance"></ng-container>
+          </div>
+        </div>
+      </div>
+
+      <!-- Barra de Ações Inferior -->
+      <div class="flex flex-wrap items-center justify-between gap-4 pt-4 border-t border-slate-100">
+        <div class="flex items-center gap-2 text-xs text-slate-500">
+          <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          Sincronização noturna automática ativa (diariamente às 03:00).
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button (click)="desconectarOpenFinance()" type="button"
+            class="px-4 py-2 text-xs font-semibold text-rose-600 hover:text-rose-700 hover:bg-rose-50 rounded-xl transition-colors cursor-pointer">
+            Desconectar Integração
+          </button>
+          <button (click)="sincronizarAgora()"
+            [disabled]="sincronizandoOpenFinance || (openFinanceStatus?.syncsRestantesHoje ?? 0) <= 0" type="button"
+            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed rounded-xl shadow-sm transition-all cursor-pointer">
+            <svg *ngIf="sincronizandoOpenFinance" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+              </circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            <svg *ngIf="!sincronizandoOpenFinance" class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+            <span *ngIf="!sincronizandoOpenFinance">Sincronizar Agora</span>
+            <span *ngIf="sincronizandoOpenFinance">Sincronizando...</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADO: NÃO CONECTADO (FORMULÁRIO SIMPLES) -->
+    <div *ngIf="!carregandoOpenFinance && !openFinanceStatus?.conectado" class="mt-6 flex flex-col gap-6">
+
+      <!-- Guia Passo a Passo Intuitivo -->
+      <ng-container *ngTemplateOutlet="tutorialOpenFinance"></ng-container>
+
+      <!-- Formulário de Conexão -->
+      <form [formGroup]="openFinanceForm" (ngSubmit)="conectarOpenFinance()" class="flex flex-col gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Identificador de Acesso (Client ID) *</label>
+            <input type="text" formControlName="clientId" placeholder="Ex: 8a4c3e8a-8e2b-42ab-..."
+              class="w-full px-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-slate-800" />
+            <span
+              *ngIf="openFinanceForm.get('clientId')?.touched && openFinanceForm.get('clientId')?.hasError('required')"
+              class="text-xs text-rose-500 mt-1 block">O Client ID é obrigatório.</span>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-700 mb-1">Chave Secreta (Client Secret) *</label>
+            <input type="password" formControlName="clientSecret" placeholder="••••••••••••••••"
+              class="w-full px-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-slate-800" />
+            <span
+              *ngIf="openFinanceForm.get('clientSecret')?.touched && openFinanceForm.get('clientSecret')?.hasError('required')"
+              class="text-xs text-rose-500 mt-1 block">O Client Secret é obrigatório.</span>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">
+            Item ID(s) dos Bancos Conectados <span class="text-slate-400 font-normal">(Opcional ou Recomendado)</span>
+          </label>
+          <input type="text" formControlName="itemIds"
+            placeholder="Ex: e062ab2b-9006-45e8-b689-defabba53647 (se tiver mais de um, separe por vírgula)"
+            class="w-full px-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-slate-800" />
+          <p class="text-[11px] text-slate-400 mt-1 leading-relaxed">
+            No <strong>Meu Pluggy</strong>, abra cada banco conectado e copie o <strong>Item ID</strong> para importar
+            as contas no primeiro acesso. Você também poderá adicionar outros depois.
+          </p>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <p class="text-[11px] text-slate-400 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+                clip-rule="evenodd" />
+            </svg>
+            Protegido com criptografia simétrica AES-256 no banco de dados.
+          </p>
+
+          <button type="submit" [disabled]="carregandoOpenFinance"
+            class="inline-flex items-center gap-2 px-6 py-2.5 text-xs font-bold text-white bg-indigo-600 hover:bg-indigo-700 disabled:opacity-50 rounded-xl shadow-sm transition-all cursor-pointer">
+            <svg *ngIf="carregandoOpenFinance" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+              </circle>
+              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+            </svg>
+            <span>Conectar e Importar Contas</span>
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- TEMPLATE DO TUTORIAL PASSO A PASSO (Reutilizado antes e depois da conexão) -->
+    <ng-template #tutorialOpenFinance>
+      <div class="p-5 rounded-2xl bg-indigo-50/70 border border-indigo-100 flex flex-col gap-4">
+        <div class="flex items-center justify-between">
+          <h4 class="text-sm font-bold text-indigo-950 flex items-center gap-2">
+            <svg class="w-4 h-4 text-indigo-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            Como configurar e conectar seus bancos passo a passo:
+          </h4>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs text-indigo-900">
+          <!-- Passo 1 -->
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100 flex flex-col justify-between shadow-2xs">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="inline-flex w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold items-center justify-center shrink-0">1</span>
+                <p class="font-bold text-slate-900">Conecte no Meu Pluggy</p>
+              </div>
+              <p class="text-slate-600 leading-relaxed text-[11px]">
+                Acesse o <a href="https://meu.pluggy.ai" target="_blank" rel="noopener noreferrer"
+                  class="underline font-semibold text-indigo-600 hover:text-indigo-800">meu.pluggy.ai</a>, crie sua
+                conta e conecte as contas bancárias e cartões que deseja sincronizar.
+              </p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-2 font-medium">Ambiente do usuário (grátis)</span>
+          </div>
+
+          <!-- Passo 2 -->
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100 flex flex-col justify-between shadow-2xs">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="inline-flex w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold items-center justify-center shrink-0">2</span>
+                <p class="font-bold text-slate-900">Crie o App no Dashboard</p>
+              </div>
+              <p class="text-slate-600 leading-relaxed text-[11px]">
+                Acesse <a href="https://dashboard.pluggy.ai" target="_blank" rel="noopener noreferrer"
+                  class="underline font-semibold text-indigo-600 hover:text-indigo-800">dashboard.pluggy.ai</a>, no menu
+                lateral vá em <strong>Aplicações</strong> e clique em <strong>Novo</strong>. Crie a aplicação e copie o
+                <strong>Client ID</strong> e <strong>Client Secret</strong>.
+              </p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-2 font-medium">Menu Lateral > Aplicações > Novo</span>
+          </div>
+
+          <!-- Passo 3 -->
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100 flex flex-col justify-between shadow-2xs">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="inline-flex w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold items-center justify-center shrink-0">3</span>
+                <p class="font-bold text-slate-900">Dê Play ▶️ e Conecte</p>
+              </div>
+              <p class="text-slate-600 leading-relaxed text-[11px]">
+                No Dashboard da Pluggy, clique no botão de <strong>Play ▶️</strong>, selecione <strong>"Conectar
+                  conta"</strong>, escolha o conector <strong>"Meu Pluggy"</strong>, faça login e selecione o banco.
+              </p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-2 font-medium">Gera a conexão da conta</span>
+          </div>
+
+          <!-- Passo 4 -->
+          <div class="bg-white p-3.5 rounded-xl border border-indigo-100 flex flex-col justify-between shadow-2xs">
+            <div>
+              <div class="flex items-center gap-2 mb-2">
+                <span
+                  class="inline-flex w-5 h-5 rounded-full bg-indigo-600 text-white text-[11px] font-bold items-center justify-center shrink-0">4</span>
+                <p class="font-bold text-slate-900">Copie o Item ID</p>
+              </div>
+              <p class="text-slate-600 leading-relaxed text-[11px]">
+                Clique no item recém-conectado na lista para abrir os detalhes. O <strong>Item ID</strong> é o código
+                que fica no cabeçalho, logo acima do título <em>"Meu Pluggy"</em>. Copie e cole aqui!
+              </p>
+            </div>
+            <span class="text-[10px] text-slate-400 mt-2 font-medium">Código UUID no cabeçalho</span>
+          </div>
+        </div>
+
+        <!-- Dica prática para adicionar bancos adicionais -->
+        <div
+          class="p-3 bg-white/90 rounded-xl border border-indigo-100 text-[11px] text-indigo-950 flex items-start gap-2.5">
+          <svg class="w-4 h-4 text-indigo-600 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div class="leading-relaxed">
+            <strong>Quer adicionar outro banco no futuro?</strong>
+            Vincule o novo banco no <a href="https://meu.pluggy.ai" target="_blank"
+              class="underline font-semibold text-indigo-600">meu.pluggy.ai</a>, repita o <strong>Passo 3</strong> dando
+            <strong>Play ▶️</strong> no dashboard da Pluggy para gerar o novo conector, abra os detalhes, copie o novo
+            <strong>Item ID</strong> do cabeçalho e adicione no campo <em>"Vincular Novo Banco por Item ID"</em>.
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </div>
+
+
+  <!-- ================= SEÇÃO ASSISTENTE DE IA ================= -->
+  <div *ngIf="subabaAtiva === 'ia'" id="secao-ia" class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
+      <div class="flex items-center gap-3 min-w-0">
+        <div
+          class="w-10 h-10 min-w-10 min-h-10 shrink-0 aspect-square rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+          <!-- Ícone SVG profissional de IA / Faíscas Inteligentes -->
+          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+          </svg>
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-slate-900">Assistente Inteligente de Faturas (IA)</h2>
+          <p class="text-xs text-slate-500">Configure modelos de inteligência artificial para ler faturas em PDF e
+            organizar seus lançamentos automaticamente.</p>
+        </div>
+      </div>
+
+      <button (click)="abrirModalNovaChave()" type="button"
+        class="inline-flex items-center gap-2 px-4 py-2 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 rounded-xl shadow-sm transition-all self-start sm:self-auto cursor-pointer">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Adicionar Chave de IA</span>
+      </button>
+    </div>
+
+    <!-- Feedback Mensagens -->
+    <div *ngIf="chaveIaMensagem" class="mt-4 p-4 rounded-xl text-sm font-medium"
+      [ngClass]="chaveIaMensagem.tipo === 'sucesso' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'">
+      {{ chaveIaMensagem.texto }}
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="carregandoChavesIa" class="py-12 flex justify-center items-center text-slate-400 text-sm">
+      <svg class="animate-spin h-5 w-5 mr-2 text-purple-600" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+      </svg>
+      Carregando modelos de IA configurados...
+    </div>
+
+    <!-- Lista Vazia -->
+    <div *ngIf="!carregandoChavesIa && chavesIa.length === 0" class="py-8 text-center flex flex-col items-center">
+      <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+        </svg>
+      </div>
+      <p class="text-sm font-semibold text-slate-700">Nenhum assistente de IA configurado</p>
+      <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">
+        Cadastre uma chave para que o sistema consiga ler faturas em PDF e cadastrar os lançamentos automaticamente.
+      </p>
+      <button (click)="abrirModalNovaChave()" type="button"
+        class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors cursor-pointer">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+        </svg>
+        <span>Cadastrar primeira chave</span>
+      </button>
+    </div>
+
+    <!-- Tabela de Chaves Cadastradas -->
+    <div *ngIf="!carregandoChavesIa && chavesIa.length > 0" class="mt-6 overflow-x-auto">
+      <table class="w-full text-left text-xs border-collapse">
+        <thead>
+          <tr class="border-b border-slate-100 text-slate-400 font-semibold uppercase tracking-wider">
+            <th class="py-3 px-4">Identificação</th>
+            <th class="py-3 px-4">Modelo / Provedor</th>
+            <th class="py-3 px-4">Chave Mascarada</th>
+            <th class="py-3 px-4 text-center">Status</th>
+            <th class="py-3 px-4 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-slate-700">
+          <tr *ngFor="let chave of chavesIa" class="hover:bg-slate-50/50 transition-colors">
+            <td class="py-3.5 px-4 font-semibold text-slate-900">
+              {{ chave.apelido }}
+            </td>
+            <td class="py-3.5 px-4">
+              <span [ngClass]="{
+                'bg-blue-50 text-blue-700 border-blue-200': chave.provedor === 'GEMINI',
+                'bg-orange-50 text-orange-700 border-orange-200': chave.provedor === 'CLAUDE',
+                'bg-emerald-50 text-emerald-700 border-emerald-200': chave.provedor === 'OPENAI',
+                'bg-indigo-50 text-indigo-700 border-indigo-200': chave.provedor === 'DEEPSEEK',
+                'bg-amber-50 text-amber-700 border-amber-200': chave.provedor === 'GROQ'
+              }" class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border">
+                {{ chave.provedor === 'GEMINI' ? 'Google Gemini' : (chave.provedor === 'CLAUDE' ? 'Anthropic Claude' :
+                (chave.provedor === 'OPENAI' ? 'OpenAI (GPT)' : (chave.provedor === 'DEEPSEEK' ? 'DeepSeek' : 'Groq')) )
+                }}
+              </span>
+            </td>
+            <td class="py-3.5 px-4 font-mono text-slate-600">
+              {{ chave.chaveMascarada }}
+            </td>
+            <td class="py-3.5 px-4 text-center">
+              <span *ngIf="chave.padrao"
+                class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-purple-50 text-purple-700 border border-purple-200">
+                <svg class="w-3 h-3 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                  <path
+                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                </svg>
+                Padrão
+              </span>
+              <span *ngIf="!chave.padrao" class="text-slate-400 text-[11px]">
+                Secundária
+              </span>
+            </td>
+            <td class="py-3.5 px-4 text-right">
+              <div class="inline-flex items-center gap-2">
+                <button *ngIf="!chave.padrao" (click)="definirChavePadrao(chave)" type="button" title="Tornar Padrão"
+                  class="px-2.5 py-1 text-[11px] font-semibold text-purple-600 hover:text-purple-700 hover:bg-purple-50 rounded-lg transition-colors cursor-pointer">
+                  Tornar Padrão
+                </button>
+                <button (click)="excluirChave(chave)" type="button" title="Excluir Chave"
+                  class="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+  <!-- ================= MODAL ADICIONAR CHAVE IA ================= -->
+  <div *ngIf="modalNovaChaveAberta"
+    class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm">
+    <div
+      class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 animate-in fade-in duration-150">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div
+            class="w-8 h-8 min-w-8 min-h-8 shrink-0 aspect-square rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+            <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+            </svg>
+          </div>
+          <h3 class="text-lg font-bold text-slate-900">Adicionar Assistente de IA</h3>
+        </div>
+        <button (click)="fecharModalNovaChave()" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <form [formGroup]="novaChaveForm" (ngSubmit)="salvarNovaChave()" class="flex flex-col gap-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Nome identificador</label>
+          <input type="text" formControlName="apelido" placeholder="Ex: Meu Gemini Pro"
+            class="w-full px-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-800" />
+          <span *ngIf="novaChaveForm.get('apelido')?.touched && novaChaveForm.get('apelido')?.hasError('required')"
+            class="text-xs text-rose-500 mt-1 block">O nome é obrigatório.</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Provedor do modelo</label>
+          <select formControlName="provedor"
+            class="w-full px-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 text-slate-800">
+            <option *ngFor="let p of provedoresDisponiveis" [value]="p.valor">{{ p.label }}</option>
+          </select>
+        </div>
+
+        <div>
+          <div class="flex items-center justify-between mb-1">
+            <label class="text-xs font-semibold text-slate-700">Chave de Acesso (API Key) *</label>
+            <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
+              class="text-xs font-medium text-purple-600 hover:text-purple-800 hover:underline flex items-center gap-1 transition-colors"
+              [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top"
+              tooltipStyleClass="whitespace-pre-line text-xs">
+              <span>{{ linkApiKeyProvedor.label }}</span>
+              <svg class="w-3 h-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+          <input type="password" formControlName="apiKey" placeholder="••••••••••••••••"
+            class="w-full px-4 py-2.5 text-xs bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-none focus:ring-2 focus:ring-purple-500 font-mono text-slate-800" />
+
+          <!-- Mini tutorial dinâmico do provedor selecionado -->
+          <div class="mt-2.5 p-3 bg-purple-50/70 border border-purple-100 rounded-xl text-xs flex flex-col gap-1.5">
+            <p class="font-bold text-purple-950 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-purple-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              Como obter sua chave do {{ linkApiKeyProvedor.provedorNome }}:
+            </p>
+            <ol class="list-decimal list-inside space-y-0.5 text-[11px] text-purple-900 leading-relaxed">
+              <li *ngFor="let passo of linkApiKeyProvedor.passos">{{ passo }}</li>
+            </ol>
+          </div>
+
+          <span *ngIf="novaChaveForm.get('apiKey')?.touched && novaChaveForm.get('apiKey')?.hasError('required')"
+            class="text-xs text-rose-500 mt-1 block">A chave de acesso é obrigatória.</span>
+        </div>
+
+        <div class="flex items-center gap-2 pt-1">
+          <input type="checkbox" id="padraoCheckbox" formControlName="padrao"
+            class="rounded text-purple-600 focus:ring-purple-500" />
+          <label for="padraoCheckbox" class="text-xs font-medium text-slate-700 cursor-pointer">
+            Usar este assistente como padrão para ler faturas
+          </label>
+        </div>
+
+        <div class="flex items-center justify-between pt-4 border-t border-slate-100 gap-3">
+          <p class="text-[11px] text-slate-400 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+                clip-rule="evenodd" />
+            </svg>
+            <span>Protegido com criptografia AES-256.</span>
+          </p>
+
+          <div class="flex items-center gap-2">
+            <button type="button" (click)="fecharModalNovaChave()"
+              class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="salvandoChaveIa"
+              class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-50 rounded-xl shadow-sm transition-all cursor-pointer">
+              <svg *ngIf="salvandoChaveIa" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+                </circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <span *ngIf="!salvandoChaveIa">Salvar Chave</span>
+              <span *ngIf="salvandoChaveIa">Salvando...</span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+</div>

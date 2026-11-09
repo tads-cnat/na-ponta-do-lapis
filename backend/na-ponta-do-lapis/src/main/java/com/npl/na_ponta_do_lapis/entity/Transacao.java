@@ -60,6 +60,9 @@ public class Transacao {
     @Column(name = "valor_total_compra", precision = 19, scale = 2)
     private BigDecimal valorTotalCompra;
 
+    @Column(name = "pluggy_transaction_id", length = 100)
+    private String pluggyTransactionId;
+
 
     public Marcador getMarcador() {
         return marcador;
@@ -108,4 +111,7 @@ public class Transacao {
 
     public BigDecimal getValorTotalCompra() { return valorTotalCompra; }
     public void setValorTotalCompra(BigDecimal valorTotalCompra) { this.valorTotalCompra = valorTotalCompra; }
+
+    public String getPluggyTransactionId() { return pluggyTransactionId; }
+    public void setPluggyTransactionId(String pluggyTransactionId) { this.pluggyTransactionId = pluggyTransactionId; }
 }

@@ -18,6 +18,7 @@ export interface ITransacoes {
   id: number | null;
   descricao: string;
   valor: number;
+  valorComSinal?: number | null;
   tipo: Tipo | null;
   estado: Estado | null;
   dataHora: string;
@@ -96,6 +97,8 @@ export interface FaturaAnaliseOpcoes {
   usarIa?: boolean;
   enviarPdfParaIa?: boolean;
   consentimentoLgpd?: boolean;
+  chaveIaId?: number;
+  salvarChave?: boolean;
 }
 
 export interface FaturaValidacaoPreviaResponse {

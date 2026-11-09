@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { ActivatedRoute } from '@angular/router';
 import { BotoesAcaoComponent } from '../botoes-acao/botoes-acao.component';
 import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/formulario-secao.component';
-import { UsuarioService } from '../../service/perfil.services'; // Certifique-se de que este caminho aponta para o service correto
+import { IntegracoesPerfilComponent } from '../integracoes-perfil/integracoes-perfil.component';
+import { UsuarioService } from '../../service/perfil.services';
 import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
 import { MessageService } from 'primeng/api';
@@ -11,11 +13,12 @@ import { MessageService } from 'primeng/api';
 @Component({
   selector: 'app-ajustes-do-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent],
   templateUrl: './ajustes-do-perfil.component.html'
 })
 export class AjustesPerfilComponent implements OnInit {
   public perfilForm!: FormGroup;
+  public abaAtiva: 'dados' | 'integracoes' = 'dados';
 
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
@@ -45,6 +48,7 @@ export class AjustesPerfilComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private usuarioService: UsuarioService,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService
   ) {
@@ -53,6 +57,12 @@ export class AjustesPerfilComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarDadosIniciais();
+    this.route.queryParams.subscribe((params) => {
+      if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes' || params['aba'] === 'ia' || params['secao'] === 'ia') {
+        this.abaAtiva = 'integracoes';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   private inicializarFormulario(): void {
