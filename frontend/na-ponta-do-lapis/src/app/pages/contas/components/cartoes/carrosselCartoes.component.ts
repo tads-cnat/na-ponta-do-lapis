@@ -1,11 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NgClass, CurrencyPipe } from '@angular/common';
 import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
+import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 
 @Component({
   selector: 'app-carrossel-cartoes',
   standalone: true,
-  imports: [NgClass, CurrencyPipe],
+  imports: [NgClass, CurrencyPipe, IconeBancoComponent],
   template: `
     <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 overflow-hidden">
 
@@ -98,8 +99,13 @@ import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
                       </h3>
                     </div>
 
-                    <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-                      <i [class]="ehCartao(conta) ? 'pi pi-credit-card text-xl' : 'pi pi-wallet text-xl'"></i>
+                    <div class="shrink-0 flex items-center justify-center">
+                      <app-icone-banco
+                        [nome]="conta.nome"
+                        [tamanho]="50"
+                        [formato]="'quadrado'"
+                        [fallbackIcon]="ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet'">
+                      </app-icone-banco>
                     </div>
 
                   </div>

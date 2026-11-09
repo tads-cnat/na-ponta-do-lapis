@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { IntegracoesService } from '../../../../service/integracoes.service';
+import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
+import { mapearNomeBanco } from '../../../../shared/utils/banco-icon.helper';
 import {
   IChaveIaRequest,
   IChaveIaResponse,
@@ -14,7 +16,7 @@ import {
 @Component({
   selector: 'app-integracoes-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TooltipModule],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, IconeBancoComponent],
   templateUrl: './integracoes-perfil.component.html',
   styleUrl: './integracoes-perfil.component.css'
 })
@@ -110,6 +112,10 @@ export class IntegracoesPerfilComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  public getNomeBancoFormatado(nome?: string): string {
+    return mapearNomeBanco(nome).nomeExibicao;
   }
 
   public salvarNovoItemPorId(): void {
