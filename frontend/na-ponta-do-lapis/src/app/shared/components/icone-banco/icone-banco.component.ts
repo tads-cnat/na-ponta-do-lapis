@@ -26,7 +26,9 @@ import { mapearNomeBanco, obterSvgBancoString } from '../../utils/banco-icon.hel
              [alt]="nome || 'Banco'"
              class="w-full h-full object-contain rounded-xl bg-white p-1 border border-slate-200 shadow-xs" />
       } @else {
-        <div class="w-full h-full rounded-xl bg-white/20 text-white flex items-center justify-center backdrop-blur-sm border border-white/20 shadow-xs">
+        <div class="w-full h-full rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center border border-slate-200/80 shadow-xs"
+             [style.background]="fundo"
+             [style.color]="cor">
           <i [class]="fallbackIcon + ' text-xl'"></i>
         </div>
       }

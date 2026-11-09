@@ -10,32 +10,32 @@ export interface BancoResolvido {
 const ALIASES: Record<string, { nome: string; aliases: string[]; corPadrao?: string }> = {
   nubank: {
     nome: 'Nubank',
-    aliases: ['nubank', 'nu pagamentos', 'nu financeiro', 'roxinho'],
+    aliases: ['nubank', 'nu pagamentos', 'nu financeiro', 'roxinho', 'nuconta', 'ultravioleta'],
     corPadrao: '#820AD1'
   },
   inter: {
     nome: 'Banco Inter',
-    aliases: ['banco inter', 'inter', 'intermedium', 'bancointer'],
+    aliases: ['banco inter', 'inter', 'intermedium', 'bancointer', 'intercard'],
     corPadrao: '#FF7A00'
   },
   itau: {
     nome: 'Itaú',
-    aliases: ['itaú', 'itau', 'itaucard', 'unibanco', 'itau unibanco'],
+    aliases: ['itaú', 'itau', 'itaucard', 'unibanco', 'itau unibanco', 'personnalite', 'personnalité'],
     corPadrao: '#EC7000'
   },
   bradesco: {
     nome: 'Bradesco',
-    aliases: ['bradesco', 'bradescard', 'banco bradesco'],
+    aliases: ['bradesco', 'bradescard', 'banco bradesco', 'bradesco cartoes'],
     corPadrao: '#CC092F'
   },
   santander: {
     nome: 'Santander',
-    aliases: ['santander', 'banco santander', 'totta'],
+    aliases: ['santander', 'banco santander', 'totta', 'santander sx', 'santander free'],
     corPadrao: '#EA1D2C'
   },
   bancodobrasil: {
     nome: 'Banco do Brasil',
-    aliases: ['banco do brasil', 'brasil', 'bb', 'ourocard'],
+    aliases: ['banco do brasil', 'brasil', 'bb', 'ourocard', 'banco brasil'],
     corPadrao: '#003882'
   },
   caixa: {
@@ -163,6 +163,13 @@ export function mapearNomeBanco(nome?: string | null): BancoResolvido {
   }
 
   return { chave: null, nomeExibicao: nome };
+}
+
+/**
+ * Retorna true se o nome informado corresponde a um banco reconhecido com logo oficial
+ */
+export function temBancoDetectado(nome?: string | null): boolean {
+  return mapearNomeBanco(nome).chave !== null;
 }
 
 /**

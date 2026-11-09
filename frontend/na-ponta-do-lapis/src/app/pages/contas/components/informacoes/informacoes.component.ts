@@ -13,7 +13,7 @@ import { IconeBancoComponent } from '../../../../shared/components/icone-banco/i
 
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
-            <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'"></app-icone-banco>
+            <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'" [fallbackIcon]="ehCartao ? 'pi pi-credit-card' : 'pi pi-wallet'"></app-icone-banco>
             <div>
               <h2 class="text-2xl font-bold text-slate-900">
                 Informações da Conta
