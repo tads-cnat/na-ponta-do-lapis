@@ -1,23 +1,27 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.models';
+import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 
 @Component({
   selector: 'app-informacoes-conta',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, IconeBancoComponent],
   template: `
     @if (conta) {
       <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col gap-5">
 
         <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-2xl font-bold text-slate-900">
-              Informações da Conta
-            </h2>
-            <p class="text-slate-500 text-sm">
-              {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
-            </p>
+          <div class="flex items-center gap-3">
+            <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'"></app-icone-banco>
+            <div>
+              <h2 class="text-2xl font-bold text-slate-900">
+                Informações da Conta
+              </h2>
+              <p class="text-slate-500 text-sm">
+                {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
+              </p>
+            </div>
           </div>
 
           <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
