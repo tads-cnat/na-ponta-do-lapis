@@ -9,32 +9,7 @@ import { CarrosselCartoesComponent } from './carrosselCartoes.component';
   imports: [AcoesCartoesComponent, CarrosselCartoesComponent],
   template: `
     <div class="flex flex-col gap-5">
-
-      <!-- HEADER -->
-      <div class="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
-
-        <div class="min-w-0">
-          <h1 class="text-4xl font-bold text-slate-900">
-            Contas
-          </h1>
-          <p class="text-slate-500 mt-2">
-            Gestão de contas financeiras
-          </p>
-        </div>
-
-        <!-- AÇÕES -->
-        <app-acoes-cartoes
-          [sincronizandoOpenFinance]="sincronizandoOpenFinance"
-          [openFinanceConectado]="openFinanceConectado"
-          (onAdicionar)="onAdicionar.emit()"
-          (onEditar)="onEditar.emit()"
-          (onExcluir)="onExcluir.emit()"
-          (onSincronizarOpenFinance)="onSincronizarOpenFinance.emit()">
-        </app-acoes-cartoes>
-
-      </div>
-
-      <!-- CARROSSEL -->
+      <!-- CARROSSEL DE CONTAS -->
       <app-carrossel-cartoes
         [contas]="contas"
         [contaSelecionadaIndex]="contaSelecionadaIndex"
@@ -45,7 +20,6 @@ import { CarrosselCartoesComponent } from './carrosselCartoes.component';
         (onAnterior)="onAnterior.emit()"
         (onProxima)="onProxima.emit()">
       </app-carrossel-cartoes>
-
     </div>
   `
 })

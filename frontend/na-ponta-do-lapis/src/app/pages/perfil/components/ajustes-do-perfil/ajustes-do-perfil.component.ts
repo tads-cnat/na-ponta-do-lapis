@@ -34,7 +34,7 @@ export class AjustesPerfilComponent implements OnInit {
   ngOnInit(): void {
     this.carregarDadosIniciais();
     this.route.queryParams.subscribe((params) => {
-      if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes') {
+      if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes' || params['aba'] === 'ia' || params['secao'] === 'ia') {
         this.abaAtiva = 'integracoes';
         this.cdr.detectChanges();
       }

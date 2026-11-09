@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { NgClass, CurrencyPipe } from '@angular/common';
 import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
+import { obterCorOficialBanco } from '../../../../shared/utils/banco-icon.helper';
 
 @Component({
   selector: 'app-carrossel-cartoes',
@@ -72,7 +73,7 @@ import { IconeBancoComponent } from '../../../../shared/components/icone-banco/i
               <div
                 class="relative w-[400px] max-w-[82vw] h-[220px] rounded-[2rem] overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]"
                 [title]="conta.nome"
-                [style.background]="conta.cor">
+                [style.background]="obterCorCartao(conta)">
 
                 <!-- EFEITOS -->
                 <div class="absolute top-[-30px] right-[-20px] w-52 h-52 rounded-full border border-white/20"></div>
@@ -99,10 +100,10 @@ import { IconeBancoComponent } from '../../../../shared/components/icone-banco/i
                       </h3>
                     </div>
 
-                    <div class="shrink-0 flex items-center justify-center">
+                    <div class="shrink-0 p-[2px] rounded-xl bg-white shadow-md ring-1 ring-white/40 flex items-center justify-center transition-transform hover:scale-105">
                       <app-icone-banco
                         [nome]="conta.nome"
-                        [tamanho]="50"
+                        [tamanho]="48"
                         [formato]="'quadrado'"
                         [fallbackIcon]="ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet'">
                       </app-icone-banco>
@@ -189,6 +190,20 @@ export class CarrosselCartoesComponent {
 
   ehCartao(conta: IContas): boolean {
     return ehCartaoCredito(conta);
+  }
+
+  obterCorCartao(conta: IContas): string {
+    const corAtual = conta.cor ? conta.cor.toUpperCase().replace('#', '') : '';
+    // Se tiver cor customizada que não seja o amarelo padrão antigo (FFDE59)
+    if (corAtual && corAtual !== 'FFDE59') {
+      return `#${corAtual}`;
+    }
+    // Busca a cor oficial da marca do banco
+    const corOficial = obterCorOficialBanco(conta.nome);
+    if (corOficial) {
+      return corOficial;
+    }
+    return conta.cor ? (conta.cor.startsWith('#') ? conta.cor : `#${conta.cor}`) : '#4F46E5';
   }
 
 }

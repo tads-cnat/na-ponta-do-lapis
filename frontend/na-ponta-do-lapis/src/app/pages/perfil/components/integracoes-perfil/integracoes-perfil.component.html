@@ -1,11 +1,41 @@
-<div class="w-full flex flex-col gap-8">
+<div class="w-full flex flex-col gap-6">
+
+  <!-- SELETOR DE SUB-ABAS (Open Finance vs Assistente de IA) -->
+  <div class="flex items-center gap-2 p-1.5 bg-slate-100 rounded-2xl w-fit border border-slate-200/80">
+    <button type="button"
+            (click)="subabaAtiva = 'bancos'"
+            [ngClass]="subabaAtiva === 'bancos' ? 'bg-white text-indigo-950 font-bold shadow-xs' : 'text-slate-600 font-medium hover:text-slate-900'"
+            class="px-4 py-2 text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center gap-2">
+      <svg class="w-4 h-4 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z" />
+      </svg>
+      <span>Open Finance (Bancos)</span>
+      <span *ngIf="openFinanceStatus?.conectado" class="w-2 h-2 rounded-full bg-emerald-500" title="Conectado"></span>
+    </button>
+
+    <button type="button"
+            (click)="subabaAtiva = 'ia'"
+            [ngClass]="subabaAtiva === 'ia' ? 'bg-white text-purple-950 font-bold shadow-xs' : 'text-slate-600 font-medium hover:text-slate-900'"
+            class="px-4 py-2 text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center gap-2">
+      <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+      </svg>
+      <span>Assistente de IA (Chaves)</span>
+      <span *ngIf="chavesIa.length > 0" class="text-[10px] bg-purple-100 text-purple-700 px-1.5 py-0.5 rounded-full font-bold">
+        {{ chavesIa.length }}
+      </span>
+    </button>
+  </div>
 
   <!-- ================= SEÇÃO CONEXÃO BANCÁRIA (OPEN FINANCE) ================= -->
-  <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+  <div *ngIf="subabaAtiva === 'bancos'" class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
       <div>
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 min-w-10 min-h-10 shrink-0 aspect-square rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
+          <div
+            class="w-10 h-10 min-w-10 min-h-10 shrink-0 aspect-square rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center font-bold">
             <!-- Ícone SVG de instituição bancária -->
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round"
@@ -94,9 +124,11 @@
           <div *ngFor="let item of itensConectados"
             class="p-4 rounded-xl border border-slate-200 bg-slate-50/60 flex items-center justify-between gap-3 shadow-xs">
             <div class="flex items-center gap-3 min-w-0">
-              <app-icone-banco [nome]="item.nomeInstituicao" [fallbackLogoUrl]="item.logoUrl" [tamanho]="40" [formato]="'quadrado'"></app-icone-banco>
+              <app-icone-banco [nome]="item.nomeInstituicao" [fallbackLogoUrl]="item.logoUrl" [tamanho]="40"
+                [formato]="'quadrado'"></app-icone-banco>
               <div class="min-w-0">
-                <p class="text-xs font-bold text-slate-800 truncate">{{ getNomeBancoFormatado(item.nomeInstituicao) }}</p>
+                <p class="text-xs font-bold text-slate-800 truncate">{{ getNomeBancoFormatado(item.nomeInstituicao) }}
+                </p>
                 <p class="text-[11px] font-mono text-slate-400 truncate" title="{{ item.itemId }}">ID: {{ item.itemId }}
                 </p>
               </div>
@@ -394,10 +426,11 @@
 
 
   <!-- ================= SEÇÃO ASSISTENTE DE IA ================= -->
-  <div class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
+  <div *ngIf="subabaAtiva === 'ia'" id="secao-ia" class="bg-white rounded-2xl border border-slate-200 p-6 md:p-8 shadow-sm">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
       <div class="flex items-center gap-3 min-w-0">
-        <div class="w-10 h-10 min-w-10 min-h-10 shrink-0 aspect-square rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
+        <div
+          class="w-10 h-10 min-w-10 min-h-10 shrink-0 aspect-square rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
           <!-- Ícone SVG profissional de IA / Faíscas Inteligentes -->
           <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round"
@@ -406,8 +439,8 @@
         </div>
         <div>
           <h2 class="text-xl font-bold text-slate-900">Assistente Inteligente de Faturas (IA)</h2>
-          <p class="text-xs text-slate-500">Configure modelos de inteligência artificial (Google Gemini, OpenAI ou
-            Claude) para ler faturas em PDF e organizar seus lançamentos automaticamente.</p>
+          <p class="text-xs text-slate-500">Configure modelos de inteligência artificial para ler faturas em PDF e
+            organizar seus lançamentos automaticamente.</p>
         </div>
       </div>
 
@@ -531,7 +564,8 @@
       class="bg-white rounded-2xl max-w-md w-full p-6 shadow-xl border border-slate-100 animate-in fade-in duration-150">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100 mb-4">
         <div class="flex items-center gap-2.5 min-w-0">
-          <div class="w-8 h-8 min-w-8 min-h-8 shrink-0 aspect-square rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
+          <div
+            class="w-8 h-8 min-w-8 min-h-8 shrink-0 aspect-square rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center">
             <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round"
                 d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
@@ -596,7 +630,6 @@
             </ol>
           </div>
 
-          <p class="text-[11px] text-slate-400 mt-1.5">Armazenada com criptografia simétrica AES-256 no servidor.</p>
           <span *ngIf="novaChaveForm.get('apiKey')?.touched && novaChaveForm.get('apiKey')?.hasError('required')"
             class="text-xs text-rose-500 mt-1 block">A chave de acesso é obrigatória.</span>
         </div>
@@ -609,21 +642,32 @@
           </label>
         </div>
 
-        <div class="flex items-center justify-end gap-2 pt-4 border-t border-slate-100">
-          <button type="button" (click)="fecharModalNovaChave()"
-            class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
-            Cancelar
-          </button>
-          <button type="submit" [disabled]="salvandoChaveIa"
-            class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-50 rounded-xl shadow-sm transition-all cursor-pointer">
-            <svg *ngIf="salvandoChaveIa" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
-              </circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+        <div class="flex items-center justify-between pt-4 border-t border-slate-100 gap-3">
+          <p class="text-[11px] text-slate-400 flex items-center gap-1.5">
+            <svg class="w-3.5 h-3.5 text-emerald-600 shrink-0" fill="currentColor" viewBox="0 0 20 20">
+              <path fill-rule="evenodd"
+                d="M10 1a4.5 4.5 0 00-4.5 4.5V9H5a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5V5.5A4.5 4.5 0 0010 1zm3 8V5.5a3 3 0 10-6 0V9h6z"
+                clip-rule="evenodd" />
             </svg>
-            <span *ngIf="!salvandoChaveIa">Salvar Chave</span>
-            <span *ngIf="salvandoChaveIa">Salvando...</span>
-          </button>
+            <span>Protegido com criptografia AES-256.</span>
+          </p>
+
+          <div class="flex items-center gap-2">
+            <button type="button" (click)="fecharModalNovaChave()"
+              class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl transition-colors">
+              Cancelar
+            </button>
+            <button type="submit" [disabled]="salvandoChaveIa"
+              class="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-bold text-white bg-purple-600 hover:bg-purple-700 disabled:opacity-50 rounded-xl shadow-sm transition-all cursor-pointer">
+              <svg *ngIf="salvandoChaveIa" class="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none">
+                </circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
+              </svg>
+              <span *ngIf="!salvandoChaveIa">Salvar Chave</span>
+              <span *ngIf="salvandoChaveIa">Salvando...</span>
+            </button>
+          </div>
         </div>
       </form>
     </div>

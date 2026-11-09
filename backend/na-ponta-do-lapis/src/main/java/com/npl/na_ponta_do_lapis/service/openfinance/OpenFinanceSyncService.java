@@ -363,8 +363,7 @@ public class OpenFinanceSyncService {
                         // Define o tipo de conta (Cartão de Crédito vs Conta Corrente)
                         String rawType = accNode.path("type").asText("").trim().toUpperCase();
                         String rawSubtype = accNode.path("subtype").asText("").trim().toUpperCase();
-                        boolean ehCartao = "CREDIT".equals(rawType) || "CREDIT_CARD".equals(rawSubtype)
-                                || (rawName != null && (rawName.toLowerCase().contains("cartão") || rawName.toLowerCase().contains("cartao") || rawName.toLowerCase().contains("credit")));
+                        boolean ehCartao = "CREDIT".equals(rawType) || "CREDIT_CARD".equals(rawSubtype);
                         conta.setTipoConta(ehCartao ? TipoConta.CARTAO_CREDITO : TipoConta.CONTA_CORRENTE);
 
                         // Extrai limites de cartão se presentes em creditData
@@ -691,7 +690,7 @@ public class OpenFinanceSyncService {
             return TipoTransacao.RECEITA;
         }
 
-        boolean ehCartao = (conta.getNome() != null && (conta.getNome().toLowerCase().contains("cartão") || conta.getNome().toLowerCase().contains("cartao")))
+        boolean ehCartao = conta.getTipoConta() == TipoConta.CARTAO_CREDITO
                 || txNode.hasNonNull("billId")
                 || txNode.hasNonNull("creditCardMetadata");
 
