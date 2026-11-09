@@ -669,12 +669,11 @@ export class ContasComponent implements OnInit {
     this.integracoesService.sincronizarOpenFinanceManual().subscribe({
       next: (status) => {
         this.sincronizandoOpenFinance = false;
-        const restantes = status.syncsRestantesHoje ?? status.sincronizacoesRestantesHoje ?? 0;
         this.messageService.add({
           severity: 'success',
           summary: 'Sincronização concluída',
-          detail: `Contas e transações atualizadas! Restantes hoje: ${restantes}/${status.limiteDiario}`,
-          life: 4000
+          detail: 'Contas e transações bancárias atualizadas com sucesso via Open Finance!',
+          life: 3500
         });
         this.listarContas();
       },
