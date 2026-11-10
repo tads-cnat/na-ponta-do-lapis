@@ -1,17 +1,17 @@
 @if(temFamilia) {
-<div class="w-full flex flex-col gap-6 p-4 overflow-y-auto h-[calc(100vh-64px)]">
-  <div class="flex flex-row justify-center items-stretch gap-4 sm:gap-6 lg:gap-8 flex-wrap">
-    <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
-      <p-card header="Saldo inicial" styleClass="w-full relative">
-        <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
+  <div class="w-full flex flex-col gap-6 p-4 overflow-y-auto h-[calc(100vh-64px)]">
+    <div class="flex flex-row justify-center items-stretch gap-4 sm:gap-6 lg:gap-8 flex-wrap">
+      <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
+          <p-card header="Saldo inicial" styleClass="w-full relative">
+              <img src="Icon-grafico.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
 
-        <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16">
-          <div>
-            <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
-            <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">R$ 4.010,00</span>
-          </div>
+              <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16">
+                  <div>
+                      <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">{{ 4010 | appMoeda }}</span>
+                  </div>
 
-          <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
+                  <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
                       <span class="flex items-center gap-1">
                           <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5">
                           <span class="text-red-500 font-semibold">4.3%</span>
@@ -22,17 +22,17 @@
       </p-card>
     </div>
 
-    <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
-      <p-card header="Gastos" styleClass="w-full relative">
-        <img src="Icon_Gastos.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
+      <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
+          <p-card header="Gastos" styleClass="w-full relative">
+              <img src="Icon_Gastos.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
 
-        <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16">
-          <div>
-            <p class="text-xs text-gray-500 mb-0.5">Referente aos gastos do mês</p>
-            <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">R$ 860,00</span>
-          </div>
+              <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16">
+                  <div>
+                      <p class="text-xs text-gray-500 mb-0.5">Referente aos gastos do mês</p>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">{{ 860 | appMoeda }}</span>
+                  </div>
 
-          <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
+                  <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
                       <span class="flex items-center gap-1">
                           <img src="ic-trending-down.svg" alt="icon seta" class="w-3.5 h-3.5">
                           <span class="text-red-500 font-semibold">1.3%</span>
@@ -43,17 +43,17 @@
       </p-card>
     </div>
 
-    <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
-      <p-card header="Saldo atual" styleClass="w-full relative">
-        <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
+      <div class="w-full sm:w-[380px] hover:scale-105 transition-transform duration-300">
+          <p-card header="Saldo atual" styleClass="w-full relative">
+              <img src="Icon-pessoa.svg" alt="Grafico" class="absolute top-1/2 -translate-y-1/2 right-4 sm:right-6 w-8 h-8 sm:w-10 sm:h-10 opacity-80">
 
-        <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16">
-          <div>
-            <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
-            <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
-          </div>
+              <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16">
+                  <div>
+                      <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-900">{{ saldoTotal | appMoeda }}</span>
+                  </div>
 
-          <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
+                  <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
                       <span class="flex items-center gap-1">
                           <img src="ic-treding-up.svg" alt="icon seta" class="w-3.5 h-3.5">
                           <span class="text-green-500 font-semibold">2.1%</span>
@@ -111,22 +111,22 @@
               </tr>
             </ng-template>
 
-            <ng-template pTemplate="body" let-t>
-              <tr>
-                <td>
-                  <p-tableCheckbox [value]="t" />
-                </td>
-                <td class="whitespace-nowrap">
-                  {{ t.descricao }}
-                </td>
-                <td class="font-bold whitespace-nowrap"
-                    [ngClass]="t.tipo === 'RECEITA' ? 'text-green-600' : 'text-red-500'">
-                  {{ t.valor | currency: 'BRL' }}
-                </td>
-                <td class="whitespace-nowrap">{{ t.membroUsername || t.membroNome }}</td>
-                <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
-                <td>
-                  <p-tag [value]="t.tipo" [style]="{
+                <ng-template pTemplate="body" let-t>
+                  <tr>
+                    <td>
+                      <p-tableCheckbox [value]="t" />
+                    </td>
+                    <td class="whitespace-nowrap">
+                      {{ t.descricao }}
+                    </td>
+                    <td class="font-bold whitespace-nowrap"
+                      [ngClass]="t.tipo === 'RECEITA' ? 'text-green-600' : 'text-red-500'">
+                      {{ t.valor | appMoeda }}
+                    </td>
+                    <td class="whitespace-nowrap">{{ t.membroUsername || t.membroNome }}</td>
+                    <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
+                    <td>
+                      <p-tag [value]="t.tipo" [style]="{
                         'background': t.tipo === 'RECEITA' ? '#1b9e34' : '#dd3340',
                         'color': '#ffffff'
                       }"></p-tag>
@@ -154,13 +154,23 @@
           <h1 class="text-[#AA7FFF80] font-bold text-[14px] whitespace-nowrap">
             Família {{ nomeFamilia }}
           </h1>
-          <div class="w-full flex flex-row justify-end gap-4">
-            <button (click)="handleModalAdicionarAberto()" class="cursor-pointer hover:text-green-500 transition-colors duration-300">
-              <i class="pi pi-plus"></i>
-            </button>
-            <button (click)="handleModalRemoverAberto()" class="cursor-pointer hover:text-red-500 transition-colors duration-300">
-              <i class="pi pi-minus"></i>
-            </button>
+          <div class="w-full max-h-48 overflow-y-auto overflow-x-auto">
+              <table class="w-full">
+                <thead>
+                  <tr class="bg-[#F8F8FC]">
+                    <th class="text-slate-700! text-sm px-4 py-2 text-left">Membro</th>
+                    <th class="text-slate-700! text-sm px-4 py-2 text-left">Gasto</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (membro of membros; track $index) {
+                    <tr class="border-t border-gray-200">
+                      <td class="text-sm px-4 py-2">{{ membro.username }}</td>
+                      <td class="text-sm px-4 py-2">{{ membro.id | appMoeda }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
           </div>
         </div>
         <div class="flex flex-row justify-center items-center gap-4 w-full">

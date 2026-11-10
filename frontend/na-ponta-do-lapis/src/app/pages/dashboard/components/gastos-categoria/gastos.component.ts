@@ -1,7 +1,7 @@
-import { Component, Input, OnChanges, effect, inject, untracked } from '@angular/core';
-import { ChartModule } from 'primeng/chart';
-import { Categoria, ITransacoes } from '../../../../model/ITransacoes.model';
-import { ThemeService } from '../../../../service/theme.service';
+import { Component, Input, OnChanges, inject } from "@angular/core";
+import { ChartModule } from "primeng/chart";
+import { Categoria, ITransacoes } from "../../../../model/ITransacoes.model";
+import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-moeda.service";
 
 // ─── Paleta de cores ──────────────────────────────────────────────────────────
 // Não há mais nomes fixos: as categorias são as que vêm de GET /categorias
@@ -100,6 +100,9 @@ interface CategoriaVM {
   `,
 })
 export class GastosCategoriaComponent implements OnChanges {
+
+  private preferenciaMoedaService = inject(PreferenciaMoedaService);
+
   @Input() transacoes: ITransacoes[] = [];
   @Input() categorias_disponiveis: Categoria[] = [];
 
@@ -202,15 +205,14 @@ export class GastosCategoriaComponent implements OnChanges {
         tooltip: {
           callbacks: {
             label: (ctx: any) => {
-              const val = (ctx.parsed as number).toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              });
-              return ` ${ctx.label}: R$ ${val}`;
-            },
-          },
-        },
-      },
+              const val = (ctx.parsed as number)
+                .toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+              const simbolo = this.preferenciaMoedaService.obterSimboloMoeda();
+              return ` ${ctx.label}: ${simbolo} ${val}`;
+            }
+          }
+        }
+      }
     };
   }
 }

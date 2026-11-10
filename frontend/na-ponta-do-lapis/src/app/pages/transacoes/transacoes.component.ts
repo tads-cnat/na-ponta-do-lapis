@@ -22,6 +22,8 @@ import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
+import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
+import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MarcadorDlgComponent } from '../marcador-dlg/marcador-dlg.component';
@@ -38,7 +40,7 @@ interface GrupoParcelamentoResumo {
 
 @Component({
   selector: 'app-transacoes',
-  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent],
+  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
@@ -187,6 +189,7 @@ export class TransacoesComponent {
 
   private messageService = inject(MessageService)
   private destroyRef = inject(DestroyRef)
+  private preferenciaMoedaService = inject(PreferenciaMoedaService);
   id: number | null = null;
   @ViewChild(CardSaldoComponent) cardSaldo?: CardSaldoComponent;
   formTransacao: FormGroup;
@@ -280,13 +283,13 @@ export class TransacoesComponent {
   }
 
   ngOnInit(): void {
-    const moedaSalva = localStorage.getItem('npl_moeda');
-    if (!moedaSalva) {
-      localStorage.setItem('npl_moeda', 'BRL');
-      this.codigoMoeda = 'BRL';
-    } else {
-      this.codigoMoeda = moedaSalva;
-    }
+    this.codigoMoeda = this.preferenciaMoedaService.obterMoedaAtiva();
+    this.preferenciaMoedaService.moeda$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(moeda => {
+        this.codigoMoeda = moeda;
+        this.cdr.markForCheck();
+      });
 
     this.listarTransacoes()
     this.listarContas()

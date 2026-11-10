@@ -1,9 +1,10 @@
-import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { HeaderComponent } from '../header/header.component';
-import { SidebarComponent } from '../sidebar/sidebar.component';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { HeaderComponent } from '../header/header.component'
+import { SidebarComponent } from '../sidebar/sidebar.component'
+import { RouterOutlet } from '@angular/router'
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
-import { ThemeService } from '../../service/theme.service';
+import { AuthService } from '../../auth/service/auth.service';
+import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -11,14 +12,18 @@ import { ThemeService } from '../../service/theme.service';
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css',
 })
-export class MainLayoutComponent implements OnInit, OnDestroy {
-  private readonly themeService = inject(ThemeService);
+export class MainLayoutComponent implements OnInit {
+  private authService = inject(AuthService);
+  private preferenciaMoedaService = inject(PreferenciaMoedaService);
 
   ngOnInit(): void {
-    this.themeService.ativarAreaInterna();
-  }
-
-  ngOnDestroy(): void {
-    this.themeService.desativarAreaInterna();
+    this.authService.meusDados().subscribe({
+      next: (usuario) => {
+        this.preferenciaMoedaService.carregarMoedaDoUsuario(usuario);
+      },
+      error: () => {
+        // Silencioso se token expirado ou interceptor tratar
+      }
+    });
   }
 }

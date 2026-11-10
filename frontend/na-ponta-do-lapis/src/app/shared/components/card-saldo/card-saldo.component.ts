@@ -6,12 +6,13 @@ import { IContas, ehCartaoCredito } from '../../../model/IContas.models';
 import { ITransacoes } from '../../../model/ITransacoes.model';
 import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
+import { AppMoedaPipe } from '../../pipes/app-moeda.pipe';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-card-saldo',
-  imports: [PrimeNGModuleModule, CommonModule],
+  imports: [PrimeNGModuleModule, CommonModule, AppMoedaPipe],
   templateUrl: './card-saldo.component.html',
   styleUrl: './card-saldo.component.css',
 })

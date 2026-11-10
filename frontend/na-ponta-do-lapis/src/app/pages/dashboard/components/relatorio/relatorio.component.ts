@@ -1,8 +1,8 @@
-import { Component, Input, OnChanges, effect, inject, untracked } from '@angular/core';
-import { IContas } from '../../../../model/IContas.models';
-import { ITransacoes } from '../../../../model/ITransacoes.model';
-import { ChartModule } from 'primeng/chart';
-import { ThemeService } from '../../../../service/theme.service';
+import { Component, Input, OnChanges, inject } from "@angular/core";
+import { IContas } from "../../../../model/IContas.models";
+import { ITransacoes } from "../../../../model/ITransacoes.model";
+import { ChartModule } from "primeng/chart";
+import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-moeda.service";
 
 @Component({
   selector: 'app-relatorio',
@@ -54,7 +54,7 @@ import { ThemeService } from '../../../../service/theme.service';
 export class RelatorioComponent implements OnChanges {
   @Input() transacoes: any[] = [];
 
-  @Input() saldoAtual: number = 0;
+    private preferenciaMoedaService = inject(PreferenciaMoedaService);
 
   private tema = inject(ThemeService);
 
@@ -115,13 +115,20 @@ export class RelatorioComponent implements OnChanges {
             callback: (value: any) => {
               return 'R$ ' + value.toLocaleString('pt-BR');
             },
-          },
-        },
-      },
-    };
-  }
-  private calcularSaldoMensal(): number[] {
-    const movimentacoes = new Array(12).fill(0);
+            scales:{
+                y:{
+                    ticks:{
+                        callback:(value:any)=>{
+                          const simbolo = this.preferenciaMoedaService.obterSimboloMoeda();
+                          return `${simbolo} ` + value.toLocaleString('pt-BR');
+                        }
+                    }
+                }
+            }
+        };
+    }
+    private calcularSaldoMensal(): number[] {
+      const movimentacoes = new Array(12).fill(0);
 
     for (const t of this.transacoes) {
       const data = new Date(t.dataHora);

@@ -2,11 +2,12 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 import { ITransacoes } from '../../../../model/ITransacoes.model';
+import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 
 @Component({
   selector: 'app-transacoes-conta',
   standalone: true,
-  imports: [CommonModule, PrimeNGModuleModule],
+  imports: [CommonModule, PrimeNGModuleModule, AppMoedaPipe],
   template: `
     <div
       class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col min-h-0">
@@ -70,10 +71,10 @@ import { ITransacoes } from '../../../../model/ITransacoes.model';
               <span
                 class="font-bold shrink-0"
                 [ngClass]="{
-                  'text-red-500':    transacao.tipo === 'DESPESA',
+                  'text-[#C24E4E]':    transacao.tipo === 'DESPESA',
                   'text-emerald-600': transacao.tipo === 'RECEITA'
                 }">
-                {{ transacao.valor | currency:'BRL' }}
+                {{ transacao.valor | appMoeda }}
               </span>
 
             </div>

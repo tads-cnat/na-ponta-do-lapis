@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { NgClass, CurrencyPipe } from '@angular/common';
+import { NgClass } from '@angular/common';
+import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 import { IContas, ehCartaoCredito } from '../../../../model/IContas.models';
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/utils/banco-icon.helper';
@@ -7,7 +8,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
 @Component({
   selector: 'app-carrossel-cartoes',
   standalone: true,
-  imports: [NgClass, CurrencyPipe, IconeBancoComponent],
+  imports: [NgClass, AppMoedaPipe, IconeBancoComponent],
   template: `
     <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 overflow-hidden">
 
@@ -122,13 +123,13 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                         {{ ehCartao(conta) ? 'Fatura Atual' : 'Saldo Disponível' }}
                       </p>
                       <p class="text-xl font-bold tracking-tight">
-                        {{ ehCartao(conta) ? '-' : '' }} {{ conta.saldo | currency: conta.moeda }}
+                        {{ ehCartao(conta) ? '-' : '' }} {{ conta.saldo | appMoeda }}
                       </p>
                     </div>
                     @if (ehCartao(conta) && (conta.limiteDisponivel || conta.limiteTotal)) {
                       <div class="text-right text-[11px] text-white/90">
                         <span class="opacity-80">Disp.: </span>
-                        <span class="font-bold">{{ (conta.limiteDisponivel ?? (conta.limiteTotal! - conta.saldo)) | currency: conta.moeda }}</span>
+                        <span class="font-bold">{{ (conta.limiteDisponivel ?? (conta.limiteTotal! - conta.saldo)) | appMoeda }}</span>
                       </div>
                     }
                   </div>

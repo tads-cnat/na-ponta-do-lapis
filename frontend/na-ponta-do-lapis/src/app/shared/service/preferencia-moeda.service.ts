@@ -50,6 +50,26 @@ export class PreferenciaMoedaService {
     }
   }
 
+  public obterLocaleMoeda(moeda?: string | null): string {
+    const cod = (moeda || this.obterMoedaAtiva()).toUpperCase();
+    switch (cod) {
+      case 'USD': return 'en-US';
+      case 'EUR': return 'de-DE';
+      case 'BRL':
+      default:    return 'pt-BR';
+    }
+  }
+
+  public obterSeparadorDecimal(moeda?: string | null): string {
+    const cod = (moeda || this.obterMoedaAtiva()).toUpperCase();
+    return cod === 'USD' ? '.' : ',';
+  }
+
+  public obterSeparadorMilhar(moeda?: string | null): string {
+    const cod = (moeda || this.obterMoedaAtiva()).toUpperCase();
+    return cod === 'USD' ? ',' : '.';
+  }
+
   public definirMoedaPadrao(moeda: string): void {
     const limpa = (moeda || 'BRL').toUpperCase();
     this.moedaSubject.next(limpa);

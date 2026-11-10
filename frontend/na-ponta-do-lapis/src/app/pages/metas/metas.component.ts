@@ -9,16 +9,16 @@ import { Button } from 'primeng/button';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext'; 
-import { InputNumber } from 'primeng/inputnumber';
 import { DatePicker } from 'primeng/datepicker';
 import { Select } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { Textarea } from 'primeng/textarea';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
+import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 
 @Component({
   selector: 'app-metas',
-  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, InputNumber, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent],
+  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent, AppMoedaPipe],
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
 })
