@@ -1,38 +1,61 @@
-<div class="w-[320px] h-[325px] bg-[#ffffff] rounded-[20px] shadow-[0_4px_20px_rgba(0,0,0,0.05)] border border-slate-100 p-6 flex flex-col items-center justify-center relative font-sans">
+<div class="w-full bg-white rounded-3xl shadow-[0_4px_20px_rgba(0,0,0,0.04)] border border-slate-100 overflow-hidden font-sans">
   
-  @if (usuarioLogado) {
-    <div class="relative mb-4">
-      <img 
-        class="h-[200px] w-[200px] rounded-full border-4 border-[#f9db70] object-cover shadow-sm" 
-        [src]="usuarioLogado.fotoPerfil ? usuarioLogado.fotoPerfil : 'user_anonimo.png'" 
-        (error)="usarFotoPadrao($event)" 
-        alt="Foto de {{ usuarioLogado.nome }}">
+  <!-- Faixa Decorativa de Topo (Gradiente Roxo + Amarelo da Marca) -->
+  <div class="h-24 w-full bg-gradient-to-r from-[#6214CC]/15 via-[#f9db70]/25 to-[#6214CC]/15 border-b border-slate-100/60 relative"></div>
 
-      <button 
-        pButton 
-        icon="pi pi-pencil" 
-        class="p-button-rounded p-button-text p-button-sm absolute -top-1 -right-1 bg-white text-slate-700 shadow-md hover:bg-slate-50 w-8 h-8 flex items-center justify-center rounded-full border border-slate-200 transition-colors duration-200"
-        aria-label="Editar foto de perfil">
-        <i class="pi pi-pencil text-xs"></i>
-      </button>
-    </div>
+  <div class="px-6 pb-6 pt-0 flex flex-col items-center text-center -mt-14 relative z-10">
+    @if (usuarioLogado) {
+      <!-- Avatar com o anel amarelo oficial do Na Ponta do Lápis -->
+      <div class="relative mb-3 group">
+        <img 
+          class="h-28 w-28 rounded-full border-4 border-[#f9db70] shadow-md object-cover bg-white ring-2 ring-white" 
+          [src]="usuarioLogado.fotoPerfil ? usuarioLogado.fotoPerfil : 'user_anonimo.png'" 
+          (error)="usarFotoPadrao($event)" 
+          alt="Foto de {{ usuarioLogado.nome }}">
 
-    <div class="text-center">
-      <h2 class="text-[#FFC107] font-bold text-xl mb-1 tracking-wide truncate max-w-[280px]" title="@{{ usuarioLogado.username }}">
-        &#64;{{ usuarioLogado.username }}
-      </h2>
-      
-      <p class="text-slate-400 text-sm font-medium truncate max-w-[280px]" title="{{ usuarioLogado.email }}">
-        {{ usuarioLogado.email }}
-      </p>
-    </div>
+        <span 
+          class="absolute bottom-0 right-0 w-8 h-8 rounded-full bg-[#6214CC] hover:bg-[#5110A8] text-[#f9db70] shadow-md flex items-center justify-center border-2 border-white text-xs cursor-default transition-all"
+          title="Foto sincronizada com seu perfil">
+          <i class="pi pi-camera"></i>
+        </span>
+      </div>
 
-  } @else {
-    <div class="flex flex-col items-center animate-pulse">
-      <div class="h-24 w-24 rounded-full bg-slate-100 mb-4"></div>
-      <div class="h-6 bg-slate-100 rounded w-32 mb-2"></div>
-      <div class="h-4 bg-slate-100 rounded w-44"></div>
-    </div>
-  }
+      <!-- Informações do Usuário -->
+      <div class="flex flex-col items-center w-full min-w-0">
+        <h2 class="text-slate-900 font-bold text-lg tracking-tight truncate max-w-full" title="{{ usuarioLogado.nome }}">
+          {{ usuarioLogado.nome }}
+        </h2>
+        
+        <p class="text-amber-600 font-semibold text-xs mb-1 truncate max-w-full">
+          &#64;{{ usuarioLogado.username }}
+        </p>
+
+        <p class="text-slate-400 text-xs font-normal truncate max-w-full" title="{{ usuarioLogado.email }}">
+          {{ usuarioLogado.email }}
+        </p>
+
+        <!-- Badges de Status e Papel (Roxo e Amarelo da Marca) -->
+        <div class="flex flex-wrap items-center justify-center gap-2 mt-4 pt-4 border-t border-slate-100 w-full">
+          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#6214CC]/10 text-[#6214CC] border border-[#6214CC]/20">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#6214CC]"></span>
+            {{ obterPapelFormatado() }}
+          </span>
+
+          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200">
+            {{ obterMoedaFormatada() }}
+          </span>
+        </div>
+      </div>
+
+    } @else {
+      <!-- Skeleton Loading -->
+      <div class="flex flex-col items-center animate-pulse w-full">
+        <div class="h-28 w-28 rounded-full bg-slate-100 mb-3 border-4 border-[#f9db70]/50 shadow-sm"></div>
+        <div class="h-5 bg-slate-100 rounded-lg w-36 mb-2"></div>
+        <div class="h-3.5 bg-slate-100 rounded-lg w-24 mb-1"></div>
+        <div class="h-3.5 bg-slate-100 rounded-lg w-44"></div>
+      </div>
+    }
+  </div>
 
 </div>

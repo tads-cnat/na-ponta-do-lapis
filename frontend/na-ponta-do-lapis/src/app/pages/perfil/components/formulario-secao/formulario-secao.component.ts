@@ -7,6 +7,9 @@ export interface CampoFormulario {
   label: string;
   placeholder: string;
   type?: string;
+  helperText?: string;
+  icon?: string;
+  colSpan?: number;
 }
 
 @Component({
@@ -17,6 +20,8 @@ export interface CampoFormulario {
 })
 export class FormularioSecaoComponent {
   @Input() titulo: string = '';
+  @Input() subtitulo?: string = '';
+  @Input() icone?: string = '';
   @Input() campos: CampoFormulario[] = [];
   @Input() formGroupPai!: FormGroup;
   camposVisiveis: Record<string, boolean> = {};

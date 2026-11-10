@@ -35,4 +35,22 @@ export class DadosPerfilComponent implements OnInit {
       }
     });
   }
+
+  public obterPapel(): string {
+    const p = this.usuarioLogado?.papel?.toUpperCase();
+    if (p === 'ADMIN') return 'Administrador';
+    if (p === 'RESPONSAVEL') return 'Responsável';
+    return 'Membro';
+  }
+
+  public obterMoeda(): string {
+    const m = this.usuarioLogado?.moedaPadrao?.toUpperCase() || 'BRL';
+    if (m === 'USD') return 'USD ($)';
+    if (m === 'EUR') return 'EUR (€)';
+    return 'BRL (R$)';
+  }
+
+  public obterFamilia(): string {
+    return this.usuarioLogado?.idFamilia ? 'Grupo Familiar' : 'Individual';
+  }
 }
