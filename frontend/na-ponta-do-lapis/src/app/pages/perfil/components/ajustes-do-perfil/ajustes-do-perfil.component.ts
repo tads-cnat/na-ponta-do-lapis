@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { BotoesAcaoComponent } from '../botoes-acao/botoes-acao.component';
 import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/formulario-secao.component';
@@ -10,6 +10,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
 import { MessageService } from 'primeng/api';
 import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/preferencia-moeda.service';
+import { Usuario } from '../../../../model/IUsuario.models';
 
 @Component({
   selector: 'app-ajustes-do-perfil',
@@ -21,6 +22,11 @@ export class AjustesPerfilComponent implements OnInit {
   public perfilForm!: FormGroup;
   public abaAtiva: 'dados' | 'integracoes' = 'dados';
   public moedaOriginalUsuario: string = 'BRL';
+  public usuarioLogado: Usuario | null = null;
+
+  // Controle de modo de edição (dados e senha iniciam recolhidos/em modo de leitura)
+  public editandoDados: boolean = false;
+  public editandoSenha: boolean = false;
 
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
@@ -31,22 +37,38 @@ export class AjustesPerfilComponent implements OnInit {
 
   get podeAbrirConfirmacao(): boolean {
     const valores = this.perfilForm?.value ?? {};
-    const camposSenha = [
-      valores.senhaAtual,
-      valores.confirmarSenhaAtual,
-      valores.novaSenha,
-      valores.confirmarNovaSenha
-    ];
-    const alterandoSenha = camposSenha.some(this.temTexto);
-
-    if (alterandoSenha) {
-      return camposSenha.every(this.temTexto)
-        && valores.senhaAtual === valores.confirmarSenhaAtual
-        && valores.novaSenha === valores.confirmarNovaSenha;
+    
+    // Validação da alteração de senha (3 campos: senhaAtual, novaSenha, confirmarNovaSenha)
+    if (this.editandoSenha) {
+      const camposSenha = [valores.senhaAtual, valores.novaSenha, valores.confirmarNovaSenha];
+      const preencheuAlgum = camposSenha.some(this.temTexto);
+      if (preencheuAlgum) {
+        return camposSenha.every(this.temTexto)
+          && valores.novaSenha === valores.confirmarNovaSenha
+          && valores.novaSenha.length >= 6;
+      }
     }
 
     const alterouMoeda = valores.moedaPadrao && valores.moedaPadrao !== this.moedaOriginalUsuario;
-    return [valores.nome, valores.email].some(this.temTexto) || !!alterouMoeda;
+    const alterouNome = this.editandoDados && valores.nome?.trim() && valores.nome?.trim() !== this.usuarioLogado?.nome;
+    const alterouEmail = this.editandoDados && valores.email?.trim() && valores.email?.trim() !== this.usuarioLogado?.email;
+
+    return !!alterouNome || !!alterouEmail || !!alterouMoeda || this.editandoSenha;
+  }
+
+  get temAlteracoesPendentes(): boolean {
+    const valores = this.perfilForm?.value ?? {};
+    const alterouNome = this.editandoDados && valores.nome?.trim() && valores.nome?.trim() !== this.usuarioLogado?.nome;
+    const alterouEmail = this.editandoDados && valores.email?.trim() && valores.email?.trim() !== this.usuarioLogado?.email;
+    const alterouMoeda = valores.moedaPadrao && valores.moedaPadrao !== this.moedaOriginalUsuario;
+    
+    const alterouSenha = this.editandoSenha && (
+      this.temTexto(valores.senhaAtual) || 
+      this.temTexto(valores.novaSenha) || 
+      this.temTexto(valores.confirmarNovaSenha)
+    );
+
+    return !!alterouNome || !!alterouEmail || !!alterouMoeda || !!alterouSenha;
   }
 
   private readonly temTexto = (valor: unknown): boolean =>
@@ -80,13 +102,43 @@ export class AjustesPerfilComponent implements OnInit {
       nome: [''],
       email: [''],
       senhaAtual: [''],
-      confirmarSenhaAtual: [''],
       novaSenha: [''],
       confirmarNovaSenha: [''],
       moedaPadrao: [moedaInicial]
     });
 
     this.configurarCamposEstaticos();
+  }
+
+  public iniciarEdicaoDados(): void {
+    this.editandoDados = true;
+    this.perfilForm.patchValue({
+      nome: this.usuarioLogado?.nome || '',
+      email: this.usuarioLogado?.email || ''
+    });
+    this.configurarCamposEstaticos(this.usuarioLogado?.nome, this.usuarioLogado?.email);
+    this.cdr.detectChanges();
+  }
+
+  public cancelarEdicaoDados(): void {
+    this.editandoDados = false;
+    this.perfilForm.patchValue({
+      nome: this.usuarioLogado?.nome || '',
+      email: this.usuarioLogado?.email || ''
+    });
+    this.cdr.detectChanges();
+  }
+
+  public alternarEdicaoSenha(): void {
+    this.editandoSenha = !this.editandoSenha;
+    if (!this.editandoSenha) {
+      this.perfilForm.patchValue({
+        senhaAtual: '',
+        novaSenha: '',
+        confirmarNovaSenha: ''
+      });
+    }
+    this.cdr.detectChanges();
   }
 
   public selecionarMoedaPadrao(codigo: string): void {
@@ -99,36 +151,93 @@ export class AjustesPerfilComponent implements OnInit {
     return this.preferenciaMoedaService.obterSimboloMoeda(moeda);
   }
 
-  private configurarCamposEstaticos(nome = ' ', email = ' '): void {
+  public descartarAlteracoes(): void {
+    this.editandoDados = false;
+    this.editandoSenha = false;
+    this.perfilForm.reset({
+      nome: this.usuarioLogado?.nome || '',
+      email: this.usuarioLogado?.email || '',
+      senhaAtual: '',
+      novaSenha: '',
+      confirmarNovaSenha: '',
+      moedaPadrao: this.moedaOriginalUsuario
+    });
+    this.configurarCamposEstaticos(this.usuarioLogado?.nome, this.usuarioLogado?.email);
+    this.messageService.add({
+      severity: 'info',
+      summary: 'Alterações descartadas',
+      detail: 'O formulário foi restaurado com os dados originais.',
+      life: 2500
+    });
+    this.cdr.detectChanges();
+  }
+
+  private configurarCamposEstaticos(nome = '', email = ''): void {
     this.camposDetalhes = [
-      { key: 'nome', label: 'Nome', placeholder: nome },
-      { key: 'email', label: 'Email', placeholder: email }
+      { 
+        key: 'nome', 
+        label: 'Nome completo', 
+        placeholder: nome?.trim() || 'Digite seu nome completo',
+        icon: 'pi pi-user'
+      },
+      { 
+        key: 'email', 
+        label: 'E-mail de acesso', 
+        placeholder: email?.trim() || 'Digite seu e-mail',
+        type: 'email',
+        icon: 'pi pi-envelope'
+      }
     ];
 
+    // Exatamente 3 campos para alteração de senha:
+    // Linha 1: Senha atual (largura completa)
+    // Linha 2: Nova senha e Confirmar nova senha lado a lado
     this.camposSenha = [
-      { key: 'senhaAtual', label: 'Mudar senha', placeholder: 'Coloque senha atual...', type: 'password' },
-      { key: 'confirmarSenhaAtual', label: '\u00A0', placeholder: 'Confirme senha...', type: 'password' },
-      { key: 'novaSenha', label: 'Nova senha', placeholder: 'Coloque sua nova senha...', type: 'password' },
-      { key: 'confirmarNovaSenha', label: '\u00A0', placeholder: 'Confirme nova senha...', type: 'password' }
+      { 
+        key: 'senhaAtual', 
+        label: 'Senha atual', 
+        placeholder: 'Digite sua senha atual...', 
+        type: 'password',
+        icon: 'pi pi-lock',
+        colSpan: 2
+      },
+      { 
+        key: 'novaSenha', 
+        label: 'Nova senha', 
+        placeholder: 'Mínimo de 6 caracteres...', 
+        type: 'password',
+        icon: 'pi pi-key',
+        colSpan: 1
+      },
+      { 
+        key: 'confirmarNovaSenha', 
+        label: 'Confirmar nova senha', 
+        placeholder: 'Repita a nova senha...', 
+        type: 'password',
+        icon: 'pi pi-key',
+        colSpan: 1
+      }
     ];
   }
 
   private carregarDadosIniciais(): void {
     this.usuarioService.obterPerfilCompleto().subscribe({
       next: (usuario) => {
+        this.usuarioLogado = usuario;
         if (usuario.moedaPadrao) {
           this.moedaOriginalUsuario = usuario.moedaPadrao;
           this.perfilForm.get('moedaPadrao')?.setValue(usuario.moedaPadrao);
           this.preferenciaMoedaService.definirMoedaPadrao(usuario.moedaPadrao);
         }
-        this.configurarCamposEstaticos(
-          usuario.nome,
-          usuario.email
-        );
+        this.perfilForm.patchValue({
+          nome: usuario.nome || '',
+          email: usuario.email || ''
+        });
+        this.configurarCamposEstaticos(usuario.nome, usuario.email);
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Erro ao alimentar os placeholders da tela de ajustes:', err);
+        console.error('Erro ao alimentar tela de ajustes:', err);
       }
     });
   }
@@ -137,14 +246,18 @@ export class AjustesPerfilComponent implements OnInit {
     const valoresFormulario = this.perfilForm.value;
     const dadosParciaisPatch: any = {};
 
-    // 1. Verifica se o nome foi digitado
-    if (valoresFormulario.nome && valoresFormulario.nome.trim() !== '') {
-      dadosParciaisPatch.nome = valoresFormulario.nome.trim();
+    // 1. Verifica se o nome foi alterado
+    if (this.editandoDados && valoresFormulario.nome && valoresFormulario.nome.trim() !== '') {
+      if (valoresFormulario.nome.trim() !== this.usuarioLogado?.nome) {
+        dadosParciaisPatch.nome = valoresFormulario.nome.trim();
+      }
     }
 
-    // 2. Verifica se o e-mail foi digitado
-    if (valoresFormulario.email && valoresFormulario.email.trim() !== '') {
-      dadosParciaisPatch.email = valoresFormulario.email.trim();
+    // 2. Verifica se o e-mail foi alterado
+    if (this.editandoDados && valoresFormulario.email && valoresFormulario.email.trim() !== '') {
+      if (valoresFormulario.email.trim() !== this.usuarioLogado?.email) {
+        dadosParciaisPatch.email = valoresFormulario.email.trim();
+      }
     }
 
     // 3. Verifica se a moeda padrão foi alterada
@@ -152,48 +265,49 @@ export class AjustesPerfilComponent implements OnInit {
       dadosParciaisPatch.moedaPadrao = valoresFormulario.moedaPadrao;
     }
 
-    // 4. Validação e inclusão da senha se qualquer campo de senha foi digitado
-    const camposSenha = [
-      valoresFormulario.senhaAtual,
-      valoresFormulario.confirmarSenhaAtual,
-      valoresFormulario.novaSenha,
-      valoresFormulario.confirmarNovaSenha
-    ];
-    const alterandoSenha = camposSenha.some(this.temTexto);
+    // 4. Validação e inclusão da senha se a seção de senha estiver aberta e preenchida
+    if (this.editandoSenha) {
+      const camposSenha = [
+        valoresFormulario.senhaAtual,
+        valoresFormulario.novaSenha,
+        valoresFormulario.confirmarNovaSenha
+      ];
+      const alterandoSenha = camposSenha.some(this.temTexto);
 
-    if (alterandoSenha && !camposSenha.every(this.temTexto)) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Dados incompletos',
-        detail: 'Preencha todos os campos para alterar a senha.',
-        life: 3000
-      });
-      return;
-    }
+      if (alterandoSenha) {
+        if (!camposSenha.every(this.temTexto)) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Dados incompletos',
+            detail: 'Preencha a senha atual e a nova senha para atualizar.',
+            life: 3000
+          });
+          return;
+        }
 
-    if (alterandoSenha && valoresFormulario.senhaAtual !== valoresFormulario.confirmarSenhaAtual) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'A confirmação da senha atual não confere.',
-        life: 3000
-      });
-      return;
-    }
+        if (valoresFormulario.novaSenha !== valoresFormulario.confirmarNovaSenha) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro na nova senha',
+            detail: 'A nova senha e a confirmação não conferem.',
+            life: 3000
+          });
+          return;
+        }
 
-    if (alterandoSenha && valoresFormulario.novaSenha !== valoresFormulario.confirmarNovaSenha) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'As senhas não conferem.',
-        life: 3000
-      });
-      return;
-    }
+        if (valoresFormulario.novaSenha.length < 6) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Senha curta',
+            detail: 'A nova senha deve ter no mínimo 6 caracteres.',
+            life: 3000
+          });
+          return;
+        }
 
-    if (alterandoSenha) {
-      dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
-      dadosParciaisPatch.senha = valoresFormulario.novaSenha;
+        dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
+        dadosParciaisPatch.senha = valoresFormulario.novaSenha;
+      }
     }
 
     // Se nenhum campo foi alterado, emite aviso
@@ -215,15 +329,17 @@ export class AjustesPerfilComponent implements OnInit {
         }
 
         const usuario = res.usuario ?? res;
+        this.usuarioLogado = usuario;
 
         if (dadosParciaisPatch.moedaPadrao) {
           this.moedaOriginalUsuario = dadosParciaisPatch.moedaPadrao;
           this.preferenciaMoedaService.definirMoedaPadrao(dadosParciaisPatch.moedaPadrao);
         }
 
+        this.editandoDados = false;
+        this.editandoSenha = false;
         this.perfilForm.patchValue({
           senhaAtual: '',
-          confirmarSenhaAtual: '',
           novaSenha: '',
           confirmarNovaSenha: ''
         });
@@ -250,4 +366,4 @@ export class AjustesPerfilComponent implements OnInit {
       }
     });
   }
-} 
+}

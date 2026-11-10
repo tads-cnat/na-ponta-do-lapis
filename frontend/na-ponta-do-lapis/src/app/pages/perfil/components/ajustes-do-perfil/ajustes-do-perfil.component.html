@@ -1,80 +1,215 @@
-<div class="w-full min-h-full bg-[#ffffff] rounded-[20px] p-8 md:p-10 flex flex-col font-sans shadow-sm"
-     [ngClass]="abaAtiva === 'dados' ? 'justify-between' : 'justify-start gap-8'">
+<div class="w-full bg-white rounded-3xl border border-slate-100 p-6 sm:p-8 md:p-10 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex flex-col font-sans transition-all">
 
-  <div class="w-full flex flex-col">
-    <!-- Tabs Header -->
-    <div class="flex items-center gap-6 border-b border-slate-200 mb-8">
+  <!-- Header com Abas de Navegação (Roxo e Amarelo da Marca) -->
+  <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-8">
+    <div class="flex items-center gap-1.5 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200/60">
+      
+      <!-- Aba: Ajustes do Perfil -->
       <button type="button"
               (click)="abaAtiva = 'dados'"
-              [ngClass]="abaAtiva === 'dados' ? 'text-slate-900 border-indigo-600 font-extrabold' : 'text-slate-400 border-transparent font-medium hover:text-slate-600'"
-              class="pb-3 text-xl md:text-2xl tracking-tight border-b-2 transition-all cursor-pointer">
-        Ajustes do perfil
+              [class]="abaAtiva === 'dados' 
+                ? 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer' 
+                : 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer'">
+        <i class="pi pi-user text-sm" [ngClass]="abaAtiva === 'dados' ? 'text-[#6214CC]' : 'text-slate-400'"></i>
+        <span class="text-xs sm:text-sm">Ajustes do Perfil</span>
       </button>
 
+      <!-- Aba: Conexões & IA -->
       <button type="button"
               (click)="abaAtiva = 'integracoes'"
-              [ngClass]="abaAtiva === 'integracoes' ? 'text-slate-900 border-indigo-600 font-extrabold' : 'text-slate-400 border-transparent font-medium hover:text-slate-600'"
-              class="pb-3 text-xl md:text-2xl tracking-tight border-b-2 transition-all cursor-pointer flex items-center gap-2">
-        <span>Conexões & IA</span>
-        <span class="text-[10px] bg-indigo-50 text-indigo-700 px-2 py-0.5 rounded-full font-bold uppercase tracking-wide">Novo</span>
+              [class]="abaAtiva === 'integracoes' 
+                ? 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer' 
+                : 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer'">
+        <i class="pi pi-sliders-h text-sm" [ngClass]="abaAtiva === 'integracoes' ? 'text-[#6214CC]' : 'text-slate-400'"></i>
+        <span class="text-xs sm:text-sm">Conexões & IA</span>
+        <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-amber-200/80">Novo</span>
       </button>
     </div>
 
-    <!-- Conteúdo Aba 1: Dados do Perfil -->
-    <div *ngIf="abaAtiva === 'dados'" [formGroup]="perfilForm" class="flex flex-col justify-between w-full">
-      <div class="flex-1 flex flex-col justify-between w-full mb-8">
-        <app-formulario-secao 
-          titulo="Detalhes" 
-          [campos]="camposDetalhes"
-          [formGroupPai]="perfilForm"
-          class="w-full block [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2">
-        </app-formulario-secao>
+    <div class="text-xs text-slate-400 font-medium hidden sm:block">
+      Gerencie suas informações e preferências
+    </div>
+  </div>
 
-        <!-- Seção: Moeda Principal da Conta -->
-        <div class="w-full flex flex-col gap-3 my-6 pt-6 border-t border-slate-100">
-          <div class="flex items-center justify-between">
-            <h2 class="text-xl font-bold text-slate-900 tracking-tight">Moeda Padrão</h2>
-            <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-100/80">
-              {{ obterSimboloMoeda(perfilForm.get('moedaPadrao')?.value) }} {{ perfilForm.get('moedaPadrao')?.value }}
+  <!-- Conteúdo Aba 1: Dados do Perfil -->
+  <div *ngIf="abaAtiva === 'dados'" [formGroup]="perfilForm" class="flex flex-col w-full">
+    
+    <div class="flex flex-col gap-6 w-full">
+      
+      <!-- 1. Informações Pessoais (Modo Leitura por padrão, Modo Edição ao clicar em Editar) -->
+      <div class="p-6 rounded-2xl bg-white border border-slate-100/90 shadow-2xs">
+        
+        <div class="flex items-center justify-between gap-3 mb-4">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-[#6214CC]/10 text-[#6214CC] flex items-center justify-center">
+              <i class="pi pi-id-card text-sm"></i>
+            </div>
+            <div>
+              <h2 class="text-slate-900 font-bold text-base sm:text-lg tracking-tight">Informações Pessoais</h2>
+              <p class="text-xs text-slate-400 font-normal m-0">Seus dados cadastrais no sistema.</p>
+            </div>
+          </div>
+
+          <!-- Botão de Alternância entre Visualização e Edição -->
+          <button 
+            *ngIf="!editandoDados"
+            type="button"
+            (click)="iniciarEdicaoDados()"
+            class="px-3.5 py-1.5 rounded-xl border border-slate-200 hover:border-[#6214CC] bg-white hover:bg-[#6214CC]/5 text-slate-700 hover:text-[#6214CC] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs">
+            <i class="pi pi-pencil text-xs"></i>
+            <span>Editar</span>
+          </button>
+
+          <button 
+            *ngIf="editandoDados"
+            type="button"
+            (click)="cancelarEdicaoDados()"
+            class="px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer">
+            <i class="pi pi-times text-xs"></i>
+            <span>Cancelar</span>
+          </button>
+        </div>
+
+        <!-- MODO DE LEITURA (Padrão limpo, sem expor inputs abertos) -->
+        <div *ngIf="!editandoDados" class="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
+          <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col gap-1">
+            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Nome Completo</span>
+            <span class="text-sm font-bold text-slate-900 truncate" title="{{ usuarioLogado?.nome }}">
+              {{ usuarioLogado?.nome || 'Não informado' }}
             </span>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            @for (op of opcoesMoeda; track op.codigo) {
-              <button
-                type="button"
-                (click)="selecionarMoedaPadrao(op.codigo)"
-                [class]="perfilForm.get('moedaPadrao')?.value === op.codigo
-                  ? 'flex items-center gap-3 p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-950 font-semibold transition-colors shadow-xs cursor-pointer text-left'
-                  : 'flex items-center gap-3 p-3.5 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors cursor-pointer text-left'">
-                <span class="text-2xl select-none">{{ op.bandeira }}</span>
-                <div class="flex flex-col min-w-0">
-                  <span class="text-sm font-bold leading-tight truncate">{{ op.nome }}</span>
-                  <span class="text-xs text-slate-500 font-normal">{{ op.simbolo }} ({{ op.codigo }})</span>
-                </div>
-              </button>
-            }
+          <div class="p-4 rounded-xl bg-slate-50/70 border border-slate-100 flex flex-col gap-1">
+            <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">E-mail de Acesso</span>
+            <span class="text-sm font-bold text-slate-900 truncate" title="{{ usuarioLogado?.email }}">
+              {{ usuarioLogado?.email || 'Não informado' }}
+            </span>
           </div>
         </div>
 
-        <app-formulario-secao 
-          titulo="Senha" 
-          [campos]="camposSenha"
-          [formGroupPai]="perfilForm"
-          class="w-full block [&_h2]:text-xl [&_h2]:font-bold [&_h2]:mb-2">
-        </app-formulario-secao>
+        <!-- MODO DE EDIÇÃO (Aberto apenas quando o usuário clica em Editar) -->
+        <div *ngIf="editandoDados" class="pt-2 animate-fadeIn">
+          <app-formulario-secao 
+            [campos]="camposDetalhes"
+            [formGroupPai]="perfilForm"
+            class="w-full block">
+          </app-formulario-secao>
+        </div>
+
       </div>
 
-      <app-botoes-acao 
-        [podeAbrirConfirmacao]="podeAbrirConfirmacao"
-        (cliqueSalvar)="salvarMudancas()">
-      </app-botoes-acao>
+      <!-- 2. Moeda Principal da Conta (Roxo com destaque em Amarelo da Marca) -->
+      <div class="p-6 rounded-2xl bg-white border border-slate-100/90 shadow-2xs flex flex-col gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-[#6214CC]/10 text-[#6214CC] flex items-center justify-center">
+              <i class="pi pi-money-bill text-sm"></i>
+            </div>
+            <div>
+              <h2 class="text-slate-900 font-bold text-base sm:text-lg tracking-tight">Moeda Principal da Conta</h2>
+              <p class="text-xs text-slate-400 font-normal m-0">Moeda padrão aplicada a contas, extratos e relatórios.</p>
+            </div>
+          </div>
+
+          <span class="inline-flex items-center gap-1.5 text-xs font-bold px-3 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-300 self-start sm:self-auto shadow-2xs">
+            <span class="w-2 h-2 rounded-full bg-[#EEC046]"></span>
+            Ativa: {{ obterSimboloMoeda(perfilForm.get('moedaPadrao')?.value) }} {{ perfilForm.get('moedaPadrao')?.value }}
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
+          @for (op of opcoesMoeda; track op.codigo) {
+            <button
+              type="button"
+              (click)="selecionarMoedaPadrao(op.codigo)"
+              [class]="perfilForm.get('moedaPadrao')?.value === op.codigo
+                ? 'flex items-center justify-between p-4 rounded-2xl border-2 border-[#6214CC] bg-[#6214CC]/5 text-slate-900 font-bold transition-all shadow-xs cursor-pointer text-left relative'
+                : 'flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200/80 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-all cursor-pointer text-left'">
+              
+              <div class="flex items-center gap-3 min-w-0">
+                <span class="text-2xl select-none shrink-0">{{ op.bandeira }}</span>
+                <div class="flex flex-col min-w-0">
+                  <span class="text-sm font-bold leading-tight truncate">{{ op.nome }}</span>
+                  <span class="text-xs text-slate-500 font-normal">{{ op.simbolo }} • {{ op.codigo }}</span>
+                </div>
+              </div>
+
+              <!-- Indicador com Amarelo da Marca quando selecionado -->
+              <div class="shrink-0 ml-2">
+                <span *ngIf="perfilForm.get('moedaPadrao')?.value === op.codigo" 
+                      class="w-5 h-5 rounded-full bg-[#EEC046] text-black flex items-center justify-center text-[10px] font-extrabold shadow-xs">
+                  <i class="pi pi-check"></i>
+                </span>
+                <span *ngIf="perfilForm.get('moedaPadrao')?.value !== op.codigo" 
+                      class="w-5 h-5 rounded-full border-2 border-slate-300 block"></span>
+              </div>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- 3. Segurança e Senha (Recolhido por padrão, 3 campos convencionais ao expandir) -->
+      <div class="p-6 rounded-2xl bg-white border border-slate-100/90 shadow-2xs flex flex-col gap-4">
+        
+        <div class="flex items-center justify-between gap-3">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-[#6214CC]/10 text-[#6214CC] flex items-center justify-center">
+              <i class="pi pi-lock text-sm"></i>
+            </div>
+            <div>
+              <h2 class="text-slate-900 font-bold text-base sm:text-lg tracking-tight">Segurança & Senha</h2>
+              <p class="text-xs text-slate-400 font-normal m-0">Gerencie a senha de acesso à sua conta.</p>
+            </div>
+          </div>
+
+          <button 
+            type="button"
+            (click)="alternarEdicaoSenha()"
+            [class]="editandoSenha 
+              ? 'px-3.5 py-1.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-500 hover:text-slate-700 text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer'
+              : 'px-3.5 py-1.5 rounded-xl border border-slate-200 hover:border-[#6214CC] bg-white hover:bg-[#6214CC]/5 text-slate-700 hover:text-[#6214CC] text-xs font-semibold flex items-center gap-1.5 transition-all cursor-pointer shadow-2xs'">
+            <i [class]="editandoSenha ? 'pi pi-times text-xs' : 'pi pi-key text-xs'"></i>
+            <span>{{ editandoSenha ? 'Cancelar' : 'Alterar Senha' }}</span>
+          </button>
+        </div>
+
+        <!-- MODO RECOLHIDO (Informativo e seguro) -->
+        <div *ngIf="!editandoSenha" class="flex items-center justify-between p-4 rounded-xl bg-slate-50/70 border border-slate-100">
+          <div class="flex items-center gap-3">
+            <span class="text-sm font-mono font-bold tracking-widest text-slate-600">••••••••••••</span>
+            <span class="text-xs text-slate-400 font-normal">Sua senha está configurada</span>
+          </div>
+          <span class="text-xs font-semibold text-[#6214CC] cursor-pointer hover:underline" (click)="alternarEdicaoSenha()">
+            Trocar senha
+          </span>
+        </div>
+
+        <!-- MODO EXPANDIDO (Exatamente 3 campos: Senha atual 1x, Nova senha, Confirmar nova senha) -->
+        <div *ngIf="editandoSenha" class="pt-2 animate-fadeIn flex flex-col gap-3">
+          <app-formulario-secao 
+            [campos]="camposSenha"
+            [formGroupPai]="perfilForm"
+            class="w-full block">
+          </app-formulario-secao>
+          <p class="text-[11px] text-slate-400 m-0">A nova senha deve possuir no mínimo 6 caracteres.</p>
+        </div>
+
+      </div>
+
     </div>
 
-    <!-- Conteúdo Aba 2: Integrações e Chaves de API -->
-    <div *ngIf="abaAtiva === 'integracoes'" class="w-full">
-      <app-integracoes-perfil></app-integracoes-perfil>
-    </div>
+    <!-- Barra de Ações com Salvar e Descartar -->
+    <app-botoes-acao 
+      [podeAbrirConfirmacao]="podeAbrirConfirmacao"
+      [temAlteracoes]="temAlteracoesPendentes"
+      (cliqueSalvar)="salvarMudancas()"
+      (cliqueDescartar)="descartarAlteracoes()">
+    </app-botoes-acao>
+  </div>
+
+  <!-- Conteúdo Aba 2: Integrações e Chaves de API -->
+  <div *ngIf="abaAtiva === 'integracoes'" class="w-full">
+    <app-integracoes-perfil></app-integracoes-perfil>
   </div>
 
 </div>

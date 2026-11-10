@@ -36,4 +36,18 @@ export class PerfilResumoComponent implements OnInit {
   public usarFotoPadrao(event: any): void {
     event.target.src = 'user_anonimo.png';
   }
+
+  public obterPapelFormatado(): string {
+    const papel = this.usuarioLogado?.papel?.toUpperCase();
+    if (papel === 'ADMIN') return 'Administrador';
+    if (papel === 'RESPONSAVEL') return 'Responsável Familiar';
+    return 'Membro';
+  }
+
+  public obterMoedaFormatada(): string {
+    const moeda = this.usuarioLogado?.moedaPadrao?.toUpperCase() || 'BRL';
+    if (moeda === 'USD') return '🇺🇸 USD ($)';
+    if (moeda === 'EUR') return '🇪🇺 EUR (€)';
+    return '🇧🇷 BRL (R$)';
+  }
 }
