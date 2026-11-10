@@ -83,7 +83,7 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         log.info("[DatabaseSeeder] Banco vazio detectado. Iniciando população de dados com valores e transações reais de um usuário comum...");
 
-        // 1. Categorias (já inicializadas pelo CategoriaInitializer)
+        // 1. Categorias (gerenciadas pelo CategoriaInitializer)
         TipoCategoria catAlimentacao = categoriaRepository.findByNome("Alimentação").orElseThrow();
         TipoCategoria catTransporte = categoriaRepository.findByNome("Transporte").orElseThrow();
         TipoCategoria catSaude = categoriaRepository.findByNome("Saúde").orElseThrow();
@@ -107,6 +107,9 @@ public class DatabaseSeeder implements CommandLineRunner {
                 "https://res.cloudinary.com/doqohj5cv/image/upload/v1778434114/Screenshot_2026-05-10_135730_gby643.jpg", Papel.USUARIO);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 54fce67 (chore: atualiza seeders)
         // 3. Contas e Cartões com Saldos e Limites Coerentes para o Cotidiano
         LocalDate hoje = LocalDate.now();
         int ano = hoje.getYear();
@@ -114,6 +117,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         LocalDate mesAnt = hoje.minusMonths(1);
         int anoAnt = mesAnt.getYear();
         int mesAntNum = mesAnt.getMonthValue();
+<<<<<<< HEAD
 
         // Lucas (Conta Inter + Cartão Inter + PicPay)
         ContaFinanceira cInter = criarConta("Banco Inter", new BigDecimal("1642.35"), "#FF7A00", Moeda.BRL, uLucas,
@@ -146,35 +150,42 @@ public class DatabaseSeeder implements CommandLineRunner {
         // 3. Contas Financeiras e Cartões de Crédito
         // Cores institucionais mapeadas para compatibilidade direta com a biblioteca de ícones bancários:
         // Inter: #FF7A00, Nubank: #820AD1, Itaú: #EC7000, Santander: #EA1D2C, BB: #003882, PicPay: #11C76F
+=======
+>>>>>>> 54fce67 (chore: atualiza seeders)
 
-        // Lucas (Conta Inter + Cartão Inter Black + PicPay)
-        ContaFinanceira cInter = criarConta("Banco Inter", new BigDecimal("4250.80"), "#FF7A00", Moeda.BRL, uLucas,
+        // Lucas (Conta Inter + Cartão Inter + PicPay)
+        ContaFinanceira cInter = criarConta("Banco Inter", new BigDecimal("1642.35"), "#FF7A00", Moeda.BRL, uLucas,
                 TipoConta.CONTA_CORRENTE, null, null, null, null, null);
-        ContaFinanceira cInterCard = criarConta("Cartão Inter Mastercard", new BigDecimal("1250.90"), "#FF7A00", Moeda.BRL, uLucas,
-                TipoConta.CARTAO_CREDITO, new BigDecimal("6000.00"), new BigDecimal("4749.10"), new BigDecimal("1250.90"), BigDecimal.ZERO, LocalDate.now().plusDays(10));
-        ContaFinanceira cPicPay = criarConta("PicPay", new BigDecimal("185.00"), "#11C76F", Moeda.BRL, uLucas,
-                TipoConta.CONTA_CORRENTE, null, null, null, null, null);
-
-        // Bruno (Conta Nubank + Cartão Ultravioleta + Banco do Brasil)
-        ContaFinanceira cNubank = criarConta("Nubank", new BigDecimal("5820.40"), "#820AD1", Moeda.BRL, uBruno,
-                TipoConta.CONTA_CORRENTE, null, null, null, null, null);
-        ContaFinanceira cNubankCard = criarConta("Cartão Nubank Ultravioleta", new BigDecimal("2450.00"), "#820AD1", Moeda.BRL, uBruno,
-                TipoConta.CARTAO_CREDITO, new BigDecimal("15000.00"), new BigDecimal("12550.00"), new BigDecimal("2450.00"), BigDecimal.ZERO, LocalDate.now().plusDays(15));
-        ContaFinanceira cBB = criarConta("Banco do Brasil", new BigDecimal("12500.00"), "#003882", Moeda.BRL, uBruno,
+        ContaFinanceira cInterCard = criarConta("Cartão Inter Mastercard", new BigDecimal("685.40"), "#FF7A00", Moeda.BRL, uLucas,
+                TipoConta.CARTAO_CREDITO, new BigDecimal("3000.00"), new BigDecimal("2314.60"), new BigDecimal("685.40"), BigDecimal.ZERO, hoje.withDayOfMonth(Math.min(15, hoje.lengthOfMonth())));
+        ContaFinanceira cPicPay = criarConta("PicPay", new BigDecimal("85.20"), "#11C76F", Moeda.BRL, uLucas,
                 TipoConta.CONTA_CORRENTE, null, null, null, null, null);
 
-        // Eduardo (Conta Itaú + Cartão Itaú Personnalité)
-        ContaFinanceira cItau = criarConta("Itaú Unibanco", new BigDecimal("3150.00"), "#EC7000", Moeda.BRL, uEduardo,
+        // Bruno (Conta Nubank + Cartão Nubank + Banco do Brasil Reserva)
+        ContaFinanceira cNubank = criarConta("Nubank", new BigDecimal("2180.45"), "#820AD1", Moeda.BRL, uBruno,
                 TipoConta.CONTA_CORRENTE, null, null, null, null, null);
-        ContaFinanceira cItauCard = criarConta("Cartão Itaú Personnalité", new BigDecimal("890.50"), "#EC7000", Moeda.BRL, uEduardo,
-                TipoConta.CARTAO_CREDITO, new BigDecimal("10000.00"), new BigDecimal("9109.50"), new BigDecimal("890.50"), BigDecimal.ZERO, LocalDate.now().plusDays(8));
+        ContaFinanceira cNubankCard = criarConta("Cartão Nubank", new BigDecimal("1120.70"), "#820AD1", Moeda.BRL, uBruno,
+                TipoConta.CARTAO_CREDITO, new BigDecimal("5000.00"), new BigDecimal("3879.30"), new BigDecimal("1120.70"), BigDecimal.ZERO, hoje.withDayOfMonth(Math.min(12, hoje.lengthOfMonth())));
+        ContaFinanceira cBB = criarConta("Banco do Brasil", new BigDecimal("3200.00"), "#003882", Moeda.BRL, uBruno,
+                TipoConta.CONTA_CORRENTE, null, null, null, null, null);
+
+        // Eduardo (Conta Itaú + Cartão Itaú)
+        ContaFinanceira cItau = criarConta("Itaú Unibanco", new BigDecimal("645.80"), "#EC7000", Moeda.BRL, uEduardo,
+                TipoConta.CONTA_CORRENTE, null, null, null, null, null);
+        ContaFinanceira cItauCard = criarConta("Cartão Itaú Click", new BigDecimal("385.40"), "#EC7000", Moeda.BRL, uEduardo,
+                TipoConta.CARTAO_CREDITO, new BigDecimal("1200.00"), new BigDecimal("814.60"), new BigDecimal("385.40"), BigDecimal.ZERO, hoje.withDayOfMonth(Math.min(10, hoje.lengthOfMonth())));
 
         // Pedro (Conta Santander + Cartão Santander SX)
-        ContaFinanceira cSantander = criarConta("Santander", new BigDecimal("980.00"), "#EA1D2C", Moeda.BRL, uPedro,
+        ContaFinanceira cSantander = criarConta("Santander", new BigDecimal("512.30"), "#EA1D2C", Moeda.BRL, uPedro,
                 TipoConta.CONTA_CORRENTE, null, null, null, null, null);
+<<<<<<< HEAD
         ContaFinanceira cSantanderCard = criarConta("Cartão Santander SX", new BigDecimal("420.00"), "#EA1D2C", Moeda.BRL, uPedro,
                 TipoConta.CARTAO_CREDITO, new BigDecimal("3000.00"), new BigDecimal("2580.00"), new BigDecimal("420.00"), BigDecimal.ZERO, LocalDate.now().plusDays(12));
 >>>>>>> 05a0c96 (feat(database): ajusta ddl-auto para update e aprimora seeder com cartoes e autocura)
+=======
+        ContaFinanceira cSantanderCard = criarConta("Cartão Santander SX", new BigDecimal("295.80"), "#EA1D2C", Moeda.BRL, uPedro,
+                TipoConta.CARTAO_CREDITO, new BigDecimal("1500.00"), new BigDecimal("1204.20"), new BigDecimal("295.80"), BigDecimal.ZERO, hoje.withDayOfMonth(Math.min(18, hoje.lengthOfMonth())));
+>>>>>>> 54fce67 (chore: atualiza seeders)
 
         // 4. Marcadores
         Marcador mPixLucas = criarMarcador("PIX", "#2196F3", uLucas);
@@ -201,6 +212,9 @@ public class DatabaseSeeder implements CommandLineRunner {
         List<Transacao> transacoes = new ArrayList<>();
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 54fce67 (chore: atualiza seeders)
         // ==========================================
         // TRANSAÇÕES: LUCAS
         // ==========================================
@@ -209,6 +223,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         transacoes.add(criarTransacao("Vale Refeição / Alimentação", new BigDecimal("550.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 1, 9, 0), cInter, mPixLucas));
         transacoes.add(criarTransacao("PIX Rachadinha Churrasco", new BigDecimal("38.50"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 7, 19, 15), cInter, mPixLucas));
         transacoes.add(criarTransacao("Rendimento da Conta (CDI)", new BigDecimal("6.85"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 8, 7, 0), cInter, mPixLucas));
+<<<<<<< HEAD
 
         transacoes.add(criarTransacao("Aluguel Apartamento", new BigDecimal("1150.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 5, 10, 0), cInter, mPixLucas));
         transacoes.add(criarTransacao("Condomínio Edifício Solar", new BigDecimal("265.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 11, 30), cInter, mDebitoLucas));
@@ -390,28 +405,32 @@ public class DatabaseSeeder implements CommandLineRunner {
         transacoes.add(criarTransacao("Bônus Performance", new BigDecimal("1000.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(2026, 5, 1, 8, 0), cInter, mPixLucas));
         transacoes.add(criarTransacao("Uber Cinema", new BigDecimal("20.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 1, 19, 0), cInterCard, mCreditoLucas));
         transacoes.add(criarTransacao("Pizza Família", new BigDecimal("85.00"), catAlimentacao, EstadoTransacao.PENDENTE, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 5, 20, 30), cInter, mDebitoLucas));
+=======
+>>>>>>> 54fce67 (chore: atualiza seeders)
 
-        // Bruno
-        transacoes.add(criarTransacao("Dividendo Ações", new BigDecimal("15000.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(2026, 5, 1, 9, 0), cBB, mPixBruno));
-        transacoes.add(criarTransacao("Compra de Luxo", new BigDecimal("1200.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 1, 14, 0), cNubankCard, mCreditoBruno));
-        transacoes.add(criarTransacao("Manutenção Carro", new BigDecimal("800.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 2, 11, 0), cNubankCard, mCreditoBruno));
-        transacoes.add(criarTransacao("Almoço Executivo", new BigDecimal("85.00"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 2, 13, 0), cNubank, mDebitoBruno));
-        transacoes.add(criarTransacao("Café Padaria", new BigDecimal("12.50"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 3, 8, 0), cNubank, mDebitoBruno));
-        transacoes.add(criarTransacao("Mensalidade Software", new BigDecimal("200.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 3, 10, 0), cNubankCard, mCreditoBruno));
-        transacoes.add(criarTransacao("Viagem Fim de Semana", new BigDecimal("1500.00"), catLazer, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 4, 17, 0), cNubankCard, mCreditoBruno));
-        transacoes.add(criarTransacao("Freelance Backend", new BigDecimal("4000.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(2026, 5, 5, 9, 0), cNubank, mPixBruno));
-        transacoes.add(criarTransacao("Seguro Saúde", new BigDecimal("800.00"), catSaude, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 5, 10, 0), cNubankCard, mCreditoBruno));
-        transacoes.add(criarTransacao("Depósito em Dinheiro", new BigDecimal("1000.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(2026, 5, 5, 15, 0), cBB, mPixBruno));
-        transacoes.add(criarTransacao("Troca de Óleo", new BigDecimal("180.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 2, 9, 0), cNubank, mDebitoBruno));
-        transacoes.add(criarTransacao("Conserto Celular", new BigDecimal("400.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 2, 14, 0), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Aluguel Apartamento", new BigDecimal("1150.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 5, 10, 0), cInter, mPixLucas));
+        transacoes.add(criarTransacao("Condomínio Edifício Solar", new BigDecimal("265.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 11, 30), cInter, mDebitoLucas));
+        transacoes.add(criarTransacao("Conta de Energia (Neoenergia)", new BigDecimal("124.80"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 14, 0), cInter, mDebitoLucas));
+        transacoes.add(criarTransacao("Internet Fibra 400MB", new BigDecimal("99.90"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 7, 9, 45), cInter, mDebitoLucas));
+        transacoes.add(criarTransacao("Supermercado Compra Quinzenal", new BigDecimal("318.45"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 2, 18, 20), cInter, mDebitoLucas));
+        transacoes.add(criarTransacao("Abastecimento Gasolina Comum", new BigDecimal("140.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 4, 10, 15), cInter, mDebitoLucas));
+        transacoes.add(criarTransacao("Farmácia Drogasil (Antialérgico)", new BigDecimal("42.90"), catSaude, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 16, 40), cInterCard, mCreditoLucas));
+        transacoes.add(criarTransacao("Netflix e Spotify", new BigDecimal("59.80"), catLazer, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 3, 8, 0), cInterCard, mCreditoLucas));
+        transacoes.add(criarTransacao("iFood Hambúrguer Artesanal", new BigDecimal("46.50"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 8, 20, 30), cInterCard, mCreditoLucas));
+        transacoes.add(criarTransacao("Uber para o Trabalho", new BigDecimal("19.40"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 4, 8, 15), cInterCard, mCreditoLucas));
+        transacoes.add(criarTransacao("Padaria Pão & Companhia", new BigDecimal("16.80"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 7, 7, 45), cInter, mDebitoLucas));
+        transacoes.add(criarTransacao("Livro Engenharia de Software", new BigDecimal("89.00"), catEducacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 9, 15, 0), cInterCard, mCreditoLucas));
+        transacoes.add(criarTransacao("Mensalidade Academia Smart Fit", new BigDecimal("109.90"), catSaude, EstadoTransacao.PENDENTE, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, Math.min(15, hoje.lengthOfMonth()), 10, 0), cInterCard, mCreditoLucas));
+        transacoes.add(criarTransacao("Conta de Água", new BigDecimal("58.40"), catOutros, EstadoTransacao.PENDENTE, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, Math.min(18, hoje.lengthOfMonth()), 12, 0), cInter, mDebitoLucas));
 
-        // Eduardo
-        transacoes.add(criarTransacao("Aporte Inicial", new BigDecimal("3000.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(2026, 5, 1, 8, 0), cItau, mPixEduardo));
-        transacoes.add(criarTransacao("Aluguel Escritório", new BigDecimal("1200.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 1, 10, 0), cItau, mDebitoEduardo));
-        transacoes.add(criarTransacao("Internet Fibra", new BigDecimal("120.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 2, 9, 0), cItauCard, mCreditoEduardo));
-        transacoes.add(criarTransacao("Rodízio de Pizza", new BigDecimal("90.00"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 2, 20, 0), cItauCard, mCreditoEduardo));
-        transacoes.add(criarTransacao("Cinema", new BigDecimal("45.00"), catLazer, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 3, 16, 0), cItauCard, mCreditoEduardo));
+        // Mês anterior (para histórico e cálculo do balanço comparativo)
+        transacoes.add(criarTransacao("Salário Mensal CLT", new BigDecimal("3450.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(anoAnt, mesAntNum, 5, 8, 30), cInter, mPixLucas));
+        transacoes.add(criarTransacao("Aluguel Apartamento", new BigDecimal("1150.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 5, 10, 0), cInter, mPixLucas));
+        transacoes.add(criarTransacao("Supermercado Mensal", new BigDecimal("495.20"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 6, 17, 30), cInter, mDebitoLucas));
+        transacoes.add(criarTransacao("Combustível Posto Ipiranga", new BigDecimal("170.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 10, 11, 0), cInter, mDebitoLucas));
+        transacoes.add(criarTransacao("Fatura Fechada Cartão Inter", new BigDecimal("620.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 15, 14, 0), cInter, mDebitoLucas));
 
+<<<<<<< HEAD
         // Pedro
         transacoes.add(criarTransacao("Mesada", new BigDecimal("500.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(2026, 5, 1, 12, 0), cSantander, mPixPedro));
         transacoes.add(criarTransacao("Lanche Faculdade", new BigDecimal("18.00"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(2026, 5, 1, 21, 0), cSantander, mDebitoPedro));
@@ -444,12 +463,107 @@ public class DatabaseSeeder implements CommandLineRunner {
         metas.add(criarMeta("Curso Técnico / Certificação", "Investir em capacitação profissional", new BigDecimal("1000.00"), new BigDecimal("450.00"), "educacao", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 11, 30), TipoMeta.POUPANCA, uPedro));
         metas.add(criarMeta("Limite Mensal de Lazer", "Manter gastos recreativos sob controle", new BigDecimal("150.00"), new BigDecimal("87.50"), "lazer", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uPedro));
         metas.add(criarMeta("Plano de Saúde e Cuidados", "Reserva para exames e consultas", new BigDecimal("800.00"), new BigDecimal("500.00"), "saude", LocalDate.of(ano, 2, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uPedro));
+=======
+        // ==========================================
+        // TRANSAÇÕES: BRUNO
+        // ==========================================
+        // Mês atual
+        transacoes.add(criarTransacao("Salário Mensal - Folha de Pagamento", new BigDecimal("4800.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 5, 9, 0), cNubank, mPixBruno));
+        transacoes.add(criarTransacao("Reembolso Despesa Trabalho", new BigDecimal("160.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 3, 15, 30), cNubank, mPixBruno));
+        transacoes.add(criarTransacao("Rendimento Caixinha Nubank", new BigDecimal("14.80"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 8, 8, 0), cNubank, mPixBruno));
+
+        transacoes.add(criarTransacao("Parcela Financiamento Residencial", new BigDecimal("1380.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 10, 0), cNubank, mPixBruno));
+        transacoes.add(criarTransacao("Supermercado Atacadão (Compra do Mês)", new BigDecimal("546.80"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 3, 18, 0), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Posto Shell - Gasolina Aditivada", new BigDecimal("160.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 4, 11, 0), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Conta de Luz e Energia", new BigDecimal("178.30"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 7, 14, 30), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Plano de Saúde Familiar", new BigDecimal("360.00"), catSaude, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 8, 9, 15), cNubankCard, mCreditoBruno));
+        transacoes.add(criarTransacao("Droga Raia - Fórmulas e Remédios", new BigDecimal("68.40"), catSaude, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 5, 17, 45), cNubankCard, mCreditoBruno));
+        transacoes.add(criarTransacao("Almoço Restaurante Self-Service", new BigDecimal("36.90"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 12, 30), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Troca de Óleo e Filtro (Auto Center)", new BigDecimal("180.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 2, 10, 0), cNubankCard, mCreditoBruno));
+        transacoes.add(criarTransacao("Assinaturas Digitais (YouTube e Prime)", new BigDecimal("41.80"), catLazer, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 7, 8, 0), cNubankCard, mCreditoBruno));
+        transacoes.add(criarTransacao("iFood Pizza de Domingo", new BigDecimal("78.50"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 8, 21, 0), cNubankCard, mCreditoBruno));
+        transacoes.add(criarTransacao("Café da Manhã Padaria Imperial", new BigDecimal("15.30"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 9, 7, 30), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Material Escolar Papelaria", new BigDecimal("55.00"), catEducacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 4, 16, 20), cNubankCard, mCreditoBruno));
+        transacoes.add(criarTransacao("Internet Banda Larga Fibra", new BigDecimal("119.90"), catOutros, EstadoTransacao.PENDENTE, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, Math.min(14, hoje.lengthOfMonth()), 10, 0), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Seguro do Carro (Parcela 4/10)", new BigDecimal("175.00"), catTransporte, EstadoTransacao.PENDENTE, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, Math.min(16, hoje.lengthOfMonth()), 11, 0), cNubankCard, mCreditoBruno));
+
+        // Mês anterior
+        transacoes.add(criarTransacao("Salário Mensal CLT", new BigDecimal("4800.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(anoAnt, mesAntNum, 5, 9, 0), cNubank, mPixBruno));
+        transacoes.add(criarTransacao("Parcela Financiamento Residencial", new BigDecimal("1380.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 6, 10, 0), cNubank, mPixBruno));
+        transacoes.add(criarTransacao("Supermercado Atacadão", new BigDecimal("612.40"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 4, 18, 30), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Combustível Shell", new BigDecimal("190.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 8, 11, 0), cNubank, mDebitoBruno));
+        transacoes.add(criarTransacao("Fatura Cartão Nubank", new BigDecimal("980.50"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 12, 14, 0), cNubank, mDebitoBruno));
+
+        // ==========================================
+        // TRANSAÇÕES: EDUARDO
+        // ==========================================
+        // Mês atual
+        transacoes.add(criarTransacao("Bolsa Estágio Desenvolvimento", new BigDecimal("1500.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 5, 10, 0), cItau, mPixEduardo));
+        transacoes.add(criarTransacao("Ajuda de Custo Transporte", new BigDecimal("250.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 1, 9, 30), cItau, mPixEduardo));
+        transacoes.add(criarTransacao("Aluguel Quarto / República", new BigDecimal("600.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 5, 11, 0), cItau, mPixEduardo));
+        transacoes.add(criarTransacao("Supermercado do Bairro (Básico)", new BigDecimal("215.60"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 17, 0), cItau, mDebitoEduardo));
+        transacoes.add(criarTransacao("Recarga Bilhete de Ônibus", new BigDecimal("110.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 2, 8, 0), cItau, mDebitoEduardo));
+        transacoes.add(criarTransacao("Lanche Cantina da Faculdade", new BigDecimal("22.50"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 4, 21, 15), cItau, mDebitoEduardo));
+        transacoes.add(criarTransacao("Xérox e Apostilas Universitárias", new BigDecimal("28.40"), catEducacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 7, 14, 0), cItauCard, mCreditoEduardo));
+        transacoes.add(criarTransacao("Spotify Plano Universitário", new BigDecimal("11.90"), catLazer, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 3, 9, 0), cItauCard, mCreditoEduardo));
+        transacoes.add(criarTransacao("Cinema Quarta-feira (Meia Entrada)", new BigDecimal("24.00"), catLazer, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 8, 19, 30), cItauCard, mCreditoEduardo));
+        transacoes.add(criarTransacao("Farmácia Pague Menos (Vitamina C)", new BigDecimal("21.50"), catSaude, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 15, 30), cItauCard, mCreditoEduardo));
+        transacoes.add(criarTransacao("Açaí com os Amigos", new BigDecimal("18.00"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 9, 17, 45), cItau, mDebitoEduardo));
+        transacoes.add(criarTransacao("Rateio Internet República", new BigDecimal("35.00"), catOutros, EstadoTransacao.PENDENTE, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, Math.min(12, hoje.lengthOfMonth()), 10, 0), cItau, mPixEduardo));
+
+        // Mês anterior
+        transacoes.add(criarTransacao("Bolsa Estágio", new BigDecimal("1500.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(anoAnt, mesAntNum, 5, 10, 0), cItau, mPixEduardo));
+        transacoes.add(criarTransacao("Aluguel Quarto", new BigDecimal("600.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 5, 11, 0), cItau, mPixEduardo));
+        transacoes.add(criarTransacao("Mercado Básico", new BigDecimal("230.00"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 7, 18, 0), cItau, mDebitoEduardo));
+
+        // ==========================================
+        // TRANSAÇÕES: PEDRO
+        // ==========================================
+        // Mês atual
+        transacoes.add(criarTransacao("Salário Mensal CLT", new BigDecimal("2100.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(ano, mes, 5, 8, 0), cSantander, mPixPedro));
+        transacoes.add(criarTransacao("Ajuda nas Despesas da Casa", new BigDecimal("450.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 5, 11, 30), cSantander, mPixPedro));
+        transacoes.add(criarTransacao("Supermercado Mensal", new BigDecimal("325.40"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 18, 15), cSantander, mDebitoPedro));
+        transacoes.add(criarTransacao("Recarga Transporte Público", new BigDecimal("130.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 2, 7, 30), cSantander, mDebitoPedro));
+        transacoes.add(criarTransacao("Plano Celular Controle", new BigDecimal("39.99"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 4, 10, 0), cSantander, mDebitoPedro));
+        transacoes.add(criarTransacao("Barbearia / Corte de Cabelo", new BigDecimal("35.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 7, 16, 0), cSantander, mPixPedro));
+        transacoes.add(criarTransacao("Mensalidade Academia do Bairro", new BigDecimal("79.90"), catSaude, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 3, 9, 0), cSantanderCard, mCreditoPedro));
+        transacoes.add(criarTransacao("Lanche de Sábado à Noite", new BigDecimal("34.50"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 8, 21, 30), cSantanderCard, mCreditoPedro));
+        transacoes.add(criarTransacao("Uber para Casa na Chuva", new BigDecimal("18.20"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 9, 22, 10), cSantanderCard, mCreditoPedro));
+        transacoes.add(criarTransacao("Remédio Farmácia", new BigDecimal("26.80"), catSaude, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, 6, 14, 20), cSantander, mDebitoPedro));
+        transacoes.add(criarTransacao("Conta de Água", new BigDecimal("48.00"), catOutros, EstadoTransacao.PENDENTE, TipoTransacao.DESPESA, LocalDateTime.of(ano, mes, Math.min(15, hoje.lengthOfMonth()), 10, 0), cSantander, mDebitoPedro));
+
+        // Mês anterior
+        transacoes.add(criarTransacao("Salário Mensal CLT", new BigDecimal("2100.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(anoAnt, mesAntNum, 5, 8, 0), cSantander, mPixPedro));
+        transacoes.add(criarTransacao("Supermercado", new BigDecimal("340.00"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 6, 18, 0), cSantander, mDebitoPedro));
+        transacoes.add(criarTransacao("Ajuda em Casa", new BigDecimal("450.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 5, 11, 0), cSantander, mPixPedro));
+
+        transacaoRepository.saveAll(transacoes);
+
+        // 6. Metas Realistas e Acessíveis
+        List<Meta> metas = new ArrayList<>();
+        // Lucas
+        metas.add(criarMeta("Reserva de Emergência", "Guardar dinheiro para imprevistos (3 a 6 meses de contas)", new BigDecimal("4000.00"), new BigDecimal("1500.00"), "https://link-da-foto.com/reserva.png", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uLucas));
+        metas.add(criarMeta("Troca de Notebook", "Economizar para novo computador de trabalho", new BigDecimal("3200.00"), new BigDecimal("1800.00"), "https://link-da-foto.com/notebook.png", LocalDate.of(ano, 2, 1), LocalDate.of(ano, 11, 30), TipoMeta.PRAZO_FIXO, uLucas));
+        metas.add(criarMeta("Limite Supermercado", "Controle mensal com compras de mercado", new BigDecimal("600.00"), new BigDecimal("318.45"), "https://link-da-foto.com/mercado.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uLucas));
+
+        // Bruno
+        metas.add(criarMeta("Fundo de Reserva", "Guardar em caixinha com liquidez diária", new BigDecimal("6000.00"), new BigDecimal("3200.00"), "https://link-da-foto.com/reserva.png", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uBruno));
+        metas.add(criarMeta("Revisão e Seguro do Carro", "Poupar para revisão preventiva anual", new BigDecimal("2000.00"), new BigDecimal("1250.00"), "https://link-da-foto.com/carro.png", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 10, 31), TipoMeta.PRAZO_FIXO, uBruno));
+        metas.add(criarMeta("Limite Alimentação e Delivery", "Controle mensal de almoço fora e iFood", new BigDecimal("850.00"), new BigDecimal("583.70"), "https://link-da-foto.com/alimentacao.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uBruno));
+
+        // Eduardo
+        metas.add(criarMeta("Computador para Estudo", "Equipamento para faculdade e cursos", new BigDecimal("2000.00"), new BigDecimal("750.00"), "https://link-da-foto.com/estudo.png", LocalDate.of(ano, 2, 15), LocalDate.of(ano, 12, 15), TipoMeta.POUPANCA, uEduardo));
+        metas.add(criarMeta("Limite Lazer e Saídas", "Controle de despesas em finais de semana", new BigDecimal("180.00"), new BigDecimal("75.90"), "https://link-da-foto.com/lazer.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uEduardo));
+
+        // Pedro
+        metas.add(criarMeta("Curso Técnico / Certificação", "Investir em capacitação profissional", new BigDecimal("1000.00"), new BigDecimal("450.00"), "https://link-da-foto.com/curso.png", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 11, 30), TipoMeta.PRAZO_FIXO, uPedro));
+        metas.add(criarMeta("Limite Mensal de Lazer", "Manter gastos recreativos sob controle", new BigDecimal("150.00"), new BigDecimal("87.50"), "https://link-da-foto.com/lazer.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uPedro));
+>>>>>>> 54fce67 (chore: atualiza seeders)
 
         metaRepository.saveAll(metas);
 
-        log.info("[DatabaseSeeder] Carga inicial de dados finalizada com sucesso!");
+        log.info("[DatabaseSeeder] Carga inicial de dados realistas finalizada com sucesso!");
     }
-
 
     private Usuario criarUsuario(String nome, String email, String username, String senha, String foto, Papel papel) {
         Usuario u = new Usuario();
@@ -584,6 +698,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         return m;
     }
 
+<<<<<<< HEAD
     private void popularConquistasPadrao() {
         if (conquistaRepository.count() == 0) {
             log.info("[DatabaseSeeder] Inicializando catálogo de conquistas financeiras...");
@@ -602,4 +717,6 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
     }
 
+=======
+>>>>>>> 54fce67 (chore: atualiza seeders)
 }
