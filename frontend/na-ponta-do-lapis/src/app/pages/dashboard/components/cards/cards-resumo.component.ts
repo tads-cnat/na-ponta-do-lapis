@@ -1,13 +1,14 @@
 import { Component, Input } from "@angular/core";
-import { CommonModule, CurrencyPipe, DecimalPipe } from "@angular/common";
+import { CommonModule, DecimalPipe } from "@angular/common";
 import { IContas, ehCartaoCredito } from "../../../../model/IContas.models";
 import { ITransacoes } from "../../../../model/ITransacoes.model";
 import { ICotacao } from "../../../../model/ICotacao.models";
+import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 
 @Component({
   selector: 'app-cards-resumo',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, DecimalPipe],
+  imports: [CommonModule, DecimalPipe, AppMoedaPipe],
   template: `
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
@@ -23,36 +24,36 @@ import { ICotacao } from "../../../../model/ICotacao.models";
         </div>
         <div>
           <span class="text-2xl lg:text-3xl font-extrabold text-emerald-700 tracking-tight block truncate">
-            {{ totalDinheiroContas | currency : 'BRL' }}
+            {{ totalDinheiroContas | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
             <span class="truncate">Disponível em contas</span>
             @if (totalReceitasPendentes > 0) {
-              <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalReceitasPendentes | currency : 'BRL' }} a receber</span>
+              <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalReceitasPendentes | appMoeda }} a receber</span>
             }
           </div>
         </div>
       </div>
 
       <!-- Card 2: Saldo Devedor Pendente -->
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-rose-100 flex flex-col justify-between min-h-[136px]">
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px]">
         <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-rose-800">Saldo Devedor Pendente</span>
-          <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center">
+          <span class="text-xs font-bold uppercase tracking-wider text-[#9E3636]">Saldo Devedor Pendente</span>
+          <div class="w-10 h-10 rounded-xl bg-[#FDF4F4] border border-[#F5D5D5] text-[#C24E4E] flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
           </div>
         </div>
         <div>
-          <span class="text-2xl lg:text-3xl font-extrabold text-rose-600 tracking-tight block truncate">
-            - {{ totalSaldoDevedor | currency : 'BRL' }}
+          <span class="text-2xl lg:text-3xl font-extrabold text-[#C24E4E] tracking-tight block truncate">
+            - {{ totalSaldoDevedor | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500"
-               [title]="'Faturas: ' + (totalFaturasCartoes | currency:'BRL') + ' | Pendentes: ' + (totalDespesasPendentes | currency:'BRL') + ' | Balanço Projetado: ' + (balancoProjetado | currency:'BRL')">
+               [title]="'Faturas: ' + (totalFaturasCartoes | appMoeda) + ' | Pendentes: ' + (totalDespesasPendentes | appMoeda) + ' | Balanço Projetado: ' + (balancoProjetado | appMoeda)">
             @if (totalDespesasPendentes > 0) {
-              <span class="truncate">Faturas: {{ totalFaturasCartoes | currency : 'BRL' }}</span>
-              <span class="text-rose-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalDespesasPendentes | currency : 'BRL' }} a pagar</span>
+              <span class="truncate">Faturas: {{ totalFaturasCartoes | appMoeda }}</span>
+              <span class="text-[#C24E4E] font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalDespesasPendentes | appMoeda }} a pagar</span>
             } @else {
               <span class="truncate">Faturas em aberto</span>
               <span class="text-slate-400 whitespace-nowrap shrink-0 ml-1">Sem pendências</span>
@@ -73,15 +74,15 @@ import { ICotacao } from "../../../../model/ICotacao.models";
         </div>
         <div>
           <span class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight block truncate">
-            {{ receitaMesAtualRealizada | currency : 'BRL' }}
+            {{ receitaMesAtualRealizada | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
             @if (receitaMesAtualPendente > 0) {
               <span class="truncate">Realizado</span>
-              <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ receitaMesAtualPendente | currency : 'BRL' }} a receber</span>
+              <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ receitaMesAtualPendente | appMoeda }} a receber</span>
             } @else if (variacaoReceita !== null) {
               <span class="truncate">vs mês anterior</span>
-              <span class="whitespace-nowrap shrink-0 ml-1 font-semibold" [ngClass]="variacaoReceita >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+              <span class="whitespace-nowrap shrink-0 ml-1 font-semibold" [ngClass]="variacaoReceita >= 0 ? 'text-emerald-600' : 'text-[#C24E4E]'">
                 {{ variacaoReceita >= 0 ? '↑' : '↓' }} {{ (variacaoReceita >= 0 ? variacaoReceita : -variacaoReceita) | number:'1.0-1' }}%
               </span>
             } @else {
@@ -103,15 +104,15 @@ import { ICotacao } from "../../../../model/ICotacao.models";
         </div>
         <div>
           <span class="text-2xl lg:text-3xl font-extrabold text-slate-900 tracking-tight block truncate">
-            {{ despesaMesAtualRealizada | currency : 'BRL' }}
+            {{ despesaMesAtualRealizada | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
             @if (despesaMesAtualPendente > 0) {
               <span class="truncate">Realizado</span>
-              <span class="text-amber-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ despesaMesAtualPendente | currency : 'BRL' }} a pagar</span>
+              <span class="text-amber-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ despesaMesAtualPendente | appMoeda }} a pagar</span>
             } @else if (variacaoDespesa !== null) {
               <span class="truncate">vs mês anterior</span>
-              <span class="whitespace-nowrap shrink-0 ml-1 font-semibold" [ngClass]="variacaoDespesa <= 0 ? 'text-emerald-600' : 'text-rose-600'">
+              <span class="whitespace-nowrap shrink-0 ml-1 font-semibold" [ngClass]="variacaoDespesa <= 0 ? 'text-emerald-600' : 'text-[#C24E4E]'">
                 {{ variacaoDespesa <= 0 ? '↓' : '↑' }} {{ (variacaoDespesa >= 0 ? variacaoDespesa : -variacaoDespesa) | number:'1.0-1' }}%
               </span>
             } @else {

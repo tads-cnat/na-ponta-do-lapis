@@ -19,10 +19,11 @@ import { MessageService } from 'primeng/api';
 import { ContaFinanceiraService } from '../contas/service/contas.service';
 import { IContas } from '../../model/IContas.models';
 import { Usuario } from '@models/IUsuario.models';
+import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 
 @Component({
   selector: 'app-familia',
-  imports: [Button, FormsModule, InputText, IconComponent, Card, PrimeNGModuleModule, CommonModule],
+  imports: [Button, FormsModule, InputText, IconComponent, Card, PrimeNGModuleModule, CommonModule, AppMoedaPipe],
   templateUrl: './familia.component.html',
   styleUrl: './familia.component.css',
 })

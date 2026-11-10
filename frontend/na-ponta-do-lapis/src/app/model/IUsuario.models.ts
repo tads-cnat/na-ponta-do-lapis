@@ -11,4 +11,5 @@ export interface Usuario {
     fotoPerfil:string,
     papel:string,
     idFamilia?: number | null,
+    moedaPadrao?: string | null,
 } 

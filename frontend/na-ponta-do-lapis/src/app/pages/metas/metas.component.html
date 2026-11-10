@@ -1,7 +1,7 @@
 <div class="text-center">
     <div class="text-xl text-gray-400">Valor total das metas</div>
-    <div class="text-3xl font-bold mb-2.5"><span class="text-npl-verde">R$</span> {{ totalMetasFormatado() }}</div>
-    <div class="text-lg text-gray-500">+R${{ totalAcumuladoFormatado() }} arrecadados</div>
+    <div class="text-3xl font-bold mb-2.5 text-slate-800">{{ totalMetas() | appMoeda }}</div>
+    <div class="text-lg text-gray-500">+{{ totalAcumulado() | appMoeda }} arrecadados</div>
 </div>
 <div class="mb-8 flex justify-between">
     <h1 class="text-primary font-bold text-3xl ">Metas</h1>
@@ -55,14 +55,12 @@
         
         <div class="flex flex-col gap-2 flex-1">
           <label for="valor">Valor</label>
-          <p-inputnumber 
+          <app-input-moeda 
             formControlName="valor" 
             inputId="valor" 
-            mode="currency" 
-            currency="BRL" 
-            locale="pt-BR" 
-            fluid>
-          </p-inputnumber>
+            tamanho="md" 
+            placeholder="0,00">
+          </app-input-moeda>
           @if (metaForm.get('valor')?.invalid && metaForm.get('valor')?.touched) {
             @if (metaForm.get('valor')?.errors?.['required']) {
               <small class="text-red-500">Campo obrigatório</small>

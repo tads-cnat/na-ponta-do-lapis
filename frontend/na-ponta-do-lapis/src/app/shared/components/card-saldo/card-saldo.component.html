@@ -20,39 +20,39 @@
 
                 <div class="mt-1">
                     <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-emerald-700">
-                        {{ totalDinheiroContas | currency : 'BRL' }}
+                        {{ totalDinheiroContas | appMoeda }}
                     </span>
                     <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5">
                         <span>Disponível em contas</span>
                         @if (totalReceitasPendentes > 0) {
-                            <span class="text-emerald-600 font-semibold">• (+ {{ totalReceitasPendentes | currency : 'BRL' }} a receber)</span>
+                            <span class="text-emerald-600 font-semibold">• (+ {{ totalReceitasPendentes | appMoeda }} a receber)</span>
                         }
                     </div>
                 </div>
             </div>
 
             <!-- Card 2: Saldo Devedor Pendente (Faturas + Contas a Pagar) -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-rose-100 flex flex-col justify-between relative overflow-hidden">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between relative overflow-hidden">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-2">
-                        <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
+                        <div class="w-9 h-9 rounded-xl bg-[#FDF4F4] border border-[#F5D5D5] text-[#C24E4E] flex items-center justify-center">
                             <i class="pi pi-credit-card text-base"></i>
                         </div>
                         <div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-rose-800">Saldo Devedor Pendente</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#9E3636]">Saldo Devedor Pendente</span>
                             <p class="text-[11px] text-slate-400">Total a pagar nos cartões e contas</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="mt-1">
-                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-rose-600">
-                        - {{ totalSaldoDevedor | currency : 'BRL' }}
+                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-[#C24E4E]">
+                        - {{ totalSaldoDevedor | appMoeda }}
                     </span>
                     <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5">
-                        <span>Faturas: {{ totalFaturasCartoes | currency : 'BRL' }}</span>
+                        <span>Faturas: {{ totalFaturasCartoes | appMoeda }}</span>
                         @if (totalDespesasPendentes > 0) {
-                            <span>• Pendentes: {{ totalDespesasPendentes | currency : 'BRL' }}</span>
+                            <span>• Pendentes: {{ totalDespesasPendentes | appMoeda }}</span>
                         }
                     </div>
                 </div>
@@ -74,12 +74,12 @@
 
                 <div class="mt-1">
                     <span class="font-extrabold text-2xl lg:text-3xl tracking-tight"
-                          [ngClass]="balancoLiquido >= 0 ? 'text-slate-900' : 'text-rose-600'">
-                        {{ balancoLiquido | currency : 'BRL' }}
+                          [ngClass]="balancoLiquido >= 0 ? 'text-slate-900' : 'text-[#C24E4E]'">
+                        {{ balancoLiquido | appMoeda }}
                     </span>
                     <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 mt-1 gap-1">
                         @if (totalReceitasPendentes > 0) {
-                            <span class="font-medium text-emerald-600">Proj.: {{ balancoProjetado | currency : 'BRL' }}</span>
+                            <span class="font-medium text-emerald-600">Proj.: {{ balancoProjetado | appMoeda }}</span>
                         } @else {
                             <span>Líquido atual</span>
                         }
@@ -88,7 +88,7 @@
                                 <i class="pi pi-arrow-up-right text-[10px]"></i>+{{ variacaoPercentual | number:'1.1-1' }}%
                             </span>
                         } @else if (variacaoPercentual < 0) {
-                            <span class="text-rose-600 font-semibold flex items-center gap-0.5">
+                            <span class="text-[#C24E4E] font-semibold flex items-center gap-0.5">
                                 <i class="pi pi-arrow-down-right text-[10px]"></i>{{ variacaoPercentual | number:'1.1-1' }}%
                             </span>
                         }
@@ -107,22 +107,22 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
                 
                 <!-- Card 1: Fatura Fechada (A Pagar Agora) -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-rose-200 flex flex-col justify-between">
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between">
                     <div>
                         <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-rose-700 flex items-center gap-1.5">
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#9E3636] flex items-center gap-1.5">
                                 <i class="pi pi-exclamation-circle text-xs"></i>
                                 Fatura Fechada (A Pagar)
                             </span>
-                            <span class="text-[10px] font-bold bg-rose-100 text-rose-800 px-2 py-0.5 rounded-full">
+                            <span class="text-[10px] font-bold bg-[#FDF4F4] text-[#9E3636] border border-[#F5D5D5] px-2 py-0.5 rounded-full">
                                 Pagar Agora
                             </span>
                         </div>
-                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-rose-600">
-                            - {{ faturaFechadaSelecionada | currency : 'BRL' }}
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-[#C24E4E]">
+                            - {{ faturaFechadaSelecionada | appMoeda }}
                         </span>
                     </div>
-                    <div class="mt-3 pt-2 border-t border-rose-100 text-xs text-rose-600 flex items-center justify-between">
+                    <div class="mt-3 pt-2 border-t border-[#F5D5D5] text-xs text-[#C24E4E] flex items-center justify-between">
                         <span>{{ vencimentoFaturaSelecionada ? ('Vencimento: ' + (vencimentoFaturaSelecionada | date:'dd/MM/yyyy')) : 'Aguardando vencimento' }}</span>
                         <i class="pi pi-calendar text-xs"></i>
                     </div>
@@ -141,7 +141,7 @@
                             </span>
                         </div>
                         <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-amber-900">
-                            - {{ faturaAbertaSelecionada | currency : 'BRL' }}
+                            - {{ faturaAbertaSelecionada | appMoeda }}
                         </span>
                     </div>
                     <div class="mt-3 pt-2 border-t border-amber-100 text-xs text-amber-700 flex items-center justify-between">
@@ -163,13 +163,13 @@
                             </span>
                         </div>
                         <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900">
-                            - {{ (faturaFechadaSelecionada + faturaAbertaSelecionada) | currency : 'BRL' }}
+                            - {{ (faturaFechadaSelecionada + faturaAbertaSelecionada) | appMoeda }}
                         </span>
                     </div>
                     <div class="mt-3 pt-2 border-t border-purple-100 text-xs text-slate-600 flex items-center justify-between">
-                        <span>Disp.: <strong class="text-emerald-600">{{ (limiteDisponivelSelecionado ?? (limiteTotalSelecionado ? limiteTotalSelecionado - (faturaFechadaSelecionada + faturaAbertaSelecionada) : 0)) | currency : 'BRL' }}</strong></span>
+                        <span>Disp.: <strong class="text-emerald-600">{{ (limiteDisponivelSelecionado ?? (limiteTotalSelecionado ? limiteTotalSelecionado - (faturaFechadaSelecionada + faturaAbertaSelecionada) : 0)) | appMoeda }}</strong></span>
                         @if (limiteTotalSelecionado) {
-                            <span class="text-slate-400">Total: {{ limiteTotalSelecionado | currency : 'BRL' }}</span>
+                            <span class="text-slate-400">Total: {{ limiteTotalSelecionado | appMoeda }}</span>
                         }
                     </div>
                 </div>
@@ -187,7 +187,7 @@
                     </div>
                     <div class="mt-2">
                         <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-800">
-                            {{ saldoInicial | currency : 'BRL' }}
+                            {{ saldoInicial | appMoeda }}
                         </span>
                         <p class="text-xs text-slate-400 mt-1">{{ rodapeInicial }}</p>
                     </div>
@@ -205,7 +205,7 @@
                     </div>
                     <div class="mt-2">
                         <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900">
-                            {{ saldoFinal | currency : 'BRL' }}
+                            {{ saldoFinal | appMoeda }}
                         </span>
                         <div class="flex items-center gap-2 text-xs text-slate-500 mt-1">
                             @if (variacaoPercentual > 0) {
@@ -214,7 +214,7 @@
                                 </span>
                                 <span>no período</span>
                             } @else if (variacaoPercentual < 0) {
-                                <span class="text-rose-600 font-semibold flex items-center gap-0.5">
+                                <span class="text-[#C24E4E] font-semibold flex items-center gap-0.5">
                                     <i class="pi pi-arrow-down-right text-[10px]"></i>{{ variacaoPercentual | number:'1.1-1' }}%
                                 </span>
                                 <span>no período</span>
