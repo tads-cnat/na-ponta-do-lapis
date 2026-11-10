@@ -302,17 +302,20 @@
       </div>
 
       <ng-template pTemplate="footer">
-        <div class="flex justify-end gap-3 w-full pt-2">
+        <div class="flex justify-end gap-2 w-full pt-2">
           <p-button
             label="Cancelar"
             severity="secondary"
-            [text]="true"
+            [outlined]="true"
+            size="small"
+            styleClass="rounded-xl! text-xs px-4"
             (click)="exibirDialog = false">
           </p-button>
 
           <p-button
             icon="pi pi-check"
-            severity="success"
+            size="small"
+            styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
             [label]="modoEdicao ? 'Salvar Alterações' : 'Criar Conta'"
             (click)="salvarConta()">
           </p-button>
@@ -363,11 +366,14 @@
       </div>
 
       <ng-template pTemplate="footer">
-        <div class="flex justify-end gap-3 w-full">
+        <div class="flex justify-end gap-2 w-full pt-2">
 
           <p-button
             label="Cancelar"
             severity="secondary"
+            [outlined]="true"
+            size="small"
+            styleClass="rounded-xl! text-xs px-4"
             (click)="fecharDialogExcluir()">
           </p-button>
 
@@ -375,6 +381,8 @@
             label="Confirmar Exclusão"
             icon="pi pi-trash"
             severity="danger"
+            size="small"
+            styleClass="rounded-xl! text-xs px-4 font-semibold"
             (click)="confirmarExcluirConta()">
           </p-button>
 

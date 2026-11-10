@@ -1,88 +1,112 @@
-<div class="flex h-screen w-full overflow-hidden">
-  <form [formGroup]="registerForm" (ngSubmit)="register()" class="flex flex-1 flex-col justify-center items-center p-10 overflow-y-auto">
+<p-toast></p-toast>
+<div class="flex h-screen w-full bg-white overflow-hidden">
+  <div class="flex flex-1 flex-col justify-between p-6 sm:p-10 overflow-y-auto">
 
-    <div class="flex flex-col gap-3 w-full max-w-md">
-      <h1 class="text-5xl font-bold text-[#313131]">Cadastre-se</h1>
-      <p class="text-[#4A4A4A] mb-4">Preencha todos os campos abaixo para criar sua conta. 
-      </p>
-      <a routerLink="/login" class="text-[#FBBC05] font-bold transition duration-300 ease-in-out hover:text-[#d1c4ff]">Já tenho uma conta ?</a>
+    <!-- Botão Voltar ao Início ancorado no canto superior esquerdo, distante do formulário -->
+    <div class="w-full flex items-center justify-start">
+      <button type="button" (click)="voltar()"
+        class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl transition-all cursor-pointer">
+        <i class="pi pi-arrow-left text-xs"></i>
+        <span>Voltar ao início</span>
+      </button>
+    </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="nome" class="font-medium text-sm">Nome Completo <span class="text-red-400">*</span></label>
-        <input id="nome" pInputText placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full"
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="flex flex-col gap-3.5 w-full max-w-md mx-auto my-auto py-8">
+      <div>
+        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Criar Conta</h1>
+        <p class="text-sm sm:text-base text-slate-500 mt-1.5">
+          Já possui uma conta?
+          <a routerLink="/login"
+            class="text-[#7843CD] font-bold transition duration-200 hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 ml-1">Entrar</a>
+        </p>
+      </div>
+
+      <div class="flex flex-col gap-1.5 mt-1">
+        <label for="nome" class="text-xs font-semibold text-slate-700">Nome Completo <span class="text-[#C24E4E]">*</span></label>
+        <input id="nome" pInputText placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full text-sm rounded-xl!"
                [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
                [class.ng-dirty]="registerForm.get('nomeCompleto')?.touched">
         @if (registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched) {
-          <small class="text-red-500 font-medium">O nome deve ter no mínimo 3 caracteres.</small>
+          <small class="text-[#C24E4E] text-xs font-semibold">O nome deve ter no mínimo 3 caracteres.</small>
         }
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="username" class="font-medium text-sm">Nome de Usuário <span class="text-red-400">*</span></label>
-        <input id="username" pInputText placeholder="ex: Lucaasshq" formControlName="username" class="w-full"
+      <div class="flex flex-col gap-1.5">
+        <label for="username" class="text-xs font-semibold text-slate-700">Nome de Usuário (Nickname) <span class="text-[#C24E4E]">*</span></label>
+        <input id="username" pInputText placeholder="Ex: lucaasshq" formControlName="username" class="w-full text-sm rounded-xl!"
                [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
                [class.ng-dirty]="registerForm.get('username')?.touched">
         @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
-          <small class="text-red-500 font-medium">Nome de usuário obrigatório (mín. 3 letras).</small>
+          <small class="text-[#C24E4E] text-xs font-semibold">Nome de usuário obrigatório (mín. 3 letras).</small>
         }
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-        <div class="flex flex-col gap-1">
-          <label for="email" class="font-medium text-sm">Email <span class="text-red-400">*</span></label>
-          <input id="email" pInputText placeholder="nome@gmail.com" formControlName="email" class="w-full"
+        <div class="flex flex-col gap-1.5">
+          <label for="email" class="text-xs font-semibold text-slate-700">E-mail <span class="text-[#C24E4E]">*</span></label>
+          <input id="email" pInputText placeholder="nome@gmail.com" formControlName="email" class="w-full text-sm rounded-xl!"
                  [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
                  [class.ng-dirty]="registerForm.get('email')?.touched">
           @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-            <small class="text-red-500 font-medium">E-mail inválido.</small>
+            <small class="text-[#C24E4E] text-xs font-semibold">E-mail inválido.</small>
           }
         </div>
-        <div class="flex flex-col gap-1">
-          <label for="celular" class="font-medium text-sm">Celular</label>
+        <div class="flex flex-col gap-1.5">
+          <label for="celular" class="text-xs font-semibold text-slate-700">Celular</label>
           <p-inputMask id="celular" mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName="telefone"
-            styleClass="w-full"></p-inputMask>
+            styleClass="w-full text-sm rounded-xl!"></p-inputMask>
         </div>
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="password" class="font-medium text-sm">Senha <span class="text-red-400">*</span></label>
-        <p-password id="password" [toggleMask]="true" placeholder="Digite sua senha" styleClass="w-full"
-          inputStyleClass="w-full" formControlName="password" [feedback]="true" promptLabel="Força da senha"
-          weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte"
-          [styleClass]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
-        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-          <small class="text-red-500 font-medium">A senha deve ter pelo menos 8 caracteres.</small>
-        }
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+        <div class="flex flex-col gap-1.5">
+          <label for="password" class="text-xs font-semibold text-slate-700">Senha <span class="text-[#C24E4E]">*</span></label>
+          <p-password id="password" [toggleMask]="true" placeholder="Mínimo 8 caracteres"
+            inputStyleClass="w-full text-sm rounded-xl!" formControlName="password" [feedback]="true" promptLabel="Força da senha"
+            weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte"
+            [styleClass]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold">Mínimo de 8 caracteres.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="confirmPassword" class="text-xs font-semibold text-slate-700">Confirmar Senha <span class="text-[#C24E4E]">*</span></label>
+          <p-password id="confirmPassword" [toggleMask]="true" [feedback]="false" placeholder="Repita a senha"
+            inputStyleClass="w-full text-sm rounded-xl!" formControlName="passwordConfirmation"
+            [styleClass]="registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
+          @if (registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold">Confirme sua senha.</small>
+          }
+        </div>
       </div>
 
-      <div class="flex flex-col gap-1">
-        <label for="confirmPassword" class="font-medium text-sm">Confirmar Senha <span class="text-red-400">*</span></label>
-        <p-password id="confirmPassword" [toggleMask]="true" [feedback]="false" placeholder="Repita a senha"
-          styleClass="w-full" inputStyleClass="w-full" formControlName="passwordConfirmation"
-          [styleClass]="registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
-        @if (registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched) {
-          <small class="text-red-500 font-medium">Confirme sua senha corretamente.</small>
-        }
-      </div>
-
-      <div class="flex items-center gap-2 mt-2">
-        <p-checkbox [(ngModel)]="termos" [binary]="true" [ngModelOptions]="{standalone: true}"></p-checkbox>
-        <label for="termos" class="text-sm text-slate-600">
-          Eu concordo com os <a href="/landing-page/termos_privacidade.pdf" class="text-[#FBBC05] underline cursor-pointer hover:text-[#d1c4ff]">termos e políticas de privacidade</a>.
+      <div class="flex items-center gap-2.5 mt-1">
+        <p-checkbox inputId="termos" [(ngModel)]="termos" [binary]="true" [ngModelOptions]="{standalone: true}"></p-checkbox>
+        <label for="termos" class="text-xs sm:text-sm text-slate-600 cursor-pointer">
+          Eu concordo com os <a href="/landing-page/termos_privacidade.pdf" target="_blank" class="text-[#7843CD] font-semibold underline decoration-[#EEC046] decoration-2 underline-offset-2 hover:text-[#6214CC]">termos e políticas de privacidade</a>.
         </label>
       </div>
 
-      <div class="flex flex-col gap-2 mt-4">
-        <p-button type="submit" label="Criar Conta" 
-                  styleClass="w-full bg-[#F9DB70]! border-[#F9DB70]! text-black!"
-                  type="submit" 
+      <div class="flex flex-col gap-2 mt-2">
+        <p-button type="submit" label="Criar Conta" icon="pi pi-user-plus"
+                  styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
                   [disabled]="registerForm.invalid || !termos || loading"
                   [loading]="loading"></p-button>
       </div>
-    </div>
-  </form>
+    </form>
 
-  <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center">
-    <img src="/logo.svg" alt="Logo" class="w-1/2 max-w-sm">
+    <!-- Espaçador inferior para equilibrar o centro vertical na tela -->
+    <div class="hidden sm:block h-9"></div>
+  </div>
+
+  <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
+    <div class="flex flex-col items-center gap-4 z-10 px-8 text-center max-w-sm">
+      <img src="/logo.svg" alt="Na Ponta do Lápis" class="w-64 max-w-xs drop-shadow-xs">
+      <div class="w-12 h-1 rounded-full bg-[#EEC046]"></div>
+      <p class="text-sm font-medium text-[#4A2585]/85 tracking-wide leading-relaxed">
+        Seu controle financeiro pessoal e familiar, simples e na ponta do lápis.
+      </p>
+    </div>
   </div>
 </div>

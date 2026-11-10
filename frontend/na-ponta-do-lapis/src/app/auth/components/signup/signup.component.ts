@@ -59,5 +59,9 @@ export class SignupComponent {
       }
     })
   }
+
+  public voltar() {
+    this.router.navigateByUrl('');
+  }
 }
 

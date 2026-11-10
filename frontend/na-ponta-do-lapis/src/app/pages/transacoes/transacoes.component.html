@@ -1,5 +1,14 @@
-<div class="w-full">
+<div class="w-full flex flex-col gap-6 pb-8">
+    <!-- Cabeçalho Principal da Página (Topo, antes dos cards de resumo) -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        <div>
+            <h1 class="page-title-npl m-0">Movimentações</h1>
+            <p class="page-subtitle-npl">Gerencie todas as suas receitas, despesas e faturas em um só lugar</p>
+        </div>
+    </div>
+
     <app-card-saldo
+        class="block w-full"
         [dataRange]="filtroDataRange"
         [periodoRapido]="filtroPeriodoRapido"
         [contaId]="filtroContaId">
@@ -8,24 +17,28 @@
     <div class="w-full">
         <p-toast />
 
-        <div class="flex min-h-[calc(100vh-150px)] items-start justify-center px-2 md:px-6 pt-4 sm:pt-8 mt-4 sm:mt-6">
+        <div class="w-full">
 
             <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
 
                 <div class="flex flex-col gap-4 mb-4">
                     <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4">
-                        <div class="flex items-center gap-3">
-                            <h1 class="text-amber-500 font-bold text-2xl whitespace-nowrap m-0">
-                                Movimentações
-                            </h1>
-                            <span class="text-xs px-2.5 py-1 rounded-full bg-slate-200/70 text-slate-700 font-semibold">
-                                {{ transacoesDados.length }} {{ transacoesDados.length === 1 ? 'item' : 'itens' }}
-                            </span>
+                        <div>
+                            <div class="flex items-center gap-2.5">
+                                <h2 class="section-title-npl whitespace-nowrap m-0">
+                                    Histórico de Lançamentos
+                                </h2>
+                                <span class="badge-npl-amarelo">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
+                                    {{ transacoesDados.length }} {{ transacoesDados.length === 1 ? 'item' : 'itens' }}
+                                </span>
+                            </div>
+                            <p class="text-xs text-slate-500 mt-0.5">Visualize, filtre e cadastre suas transações</p>
                         </div>
 
                         <div class="flex flex-wrap gap-2 justify-start xl:justify-end items-center">
                             <p-button
-                                styleClass="font-semibold rounded-xl! border-[#11b981]! bg-[#11b981]! text-sm px-3 py-2 shadow-xs"
+                                styleClass="font-semibold rounded-xl! btn-npl-primary text-sm px-3.5 py-2 shadow-xs"
                                 (onClick)="abrirDialogEscolha()">
                                 <i class="pi pi-plus mr-1"></i> Nova Transação
                             </p-button>
@@ -38,23 +51,23 @@
                                 <i class="pi pi-filter mr-1.5"></i>
                                 <span>Filtrar</span>
                                 @if (qtdFiltrosAtivos > 0) {
-                                    <span class="ml-1.5 px-1.5 py-0.5 text-xs font-bold rounded-full bg-[#7843cd] text-white">
+                                    <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#EEC046] text-slate-900 shadow-2xs">
                                         {{ qtdFiltrosAtivos }}
                                     </span>
                                 }
                             </p-button>
 
                             <p-button
-                                styleClass="font-semibold text-[#1976d2]! bg-blue-50/50! border-blue-200! rounded-xl! text-sm px-3 py-2"
+                                styleClass="font-semibold text-slate-700! bg-white! border-slate-300! hover:bg-slate-50! rounded-xl! text-sm px-3 py-2"
                                 (onClick)="abrirDialogMarcador()">
-                                <i class="pi pi-bookmark-fill mr-1" pButtonIcon></i> Marcadores
+                                <i class="pi pi-bookmark-fill mr-1 text-[#7843cd]" pButtonIcon></i> Marcadores
                             </p-button>
 
                             <div class="relative w-full sm:w-64">
                                 <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none z-10"></i>
                                 <input pInputText [ngModel]="textoBusca" (ngModelChange)="buscarPorDescricao($event)"
                                     placeholder="Buscar movimentação..."
-                                    class="w-full text-sm rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                                    class="w-full text-sm rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
                                     style="padding-left: 2.5rem !important; padding-right: 2.25rem !important;" />
                                 @if (textoBusca) {
                                     <button type="button" (click)="buscarPorDescricao('')"
@@ -353,11 +366,11 @@
                                 <div class="flex items-center justify-center gap-1.5">
                                     <p-button icon="pi pi-pencil"
                                         pTooltip="Editar transação" tooltipPosition="top" [showDelay]="300"
-                                        styleClass="text-[#7843cd]! bg-white! border border-purple-200! shadow-2xs hover:bg-[#7843cd]! hover:text-white! hover:border-[#7843cd]! transition-colors! h-8 w-8 rounded-lg!"
+                                        styleClass="btn-icon-edit-npl"
                                         (onClick)="prepararEdicao(t)"></p-button>
                                     <p-button icon="pi pi-trash"
                                         pTooltip="Excluir transação" tooltipPosition="top" [showDelay]="300"
-                                        styleClass="text-[#ef4444]! bg-[#fee2e2]! border-[#fee2e2]! hover:bg-[#ef4444]! hover:text-white! transition-colors! h-8 w-8 rounded-lg!"
+                                        styleClass="btn-icon-delete-npl"
                                         (onClick)="abrirConfirmacaoExcluir(t)"></p-button>
                                 </div>
                             </td>
@@ -392,7 +405,7 @@
     </div>
 
     <form [formGroup]="formTransacao">
-        <p-dialog [header]="id ? 'Editar Movimentação' : 'Nova Movimentação'" [(visible)]="exibirDialog" [modal]="true"
+        <p-dialog [header]="id ? 'Editar Transação' : 'Nova Transação'" [(visible)]="exibirDialog" [modal]="true"
             (onHide)="fecharModalTransacao()" [breakpoints]="{ '960px': '75vw', '640px': '95vw' }" [style]="{ width: '46rem', maxWidth: '95vw' }">
 
             <div class="flex flex-col items-center justify-center gap-1.5 mt-1">
@@ -607,10 +620,10 @@
                     <div class="flex items-center gap-2">
                         <p-button label="Cancelar" [outlined]="true" severity="secondary" size="small"
                             styleClass="rounded-xl! text-xs px-4" (onClick)="fecharModalTransacao()"></p-button>
-                        <p-button [label]="id ? 'Salvar alterações' : 'Criar movimentação'" icon="pi pi-check"
+                        <p-button [label]="id ? 'Salvar Alterações' : 'Criar Transação'" icon="pi pi-check"
                             [loading]="salvandoTransacao" [disabled]="formTransacao.invalid || salvandoTransacao"
-                            severity="success" size="small"
-                            styleClass="rounded-xl! text-xs px-5 font-semibold bg-[#11b981]! border-[#11b981]!"
+                            size="small"
+                            styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
                             (onClick)="salvar()"></p-button>
                     </div>
                 </div>
@@ -621,19 +634,33 @@
     <app-marcador-dlg [exibirDialog]="exibirDialogMarcador" (onHide)="aoFecharDialogMarcador()">
     </app-marcador-dlg>
 
-    <p-dialog header="Como deseja adicionar?" [(visible)]="exibirDialogEscolha" [modal]="true"
-        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '520px' }">
-        <div class="flex flex-col sm:flex-row gap-4 justify-center py-4">
-            <p-button styleClass="rounded-xl! h-24 w-full sm:w-32 flex flex-col gap-2 border-[#11b981]! bg-[#11b981]!"
-                (onClick)="escolherManual()">
-                <i class="pi pi-pencil text-2xl"></i>
-                <span>Manual</span>
-            </p-button>
-            <p-button styleClass="rounded-xl! h-24 w-full sm:w-32 flex flex-col gap-2 border-[#7843cd]! bg-[#7843cd]!"
-                (onClick)="escolherUpload()">
-                <i class="pi pi-file-pdf text-2xl"></i>
-                <span>Upload PDF</span>
-            </p-button>
+    <p-dialog header="Nova Transação" [(visible)]="exibirDialogEscolha" [modal]="true"
+        [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '480px' }">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 py-2 items-stretch">
+            <button type="button" (click)="escolherManual()"
+                class="relative flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-slate-200 hover:border-[#7843CD] bg-white hover:bg-[#F3E8FF]/40 text-slate-800 transition-all cursor-pointer group shadow-2xs min-h-[156px]">
+                <div class="w-12 h-12 rounded-2xl bg-[#F3E8FF] text-[#7843CD] group-hover:bg-[#7843CD] group-hover:text-white flex items-center justify-center transition-colors shrink-0">
+                    <i class="pi pi-pencil text-xl"></i>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="font-bold text-sm text-slate-900 leading-snug">Lançamento Manual</span>
+                    <span class="text-[11px] text-slate-500 text-center mt-0.5 leading-tight">Preencha os dados da movimentação</span>
+                </div>
+            </button>
+
+            <button type="button" (click)="escolherUpload()"
+                class="relative flex flex-col items-center justify-center gap-3 p-6 rounded-2xl border-2 border-[#F9DB70] hover:border-[#EEC046] bg-[#FEF9E7]/60 hover:bg-[#FEF9E7] text-slate-800 transition-all cursor-pointer group shadow-2xs min-h-[156px]">
+                <span class="badge-npl-amarelo absolute top-2.5 right-2.5 text-[10px]! px-2! py-0.5! shadow-2xs">
+                    <i class="pi pi-sparkles text-[10px]"></i> IA
+                </span>
+                <div class="w-12 h-12 rounded-2xl bg-[#EEC046] text-slate-900 flex items-center justify-center transition-transform group-hover:scale-105 shadow-xs shrink-0">
+                    <i class="pi pi-file-pdf text-xl"></i>
+                </div>
+                <div class="flex flex-col items-center">
+                    <span class="font-bold text-sm text-slate-900 leading-snug">Importar Fatura PDF</span>
+                    <span class="text-[11px] text-slate-600 text-center mt-0.5 leading-tight">Leitura automática com IA</span>
+                </div>
+            </button>
         </div>
     </p-dialog>
 
@@ -814,7 +841,7 @@
                                placeholder="Digite a senha do PDF..."
                                class="flex-1 text-sm py-2 px-3 rounded-lg border border-amber-300 bg-white focus:outline-none focus:ring-2 focus:ring-amber-500" />
                         <p-button label="Desbloquear" icon="pi pi-key"
-                                  styleClass="rounded-lg! text-sm py-2 px-3 border-[#11b981]! bg-[#11b981]!"
+                                  styleClass="rounded-lg! text-sm py-2 px-3 btn-npl-primary"
                                   [disabled]="!senhaPdf.trim() || carregando" [loading]="carregando"
                                   (onClick)="enviarFaturaComSenha()"></p-button>
                     </div>
@@ -826,7 +853,7 @@
                         <span class="text-amber-800 text-sm">{{ erroUpload }}</span>
                     </div>
                     <p-button label="Ativar IA e tentar novamente" icon="pi pi-sparkles"
-                        styleClass="rounded-xl! w-full sm:w-auto border-[#7843cd]! bg-[#7843cd]!"
+                        styleClass="rounded-xl! w-full sm:w-auto btn-npl-primary"
                         [loading]="carregando" (onClick)="ativarIaETentarNovamente()"></p-button>
                 </div>
             } @else if (erroUpload && codigoErroUpload !== 'DOCUMENTO_NAO_EH_FATURA') {
@@ -842,17 +869,19 @@
                     <span class="text-xs sm:text-sm font-medium text-purple-900 truncate animate-pulse flex-1 min-w-0">{{ etapaAnalise }}</span>
                 </div>
             }
+        </div>
 
-            <div class="flex flex-col sm:flex-row gap-3 w-full justify-end mt-1">
-                <p-button label="Cancelar" severity="secondary" [outlined]="true"
-                    styleClass="rounded-xl! w-full sm:w-auto"
+        <ng-template pTemplate="footer">
+            <div class="flex flex-col sm:flex-row gap-2 w-full justify-end">
+                <p-button label="Cancelar" severity="secondary" [outlined]="true" size="small"
+                    styleClass="rounded-xl! text-xs px-4 w-full sm:w-auto"
                     (onClick)="exibirDialogUpload = false"></p-button>
-                <p-button label="Analisar fatura" icon="pi pi-search"
-                    styleClass="rounded-xl! w-full sm:w-auto border-[#11b981]! bg-[#11b981]!"
+                <p-button label="Analisar fatura" icon="pi pi-search" size="small"
+                    styleClass="rounded-xl! text-xs px-5 w-full sm:w-auto btn-npl-primary"
                     [disabled]="!podeAnalisarFatura" [loading]="carregando"
                     (onClick)="enviarFatura()"></p-button>
             </div>
-        </div>
+        </ng-template>
     </p-dialog>
 
     <p-dialog header="Fatura em imagem — autorizar envio à IA" [(visible)]="exibirDialogConsentimento" [modal]="true"
@@ -1024,7 +1053,7 @@
                         <input type="checkbox"
                                [checked]="todasSelecionadas"
                                (change)="alternarSelecionarTodas()"
-                               class="w-4 h-4 rounded text-emerald-600 accent-emerald-600 cursor-pointer" />
+                               class="w-4 h-4 rounded text-[#7843CD] accent-[#7843CD] cursor-pointer" />
                         <span>Selecionar todas as transações</span>
                     </label>
                     <span class="font-medium text-slate-500">
@@ -1044,7 +1073,7 @@
                                             <input type="checkbox"
                                                    [(ngModel)]="t.selecionada"
                                                    (change)="aoAlternarItem()"
-                                                   class="w-4 h-4 rounded text-emerald-600 accent-emerald-600 cursor-pointer" />
+                                                   class="w-4 h-4 rounded text-[#7843CD] accent-[#7843CD] cursor-pointer" />
                                             <span>Descrição</span>
                                         </label>
                                     </div>
@@ -1062,12 +1091,12 @@
                                 <div class="sm:col-span-2 flex flex-col gap-1">
                                     <label class="text-xs font-semibold text-slate-500">Data</label>
                                     <input type="date" [(ngModel)]="t.data"
-                                        class="w-full text-sm py-1.5 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                        class="w-full text-sm py-1.5 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500" />
                                 </div>
                                 <div class="sm:col-span-2 flex flex-col gap-1">
                                     <label class="text-xs font-semibold text-slate-500">Tipo</label>
                                     <select [(ngModel)]="t.tipo" (change)="aoAlternarItem()"
-                                        class="w-full text-sm py-2 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                                        class="w-full text-sm py-2 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer">
                                         <option value="DESPESA">Despesa</option>
                                         <option value="RECEITA">Receita</option>
                                     </select>
@@ -1083,7 +1112,7 @@
                                         </button>
                                     </div>
                                     <select [(ngModel)]="t.categoria"
-                                        class="w-full text-sm py-2 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500 cursor-pointer">
+                                        class="w-full text-sm py-2 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500 cursor-pointer">
                                         <option [ngValue]="null">Sem categoria</option>
                                         @for (cat of opcoesCategoriaNome; track cat) {
                                             <option [value]="cat">{{ cat }}</option>
@@ -1098,11 +1127,11 @@
                                     placeholder="Parcela"
                                     [class.border-rose-400]="t.numeroParcela && t.totalParcelas && t.numeroParcela > t.totalParcelas"
                                     [class.bg-rose-50]="t.numeroParcela && t.totalParcelas && t.numeroParcela > t.totalParcelas"
-                                    class="w-20 text-sm py-1 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    class="w-20 text-sm py-1 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500" />
                                 <span class="text-xs text-slate-400">de</span>
                                 <input type="number" [(ngModel)]="t.totalParcelas" [min]="2" [max]="60"
                                     placeholder="Total"
-                                    class="w-20 text-sm py-1 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                                    class="w-20 text-sm py-1 px-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-purple-500" />
                                 @if (t.numeroParcela && t.totalParcelas) {
                                     @if (t.numeroParcela > t.totalParcelas) {
                                         <span class="text-xs text-rose-600 font-semibold bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
@@ -1153,10 +1182,10 @@
                         }
                     </div>
                     <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
-                        <p-button label="Cancelar" severity="secondary" [outlined]="true"
-                            styleClass="rounded-xl! w-full sm:w-auto"
+                        <p-button label="Cancelar" severity="secondary" [outlined]="true" size="small"
+                            styleClass="rounded-xl! text-xs px-4 w-full sm:w-auto"
                             (onClick)="exibirDialogRevisao = false"></p-button>
-                        <p-button styleClass="rounded-xl! border-[#11b981]! bg-[#11b981]! h-11 px-5 w-full sm:w-auto"
+                        <p-button size="small" styleClass="rounded-xl! text-xs px-5 w-full sm:w-auto btn-npl-primary"
                             [label]="'Confirmar (' + qtdSelecionadas + ')'"
                             icon="pi pi-check"
                             [disabled]="!contaSelecionadaRevisao || qtdSelecionadas === 0 || parcelamentoInvalido()"
@@ -1384,10 +1413,10 @@
         <ng-template pTemplate="footer">
             <div class="flex justify-end gap-2 w-full pt-1">
                 <p-button label="Cancelar" severity="secondary" [outlined]="true"
-                    size="small" styleClass="rounded-xl! text-xs" [disabled]="salvandoTransacao"
+                    size="small" styleClass="rounded-xl! text-xs px-4" [disabled]="salvandoTransacao"
                     (onClick)="fecharDialogConfirmarEdicao()"></p-button>
-                <p-button label="Confirmar e Salvar" icon="pi pi-check" severity="success"
-                    size="small" styleClass="rounded-xl! text-xs border-[#11b981]! bg-[#11b981]!" [loading]="salvandoTransacao"
+                <p-button label="Confirmar e Salvar" icon="pi pi-check"
+                    size="small" styleClass="rounded-xl! text-xs px-5 btn-npl-primary" [loading]="salvandoTransacao"
                     (onClick)="executarEdicao()"></p-button>
             </div>
         </ng-template>

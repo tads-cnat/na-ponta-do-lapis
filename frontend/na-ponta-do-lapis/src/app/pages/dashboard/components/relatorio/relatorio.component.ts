@@ -16,38 +16,36 @@ import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-
    * sem impacto visual.
    */
   template: `
-    <section class="bg-white rounded-2xl p-6 shadow-sm">
-      <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
-        <div class="flex justify-between items-center mb-5">
-          <h2 class="text-2xl font-bold text-slate-900">Relatório mensal</h2>
+    <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
 
-          <select
-            class="
-            border
-            border-slate-200
-            rounded-lg
-            px-3
-            py-2
-            text-sm
-            text-slate-600"
-          >
-            <option>Ano atual</option>
-          </select>
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
+        <div>
+          <h2 class="section-title-npl">
+            Relatório mensal
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Evolução acumulada do saldo ao longo dos meses
+          </p>
         </div>
 
-        @if (chartData) {
-          <p-chart
+        <span class="badge-npl-amarelo self-start sm:self-auto">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
+          Ano atual
+        </span>
+      </div>
+
+      @if(chartData){
+        <p-chart
             type="line"
             [data]="chartData"
             [options]="chartOptions"
             [style]="{
               height: '260px',
             }"
-            class="w-full"
-          >
-          </p-chart>
-        }
-      </div>
+            class="w-full">
+        </p-chart>
+      }
+
     </section>
   `,
 })
@@ -79,41 +77,36 @@ export class RelatorioComponent implements OnChanges {
   gerarGrafico() {
     const valores = this.calcularSaldoMensal();
 
-    this.chartData = {
-      labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
-      datasets: [
-        {
-          label: 'Saldo',
-          data: valores,
-          fill: true,
-          tension: 0.4,
-          borderColor: '#3B82F6',
-          backgroundColor: 'rgba(59,130,246,0.15)',
-          pointRadius: 4,
-        },
-      ],
-    };
-    // No tema claro mantém os padrões do Chart.js; no escuro troca eixo/grade.
-    const escuro = this.tema.escuro();
-    const paleta = this.tema.paletaGrafico();
-    const corTexto = escuro ? paleta.textoSuave : undefined;
-    const corGrade = escuro ? paleta.grade : undefined;
-    this.chartOptions = {
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-      },
-      scales: {
-        x: {
-          ticks: { color: corTexto },
-          grid: { color: corGrade },
-        },
-        y: {
-          grid: { color: corGrade },
-          ticks: {
-            color: corTexto,
-            callback: (value: any) => {
-              return 'R$ ' + value.toLocaleString('pt-BR');
+        this.chartData = {
+            labels: [
+                'Jan','Fev','Mar',
+                'Abr','Mai','Jun',
+                'Jul', 'Ago', 'Set',
+                'Out', 'Nov', 'Dez'
+            ],
+            datasets:[
+              {
+                    label:'Saldo',
+                    data: valores,
+                    fill:true,
+                    tension:0.4,
+                    borderColor:'#7843CD',
+                    backgroundColor: 'rgba(120, 67, 205, 0.10)',
+                    borderWidth: 2.5,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#EEC046',
+                    pointBorderColor: '#7843CD',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#EEC046',
+                    pointHoverBorderColor: '#7843CD'
+                }
+            ]
+        };
+        this.chartOptions = {
+            maintainAspectRatio: false,
+            plugins:{
+                legend:{ display:false }
             },
             scales:{
                 y:{

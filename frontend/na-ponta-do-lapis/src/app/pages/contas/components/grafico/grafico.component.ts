@@ -14,10 +14,10 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 
         <div>
-          <h2 class="text-3xl font-bold text-slate-900">
+          <h2 class="section-title-npl">
             Evolução do saldo
           </h2>
-          <p class="text-slate-500 mt-1">
+          <p class="text-xs text-slate-500 mt-0.5">
             Histórico financeiro da conta selecionada
           </p>
         </div>
@@ -112,7 +112,7 @@ export class GraficoComponent {
         ctx.moveTo(x, yScale.top);
         ctx.lineTo(x, yScale.bottom);
         ctx.lineWidth   = 1;
-        ctx.strokeStyle = 'rgba(249, 115, 22, 0.55)';
+        ctx.strokeStyle = 'rgba(120, 67, 205, 0.50)';
         ctx.stroke();
         ctx.restore();
       }

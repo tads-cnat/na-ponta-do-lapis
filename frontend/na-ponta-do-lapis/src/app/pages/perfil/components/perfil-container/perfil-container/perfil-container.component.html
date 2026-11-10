@@ -1,13 +1,23 @@
-<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 flex flex-col lg:flex-row items-start gap-8 text-left">
-  
-  <!-- Coluna Lateral (Perfil e Resumo) -->
-  <aside class="w-full lg:w-80 lg:shrink-0 flex flex-col">
-    <app-area-perfil-component class="w-full block"></app-area-perfil-component>
-  </aside>
+<div class="w-full flex flex-col gap-6 pb-8 text-left">
 
-  <!-- Coluna Principal (Ajustes e Conexões) -->
-  <main class="w-full flex-1 flex flex-col min-w-0">
-    <app-ajustes-do-perfil class="w-full block"></app-ajustes-do-perfil>
-  </main>
+  <!-- Cabeçalho Principal da Página (Padrão Design System) -->
+  <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+    <div>
+      <h1 class="page-title-npl m-0">Meu Perfil</h1>
+      <p class="page-subtitle-npl">Gerencie seus dados pessoais, preferências, Open Finance e assistentes de IA</p>
+    </div>
+  </div>
+
+  <div class="w-full flex flex-col lg:flex-row items-start gap-8">
+    <!-- Coluna Lateral (Perfil e Resumo) -->
+    <aside class="w-full lg:w-80 lg:shrink-0 flex flex-col">
+      <app-area-perfil-component class="w-full block"></app-area-perfil-component>
+    </aside>
+
+    <!-- Coluna Principal (Ajustes e Conexões) -->
+    <main class="w-full flex-1 flex flex-col min-w-0">
+      <app-ajustes-do-perfil class="w-full block"></app-ajustes-do-perfil>
+    </main>
+  </div>
 
 </div>

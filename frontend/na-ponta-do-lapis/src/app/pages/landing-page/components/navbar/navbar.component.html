@@ -1,33 +1,30 @@
-<nav class="w-full h-30 bg-[#FAFAFA] px-6 md:px-20 py-8 flex justify-center lg:justify-between items-center border-b border-gray-100">
+<nav class="w-full h-24 bg-white/95 backdrop-blur-xs px-6 md:px-20 flex justify-between items-center border-b border-slate-200/80 sticky top-0 z-50">
   @if (!isMobile) {
-    <div class="flex items-center justify-center">
-      <img src="logo.svg" alt="Na Ponta do Lápis" class="h-12 md:h-14 object-contain" />
-    </div>
+    <a routerLink="/" class="flex items-center justify-center">
+      <img src="logo.svg" alt="Na Ponta do Lápis" class="h-11 md:h-12 object-contain" />
+    </a>
   }
-  <div class="hidden md:flex items-center gap-8" style="margin-left: 120px; margin-top: 12px;">
+  <div class="hidden md:flex items-center gap-8">
     <a href="#" (click)="$event.preventDefault(); $any($event.target).ownerDocument.defaultView.scrollTo({top: 0, behavior: 'smooth'})"
-       class="transition-colors" 
-       style="color: #7843CD; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 400; line-height: 120%;">
-      Home
+       class="text-base font-semibold text-[#7843CD] hover:text-[#6214CC] transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-[#EEC046] after:rounded-full">
+      Início
     </a>
     <a href="#o-que-fazemos"
-       class="transition-colors hover:text-[#1A1A1A]" 
-       style="color: #4D4D4D; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 400; line-height: 120%;">
+       class="text-base font-medium text-slate-600 hover:text-[#7843CD] transition-colors">
       Produtos
     </a>
     <a href="#por-que-nos"
-       class="transition-colors hover:text-[#1A1A1A]" 
-       style="color: #4D4D4D; text-align: center; font-family: 'Lexend Deca'; font-size: 20px; font-style: normal; font-weight: 400; line-height: 120%;">
+       class="text-base font-medium text-slate-600 hover:text-[#7843CD] transition-colors">
       Sobre nós
     </a>
   </div>
 
-  <div class="flex items-center justify-center gap-4">
-    <a routerLink="/login" class="w-32.5 h-12 border-2 border-[#7843CD] text-[#7843CD] font-semibold flex items-center justify-center rounded-xl hover:bg-purple-50 transition-all">
+  <div class="flex items-center justify-center gap-3">
+    <a routerLink="/login" class="h-11 px-6 border border-[#7843CD]/30 bg-white text-[#7843CD] font-semibold text-sm flex items-center justify-center rounded-xl hover:bg-[#F3E8FF] hover:border-[#7843CD] transition-all shadow-2xs">
       Entrar
     </a>
     
-    <a routerLink="/signup" class="w-32.5 h-12 bg-[#7843CD] text-white font-semibold flex items-center justify-center rounded-xl hover:bg-[#6533b3] transition-all shadow-sm">
+    <a routerLink="/signup" class="btn-npl-primary h-11 px-6 font-semibold text-sm flex items-center justify-center rounded-xl transition-all shadow-xs">
       Cadastrar
     </a>
   </div>

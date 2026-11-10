@@ -45,7 +45,15 @@ import { Categoria } from '../../model/ITransacoes.model';
    * direto do <main> do main-layout), então o wrapper <div> se comporta corretamente.
    */
   template: `
-    <div class="flex flex-col gap-6 overflow-y-auto" >
+    <div class="w-full flex flex-col gap-6 pb-8">
+
+      <!-- Cabeçalho Padronizado do Design System -->
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+        <div>
+          <h1 class="page-title-npl m-0">Dashboard</h1>
+          <p class="page-subtitle-npl">Acompanhe o resumo das suas contas, movimentações e metas financeiras</p>
+        </div>
+      </div>
 
       <!-- Seção 1: Cards de resumo (4 colunas) -->
       <!-- FIX 2: class="block w-full" garante que o host element do componente

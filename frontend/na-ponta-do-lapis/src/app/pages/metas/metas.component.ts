@@ -37,6 +37,16 @@ export class MetasComponent implements OnInit {
     return this.metas().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
   });
 
+  totalRestante = computed(() => {
+    return Math.max(0, this.totalMetas() - this.totalAcumulado());
+  });
+
+  progressoGeral = computed(() => {
+    const total = this.totalMetas();
+    if (!total || total <= 0) return 0;
+    return Math.min(100, Math.round((this.totalAcumulado() / total) * 100));
+  });
+
   totalMetasFormatado = computed(() =>
     this.totalMetas().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
   );

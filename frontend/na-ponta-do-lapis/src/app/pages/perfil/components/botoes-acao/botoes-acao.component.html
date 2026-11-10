@@ -27,7 +27,7 @@
       (click)="aoClicarSalvar()"
       [disabled]="!temAlteracoes"
       [class]="temAlteracoes 
-        ? 'px-6 py-2.5 bg-[#6214CC] hover:bg-[#5110A8] text-white font-bold text-xs sm:text-sm rounded-xl shadow-sm hover:shadow-md transition-all cursor-pointer flex items-center gap-2'
+        ? 'px-6 py-2.5 btn-npl-primary text-xs sm:text-sm cursor-pointer flex items-center gap-2'
         : 'px-6 py-2.5 bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm rounded-xl cursor-not-allowed flex items-center gap-2'">
       <i class="pi pi-check text-xs"></i>
       <span>Salvar alterações</span>
@@ -44,7 +44,7 @@
   [breakpoints]="{ '640px': '95vw' }"
   [style]="{ width: '28rem', maxWidth: '95vw' }">
   <div class="flex items-start gap-3 py-2">
-    <div class="w-10 h-10 rounded-full bg-[#6214CC]/10 text-[#6214CC] flex items-center justify-center shrink-0">
+    <div class="w-10 h-10 rounded-full bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
       <i class="pi pi-question-circle text-lg"></i>
     </div>
     <div class="flex flex-col gap-1">
@@ -69,7 +69,7 @@
         label="Confirmar e Salvar"
         icon="pi pi-check"
         size="small"
-        styleClass="rounded-xl! text-xs px-5 font-bold bg-[#6214CC]! border-[#6214CC]! text-white!"
+        styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
         (onClick)="confirmarSalvar()">
       </p-button>
     </div>
