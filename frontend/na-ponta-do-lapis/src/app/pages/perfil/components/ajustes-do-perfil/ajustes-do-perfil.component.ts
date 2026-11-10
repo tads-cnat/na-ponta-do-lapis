@@ -1,10 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 =======
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
+=======
+import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
 import { ActivatedRoute } from '@angular/router';
 import { BotoesAcaoComponent } from '../botoes-acao/botoes-acao.component';
 import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/formulario-secao.component';
@@ -22,11 +26,14 @@ import { MessageService } from 'primeng/api';
 <<<<<<< HEAD
 import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/preferencia-moeda.service';
 import { Usuario } from '../../../../model/IUsuario.models';
+<<<<<<< HEAD
 =======
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
 =======
 import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/preferencia-moeda.service';
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
 
 @Component({
   selector: 'app-ajustes-do-perfil',
@@ -48,6 +55,7 @@ export class AjustesPerfilComponent implements OnInit {
   // Controle de modo de edição (dados e senha iniciam recolhidos/em modo de leitura)
   public editandoDados: boolean = false;
   public editandoSenha: boolean = false;
+<<<<<<< HEAD
 =======
   public abaAtiva: 'dados' | 'integracoes' = 'dados';
 <<<<<<< HEAD
@@ -55,6 +63,8 @@ export class AjustesPerfilComponent implements OnInit {
 =======
   public moedaOriginalUsuario: string = 'BRL';
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
 
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
@@ -107,18 +117,16 @@ export class AjustesPerfilComponent implements OnInit {
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
   get podeAbrirConfirmacao(): boolean {
     const valores = this.perfilForm?.value ?? {};
-    const camposSenha = [
-      valores.senhaAtual,
-      valores.confirmarSenhaAtual,
-      valores.novaSenha,
-      valores.confirmarNovaSenha
-    ];
-    const alterandoSenha = camposSenha.some(this.temTexto);
-
-    if (alterandoSenha) {
-      return camposSenha.every(this.temTexto)
-        && valores.senhaAtual === valores.confirmarSenhaAtual
-        && valores.novaSenha === valores.confirmarNovaSenha;
+    
+    // Validação da alteração de senha (3 campos: senhaAtual, novaSenha, confirmarNovaSenha)
+    if (this.editandoSenha) {
+      const camposSenha = [valores.senhaAtual, valores.novaSenha, valores.confirmarNovaSenha];
+      const preencheuAlgum = camposSenha.some(this.temTexto);
+      if (preencheuAlgum) {
+        return camposSenha.every(this.temTexto)
+          && valores.novaSenha === valores.confirmarNovaSenha
+          && valores.novaSenha.length >= 6;
+      }
     }
 
 <<<<<<< HEAD
@@ -126,8 +134,30 @@ export class AjustesPerfilComponent implements OnInit {
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
 =======
     const alterouMoeda = valores.moedaPadrao && valores.moedaPadrao !== this.moedaOriginalUsuario;
+<<<<<<< HEAD
     return [valores.nome, valores.email].some(this.temTexto) || !!alterouMoeda;
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+    const alterouNome = this.editandoDados && valores.nome?.trim() && valores.nome?.trim() !== this.usuarioLogado?.nome;
+    const alterouEmail = this.editandoDados && valores.email?.trim() && valores.email?.trim() !== this.usuarioLogado?.email;
+
+    return !!alterouNome || !!alterouEmail || !!alterouMoeda || this.editandoSenha;
+  }
+
+  get temAlteracoesPendentes(): boolean {
+    const valores = this.perfilForm?.value ?? {};
+    const alterouNome = this.editandoDados && valores.nome?.trim() && valores.nome?.trim() !== this.usuarioLogado?.nome;
+    const alterouEmail = this.editandoDados && valores.email?.trim() && valores.email?.trim() !== this.usuarioLogado?.email;
+    const alterouMoeda = valores.moedaPadrao && valores.moedaPadrao !== this.moedaOriginalUsuario;
+    
+    const alterouSenha = this.editandoSenha && (
+      this.temTexto(valores.senhaAtual) || 
+      this.temTexto(valores.novaSenha) || 
+      this.temTexto(valores.confirmarNovaSenha)
+    );
+
+    return !!alterouNome || !!alterouEmail || !!alterouMoeda || !!alterouSenha;
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
   }
 
   private readonly temTexto = (valor: unknown): boolean =>
@@ -195,6 +225,9 @@ export class AjustesPerfilComponent implements OnInit {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
   public iniciarEdicaoDados(): void {
     this.editandoDados = true;
     this.perfilForm.patchValue({
@@ -226,8 +259,11 @@ export class AjustesPerfilComponent implements OnInit {
     this.cdr.detectChanges();
   }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
   public selecionarMoedaPadrao(codigo: string): void {
     this.perfilForm.get('moedaPadrao')?.setValue(codigo);
     this.perfilForm.markAsDirty();
@@ -239,6 +275,9 @@ export class AjustesPerfilComponent implements OnInit {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
   public descartarAlteracoes(): void {
     this.editandoDados = false;
     this.editandoSenha = false;
@@ -261,9 +300,12 @@ export class AjustesPerfilComponent implements OnInit {
   }
 
   private configurarCamposEstaticos(nome = '', email = ''): void {
+<<<<<<< HEAD
 =======
   private configurarCamposEstaticos(nome = ' ', email = ' '): void {
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
     this.camposDetalhes = [
       { 
         key: 'nome', 
@@ -315,26 +357,36 @@ export class AjustesPerfilComponent implements OnInit {
     this.usuarioService.obterPerfilCompleto().subscribe({
       next: (usuario) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.usuarioLogado = usuario;
 =======
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+        this.usuarioLogado = usuario;
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
         if (usuario.moedaPadrao) {
           this.moedaOriginalUsuario = usuario.moedaPadrao;
           this.perfilForm.get('moedaPadrao')?.setValue(usuario.moedaPadrao);
           this.preferenciaMoedaService.definirMoedaPadrao(usuario.moedaPadrao);
         }
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
         this.perfilForm.patchValue({
           nome: usuario.nome || '',
           email: usuario.email || ''
         });
         this.configurarCamposEstaticos(usuario.nome, usuario.email);
+<<<<<<< HEAD
 =======
         this.configurarCamposEstaticos(
           usuario.nome,
           usuario.email
         );
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -348,20 +400,28 @@ export class AjustesPerfilComponent implements OnInit {
     const dadosParciaisPatch: any = {};
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
     // 1. Verifica se o nome foi alterado
     if (this.editandoDados && valoresFormulario.nome && valoresFormulario.nome.trim() !== '') {
       if (valoresFormulario.nome.trim() !== this.usuarioLogado?.nome) {
         dadosParciaisPatch.nome = valoresFormulario.nome.trim();
       }
+<<<<<<< HEAD
 =======
     // 1. Verifica se o nome foi digitado
     if (valoresFormulario.nome && valoresFormulario.nome.trim() !== '') {
       dadosParciaisPatch.nome = valoresFormulario.nome.trim();
+=======
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
     }
 
-    // 2. Verifica se o e-mail foi digitado
-    if (valoresFormulario.email && valoresFormulario.email.trim() !== '') {
-      dadosParciaisPatch.email = valoresFormulario.email.trim();
+    // 2. Verifica se o e-mail foi alterado
+    if (this.editandoDados && valoresFormulario.email && valoresFormulario.email.trim() !== '') {
+      if (valoresFormulario.email.trim() !== this.usuarioLogado?.email) {
+        dadosParciaisPatch.email = valoresFormulario.email.trim();
+      }
     }
 
     // 3. Verifica se a moeda padrão foi alterada
@@ -369,49 +429,56 @@ export class AjustesPerfilComponent implements OnInit {
       dadosParciaisPatch.moedaPadrao = valoresFormulario.moedaPadrao;
     }
 
-    // 4. Validação e inclusão da senha se qualquer campo de senha foi digitado
-    const camposSenha = [
-      valoresFormulario.senhaAtual,
-      valoresFormulario.confirmarSenhaAtual,
-      valoresFormulario.novaSenha,
-      valoresFormulario.confirmarNovaSenha
-    ];
-    const alterandoSenha = camposSenha.some(this.temTexto);
+    // 4. Validação e inclusão da senha se a seção de senha estiver aberta e preenchida
+    if (this.editandoSenha) {
+      const camposSenha = [
+        valoresFormulario.senhaAtual,
+        valoresFormulario.novaSenha,
+        valoresFormulario.confirmarNovaSenha
+      ];
+      const alterandoSenha = camposSenha.some(this.temTexto);
 
-    if (alterandoSenha && !camposSenha.every(this.temTexto)) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Dados incompletos',
-        detail: 'Preencha todos os campos para alterar a senha.',
-        life: 3000
-      });
-      return;
-    }
+      if (alterandoSenha) {
+        if (!camposSenha.every(this.temTexto)) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Dados incompletos',
+            detail: 'Preencha a senha atual e a nova senha para atualizar.',
+            life: 3000
+          });
+          return;
+        }
 
-    if (alterandoSenha && valoresFormulario.senhaAtual !== valoresFormulario.confirmarSenhaAtual) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'A confirmação da senha atual não confere.',
-        life: 3000
-      });
-      return;
-    }
+        if (valoresFormulario.novaSenha !== valoresFormulario.confirmarNovaSenha) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro na nova senha',
+            detail: 'A nova senha e a confirmação não conferem.',
+            life: 3000
+          });
+          return;
+        }
 
-    if (alterandoSenha && valoresFormulario.novaSenha !== valoresFormulario.confirmarNovaSenha) {
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Erro',
-        detail: 'As senhas não conferem.',
-        life: 3000
-      });
-      return;
-    }
+        if (valoresFormulario.novaSenha.length < 6) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Senha curta',
+            detail: 'A nova senha deve ter no mínimo 6 caracteres.',
+            life: 3000
+          });
+          return;
+        }
 
+<<<<<<< HEAD
     if (alterandoSenha) {
       dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
       dadosParciaisPatch.senha = valoresFormulario.novaSenha;
 >>>>>>> 6119e15 (feat: add messages of status from changes in perfil and add logic to send senhaAtual and verifications in frontend.)
+=======
+        dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
+        dadosParciaisPatch.senha = valoresFormulario.novaSenha;
+      }
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
     }
 
 <<<<<<< HEAD
@@ -509,6 +576,7 @@ export class AjustesPerfilComponent implements OnInit {
         }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.editandoDados = false;
         this.editandoSenha = false;
         this.perfilForm.patchValue({
@@ -518,6 +586,12 @@ export class AjustesPerfilComponent implements OnInit {
           senhaAtual: '',
           confirmarSenhaAtual: '',
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+        this.editandoDados = false;
+        this.editandoSenha = false;
+        this.perfilForm.patchValue({
+          senhaAtual: '',
+>>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
           novaSenha: '',
           confirmarNovaSenha: ''
         });
