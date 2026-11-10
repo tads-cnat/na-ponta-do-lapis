@@ -7,17 +7,22 @@ import { MetaItemDashboardComponent } from './meta-item-dashboard.component';
   selector: 'app-metas-dashboard',
   imports: [PrimeNGModuleModule, MetaItemDashboardComponent],
   template: `
-    <div class="bg-white rounded-2xl p-6 shadow-sm">
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 h-full flex flex-col">
 
         <!-- Cabeçalho -->
         <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-bold text-gray-800">Metas</h2>
+          <div>
+            <h2 class="section-title-npl">Metas</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Progresso dos seus objetivos</p>
+          </div>
           <p-button
-          label="Mostrar todas"
-          severity="secondary"
-          styleClass="rounded-xl!"
-          (click)="onIrParaMetas.emit()">
-        </p-button>
+            label="Mostrar todas"
+            icon="pi pi-arrow-right"
+            iconPos="right"
+            size="small"
+            styleClass="btn-npl-secondary text-xs px-3.5 py-2"
+            (onClick)="onIrParaMetas.emit()">
+          </p-button>
         </div>
         <div class="overflow-y-auto max-h-125">
     <ul >

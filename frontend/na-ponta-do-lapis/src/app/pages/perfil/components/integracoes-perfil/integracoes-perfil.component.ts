@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 import { IntegracoesService } from '../../../../service/integracoes.service';
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 import { mapearNomeBanco } from '../../../../shared/utils/banco-icon.helper';
@@ -17,7 +19,7 @@ import {
 @Component({
   selector: 'app-integracoes-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, IconeBancoComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, DialogModule, ButtonModule, IconeBancoComponent],
   templateUrl: './integracoes-perfil.component.html',
   styleUrl: './integracoes-perfil.component.css'
 })

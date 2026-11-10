@@ -17,10 +17,10 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
           <div class="flex items-center gap-3">
             <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'" [fallbackIcon]="ehCartao ? 'pi pi-credit-card' : 'pi pi-wallet'"></app-icone-banco>
             <div>
-              <h2 class="text-2xl font-bold text-slate-900">
+              <h2 class="section-title-npl">
                 Informações da Conta
               </h2>
-              <p class="text-slate-500 text-sm">
+              <p class="text-slate-500 text-xs mt-0.5">
                 {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
               </p>
             </div>
@@ -172,7 +172,7 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
             </p>
 
             <div class="flex items-center gap-3">
-              <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-orange-100 text-orange-600 text-base font-bold shrink-0">
+              <span class="inline-flex items-center justify-center w-11 h-11 rounded-xl bg-[#FEF9E7] text-[#B45309] border border-[#F9DB70] text-base font-bold shrink-0">
                 {{ preferenciaMoedaService.obterSimboloMoeda() }}
               </span>
 
@@ -188,14 +188,14 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
           </div>
 
           @if (conta.sincronizada) {
-            <div class="bg-indigo-50/70 border border-indigo-100 rounded-2xl p-4 flex items-center gap-3">
-              <div class="w-8 h-8 rounded-lg bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0">
+            <div class="bg-[#F3E8FF]/60 border border-[#D1C4FF] rounded-2xl p-4 flex items-center gap-3">
+              <div class="w-8 h-8 rounded-lg bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
                 </svg>
               </div>
               <div>
-                <p class="text-xs font-bold text-indigo-900">Sincronizada via Open Finance</p>
+                <p class="text-xs font-bold text-[#7843CD]">Sincronizada via Open Finance</p>
               </div>
             </div>
           }

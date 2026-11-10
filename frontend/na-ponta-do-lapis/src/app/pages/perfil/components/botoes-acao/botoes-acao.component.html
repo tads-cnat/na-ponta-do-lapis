@@ -1,33 +1,62 @@
-<div class="flex flex-col justify-center items-center mt-auto w-full pt-4">
-  <button 
-    type="button" 
-    (click)="aoClicarSalvar()"
-    class="px-8 h-12 bg-[#6214CC] text-white font-medium rounded-xl hover:bg-[#5110A8] transition-colors shadow-sm">
-    Salvar mudanças
-  </button>
+<div class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-slate-100 mt-8 w-full">
+  
+  <!-- Indicador de Status à Esquerda -->
+  <div>
+    <span *ngIf="temAlteracoes" class="inline-flex items-center gap-2 text-xs text-amber-800 font-semibold bg-amber-50 px-3 py-1.5 rounded-xl border border-amber-200">
+      <span class="w-2 h-2 rounded-full bg-[#EEC046] animate-pulse"></span>
+      Existem alterações não salvas
+    </span>
+    <span *ngIf="!temAlteracoes" class="inline-flex items-center gap-1.5 text-xs text-slate-400 font-normal">
+      <i class="pi pi-check text-emerald-500 text-[11px]"></i>
+      Suas informações estão sincronizadas
+    </span>
+  </div>
 
-  <a 
-    href="javascript:void(0)" 
-    class="text-[#757575] text-sm font-medium underline hover:text-[#5110A8] transition-colors pr-6">
-    Esqueceu sua senha?
-  </a>
+  <!-- Botões de Ação à Direita -->
+  <div class="flex items-center gap-3 w-full sm:w-auto justify-end">
+    <button 
+      *ngIf="temAlteracoes"
+      type="button" 
+      (click)="cliqueDescartar.emit()"
+      class="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-xl transition-all cursor-pointer">
+      Descartar
+    </button>
+
+    <button 
+      type="button" 
+      (click)="aoClicarSalvar()"
+      [disabled]="!temAlteracoes"
+      [class]="temAlteracoes 
+        ? 'px-6 py-2.5 btn-npl-primary text-xs sm:text-sm cursor-pointer flex items-center gap-2'
+        : 'px-6 py-2.5 bg-slate-100 text-slate-400 font-semibold text-xs sm:text-sm rounded-xl cursor-not-allowed flex items-center gap-2'">
+      <i class="pi pi-check text-xs"></i>
+      <span>Salvar alterações</span>
+    </button>
+  </div>
+
 </div>
 
+<!-- Modal de Confirmação -->
 <p-dialog
   header="Confirmar alterações"
   [(visible)]="confirmacaoVisivel"
   [modal]="true"
   [breakpoints]="{ '640px': '95vw' }"
-  [style]="{ width: '32rem', maxWidth: '95vw' }">
-  <div class="flex flex-col gap-2">
-    <span class="font-semibold text-slate-700">Salvar alterações do perfil?</span>
-    <p class="m-0 text-sm text-slate-500">
-      Confirme para atualizar os dados do seu perfil.
-    </p>
+  [style]="{ width: '28rem', maxWidth: '95vw' }">
+  <div class="flex items-start gap-3 py-2">
+    <div class="w-10 h-10 rounded-full bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
+      <i class="pi pi-question-circle text-lg"></i>
+    </div>
+    <div class="flex flex-col gap-1">
+      <span class="font-bold text-slate-900 text-sm">Deseja salvar as alterações?</span>
+      <p class="m-0 text-xs text-slate-500 leading-relaxed">
+        Os dados atualizados do seu perfil e preferências entrarão em vigor imediatamente na aplicação.
+      </p>
+    </div>
   </div>
 
   <ng-template pTemplate="footer">
-    <div class="flex items-center justify-end gap-2 w-full pt-2">
+    <div class="flex items-center justify-end gap-2 w-full pt-3">
       <p-button
         label="Cancelar"
         [outlined]="true"
@@ -37,11 +66,10 @@
         (onClick)="cancelarSalvar()">
       </p-button>
       <p-button
-        label="Confirmar e salvar"
+        label="Confirmar e Salvar"
         icon="pi pi-check"
-        severity="success"
         size="small"
-        styleClass="rounded-xl! text-xs px-5 font-semibold bg-[#11b981]! border-[#11b981]!"
+        styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
         (onClick)="confirmarSalvar()">
       </p-button>
     </div>

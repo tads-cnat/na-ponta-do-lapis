@@ -11,8 +11,10 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 export class BotoesAcaoComponent {
   public confirmacaoVisivel = false;
   @Input() podeAbrirConfirmacao = true;
+  @Input() temAlteracoes = false;
 
   @Output() cliqueSalvar = new EventEmitter<void>();
+  @Output() cliqueDescartar = new EventEmitter<void>();
 
   public aoClicarSalvar(): void {
     if (!this.podeAbrirConfirmacao) {

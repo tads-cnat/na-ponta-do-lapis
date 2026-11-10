@@ -1,43 +1,66 @@
-<div [formGroup]="formGroupPai" class="flex flex-col gap-4">
-  <h2 class="text-[#000000] font-semibold text-lg">{{ titulo }}</h2>
+<div [formGroup]="formGroupPai" class="flex flex-col gap-4 w-full">
   
-  <div class="grid grid-cols-1 lg:grid-cols-2 md:grid-cols-1 gap-x-6 gap-y-4">
-    <div *ngFor="let campo of campos" class="flex flex-col gap-2">
-      <label class="text-[#000000] text-sm font-medium min-h-[20px]">
-        {{ campo.label ? campo.label : '&nbsp;' }}
+  <!-- Cabeçalho da Seção -->
+  <div *ngIf="titulo" class="flex flex-col gap-1">
+    <div class="flex items-center gap-2">
+      <i *ngIf="icone" [class]="icone + ' text-[#7843CD] text-base'"></i>
+      <h2 class="text-slate-900 font-bold text-lg tracking-tight">{{ titulo }}</h2>
+    </div>
+    <p *ngIf="subtitulo" class="text-xs text-slate-500 font-normal m-0">{{ subtitulo }}</p>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+    <div *ngFor="let campo of campos" 
+         class="flex flex-col gap-1.5"
+         [ngClass]="campo.colSpan === 2 ? 'md:col-span-2' : ''">
+      <label class="text-xs font-semibold text-slate-700 tracking-wide">
+        {{ campo.label }}
       </label>
 
-      <div *ngIf="campo.key === 'celular'; else inputPadrao" class="flex gap-2 w-full h-12">
-        <div class="w-16 h-full flex items-center justify-center bg-[#EBEBEB] text-[#9E9E9E] rounded-xl font-medium text-sm">
-          +55
+      <!-- Input de Celular com DDI -->
+      <div *ngIf="campo.key === 'celular'; else inputPadrao" 
+           class="flex items-center gap-2 w-full h-12 bg-slate-50/80 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-[#7843CD] focus-within:ring-4 focus-within:ring-[#F3E8FF] rounded-xl px-3 transition-all shadow-2xs">
+        <div class="flex items-center gap-1 text-slate-500 font-semibold text-xs border-r border-slate-200 pr-2">
+          <span>🇧🇷</span>
+          <span>+55</span>
         </div>
         <input 
           [type]="tipoDoCampo(campo)" 
           [placeholder]="campo.placeholder" 
           [formControlName]="campo.key"
-          class="flex-1 h-full px-4 bg-[#EBEBEB] border-none rounded-xl text-black placeholder-[#9E9E9E] focus:outline-none focus:ring-2 focus:ring-[#6A1B9A] transition-all"
+          class="flex-1 h-full bg-transparent border-none text-slate-900 placeholder:text-slate-400 focus:outline-none text-sm"
         />
       </div>
 
+      <!-- Input Padrão e Senha -->
       <ng-template #inputPadrao>
-        <div class="relative w-full">
+        <div class="relative w-full flex items-center bg-slate-50/80 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-[#7843CD] focus-within:ring-4 focus-within:ring-[#F3E8FF] rounded-xl px-3.5 h-12 transition-all shadow-2xs">
+          
+          <i *ngIf="campo.icon" [class]="campo.icon + ' text-slate-400 mr-2.5 text-sm'"></i>
+
           <input
             [type]="tipoDoCampo(campo)"
             [placeholder]="campo.placeholder"
             [formControlName]="campo.key"
-            [class.pr-12]="campo.type === 'password'"
-            class="w-full h-12 px-4 bg-[#EBEBEB] border-none rounded-xl text-black placeholder-[#9E9E9E] focus:outline-none focus:ring-2 focus:ring-[#6A1B9A] transition-all"
+            class="flex-1 h-full bg-transparent border-none text-slate-900 placeholder:text-slate-400 focus:outline-none text-sm"
           />
+
+          <!-- Botão Exibir/Ocultar Senha -->
           <button
             *ngIf="campo.type === 'password'"
             type="button"
             [attr.aria-label]="camposVisiveis[campo.key] ? 'Ocultar senha' : 'Mostrar senha'"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-[#757575] hover:text-[#5110A8] transition-colors"
+            class="ml-2 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#7843CD] hover:bg-slate-100 transition-colors cursor-pointer"
             (click)="alternarVisibilidade(campo)">
-            <i [class]="camposVisiveis[campo.key] ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+            <i [class]="camposVisiveis[campo.key] ? 'pi pi-eye-slash text-sm' : 'pi pi-eye text-sm'"></i>
           </button>
         </div>
       </ng-template>
+
+      <span *ngIf="campo.helperText" class="text-[11px] text-slate-400 mt-0.5">
+        {{ campo.helperText }}
+      </span>
     </div>
   </div>
+
 </div>

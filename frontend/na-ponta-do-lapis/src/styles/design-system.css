@@ -1,0 +1,292 @@
+/* ==========================================================================
+   NA PONTA DO LÁPIS (NPL) — DESIGN SYSTEM
+   Identidade Visual: Roxo (#7843CD) & Amarelo (#EEC046 / #F9DB70)
+   ========================================================================== */
+
+@theme {
+  /* --- PALETA ROXA (COR INSTITUCIONAL PRIMÁRIA) --- */
+  --color-npl-roxo: #7843CD;
+  --color-npl-roxo-hover: #6214CC;
+  --color-npl-roxo-active: #5110A8;
+  --color-npl-roxo-suave: #F3E8FF;
+  --color-npl-roxo-borda: #D1C4FF;
+
+  /* --- PALETA AMARELA (COR INSTITUCIONAL DE DESTAQUE / ACCENT) --- */
+  --color-npl-amarelo: #EEC046;
+  --color-npl-amarelo-hover: #DEB035;
+  --color-npl-amarelo-claro: #F9DB70;
+  --color-npl-amarelo-suave: #FEF9E7;
+  --color-npl-amarelo-borda: #F6D884;
+  --color-npl-amarelo-texto: #B45309; /* Contraste ideal WCAG AA sobre fundo claro */
+
+  /* --- PALETA FINANCEIRA (RECEITA & DESPESA) --- */
+  --color-npl-verde: #10B981;
+  --color-npl-receita: #10B981;
+  --color-npl-receita-hover: #059669;
+  --color-npl-receita-suave: #ECFDF5;
+  --color-npl-receita-borda: #A7F3D0;
+
+  --color-npl-despesa: #C24E4E;
+  --color-npl-despesa-hover: #AB3E3E;
+  --color-npl-despesa-bg: #FDF4F4;
+  --color-npl-despesa-borda: #F5D5D5;
+}
+
+/* ==========================================================================
+   BOTÕES DO DESIGN SYSTEM
+   ========================================================================== */
+
+/* Botão Primário da Marca (Roxo Oficial) */
+.btn-npl-primary {
+  background-color: #7843CD !important;
+  border-color: #7843CD !important;
+  color: #ffffff !important;
+  border-radius: 0.75rem !important; /* rounded-xl (12px) */
+  font-weight: 600 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-npl-primary:hover:not(:disabled) {
+  background-color: #6214CC !important;
+  border-color: #6214CC !important;
+  box-shadow: 0 4px 6px -1px rgba(120, 67, 205, 0.25), 0 2px 4px -2px rgba(120, 67, 205, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-npl-primary:active:not(:disabled) {
+  background-color: #5110A8 !important;
+  border-color: #5110A8 !important;
+  transform: translateY(0);
+}
+
+/* Botão Secundário / Neutro Vazado */
+.btn-npl-secondary {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #334155 !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease;
+}
+
+.btn-npl-secondary:hover:not(:disabled) {
+  background-color: #f8fafc !important;
+  border-color: #94a3b8 !important;
+  color: #0f172a !important;
+}
+
+/* Botão Destaque da Marca (Amarelo Ouro NPL) */
+.btn-npl-accent {
+  background-color: #EEC046 !important;
+  border-color: #EEC046 !important;
+  color: #0f172a !important;
+  border-radius: 0.75rem !important;
+  font-weight: 700 !important;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-npl-accent:hover:not(:disabled) {
+  background-color: #DEB035 !important;
+  border-color: #DEB035 !important;
+  box-shadow: 0 4px 6px -1px rgba(238, 192, 70, 0.35);
+  transform: translateY(-1px);
+}
+
+.btn-npl-accent:active:not(:disabled) {
+  background-color: #C99B26 !important;
+  border-color: #C99B26 !important;
+  transform: translateY(0);
+}
+
+/* Botão de Perigo / Exclusão */
+.btn-npl-danger {
+  background-color: #fee2e2 !important;
+  border: 1px solid #fca5a5 !important;
+  color: #dc2626 !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease;
+}
+
+.btn-npl-danger:hover:not(:disabled) {
+  background-color: #fecaca !important;
+  border-color: #ef4444 !important;
+}
+
+/* Botão de Sucesso / Confirmação de Receita */
+.btn-npl-success {
+  background-color: #10B981 !important;
+  border-color: #10B981 !important;
+  color: #ffffff !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease;
+}
+
+.btn-npl-success:hover:not(:disabled) {
+  background-color: #059669 !important;
+  border-color: #059669 !important;
+}
+
+/* Botões de Ícone Padronizados (Editar / Excluir em Tabelas, Cards e Metas) */
+.btn-icon-edit-npl {
+  background-color: #F3E8FF !important;
+  border: 1px solid #E9D5FF !important;
+  color: #7843CD !important;
+  border-radius: 0.625rem !important; /* 10px */
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-icon-edit-npl:hover:not(:disabled) {
+  background-color: #7843CD !important;
+  border-color: #7843CD !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.btn-icon-delete-npl {
+  background-color: #FEE2E2 !important;
+  border: 1px solid #FECACA !important;
+  color: #EF4444 !important;
+  border-radius: 0.625rem !important; /* 10px */
+  width: 2.25rem !important;
+  height: 2.25rem !important;
+  padding: 0 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-icon-delete-npl:hover:not(:disabled) {
+  background-color: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+/* Botões com Texto Padronizados para Editar / Excluir (ex: Barra de Ações de Contas) */
+.btn-soft-edit-npl {
+  background-color: #F3E8FF !important;
+  border: 1px solid #E9D5FF !important;
+  color: #7843CD !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-soft-edit-npl:hover:not(:disabled) {
+  background-color: #7843CD !important;
+  border-color: #7843CD !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+.btn-soft-delete-npl {
+  background-color: #FEE2E2 !important;
+  border: 1px solid #FECACA !important;
+  color: #EF4444 !important;
+  border-radius: 0.75rem !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+}
+
+.btn-soft-delete-npl:hover:not(:disabled) {
+  background-color: #EF4444 !important;
+  border-color: #EF4444 !important;
+  color: #ffffff !important;
+  transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   BADGES & REALCES COM O AMARELO DA MARCA
+   ========================================================================== */
+
+/* Badge Dourado / Amarelo da Marca */
+.badge-npl-amarelo {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background-color: #FEF9E7;
+  color: #B45309;
+  border: 1px solid #F9DB70;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  letter-spacing: 0.025em;
+}
+
+/* Detalhe de Borda e Acento Amarelo NPL */
+.accent-npl-border {
+  border-color: #F9DB70 !important;
+}
+
+.accent-npl-text {
+  color: #B45309 !important;
+}
+
+/* ==========================================================================
+   TIPOGRAFIA DE PÁGINAS & CARDS
+   ========================================================================== */
+
+.page-title-npl {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
+}
+
+@media (min-width: 640px) {
+  .page-title-npl {
+    font-size: 1.875rem;
+  }
+}
+
+.page-subtitle-npl {
+  font-size: 0.875rem;
+  color: #64748b;
+  margin-top: 0.25rem;
+}
+
+.section-title-npl {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.015em;
+  line-height: 1.35;
+}
+
+/* ==========================================================================
+   PADRONIZAÇÃO GLOBAL DE MODAIS (DIALOGS PRIMENG)
+   ========================================================================== */
+
+.p-dialog {
+  border-radius: 1.25rem !important; /* rounded-2xl (20px) */
+  overflow: hidden !important;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1) !important;
+}
+
+.p-dialog .p-dialog-header {
+  border-bottom: 1px solid #f1f5f9;
+  padding: 1.25rem 1.5rem !important;
+}
+
+.p-dialog .p-dialog-content {
+  padding: 1.5rem !important;
+}
+
+.p-dialog .p-dialog-footer {
+  border-top: 1px solid #f1f5f9;
+  padding: 1rem 1.5rem !important;
+}
+

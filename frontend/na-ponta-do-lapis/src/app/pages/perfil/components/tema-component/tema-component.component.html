@@ -1,0 +1,54 @@
+<div class="w-full flex flex-col font-sans text-left">
+  
+  <div class="flex items-center justify-between mb-3">
+    <div class="flex items-center gap-2">
+      <div class="w-6 h-6 rounded-lg bg-[#6214CC]/10 text-[#6214CC] flex items-center justify-center text-xs">
+        <i class="pi pi-palette"></i>
+      </div>
+      <h3 class="text-slate-900 font-bold text-sm tracking-tight">
+        Aparência
+      </h3>
+    </div>
+    <span class="text-[10px] font-medium text-slate-400">Interface</span>
+  </div>
+
+  <div class="grid grid-cols-2 gap-2.5">
+    <!-- Tema Claro (Ativo) -->
+    <button
+      type="button"
+      (click)="selecionarTema('claro')"
+      class="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border-2 transition-all cursor-pointer text-center relative"
+      [ngClass]="temaAtual === 'claro' 
+        ? 'border-[#6214CC] bg-[#6214CC]/5 text-slate-900 font-bold shadow-2xs' 
+        : 'border-slate-200 bg-white hover:bg-slate-50 text-slate-600 font-medium'">
+      
+      <div class="w-8 h-8 rounded-full bg-white shadow-2xs border border-[#f9db70] flex items-center justify-center text-[#EEC046]">
+        <i class="pi pi-sun text-sm font-bold"></i>
+      </div>
+      
+      <span class="text-xs">Modo Claro</span>
+
+      <span *ngIf="temaAtual === 'claro'" 
+            class="absolute top-1.5 right-1.5 w-4 h-4 rounded-full bg-[#EEC046] text-black flex items-center justify-center text-[9px] font-extrabold shadow-2xs">
+        <i class="pi pi-check"></i>
+      </span>
+    </button>
+
+    <!-- Tema Escuro (Em breve) -->
+    <div
+      class="flex flex-col items-center justify-center gap-2 p-3 rounded-2xl border-2 border-slate-200/70 bg-slate-50/80 text-slate-400 text-center relative opacity-80 cursor-not-allowed"
+      title="O modo escuro estará disponível em breve!">
+      
+      <div class="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+        <i class="pi pi-moon text-sm"></i>
+      </div>
+      
+      <span class="text-xs font-medium">Modo Escuro</span>
+      
+      <span class="text-[9px] bg-amber-100 text-amber-800 border border-amber-200 px-1.5 py-0.5 rounded-full font-bold uppercase tracking-wider">
+        Em breve
+      </span>
+    </div>
+  </div>
+
+</div>
