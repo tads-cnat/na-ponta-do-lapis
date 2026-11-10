@@ -85,10 +85,10 @@
                 </div>
                 <div class="flex items-center">
                   <div class="text-end">
-                    <p class="text-npl-verde font-bold text-base">R$ {{meta.valorAtual}}</p>
-                    <p class="text-sm text-gray-500">faltam R${{valorFalta}}</p>
-                    </div>
-                    </div>
+                    <p class="text-npl-verde font-bold text-base">{{ meta.valorAtual | appMoeda }}</p>
+                    <p class="text-sm text-gray-500">faltam {{ valorFalta | appMoeda }}</p>
+                  </div>
+                </div>
 
                     </div>
 <p-progressbar class="h-3!" [value]="meta.progresso" color="linear-gradient(119deg, #E8D73F, #F5A84E )" showValue="false" />

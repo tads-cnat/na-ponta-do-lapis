@@ -29,8 +29,9 @@ import { GraficoComponent }      from './components/grafico/grafico.component';
 import { TransacoesComponent }   from './components/transacoes/transacoes.component';
 import { IconeBancoComponent }    from '../../shared/components/icone-banco/icone-banco.component';
 import { InputMoedaComponent }    from '../../shared/components/input-moeda/input-moeda.component';
+import { AppMoedaPipe }          from '../../shared/pipes/app-moeda.pipe';
 import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
-import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../shared/utils/banco-icon.helper';
+import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectado } from '../../shared/utils/banco-icon.helper';
 
 @Component({
   selector: 'app-Contas',
@@ -50,7 +51,8 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../sha
     GraficoComponent,
     TransacoesComponent,
     IconeBancoComponent,
-    InputMoedaComponent
+    InputMoedaComponent,
+    AppMoedaPipe
   ],
   template: `
 
@@ -160,41 +162,61 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../sha
 
           <div class="flex flex-col gap-6 py-2">
 
-            <!-- PREVIEW EM TEMPO REAL DO CARTÃO / CONTA -->
-            <div
-              class="relative overflow-hidden rounded-2xl p-5 text-white shadow-md transition-all duration-300"
-              [style.background]="'linear-gradient(135deg, #' + (formContaFinanceira.get('cor')?.value || '4F46E5') + ' 0%, #' + (formContaFinanceira.get('cor')?.value || '4F46E5') + 'dd 100%)'">
-              <div class="absolute -right-8 -bottom-8 w-36 h-36 rounded-full bg-white/10 blur-xl pointer-events-none"></div>
-              <div class="absolute right-4 top-4 opacity-25 text-white pointer-events-none">
-                <i [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'pi pi-credit-card text-5xl' : 'pi pi-wallet text-5xl'"></i>
-              </div>
+            <!-- PREVIEW EM TEMPO REAL DO CARTÃO / CONTA (FIEL AO CARROSSEL) -->
+            <div class="flex justify-center w-full py-1">
+              <div
+                class="relative w-[400px] max-w-[85vw] h-[220px] rounded-[2rem] overflow-hidden shadow-2xl transition-transform hover:scale-[1.01]"
+                [style.background]="obterCorPreview()">
+                <!-- EFEITOS DO CARROSSEL -->
+                <div class="absolute top-[-30px] right-[-20px] w-52 h-52 rounded-full border border-white/20 pointer-events-none"></div>
+                <div class="absolute top-[-70px] right-[20px] w-72 h-72 rounded-full border border-white/10 pointer-events-none"></div>
+                <div class="absolute inset-0 bg-black/10 pointer-events-none"></div>
 
-              <div class="relative z-10 flex flex-col justify-between min-h-[90px]">
-                <div class="flex items-center gap-3">
-                  <div class="w-11 h-11 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center shrink-0 border border-white/25 shadow-xs">
-                    @if (bancoDetectado?.chave) {
-                      <app-icone-banco [nome]="bancoDetectado?.nomeExibicao" [tamanho]="28" [formato]="'quadrado'"></app-icone-banco>
-                    } @else {
-                      <i [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'pi pi-credit-card text-xl' : 'pi pi-building text-xl'"></i>
+                <!-- CONTEÚDO -->
+                <div class="relative z-10 h-full p-7 flex flex-col justify-between text-white">
+                  <div class="flex items-start justify-between gap-4">
+                    <div class="min-w-0 flex-1">
+                      @if (modoEdicao && contaSelecionada?.sincronizada) {
+                        <span class="inline-flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
+                          <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
+                          </svg>
+                          <span>Open Finance</span>
+                        </span>
+                      }
+                      <h3 class="text-2xl font-bold mt-2 leading-snug line-clamp-2 break-words">
+                        {{ formContaFinanceira.get('nome')?.value || 'Nome da Conta' }}
+                      </h3>
+                    </div>
+
+                    <div class="shrink-0 flex items-center justify-center select-none filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]">
+                      @if (temBanco(formContaFinanceira.get('nome')?.value)) {
+                        <app-icone-banco [nome]="formContaFinanceira.get('nome')?.value" [tamanho]="46" [formato]="'quadrado'"></app-icone-banco>
+                      } @else {
+                        <div class="w-11 h-11 flex items-center justify-center text-white">
+                          <i [class]="(ehCartaoPreview() ? 'pi pi-credit-card' : 'pi pi-wallet') + ' text-3xl text-white'"></i>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- RODAPÉ DO CARD: SALDO / FATURA -->
+                  <div class="flex items-end justify-between pt-2 border-t border-white/20">
+                    <div>
+                      <p class="text-[11px] font-medium text-white/80 uppercase tracking-wider">
+                        {{ ehCartaoPreview() ? 'Fatura Atual' : 'Saldo Disponível' }}
+                      </p>
+                      <p class="text-xl font-bold tracking-tight">
+                        {{ ehCartaoPreview() ? '-' : '' }} {{ (formContaFinanceira.get('saldo')?.value || 0) | appMoeda }}
+                      </p>
+                    </div>
+                    @if (ehCartaoPreview() && formContaFinanceira.get('limiteTotal')?.value) {
+                      <div class="text-right text-[11px] text-white/90">
+                        <span class="opacity-80">Disp.: </span>
+                        <span class="font-bold">{{ limiteTotalOuDisponivelPreview() | appMoeda }}</span>
+                      </div>
                     }
                   </div>
-                  <div class="min-w-0">
-                    <span class="text-[11px] uppercase font-semibold tracking-wider text-white/80 block">
-                      {{ formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'Cartão de Crédito' : 'Conta Bancária' }}
-                    </span>
-                    <h4 class="text-lg font-bold truncate leading-tight text-white drop-shadow-xs">
-                      {{ formContaFinanceira.get('nome')?.value || 'Nome da Conta' }}
-                    </h4>
-                  </div>
-                </div>
-
-                <div class="mt-4 flex items-baseline justify-between border-t border-white/20 pt-2.5">
-                  <span class="text-xs text-white/80 font-medium">
-                    {{ formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'Fatura Aberta' : 'Saldo em Conta' }}
-                  </span>
-                  <span class="text-xl sm:text-2xl font-black tracking-tight drop-shadow-xs">
-                    {{ obterSimboloMoeda(formContaFinanceira.get('moeda')?.value) }} {{ (formContaFinanceira.get('saldo')?.value || 0) | number:'1.2-2' }}
-                  </span>
                 </div>
               </div>
             </div>
@@ -207,45 +229,39 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../sha
                   type="button"
                   (click)="formContaFinanceira.get('tipoConta')?.setValue('CONTA_CORRENTE')"
                   [class]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE'
-                    ? 'flex items-center gap-3 p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-900 font-semibold transition-all shadow-xs'
-                    : 'flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-all'">
-                  <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                    ? 'flex items-center gap-3 p-3 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-900 font-semibold transition-colors shadow-xs'
+                    : 'flex items-center gap-3 p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors'">
+                  <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                        [class]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'">
-                    <i class="pi pi-wallet text-lg"></i>
+                    <i class="pi pi-wallet text-base"></i>
                   </div>
-                  <div class="flex flex-col text-left">
-                    <span class="text-sm font-bold leading-tight">Conta Bancária</span>
-                    <span class="text-xs text-slate-500 font-normal">Corrente ou Carteira</span>
-                  </div>
+                  <span class="text-sm font-bold leading-tight text-left">Conta Bancária</span>
                 </button>
 
                 <button
                   type="button"
                   (click)="formContaFinanceira.get('tipoConta')?.setValue('CARTAO_CREDITO')"
                   [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO'
-                    ? 'flex items-center gap-3 p-3.5 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-900 font-semibold transition-all shadow-xs'
-                    : 'flex items-center gap-3 p-3.5 rounded-2xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-all'">
-                  <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+                    ? 'flex items-center gap-3 p-3 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-900 font-semibold transition-colors shadow-xs'
+                    : 'flex items-center gap-3 p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors'">
+                  <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
                        [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'">
-                    <i class="pi pi-credit-card text-lg"></i>
+                    <i class="pi pi-credit-card text-base"></i>
                   </div>
-                  <div class="flex flex-col text-left">
-                    <span class="text-sm font-bold leading-tight">Cartão de Crédito</span>
-                    <span class="text-xs text-slate-500 font-normal">Fatura e limites</span>
-                  </div>
+                  <span class="text-sm font-bold leading-tight text-left">Cartão de Crédito</span>
                 </button>
               </div>
             </div>
 
             <!-- NOME DA CONTA -->
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-1.5">
               <label class="font-semibold text-slate-700 text-sm">Nome da Conta</label>
               <input
                 pInputText
                 formControlName="nome"
                 (input)="aoDigitarNomeConta()"
                 placeholder="Ex: Nubank, Santander, Inter, Itaú..."
-                class="w-full text-base py-2.5 rounded-xl border-slate-200" />
+                class="w-full text-base h-[42px]" />
 
               @if (bancoDetectado?.chave) {
                 <div class="flex items-center justify-between p-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs text-slate-700 animate-in fade-in">
@@ -264,13 +280,13 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../sha
               }
             </div>
 
-            <!-- VALORES: SALDO E LIMITE (USANDO O PADRÃO FLUIDO APP-INPUT-MOEDA) -->
+            <!-- VALORES: SALDO E LIMITE (PADRÃO ESTÉTICO INTEGRADO) -->
             @if (formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO') {
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <!-- FATURA ATUAL -->
                 <div class="flex flex-col gap-1.5">
                   <label class="font-semibold text-slate-700 text-sm">
-                    Fatura Atual / Gasto
+                    Fatura Atual
                   </label>
                   <app-input-moeda
                     formControlName="saldo"
@@ -279,7 +295,6 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../sha
                     tamanho="md"
                     placeholder="0,00">
                   </app-input-moeda>
-                  <span class="text-[11px] text-slate-500">Valor já utilizado na fatura em aberto.</span>
                 </div>
 
                 <!-- LIMITE TOTAL -->
@@ -294,36 +309,30 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../sha
                     [permitirVazio]="true"
                     placeholder="0,00">
                   </app-input-moeda>
-                  <span class="text-[11px] text-slate-500">Limite concedido pelo banco.</span>
                 </div>
               </div>
             } @else {
               <!-- CONTA BANCÁRIA: SALDO INICIAL -->
               <div class="flex flex-col gap-1.5">
-                <div class="flex items-center justify-between">
-                  <label class="font-semibold text-slate-700 text-sm">Saldo Inicial da Conta</label>
-                  <span class="text-xs text-slate-400">Clique em qualquer lugar para digitar</span>
-                </div>
+                <label class="font-semibold text-slate-700 text-sm">Saldo Inicial</label>
                 <app-input-moeda
                   formControlName="saldo"
                   [moeda]="formContaFinanceira.get('moeda')?.value"
                   [disabled]="!!(modoEdicao && contaSelecionada?.sincronizada)"
-                  tamanho="lg"
+                  tamanho="md"
                   placeholder="0,00">
                 </app-input-moeda>
                 @if (modoEdicao && contaSelecionada?.sincronizada) {
-                  <div class="p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2 mt-1">
+                  <div class="p-2.5 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-800 flex items-center gap-2 mt-1">
                     <i class="pi pi-info-circle text-amber-600"></i>
-                    <span>Esta conta é sincronizada via Open Finance. O saldo é atualizado automaticamente pelo banco.</span>
+                    <span>Conta sincronizada via Open Finance. Saldo atualizado pelo banco.</span>
                   </div>
-                } @else {
-                  <span class="text-xs text-slate-500">Digite apenas os números, os centavos são ajustados automaticamente.</span>
                 }
               </div>
             }
 
-            <!-- PALETA DE CORES RÁPIDAS + CUSTOMIZADA -->
-            <div class="flex flex-col gap-2.5">
+            <!-- PALETA DE CORES RÁPIDAS + SELETOR DE COR DESTACADO -->
+            <div class="flex flex-col gap-2">
               <div class="flex items-center justify-between">
                 <label class="font-semibold text-slate-700 text-sm">Cor do Cartão</label>
                 <div class="flex items-center gap-1.5 text-xs text-slate-500 font-mono">
@@ -349,11 +358,19 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco } from '../../sha
                   </button>
                 }
 
-                <div class="flex items-center ml-1 pl-2 border-l border-slate-200" title="Personalizar cor livremente">
-                  <p-colorpicker
-                    formControlName="cor"
-                    (onChange)="corCustomizadaManualmente = true">
-                  </p-colorpicker>
+                <!-- SELETOR DE COR PERSONALIZADA BEM DESTACADO (NATIVO, SEM QUEBRAR O MODAL) -->
+                <div class="relative flex items-center ml-1 pl-2 border-l border-slate-200">
+                  <label
+                    class="relative flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 border-dashed border-indigo-300 hover:border-indigo-600 bg-indigo-50/60 hover:bg-indigo-100/70 text-indigo-900 cursor-pointer transition-colors shadow-2xs group"
+                    title="Clique para escolher qualquer outra cor">
+                    <i class="pi pi-palette text-sm text-indigo-600 group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold text-indigo-900">Personalizar</span>
+                    <input
+                      type="color"
+                      class="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+                      [value]="'#' + (formContaFinanceira.get('cor')?.value || '4F46E5')"
+                      (input)="aoSelecionarCorNativa($event)" />
+                  </label>
                 </div>
               </div>
             </div>
@@ -708,6 +725,44 @@ export class ContasComponent implements OnInit {
   selecionarCorRapida(hex: string): void {
     this.formContaFinanceira.get('cor')?.setValue(hex.replace('#', ''));
     this.corCustomizadaManualmente = true;
+  }
+
+  aoSelecionarCorNativa(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input?.value) {
+      this.selecionarCorRapida(input.value);
+    }
+  }
+
+  // =========================================
+  // PREVIEW DO CARTÃO
+  // =========================================
+
+  temBanco(nome?: string | null): boolean {
+    return temBancoDetectado(nome);
+  }
+
+  ehCartaoPreview(): boolean {
+    return this.formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO';
+  }
+
+  obterCorPreview(): string {
+    const cor = this.formContaFinanceira.get('cor')?.value;
+    if (cor && cor !== 'FFDE59') {
+      return cor.startsWith('#') ? cor : `#${cor}`;
+    }
+    const nome = this.formContaFinanceira.get('nome')?.value;
+    const corOficial = obterCorOficialBanco(nome);
+    if (corOficial) {
+      return corOficial;
+    }
+    return cor ? (cor.startsWith('#') ? cor : `#${cor}`) : '#4F46E5';
+  }
+
+  limiteTotalOuDisponivelPreview(): number {
+    const limite = Number(this.formContaFinanceira.get('limiteTotal')?.value || 0);
+    const saldo = Number(this.formContaFinanceira.get('saldo')?.value || 0);
+    return Math.max(0, limite - saldo);
   }
 
   atualizarStringsExibicaoMonetaria(): void {
@@ -1242,10 +1297,13 @@ export class ContasComponent implements OnInit {
             title: (items: any[]) => items[0]?.label ?? '',
             label: (item: any) => {
               const val: number = item.parsed.y;
+              const codMoeda = this.preferenciaMoedaService.obterMoedaAtiva();
+              const simbolo = this.preferenciaMoedaService.obterSimboloMoeda(codMoeda);
               const fmt = val.toLocaleString('pt-BR', {
-                style: 'currency', currency: 'BRL', maximumFractionDigits: 0
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 2
               });
-              return ` ${item.dataset.label}: ${fmt}`;
+              return ` ${item.dataset.label}: ${simbolo} ${fmt}`;
             }
           }
         }

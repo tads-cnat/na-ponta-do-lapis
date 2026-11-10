@@ -10,7 +10,28 @@
 
 @theme {
   --color-npl-amarelo: #EEC046;
-  --color-npl-verde:#46B171;
+  --color-npl-verde: #46B171;
+  --color-npl-despesa: #C24E4E;
+  --color-npl-despesa-hover: #AB3E3E;
+  --color-npl-despesa-bg: #FDF4F4;
+  --color-npl-despesa-borda: #F5D5D5;
+}
+
+/* Cores de despesa confortáveis e refinadas (substituindo o vermelho agressivo) */
+.text-despesa {
+  color: #C24E4E !important;
+}
+
+.text-despesa-hover:hover {
+  color: #AB3E3E !important;
+}
+
+.bg-despesa-soft {
+  background-color: #FDF4F4 !important;
+}
+
+.border-despesa-soft {
+  border-color: #F5D5D5 !important;
 }
 
 /* Toggle switch: garante trilho em formato de pílula e impede que ele

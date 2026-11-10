@@ -201,17 +201,17 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="text-slate-400 font-medium">Receitas no filtro</span>
-                                    <span class="font-bold text-emerald-600 text-sm">+ {{ totalReceitasFiltradas | currency: codigoMoeda }}</span>
+                                    <span class="font-bold text-emerald-600 text-sm">+ {{ totalReceitasFiltradas | appMoeda }}</span>
                                 </div>
                             </div>
 
                             <div class="flex items-center gap-2.5 px-2 sm:border-l sm:border-slate-100">
-                                <div class="w-8 h-8 rounded-lg bg-rose-100 flex items-center justify-center text-rose-600">
+                                <div class="w-8 h-8 rounded-lg bg-[#FDF4F4] border border-[#F5D5D5] flex items-center justify-center text-[#C24E4E]">
                                     <i class="pi pi-arrow-up-right text-sm"></i>
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="text-slate-400 font-medium">Despesas no filtro</span>
-                                    <span class="font-bold text-rose-600 text-sm">- {{ totalDespesasFiltradas | currency: codigoMoeda }}</span>
+                                    <span class="font-bold text-[#C24E4E] text-sm">- {{ totalDespesasFiltradas | appMoeda }}</span>
                                 </div>
                             </div>
 
@@ -221,8 +221,8 @@
                                 </div>
                                 <div class="flex flex-col">
                                     <span class="text-slate-400 font-medium">Balanço do período</span>
-                                    <span [class]="saldoFiltrado >= 0 ? 'font-bold text-emerald-600 text-sm' : 'font-bold text-rose-600 text-sm'">
-                                        {{ saldoFiltrado | currency: codigoMoeda }}
+                                    <span [class]="saldoFiltrado >= 0 ? 'font-bold text-emerald-600 text-sm' : 'font-bold text-[#C24E4E] text-sm'">
+                                        {{ saldoFiltrado | appMoeda }}
                                     </span>
                                 </div>
                             </div>
@@ -240,7 +240,7 @@
                                         {{ transacoesMarcadas.length }} {{ transacoesMarcadas.length === 1 ? 'movimentação selecionada' : 'movimentações selecionadas' }}
                                     </span>
                                     <span class="text-xs text-slate-500">
-                                        Total selecionado: <span class="font-bold text-slate-700">{{ totalValorSelecionadas | currency: codigoMoeda }}</span>
+                                        Total selecionado: <span class="font-bold text-slate-700">{{ totalValorSelecionadas | appMoeda }}</span>
                                     </span>
                                 </div>
                             </div>
@@ -345,8 +345,8 @@
                             </td>
                             <td class="text-right! whitespace-nowrap pr-8!">
                                 <span class="tabular-nums text-sm font-semibold"
-                                    [class]="t.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-rose-600'">
-                                    {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | currency: codigoMoeda }}
+                                    [class]="t.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-[#C24E4E]'">
+                                    {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | appMoeda }}
                                 </span>
                             </td>
                             <td class="pl-4! whitespace-nowrap">
@@ -449,11 +449,11 @@
                     <div class="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-xl">
                         <button type="button" (click)="definirTipo('DESPESA')"
                             [class]="formTransacao.get('tipo')?.value === 'DESPESA'
-                                ? 'bg-white text-rose-600 shadow-xs font-bold border border-rose-200'
-                                : 'text-slate-500 hover:text-rose-600 font-medium'"
+                                ? 'bg-white text-[#C24E4E] shadow-xs font-bold border border-[#F5D5D5]'
+                                : 'text-slate-500 hover:text-[#C24E4E] font-medium'"
                             class="flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs sm:text-sm transition-all cursor-pointer">
                             <span class="w-2.5 h-2.5 rounded-full"
-                                [class]="formTransacao.get('tipo')?.value === 'DESPESA' ? 'bg-rose-500' : 'bg-slate-400'"></span>
+                                [class]="formTransacao.get('tipo')?.value === 'DESPESA' ? 'bg-[#C24E4E]' : 'bg-slate-400'"></span>
                             <span>- Despesa</span>
                         </button>
                         <button type="button" (click)="definirTipo('RECEITA')"
@@ -476,7 +476,7 @@
                                 {{ formTransacao.get('descricao')?.value?.length || 0 }}/100
                             </span>
                         </div>
-                        <input pInputText formControlName="descricao" maxlength="100" placeholder="Ex: Internet, Aluguel, Supermercado..." class="w-full" />
+                        <input pInputText formControlName="descricao" maxlength="100" placeholder="Ex: Internet, Aluguel, Supermercado..." class="w-full text-base h-[42px]" />
                     </div>
 
                     <div class="flex flex-col gap-1">
@@ -574,7 +574,7 @@
                             <div>
                                 @if (!id && (formTransacao.get('valor')?.value > 0)) {
                                     <span class="font-semibold block text-purple-900">
-                                        Compra de {{ formTransacao.get('valor')?.value | currency: codigoMoeda }} dividida em {{ formTransacao.get('totalParcelas')?.value }}x de {{ ((formTransacao.get('valor')?.value || 0) / formTransacao.get('totalParcelas')?.value) | currency: codigoMoeda }}
+                                        Compra de {{ formTransacao.get('valor')?.value | appMoeda }} dividida em {{ formTransacao.get('totalParcelas')?.value }}x de {{ ((formTransacao.get('valor')?.value || 0) / formTransacao.get('totalParcelas')?.value) | appMoeda }}
                                     </span>
                                     <span class="text-purple-800 mt-0.5 block">
                                         Esta transação será a <strong>parcela {{ formTransacao.get('numeroParcela')?.value }} de {{ formTransacao.get('totalParcelas')?.value }}</strong>. As parcelas futuras serão agendadas nos próximos meses.
@@ -969,21 +969,21 @@
                                 <div class="flex flex-col">
                                     <span class="text-xs text-slate-500 font-medium">Total da fatura</span>
                                     <span class="font-bold text-slate-800 text-base">
-                                        {{ faturaAnalise.valorTotalFatura | currency:'BRL' }}
+                                        {{ faturaAnalise.valorTotalFatura | appMoeda }}
                                     </span>
                                 </div>
                             }
                             <div class="flex flex-col">
                                 <span class="text-xs text-slate-500 font-medium">Lançamentos selecionados</span>
                                 <span class="font-bold text-base text-slate-800">
-                                    {{ somaTransacoesRevisao | currency:'BRL' }}
+                                    {{ somaTransacoesRevisao | appMoeda }}
                                 </span>
                             </div>
                             @if (diferencaRevisao !== null && diferencaRevisao !== 0) {
                                 <div class="flex flex-col">
                                     <span class="text-xs font-medium text-slate-500">Diferença</span>
                                     <span class="font-bold text-base text-slate-700">
-                                        {{ diferencaRevisao | currency:'BRL' }}
+                                        {{ diferencaRevisao | appMoeda }}
                                     </span>
                                 </div>
                             }
@@ -998,7 +998,7 @@
                     @if (diferencaRevisao !== null && diferencaRevisao !== 0) {
                         <div class="flex items-center gap-2 px-3 py-2 rounded-lg bg-sky-50 text-xs text-sky-800 border border-sky-200">
                             <i class="pi pi-info-circle text-sky-600 shrink-0"></i>
-                            <span>Diferença de <strong>{{ diferencaRevisao | currency:'BRL' }}</strong> em relação ao boleto (comum com créditos ou estornos).</span>
+                            <span>Diferença de <strong>{{ diferencaRevisao | appMoeda }}</strong> em relação ao boleto (comum com créditos ou estornos).</span>
                         </div>
                     }
                 }
@@ -1187,7 +1187,7 @@
                                 <div class="flex flex-col">
                                     <span class="font-bold text-slate-800 text-sm leading-tight">{{ parcelasGrupo[0].descricao }}</span>
                                     <span class="text-xs text-slate-500">
-                                        {{ totalParcelasEsperadas }}x de {{ parcelasGrupo[0].valor | currency: codigoMoeda }}
+                                        {{ totalParcelasEsperadas }}x de {{ parcelasGrupo[0].valor | appMoeda }}
                                     </span>
                                 </div>
                             </div>
@@ -1200,7 +1200,7 @@
                             <div class="flex flex-col">
                                 <span class="text-slate-400 font-medium">Total da Compra</span>
                                 <span class="font-bold text-slate-800">
-                                    {{ (parcelasGrupo[0].valorTotalCompra || (parcelasGrupo[0].valor * totalParcelasEsperadas)) | currency: codigoMoeda }}
+                                    {{ (parcelasGrupo[0].valorTotalCompra || (parcelasGrupo[0].valor * totalParcelasEsperadas)) | appMoeda }}
                                 </span>
                             </div>
                             <div class="flex flex-col border-l border-slate-200/70 pl-2.5">
@@ -1265,8 +1265,8 @@
                                     </span>
                                 </td>
                                 <td class="text-right! pr-6! whitespace-nowrap">
-                                    <span class="tabular-nums text-xs font-semibold text-rose-600">
-                                        - {{ p.valor | currency: codigoMoeda }}
+                                    <span class="tabular-nums text-xs font-semibold text-[#C24E4E]">
+                                        - {{ p.valor | appMoeda }}
                                     </span>
                                 </td>
                                 <td class="text-center! whitespace-nowrap">
@@ -1348,7 +1348,7 @@
                 </div>
                 <div class="flex justify-between items-center pt-2 border-t border-slate-200 mt-1">
                     <span class="text-xs text-slate-600 font-semibold">Valor a debitar</span>
-                    <span class="text-base font-bold text-emerald-600">{{ transacaoParaConfirmar.valor | currency: codigoMoeda }}</span>
+                    <span class="text-base font-bold text-emerald-600">{{ transacaoParaConfirmar.valor | appMoeda }}</span>
                 </div>
             </div>
         </div>
@@ -1433,7 +1433,7 @@
                     Excluir {{ transacoesMarcadas.length }} {{ transacoesMarcadas.length === 1 ? 'movimentação' : 'movimentações' }}?
                 </span>
                 <span class="text-xs text-slate-500">
-                    Total: <strong class="text-slate-700">{{ totalValorSelecionadas | currency: codigoMoeda }}</strong> • O saldo das contas será estornado.
+                    Total: <strong class="text-slate-700">{{ totalValorSelecionadas | appMoeda }}</strong> • O saldo das contas será estornado.
                 </span>
             </div>
         </div>
@@ -1462,7 +1462,7 @@
                         Excluir "{{ transacaoParaExcluir.descricao }}"?
                     </span>
                     <span class="text-xs text-slate-500">
-                        Valor: <strong class="text-slate-700">{{ transacaoParaExcluir.valor | currency: codigoMoeda }}</strong> • O saldo da conta será estornado.
+                        Valor: <strong class="text-slate-700">{{ transacaoParaExcluir.valor | appMoeda }}</strong> • O saldo da conta será estornado.
                     </span>
                 </div>
             </div>

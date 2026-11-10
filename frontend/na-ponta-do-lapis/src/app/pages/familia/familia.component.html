@@ -8,7 +8,7 @@
               <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16"> 
                   <div>
                       <p class="text-xs text-gray-500 mb-0.5">Referente ao início do mês</p>
-                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">R$ 4.010,00</span>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">{{ 4010 | appMoeda }}</span>
                   </div> 
                   
                   <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
@@ -29,7 +29,7 @@
               <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16"> 
                   <div>
                       <p class="text-xs text-gray-500 mb-0.5">Referente aos gastos do mês</p>
-                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">R$ 860,00</span>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-800">{{ 860 | appMoeda }}</span>
                   </div> 
                   
                   <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
@@ -50,7 +50,7 @@
               <div class="flex flex-col gap-2 mt-1 pr-12 sm:pr-16"> 
                   <div>
                       <p class="text-xs text-gray-500 mb-0.5">Disponível em suas contas</p>
-                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-900">{{ saldoTotal | currency : 'BRL' }}</span>
+                      <span class="font-bold text-2xl sm:text-3xl tracking-tight text-gray-900">{{ saldoTotal | appMoeda }}</span>
                   </div>
                   
                   <div class="flex items-center gap-2 text-xs text-gray-600 pt-1">
@@ -121,7 +121,7 @@
                     </td>
                     <td class="font-bold whitespace-nowrap"
                       [ngClass]="t.tipo === 'RECEITA' ? 'text-green-600' : 'text-red-500'">
-                      {{ t.valor | currency: 'BRL' }}
+                      {{ t.valor | appMoeda }}
                     </td>
                     <td class="whitespace-nowrap">{{ t.membroUsername || t.membroNome }}</td>
                     <td>{{ t.dataHora | date:'dd/MM/yyyy' }}</td>
@@ -198,7 +198,7 @@
                   @for (membro of membros; track $index) {
                     <tr class="border-t border-gray-200">
                       <td class="text-sm px-4 py-2">{{ membro.username }}</td>
-                      <td class="text-sm px-4 py-2">{{ membro.id| currency: 'BRL' }}</td>
+                      <td class="text-sm px-4 py-2">{{ membro.id | appMoeda }}</td>
                     </tr>
                   }
                 </tbody>

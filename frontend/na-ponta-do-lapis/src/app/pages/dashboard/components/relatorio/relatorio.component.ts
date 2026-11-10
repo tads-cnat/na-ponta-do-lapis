@@ -1,7 +1,8 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, Input, OnChanges, inject } from "@angular/core";
 import { IContas } from "../../../../model/IContas.models";
 import { ITransacoes } from "../../../../model/ITransacoes.model";
 import { ChartModule } from "primeng/chart";
+import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-moeda.service";
 
 @Component({
   selector: 'app-relatorio',
@@ -66,6 +67,7 @@ import { ChartModule } from "primeng/chart";
 })
 export class RelatorioComponent implements OnChanges {
 
+    private preferenciaMoedaService = inject(PreferenciaMoedaService);
 
     @Input() transacoes:any[] = [];
 
@@ -110,7 +112,8 @@ export class RelatorioComponent implements OnChanges {
                 y:{
                     ticks:{
                         callback:(value:any)=>{
-                          return 'R$ '+ value.toLocaleString('pt-BR');
+                          const simbolo = this.preferenciaMoedaService.obterSimboloMoeda();
+                          return `${simbolo} ` + value.toLocaleString('pt-BR');
                         }
                     }
                 }
