@@ -1,4 +1,36 @@
+<<<<<<< HEAD
 <div class="w-full flex flex-col gap-6 pb-8">
+=======
+<div class="text-center">
+    <div class="text-xl text-gray-400">Valor total das metas</div>
+    <div class="text-3xl font-bold mb-2.5 text-slate-800">{{ totalMetas() | appMoeda }}</div>
+    <div class="text-lg text-gray-500">+{{ totalAcumulado() | appMoeda }} arrecadados</div>
+</div>
+<div class="mb-8 flex justify-between">
+    <h1 class="text-primary font-bold text-3xl ">Metas</h1>
+    <p-button size="small" (onClick)="abrirDialog()" [style]="{ 'background': '#10B981', 'border-color': '#10B981' }">
+        <i class="pi pi-plus"></i>
+       <span>Adicionar meta</span>
+    </p-button>
+</div>
+<div class="overflow-y-auto max-h-125">
+    <ul >
+        @for(meta of metas(); track meta.id) {
+            <li class="mb-8">
+                <app-meta-item 
+                    [meta]="meta"
+                    (deletarMeta)="deletarMeta($event)"
+                    (editarMeta)="abrirDialog($event)"
+                >
+                </app-meta-item>
+            </li>
+        } @empty {
+            <div class="text-center text-gray-500">
+                Nenhuma meta cadastrada ainda
+            </div>
+        }
+    </ul>
+>>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
 
   <!-- CABEÇALHO PRINCIPAL DA PÁGINA (TOPO, ANTES DOS CARDS DE RESUMO) -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

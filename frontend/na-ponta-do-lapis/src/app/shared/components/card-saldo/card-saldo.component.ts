@@ -6,6 +6,7 @@ import { IContas, ehCartaoCredito } from '../../../model/IContas.models';
 import { ITransacoes } from '../../../model/ITransacoes.model';
 import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
+import { AppMoedaPipe } from '../../pipes/app-moeda.pipe';
 import { forkJoin, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 

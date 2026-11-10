@@ -68,6 +68,7 @@
                 }
             </div>
         </div>
+<<<<<<< HEAD
 
         <!-- Bloco Direito: Valores e Ações -->
         <div class="flex items-center justify-between sm:justify-end gap-3.5 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
@@ -114,6 +115,21 @@
                 <p-button icon="pi pi-pencil" styleClass="btn-icon-edit-npl" pTooltip="Editar meta" tooltipPosition="top" (onClick)="onEditar()"></p-button>
                 <p-button icon="pi pi-trash" styleClass="btn-icon-delete-npl" pTooltip="Excluir meta" tooltipPosition="top" (onClick)="onDeletar()"></p-button>
             </div>
+=======
+        <div>
+            <p class="font-bold text-xl text-gray-800">{{meta.nome}}</p>
+            <p class="text-base font-bold text-npl-amarelo">{{meta.progresso}}%</p>
+        </div>
+    </div>
+    <div class="flex items-center">
+        <div class="text-end">
+            <p class="text-npl-verde font-bold text-base">{{ meta.valorAtual | appMoeda }}</p>
+            <p class="text-sm text-gray-500">faltam {{ valorFalta | appMoeda }}</p>
+        </div>
+        <div class="flex items-center ml-4 gap-2">
+            <p-button size="small" icon="pi pi-trash" severity="danger" (click)="onDeletar()"></p-button>
+            <p-button size="small" icon="pi pi-pencil" (click)="onEditar()"></p-button>
+>>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
         </div>
     </div>
 

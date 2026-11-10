@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MetaResponse } from '@models/IMetas.models';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
+<<<<<<< HEAD
 import { TooltipModule } from 'primeng/tooltip';
 import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 import { IlustracaoMetaComponent } from '../../../../shared/components/ilustracao-meta/ilustracao-meta.component';
@@ -10,6 +11,13 @@ import { IlustracaoMetaComponent } from '../../../../shared/components/ilustraca
 @Component({
   selector: 'app-meta-item',
   imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe, IlustracaoMetaComponent],
+=======
+import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
+
+@Component({
+  selector: 'app-meta-item',
+  imports: [Button, ProgressBarModule, AppMoedaPipe],
+>>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   templateUrl: './meta-item.component.html',
   styleUrl: './meta-item.component.css',
 })

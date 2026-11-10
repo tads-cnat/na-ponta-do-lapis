@@ -46,11 +46,16 @@ import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem
   ],
 =======
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
+import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 
 @Component({
   selector: 'app-metas',
+<<<<<<< HEAD
   imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, InputNumber, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent],
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent, AppMoedaPipe],
+>>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
 })
