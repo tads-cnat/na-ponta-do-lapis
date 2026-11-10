@@ -267,6 +267,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 mCreditoLucas
         ));
 
+<<<<<<< HEAD
         // ==========================================
         // TRANSAÇÕES: BRUNO
         // ==========================================
@@ -464,6 +465,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         metas.add(criarMeta("Limite Mensal de Lazer", "Manter gastos recreativos sob controle", new BigDecimal("150.00"), new BigDecimal("87.50"), "lazer", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uPedro));
         metas.add(criarMeta("Plano de Saúde e Cuidados", "Reserva para exames e consultas", new BigDecimal("800.00"), new BigDecimal("500.00"), "saude", LocalDate.of(ano, 2, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uPedro));
 =======
+=======
+>>>>>>> c5c539e (feat: adicionar transacoes de compras parceladas realistas no seed)
         // ==========================================
         // TRANSAÇÕES: BRUNO
         // ==========================================
@@ -494,6 +497,35 @@ public class DatabaseSeeder implements CommandLineRunner {
         transacoes.add(criarTransacao("Combustível Shell", new BigDecimal("190.00"), catTransporte, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 8, 11, 0), cNubank, mDebitoBruno));
         transacoes.add(criarTransacao("Fatura Cartão Nubank", new BigDecimal("980.50"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 12, 14, 0), cNubank, mDebitoBruno));
 
+        // Compras Parceladas no Cartão: Bruno
+        transacoes.addAll(criarCompraParcelada(
+                "Geladeira Frost Free Brastemp",
+                new BigDecimal("289.90"),
+                10, 6,
+                catOutros,
+                LocalDateTime.of(ano, mes, 7, 11, 0).minusMonths(5),
+                cNubankCard,
+                mCreditoBruno
+        ));
+        transacoes.addAll(criarCompraParcelada(
+                "Seguro Automotivo Anual",
+                new BigDecimal("175.00"),
+                6, 3,
+                catTransporte,
+                LocalDateTime.of(ano, mes, 12, 10, 0).minusMonths(2),
+                cNubankCard,
+                mCreditoBruno
+        ));
+        transacoes.addAll(criarCompraParcelada(
+                "Cadeira Ergonômica Home Office",
+                new BigDecimal("199.50"),
+                4, 2,
+                catEducacao,
+                LocalDateTime.of(ano, mes, 15, 15, 45).minusMonths(1),
+                cNubankCard,
+                mCreditoBruno
+        ));
+
         // ==========================================
         // TRANSAÇÕES: EDUARDO
         // ==========================================
@@ -516,6 +548,17 @@ public class DatabaseSeeder implements CommandLineRunner {
         transacoes.add(criarTransacao("Aluguel Quarto", new BigDecimal("600.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 5, 11, 0), cItau, mPixEduardo));
         transacoes.add(criarTransacao("Mercado Básico", new BigDecimal("230.00"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 7, 18, 0), cItau, mDebitoEduardo));
 
+        // Compras Parceladas no Cartão: Eduardo
+        transacoes.addAll(criarCompraParcelada(
+                "Mochila Antifurto e Fone Bluetooth",
+                new BigDecimal("65.00"),
+                4, 2,
+                catEducacao,
+                LocalDateTime.of(ano, mes, 10, 16, 0).minusMonths(1),
+                cItauCard,
+                mCreditoEduardo
+        ));
+
         // ==========================================
         // TRANSAÇÕES: PEDRO
         // ==========================================
@@ -536,6 +579,17 @@ public class DatabaseSeeder implements CommandLineRunner {
         transacoes.add(criarTransacao("Salário Mensal CLT", new BigDecimal("2100.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.RECEITA, LocalDateTime.of(anoAnt, mesAntNum, 5, 8, 0), cSantander, mPixPedro));
         transacoes.add(criarTransacao("Supermercado", new BigDecimal("340.00"), catAlimentacao, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 6, 18, 0), cSantander, mDebitoPedro));
         transacoes.add(criarTransacao("Ajuda em Casa", new BigDecimal("450.00"), catOutros, EstadoTransacao.REALIZADA, TipoTransacao.DESPESA, LocalDateTime.of(anoAnt, mesAntNum, 5, 11, 0), cSantander, mPixPedro));
+
+        // Compras Parceladas no Cartão: Pedro
+        transacoes.addAll(criarCompraParcelada(
+                "Jaqueta e Roupas de Inverno",
+                new BigDecimal("79.90"),
+                3, 2,
+                catOutros,
+                LocalDateTime.of(ano, mes, 8, 19, 0).minusMonths(1),
+                cSantanderCard,
+                mCreditoPedro
+        ));
 
         transacaoRepository.saveAll(transacoes);
 
