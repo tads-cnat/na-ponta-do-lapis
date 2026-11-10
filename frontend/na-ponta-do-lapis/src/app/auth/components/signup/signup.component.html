@@ -1,6 +1,12 @@
+<<<<<<< HEAD
 <p-toast position="top-right" [baseZIndex]="10000"></p-toast>
 <div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
   <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
+=======
+<p-toast></p-toast>
+<div class="flex h-screen w-full bg-white overflow-hidden">
+  <div class="flex flex-1 flex-col justify-between p-6 sm:p-10 overflow-y-auto">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
 
     <!-- Botão Voltar ao Início ancorado no canto superior esquerdo, distante do formulário -->
     <div class="w-full flex items-center justify-start">
@@ -11,7 +17,11 @@
       </button>
     </div>
 
+<<<<<<< HEAD
     <form [formGroup]="registerForm" (ngSubmit)="register()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
+=======
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="flex flex-col gap-3.5 w-full max-w-md mx-auto my-auto py-8">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
       <div>
         <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Criar Conta</h1>
         <p class="text-sm sm:text-base text-slate-500 mt-1.5">
@@ -19,6 +29,7 @@
           <a routerLink="/login"
             class="text-[#7843CD] font-bold transition duration-200 hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 ml-1">Entrar</a>
         </p>
+<<<<<<< HEAD
       </div>
 
       <div class="flex flex-col gap-2.5 mt-1">
@@ -63,10 +74,33 @@
             <small class="text-[#C24E4E] text-xs font-semibold leading-4">Nome de usuário obrigatório (mín. 3 letras).</small>
           }
         </div>
+=======
+      </div>
+
+      <div class="flex flex-col gap-1.5 mt-1">
+        <label for="nome" class="text-xs font-semibold text-slate-700">Nome Completo <span class="text-[#C24E4E]">*</span></label>
+        <input id="nome" pInputText placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full text-sm rounded-xl!"
+               [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
+               [class.ng-dirty]="registerForm.get('nomeCompleto')?.touched">
+        @if (registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched) {
+          <small class="text-[#C24E4E] text-xs font-semibold">O nome deve ter no mínimo 3 caracteres.</small>
+        }
+      </div>
+
+      <div class="flex flex-col gap-1.5">
+        <label for="username" class="text-xs font-semibold text-slate-700">Nome de Usuário (Nickname) <span class="text-[#C24E4E]">*</span></label>
+        <input id="username" pInputText placeholder="Ex: lucaasshq" formControlName="username" class="w-full text-sm rounded-xl!"
+               [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+               [class.ng-dirty]="registerForm.get('username')?.touched">
+        @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+          <small class="text-[#C24E4E] text-xs font-semibold">Nome de usuário obrigatório (mín. 3 letras).</small>
+        }
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div class="flex flex-col gap-1.5">
+<<<<<<< HEAD
           <label for="email" class="text-xs font-semibold text-slate-700">E-mail</label>
           <input id="email" pInputText placeholder="nome@gmail.com" formControlName="email" class="w-full text-sm rounded-xl!"
                  [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
@@ -81,6 +115,18 @@
           <label for="celular" class="text-xs font-semibold text-slate-700">
             Celular <span class="text-slate-400 font-normal text-[11px]">(opcional)</span>
           </label>
+=======
+          <label for="email" class="text-xs font-semibold text-slate-700">E-mail <span class="text-[#C24E4E]">*</span></label>
+          <input id="email" pInputText placeholder="nome@gmail.com" formControlName="email" class="w-full text-sm rounded-xl!"
+                 [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+                 [class.ng-dirty]="registerForm.get('email')?.touched">
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold">E-mail inválido.</small>
+          }
+        </div>
+        <div class="flex flex-col gap-1.5">
+          <label for="celular" class="text-xs font-semibold text-slate-700">Celular</label>
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
           <p-inputMask id="celular" mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName="telefone"
             styleClass="w-full text-sm rounded-xl!"></p-inputMask>
         </div>
@@ -88,11 +134,16 @@
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div class="flex flex-col gap-1.5">
+<<<<<<< HEAD
           <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
+=======
+          <label for="password" class="text-xs font-semibold text-slate-700">Senha <span class="text-[#C24E4E]">*</span></label>
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
           <p-password id="password" [toggleMask]="true" placeholder="Mínimo 8 caracteres"
             inputStyleClass="w-full text-sm rounded-xl!" formControlName="password" [feedback]="true" promptLabel="Força da senha"
             weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte"
             [styleClass]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
+<<<<<<< HEAD
           <div class="min-h-4 flex items-center">
             @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
               <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 8 caracteres.</small>
@@ -110,6 +161,21 @@
               <small class="text-[#C24E4E] text-xs font-semibold leading-4">Confirme sua senha.</small>
             }
           </div>
+=======
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold">Mínimo de 8 caracteres.</small>
+          }
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label for="confirmPassword" class="text-xs font-semibold text-slate-700">Confirmar Senha <span class="text-[#C24E4E]">*</span></label>
+          <p-password id="confirmPassword" [toggleMask]="true" [feedback]="false" placeholder="Repita a senha"
+            inputStyleClass="w-full text-sm rounded-xl!" formControlName="passwordConfirmation"
+            [styleClass]="registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
+          @if (registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold">Confirme sua senha.</small>
+          }
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
         </div>
       </div>
 
@@ -128,7 +194,22 @@
       </div>
     </form>
 
+<<<<<<< HEAD
     <div class="hidden sm:block h-2"></div>
+=======
+    <!-- Espaçador inferior para equilibrar o centro vertical na tela -->
+    <div class="hidden sm:block h-9"></div>
+  </div>
+
+  <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
+    <div class="flex flex-col items-center gap-4 z-10 px-8 text-center max-w-sm">
+      <img src="/logo.svg" alt="Na Ponta do Lápis" class="w-64 max-w-xs drop-shadow-xs">
+      <div class="w-12 h-1 rounded-full bg-[#EEC046]"></div>
+      <p class="text-sm font-medium text-[#4A2585]/85 tracking-wide leading-relaxed">
+        Seu controle financeiro pessoal e familiar, simples e na ponta do lápis.
+      </p>
+    </div>
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
   </div>
 
   @if (!embedded) {

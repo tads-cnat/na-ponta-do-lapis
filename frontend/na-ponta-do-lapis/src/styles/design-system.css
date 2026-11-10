@@ -225,6 +225,7 @@
   letter-spacing: 0.025em;
 }
 
+<<<<<<< HEAD
 /* Badge Vermelho / Alerta */
 .badge-npl-vermelho {
   display: inline-flex;
@@ -255,6 +256,8 @@
   letter-spacing: 0.025em;
 }
 
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
 /* Detalhe de Borda e Acento Amarelo NPL */
 .accent-npl-border {
   border-color: #F9DB70 !important;
@@ -320,6 +323,7 @@
   padding: 1rem 1.5rem !important;
 }
 
+<<<<<<< HEAD
 /* ==========================================================================
    ANIMAÇÕES & MICRO-INTERAÇÕES SUAVES (MOTION 2 — BALANCED)
    ========================================================================== */
@@ -469,3 +473,5 @@
 }
 
 
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)

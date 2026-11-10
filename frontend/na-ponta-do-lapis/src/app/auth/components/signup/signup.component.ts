@@ -78,6 +78,7 @@ export class SignupComponent implements AfterViewInit {
     })
   }
 
+<<<<<<< HEAD
   public cadastrarComGoogle() {
     if (this.loading) return;
     this.loading = true;
@@ -149,6 +150,8 @@ export class SignupComponent implements AfterViewInit {
     this.loading = false;
   }
 
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
   public voltar() {
     this.router.navigateByUrl('');
   }

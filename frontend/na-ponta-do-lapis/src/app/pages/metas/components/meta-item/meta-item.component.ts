@@ -4,6 +4,7 @@ import { MetaResponse } from '@models/IMetas.models';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { TooltipModule } from 'primeng/tooltip';
 import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 import { IlustracaoMetaComponent } from '../../../../shared/components/ilustracao-meta/ilustracao-meta.component';
@@ -12,12 +13,19 @@ import { IlustracaoMetaComponent } from '../../../../shared/components/ilustraca
   selector: 'app-meta-item',
   imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe, IlustracaoMetaComponent],
 =======
+=======
+import { TooltipModule } from 'primeng/tooltip';
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
 import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 
 @Component({
   selector: 'app-meta-item',
+<<<<<<< HEAD
   imports: [Button, ProgressBarModule, AppMoedaPipe],
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
+=======
+  imports: [Button, ProgressBarModule, TooltipModule, AppMoedaPipe],
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
   templateUrl: './meta-item.component.html',
   styleUrl: './meta-item.component.css',
 })

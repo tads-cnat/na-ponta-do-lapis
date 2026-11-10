@@ -40,10 +40,14 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             [ngClass]="contas.length <= 1
               ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
 <<<<<<< HEAD
+<<<<<<< HEAD
               : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
 =======
               : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
 >>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
+=======
+              : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
             class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
             [attr.aria-disabled]="contas.length <= 1"
             [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Conta anterior'">
@@ -57,10 +61,14 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             [ngClass]="contas.length <= 1
               ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
 <<<<<<< HEAD
+<<<<<<< HEAD
               : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
 =======
               : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
 >>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
+=======
+              : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
             class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
             [attr.aria-disabled]="contas.length <= 1"
             [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Próxima conta'">
@@ -103,6 +111,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                       @if (conta.sincronizada) {
                         <span class="inline-flex items-center gap-1.5 text-[11px] bg-[#EEC046] text-slate-900 px-2.5 py-0.5 rounded-full font-bold tracking-wide shadow-xs">
                           <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+<<<<<<< HEAD
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
                           </svg>
                           <span>Open Finance</span>
@@ -110,6 +119,8 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                           ⚡ Open Finance
                         <span class="inline-flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
                           <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
                           </svg>
                           <span>Open Finance</span>

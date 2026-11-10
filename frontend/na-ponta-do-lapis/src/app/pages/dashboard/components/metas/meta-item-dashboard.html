@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <div class="p-3.5 rounded-2xl border border-slate-100 bg-white hover:border-[#D1C4FF] hover:shadow-xs transition-all">
     <!-- Linha Principal: Ícone + Título + Status + Valores -->
     <div class="flex items-center justify-between gap-3 mb-2.5">
@@ -33,6 +34,13 @@
       <div class="flex items-center">
         <div class="bg-white h-14 w-14 flex items-center justify-center rounded-2xl mr-5">
           <svg xmlns="http://www.w3.org/2000/svg" width="31" height="31" viewBox="0 0 31 31" fill="none">
+=======
+<div class="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/70 hover:bg-white hover:border-[#D1C4FF] transition-all">
+    <div class="flex items-center justify-between gap-3 mb-2.5">
+      <div class="flex items-center min-w-0">
+        <div class="bg-[#FEF9E7] border border-[#F9DB70]/80 h-11 w-11 flex items-center justify-center rounded-xl mr-3.5 shrink-0 shadow-2xs">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 31 31" fill="none">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
             <g clip-path="url(#clip0_1200_19826)">
               <path d="M8.65417 12.25H11.3941V26.5053H8.65417V12.25Z" fill="#DEBB7E" />
               <path
@@ -108,6 +116,7 @@
                   </clipPath>
                 </defs>
               </svg>
+<<<<<<< HEAD
               </div>
               <div>
                 <p class="font-bold text-xl text-gray-800">{{meta.nome}}</p>
@@ -143,4 +152,23 @@
       </span>
     </div>
     <p-progressbar class="h-2!" [value]="progressoLimitado" [color]="corBarraProgresso" [showValue]="false" />
+=======
+        </div>
+        <div class="min-w-0">
+          <div class="flex items-center gap-2 flex-wrap">
+            <p class="font-bold text-sm sm:text-base text-slate-900 truncate">{{meta.nome}}</p>
+            <span class="badge-npl-amarelo text-[11px]! py-0.5! px-2!">{{meta.progresso}}%</span>
+          </div>
+          <p class="text-[11px] text-slate-500 mt-0.5">Meta: {{ meta.valorTotal | appMoeda }}</p>
+        </div>
+      </div>
+      <div class="flex items-center shrink-0">
+        <div class="text-end">
+          <p class="text-emerald-600 font-extrabold text-sm">{{ meta.valorAtual | appMoeda }}</p>
+          <p class="text-[11px] text-slate-500">faltam {{ valorFalta | appMoeda }}</p>
+        </div>
+      </div>
+    </div>
+    <p-progressbar class="h-2.5!" [value]="meta.progresso" color="linear-gradient(119deg, #7843CD, #EEC046)" showValue="false" />
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
 </div>

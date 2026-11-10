@@ -212,6 +212,19 @@ export class MetasComponent implements OnInit {
   totalRestante = computed(() => {
     return Math.max(0, this.totalMetas() - this.totalAcumulado());
   });
+<<<<<<< HEAD
+=======
+
+  progressoGeral = computed(() => {
+    const total = this.totalMetas();
+    if (!total || total <= 0) return 0;
+    return Math.min(100, Math.round((this.totalAcumulado() / total) * 100));
+  });
+
+  totalMetasFormatado = computed(() =>
+    this.totalMetas().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+  );
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
 
   progressoGeral = computed(() => {
     const total = this.totalMetas();

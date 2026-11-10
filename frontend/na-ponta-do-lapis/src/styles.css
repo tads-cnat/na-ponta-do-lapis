@@ -12,6 +12,7 @@
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 @theme {
   --color-npl-amarelo: #EEC046;
@@ -23,6 +24,8 @@
 }
 
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
 /* Cores de despesa confortáveis e refinadas (substituindo o vermelho agressivo) */
 .text-despesa {
   color: #C24E4E !important;

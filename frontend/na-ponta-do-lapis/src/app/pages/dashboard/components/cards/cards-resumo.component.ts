@@ -27,6 +27,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
   imports: [CommonModule, DecimalPipe, AppMoedaPipe],
   template: `
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+<<<<<<< HEAD
 
       <!-- Card 1: Dinheiro em Contas -->
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
@@ -46,16 +47,29 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   template: `
     <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
 
       <!-- Card 1: Dinheiro em Contas -->
-      <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px]">
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
         <div class="flex items-center justify-between mb-3">
+<<<<<<< HEAD
           <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Dinheiro em Contas</span>
           <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
             </svg>
 >>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
+=======
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+              <i class="pi pi-wallet text-base"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Dinheiro em Contas</span>
+              <p class="text-[11px] text-slate-400">Total disponível no banco</p>
+            </div>
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
           </div>
         </div>
         <div>
@@ -65,6 +79,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
             {{ totalDinheiroContas | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs min-h-5 text-slate-500">
+<<<<<<< HEAD
             <span class="truncate">Disponível em contas</span>
             @if (totalReceitasPendentes > 0) {
               <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ totalReceitasPendentes | appMoeda }} a receber</span>
@@ -75,6 +90,8 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
           </span>
           <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
             <span class="truncate">Disponível em contas</span>
             @if (totalReceitasPendentes > 0) {
 <<<<<<< HEAD
@@ -89,6 +106,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
       </div>
 
       <!-- Card 2: Saldo Devedor Pendente -->
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
@@ -117,19 +135,25 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 =======
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px]">
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
+=======
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
         <div class="flex items-center justify-between mb-3">
-          <span class="text-xs font-bold uppercase tracking-wider text-[#9E3636]">Saldo Devedor Pendente</span>
-          <div class="w-10 h-10 rounded-xl bg-[#FDF4F4] border border-[#F5D5D5] text-[#C24E4E] flex items-center justify-center">
-            <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
-            </svg>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-[#FDF4F4] border border-[#F5D5D5] text-[#C24E4E] flex items-center justify-center shrink-0">
+              <i class="pi pi-credit-card text-base"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-[#9E3636]">Saldo Devedor Pendente</span>
+              <p class="text-[11px] text-slate-400">Faturas e contas a pagar</p>
+            </div>
           </div>
         </div>
         <div>
           <span class="text-2xl lg:text-3xl font-extrabold text-[#C24E4E] tracking-tight block truncate">
             - {{ totalSaldoDevedor | appMoeda }}
           </span>
-          <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500"
+          <div class="flex items-center justify-between mt-1 text-xs min-h-5 text-slate-500"
                [title]="'Faturas: ' + (totalFaturasCartoes | appMoeda) + ' | Pendentes: ' + (totalDespesasPendentes | appMoeda) + ' | Balanço Projetado: ' + (balancoProjetado | appMoeda)">
             @if (totalDespesasPendentes > 0) {
 <<<<<<< HEAD
@@ -150,6 +174,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 
       <!-- Card 3: Receita (Mês Atual) -->
 <<<<<<< HEAD
+<<<<<<< HEAD
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-3">
@@ -169,6 +194,18 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
             </svg>
 >>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
+=======
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
+              <i class="pi pi-arrow-up-right text-base"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-[#7843CD]">Receita ({{ mesAtualNome }})</span>
+              <p class="text-[11px] text-slate-400">Entradas realizadas no mês</p>
+            </div>
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
           </div>
         </div>
         <div>
@@ -178,6 +215,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
             {{ receitaMesAtualRealizada | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs min-h-5 text-slate-500">
+<<<<<<< HEAD
             @if (receitaMesAtualPendente > 0) {
               <span class="truncate">Realizado</span>
               <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ receitaMesAtualPendente | appMoeda }} a receber</span>
@@ -191,6 +229,8 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
           </span>
           <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
             @if (receitaMesAtualPendente > 0) {
               <span class="truncate">Realizado</span>
               <span class="text-emerald-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ receitaMesAtualPendente | appMoeda }} a receber</span>
@@ -213,6 +253,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 
       <!-- Card 4: Despesa (Mês Atual) -->
 <<<<<<< HEAD
+<<<<<<< HEAD
       <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F9DB70] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
         <div class="flex items-center justify-between mb-3">
           <div class="flex items-center gap-3">
@@ -232,6 +273,18 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0V9m0 8l-8-8-4 4-6-6" />
             </svg>
 >>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
+=======
+      <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F9DB70] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+        <div class="flex items-center justify-between mb-3">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-[#FEF9E7] border border-[#F9DB70] text-[#B45309] flex items-center justify-center shrink-0">
+              <i class="pi pi-arrow-down-right text-base"></i>
+            </div>
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-[#B45309]">Despesa ({{ mesAtualNome }})</span>
+              <p class="text-[11px] text-slate-400">Saídas realizadas no mês</p>
+            </div>
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
           </div>
         </div>
         <div>
@@ -241,6 +294,7 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
             {{ despesaMesAtualRealizada | appMoeda }}
           </span>
           <div class="flex items-center justify-between mt-1 text-xs min-h-5 text-slate-500">
+<<<<<<< HEAD
             @if (despesaMesAtualPendente > 0) {
               <span class="truncate">Realizado</span>
               <span class="text-amber-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ despesaMesAtualPendente | appMoeda }} a pagar</span>
@@ -254,6 +308,8 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
           </span>
           <div class="flex items-center justify-between mt-1 text-xs h-5 text-slate-500">
+=======
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
             @if (despesaMesAtualPendente > 0) {
               <span class="truncate">Realizado</span>
               <span class="text-amber-600 font-semibold whitespace-nowrap shrink-0 ml-1">+ {{ despesaMesAtualPendente | appMoeda }} a pagar</span>

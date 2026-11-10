@@ -93,6 +93,7 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
       <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div class="min-w-0">
 <<<<<<< HEAD
+<<<<<<< HEAD
           <h1 class="page-title-npl m-0">
             Contas
           </h1>
@@ -105,6 +106,13 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
           <p class="text-slate-500 mt-1 text-xs sm:text-sm">
             Gestão de contas financeiras
 >>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
+=======
+          <h1 class="page-title-npl m-0">
+            Contas
+          </h1>
+          <p class="page-subtitle-npl">
+            Gestão de contas financeiras e cartões
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
           </p>
         </div>
 
@@ -327,26 +335,36 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                   type="button"
                   (click)="formContaFinanceira.get('tipoConta')?.setValue('CONTA_CORRENTE')"
                   [class]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE'
-                    ? 'flex items-center gap-3 p-3 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-900 font-semibold transition-colors shadow-xs'
-                    : 'flex items-center gap-3 p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors'">
+                    ? 'flex items-center gap-3 p-3 rounded-2xl border-2 border-[#7843CD] bg-[#7843CD]/5 text-slate-900 font-bold transition-colors shadow-xs cursor-pointer'
+                    : 'flex items-center gap-3 p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors cursor-pointer'">
                   <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                       [class]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'">
+                       [class]="formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE' ? 'bg-[#7843CD] text-white' : 'bg-slate-100 text-slate-500'">
                     <i class="pi pi-wallet text-base"></i>
                   </div>
-                  <span class="text-sm font-bold leading-tight text-left">Conta Bancária</span>
+                  <span class="text-sm font-bold leading-tight text-left flex-1">Conta Bancária</span>
+                  @if (formContaFinanceira.get('tipoConta')?.value === 'CONTA_CORRENTE') {
+                    <span class="w-5 h-5 rounded-full bg-[#EEC046] text-slate-900 flex items-center justify-center text-[10px] font-extrabold shrink-0">
+                      <i class="pi pi-check"></i>
+                    </span>
+                  }
                 </button>
 
                 <button
                   type="button"
                   (click)="formContaFinanceira.get('tipoConta')?.setValue('CARTAO_CREDITO')"
                   [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO'
-                    ? 'flex items-center gap-3 p-3 rounded-2xl border-2 border-indigo-600 bg-indigo-50/70 text-indigo-900 font-semibold transition-colors shadow-xs'
-                    : 'flex items-center gap-3 p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors'">
+                    ? 'flex items-center gap-3 p-3 rounded-2xl border-2 border-[#7843CD] bg-[#7843CD]/5 text-slate-900 font-bold transition-colors shadow-xs cursor-pointer'
+                    : 'flex items-center gap-3 p-3 rounded-2xl border-2 border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-colors cursor-pointer'">
                   <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                       [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-500'">
+                       [class]="formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO' ? 'bg-[#7843CD] text-white' : 'bg-slate-100 text-slate-500'">
                     <i class="pi pi-credit-card text-base"></i>
                   </div>
-                  <span class="text-sm font-bold leading-tight text-left">Cartão de Crédito</span>
+                  <span class="text-sm font-bold leading-tight text-left flex-1">Cartão de Crédito</span>
+                  @if (formContaFinanceira.get('tipoConta')?.value === 'CARTAO_CREDITO') {
+                    <span class="w-5 h-5 rounded-full bg-[#EEC046] text-slate-900 flex items-center justify-center text-[10px] font-extrabold shrink-0">
+                      <i class="pi pi-check"></i>
+                    </span>
+                  }
                 </button>
               </div>
             </div>
@@ -435,10 +453,14 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                     type="button"
                     (click)="aplicarCorOficialBanco()"
 <<<<<<< HEAD
+<<<<<<< HEAD
                     class="text-xs font-semibold text-[#7843CD] hover:text-[#6214CC] flex items-center gap-1.5 shrink-0 cursor-pointer">
 =======
                     class="text-xs font-semibold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 shrink-0 cursor-pointer">
 >>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
+=======
+                    class="text-xs font-semibold text-[#7843CD] hover:text-[#6214CC] flex items-center gap-1.5 shrink-0 cursor-pointer">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
                     <span class="w-3.5 h-3.5 rounded-full border border-slate-300 shadow-2xs" [style.backgroundColor]="'#' + formContaFinanceira.get('cor')?.value"></span>
                     <span>Cor oficial aplicada</span>
                   </button>
@@ -593,9 +615,9 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                     [title]="cor.nome"
                     [style.backgroundColor]="'#' + cor.hex"
                     class="w-8 h-8 rounded-xl transition-all duration-150 transform hover:scale-110 flex items-center justify-center shadow-xs cursor-pointer border-2"
-                    [class.border-indigo-600]="formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()"
+                    [class.border-[#7843CD]]="formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()"
                     [class.ring-2]="formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()"
-                    [class.ring-indigo-300]="formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()"
+                    [class.ring-[#D1C4FF]]="formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()"
                     [class.border-white]="formContaFinanceira.get('cor')?.value?.toLowerCase() !== cor.hex.toLowerCase()">
                     @if (formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()) {
                       <i class="pi pi-check text-xs text-white drop-shadow-xs"></i>
@@ -649,14 +671,14 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                 <!-- SELETOR DE COR PERSONALIZADA BEM DESTACADO (NATIVO, SEM QUEBRAR O MODAL) -->
                 <div class="relative flex items-center ml-1 pl-2 border-l border-slate-200">
                   <label
-                    class="relative flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 border-dashed border-indigo-300 hover:border-indigo-600 bg-indigo-50/60 hover:bg-indigo-100/70 text-indigo-900 cursor-pointer transition-colors shadow-2xs group"
+                    class="relative flex items-center gap-2 px-3 py-1.5 rounded-xl border-2 border-dashed border-[#D1C4FF] hover:border-[#7843CD] bg-[#F3E8FF]/60 hover:bg-[#F3E8FF] text-[#7843CD] cursor-pointer transition-colors shadow-2xs group"
                     title="Clique para escolher qualquer outra cor">
-                    <i class="pi pi-palette text-sm text-indigo-600 group-hover:scale-110 transition-transform"></i>
-                    <span class="text-xs font-bold text-indigo-900">Personalizar</span>
+                    <i class="pi pi-palette text-sm text-[#7843CD] group-hover:scale-110 transition-transform"></i>
+                    <span class="text-xs font-bold text-[#7843CD]">Personalizar</span>
                     <input
                       type="color"
                       class="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-                      [value]="'#' + (formContaFinanceira.get('cor')?.value || '4F46E5')"
+                      [value]="'#' + (formContaFinanceira.get('cor')?.value || '7843CD')"
                       (input)="aoSelecionarCorNativa($event)" />
                   </label>
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
@@ -685,6 +707,7 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
 
           <ng-template pTemplate="footer">
 <<<<<<< HEAD
+<<<<<<< HEAD
             <div class="flex justify-end gap-2 w-full pt-2">
               <p-button
                 label="Cancelar"
@@ -699,17 +722,31 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                 severity="secondary"
                 [text]="true"
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+            <div class="flex justify-end gap-2 w-full pt-2">
+              <p-button
+                label="Cancelar"
+                severity="secondary"
+                [outlined]="true"
+                size="small"
+                styleClass="rounded-xl! text-xs px-4"
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
                 (click)="exibirDialog = false">
               </p-button>
 
               <p-button
                 icon="pi pi-check"
 <<<<<<< HEAD
+<<<<<<< HEAD
                 size="small"
                 styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
 =======
                 severity="success"
 >>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
+=======
+                size="small"
+                styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
                 [label]="modoEdicao ? 'Salvar Alterações' : 'Criar Conta'"
                 (click)="salvarConta()">
               </p-button>

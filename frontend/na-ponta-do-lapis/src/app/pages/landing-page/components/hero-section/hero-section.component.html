@@ -12,11 +12,17 @@
 
   <div class="flex justify-center items-center w-full relative min-h-[380px] z-10">
     <div class="relative w-full max-w-[320px] flex justify-center items-center">
+<<<<<<< HEAD
       <div class="hero-parallax-layer absolute inset-0 pointer-events-none" [style.transform]="'translate3d(' + (parallaxX() * -0.35) + 'px, ' + (parallaxY() * -0.35) + 'px, 0)'">
         <div class="absolute hero-frame-in" style="width: 255px; height: 320px; border: 1px solid #EEC046; left: 50%; top: 50%; margin-left: -127.5px; margin-top: -175px; z-index: 5; --npl-delay: 220ms;"></div>
         <div class="absolute hero-frame-in" style="width: 225px; height: 290px; border: 1px solid #EEC046; left: 50%; top: 50%; margin-left: -112.5px; margin-top: -160px; z-index: 5; --npl-delay: 340ms;"></div>
         <div class="hidden sm:block absolute hero-line-sweep" style="width: 400px; height: 2.322px; background-color: #EEC046; left: 50%; top: 50%; margin-left: -200px; margin-top: 145px; z-index: 5; --npl-delay: 420ms;"></div>
       </div>
+=======
+      <div class="absolute" style="width: 255px; height: 320px; border: 1px solid #EEC046; left: -5.5px; top: calc(50% - 227px); z-index: 5;"></div>
+      <div class="absolute" style="width: 225px; height: 290px; border: 1px solid #EEC046; left: 10.75px; top: calc(50% - 212px); z-index: 5;"></div>
+      <div class="absolute" style="width: 400px; height: 2.322px; background-color: #EEC046; left: -60px; top: calc(50% + 93px); z-index: 5;"></div>
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
       
       <div class="hero-parallax-layer relative z-10" [style.transform]="'translate3d(' + (parallaxX() * 0.65) + 'px, ' + (parallaxY() * 0.65) + 'px, 0)'">
         <img src="/landing-page/hero-primary-illustration.svg" alt="Ilustração Principal" fetchpriority="high" class="hero-j-dimensions object-contain hero-main-in" style="--npl-delay: 80ms;" />
@@ -53,7 +59,11 @@
       A gestão financeira pessoal corresponde ao controle de gastos e planejamento – não apenas ganhar e gastar o seu dinheiro.
     </p>
     
+<<<<<<< HEAD
     <div class="w-full sm:w-auto relative z-50 flex flex-wrap items-center gap-3 hero-text-rise" style="--npl-delay: 500ms;">
+=======
+    <div class="w-full sm:w-auto relative z-50 flex flex-wrap items-center gap-3">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
       <!-- BOTÃO HERO PADRONIZADO -->
       <a routerLink="/signup" class="btn-npl-primary w-full sm:w-56 h-14 font-semibold text-base flex items-center justify-center rounded-xl hover:-translate-y-0.5 active:translate-y-0 shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer">
         Vem enriquecer
@@ -97,10 +107,17 @@
   </div>
 
   <!-- CARDS POR QUE NÓS -->
+<<<<<<< HEAD
   <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 relative z-20">
     <!-- Card 1 -->
     <div appReveal [revealDelay]="0" class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-slate-100 hover:border-purple-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 transform group" style="border-bottom: 4px solid #EEC046;">
       <div class="w-24 h-24 flex items-center justify-center bg-[#FEF9E7] border border-[#F9DB70] rounded-[28px] transition-transform duration-300 group-hover:scale-105">
+=======
+  <div class="w-full grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12 relative z-20">
+    <!-- Card 1 -->
+    <div class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-slate-100 hover:border-purple-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 transform group" style="border-bottom: 4px solid #EEC046;">
+      <div class="w-24 h-24 flex items-center justify-center bg-[#FEF9E7] border border-[#F9DB70] rounded-[28px]">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
         <img src="/landing-page/card-icon-organization.png" class="w-16 h-16 object-contain" alt="" />
       </div>
       <div class="flex flex-col gap-4 items-center">
@@ -110,8 +127,13 @@
     </div>
 
     <!-- Card 2 -->
+<<<<<<< HEAD
     <div appReveal [revealDelay]="100" class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-slate-100 hover:border-purple-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 transform group" style="border-bottom: 4px solid #EEC046;">
       <div class="w-24 h-24 flex items-center justify-center bg-[#FEF9E7] border border-[#F9DB70] rounded-[28px] transition-transform duration-300 group-hover:scale-105">
+=======
+    <div class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-slate-100 hover:border-purple-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 transform group" style="border-bottom: 4px solid #EEC046;">
+      <div class="w-24 h-24 flex items-center justify-center bg-[#FEF9E7] border border-[#F9DB70] rounded-[28px]">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
         <img src="/landing-page/card-icon-goals.png" class="w-16 h-16 object-contain" alt="" />
       </div>
       <div class="flex flex-col gap-4 items-center">
@@ -121,8 +143,13 @@
     </div>
 
     <!-- Card 3 -->
+<<<<<<< HEAD
     <div appReveal [revealDelay]="200" class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-slate-100 hover:border-purple-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 transform group" style="border-bottom: 4px solid #EEC046;">
       <div class="w-24 h-24 flex items-center justify-center bg-[#FEF9E7] border border-[#F9DB70] rounded-[28px] transition-transform duration-300 group-hover:scale-105">
+=======
+    <div class="bg-white rounded-2xl p-10 flex flex-col items-center text-center gap-8 border border-slate-100 hover:border-purple-200 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 transform group" style="border-bottom: 4px solid #EEC046;">
+      <div class="w-24 h-24 flex items-center justify-center bg-[#FEF9E7] border border-[#F9DB70] rounded-[28px]">
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
         <img src="/landing-page/card-icon-monitor.png" class="w-16 h-16 object-contain" alt="" />
       </div>
       <div class="flex flex-col gap-4 items-center">
@@ -272,9 +299,23 @@
       </div>
     </div>
 
+<<<<<<< HEAD
     <div class="pt-6 border-t border-[#7843CD]/15 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs text-[#2D2640]/80 font-['Lexend_Deca']">
       <span>Na Ponta do Lápis. Todos os direitos reservados.</span>
       <span>Gestão financeira pessoal e familiar</span>
+=======
+    <div class="flex flex-col sm:flex-row gap-14 md:gap-20 lg:gap-28 xl:gap-36 justify-end">
+      <div class="flex flex-col gap-4">
+        <a href="#" (click)="$event.preventDefault(); $any($event.target).ownerDocument.defaultView.scrollTo({top: 0, behavior: 'smooth'})" class="font-['Urbanist'] font-medium text-2xl text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Início</a>
+        <a href="#o-que-fazemos" class="font-['Urbanist'] font-medium text-2xl text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Produto</a>
+        <a href="#por-que-nos" class="font-['Urbanist'] font-medium text-2xl text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Sobre nós</a>
+        <a routerLink="/blog" class="font-['Urbanist'] font-medium text-2xl text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Blog</a>
+      </div>
+      <div class="flex flex-col gap-4">
+        <a routerLink="/community" class="font-['Urbanist'] font-medium text-2xl text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Comunidade</a>
+        <a href="landing-page/termos_privacidade.pdf" target="_blank" rel="noopener noreferrer" class="font-['Urbanist'] font-medium text-2xl text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Termos de serviço</a>
+      </div>
+>>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
     </div>
   </div>
 </footer>
