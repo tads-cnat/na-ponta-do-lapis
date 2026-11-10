@@ -16,10 +16,16 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
       <div class="flex items-center justify-between mb-8">
 
         <div>
-          <h2 class="text-2xl font-bold text-slate-900">
-            Suas Contas
-          </h2>
-          <p class="text-slate-500 mt-1 text-sm">
+          <div class="flex items-center gap-2.5">
+            <h2 class="section-title-npl m-0">
+              Suas Contas
+            </h2>
+            <span class="badge-npl-amarelo">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
+              {{ contas.length }} {{ contas.length === 1 ? 'conta' : 'contas' }}
+            </span>
+          </div>
+          <p class="text-slate-500 mt-0.5 text-xs">
             Navegue entre as contas cadastradas
           </p>
         </div>
@@ -33,7 +39,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             (click)="contas.length > 1 && onAnterior.emit()"
             [ngClass]="contas.length <= 1
               ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
-              : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+              : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
             class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
             [attr.aria-disabled]="contas.length <= 1"
             [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Conta anterior'">
@@ -46,7 +52,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             (click)="contas.length > 1 && onProxima.emit()"
             [ngClass]="contas.length <= 1
               ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
-              : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
+              : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
             class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
             [attr.aria-disabled]="contas.length <= 1"
             [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Próxima conta'">
@@ -87,8 +93,8 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
 
                     <div class="min-w-0 flex-1">
                       @if (conta.sincronizada) {
-                        <span class="inline-flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
-                          <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                        <span class="inline-flex items-center gap-1.5 text-[11px] bg-[#EEC046] text-slate-900 px-2.5 py-0.5 rounded-full font-bold tracking-wide shadow-xs">
+                          <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
                           </svg>
                           <span>Open Finance</span>
@@ -169,7 +175,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
               class="rounded-full transition-all duration-300"
               [ngClass]="
                 i === contaSelecionadaIndex
-                  ? 'w-10 h-3 bg-slate-800'
+                  ? 'w-10 h-3 bg-[#EEC046] shadow-xs'
                   : 'w-3 h-3 bg-slate-300 hover:bg-slate-400'
               ">
             </button>

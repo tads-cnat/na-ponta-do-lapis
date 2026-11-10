@@ -10,19 +10,19 @@
         (click)="isMobile ? sidebarService.fecharSidebar() : null" 
         routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" 
         class="menuitem flex items-center justify-center">
-            <div class="botao-adicionar flex items-center justify-center gap-2.5 bg-[#10b981]! text-white! rounded-xl">
+            <div class="botao-adicionar flex items-center justify-center gap-2 btn-npl-primary text-white! rounded-xl whitespace-nowrap">
                 <app-icon name="plus" class="w-5 h-5 shrink-0" />
-                <span class="menulabel">
-                    Adicionar
+                <span class="menulabel text-sm font-semibold">
+                    Nova Transação
                 </span>
             </div>
         </a>
     }
     @else {
-        <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" (click)="isMobile ? sidebarService.fecharSidebar() : null" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem flex  gap-2.5 text-white! bg-[#10b981]!">
-            <app-icon name="plus" class="w-5 h-5" />
-            <span class="menulabel">
-                Adicionar
+        <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" (click)="isMobile ? sidebarService.fecharSidebar() : null" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem botao-nova-transacao flex gap-2 text-white! btn-npl-primary whitespace-nowrap">
+            <app-icon name="plus" class="w-5 h-5 shrink-0" />
+            <span class="menulabel text-sm font-semibold">
+                Nova Transação
             </span>
         </a>
     }

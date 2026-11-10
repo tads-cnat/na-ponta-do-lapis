@@ -1,14 +1,14 @@
-<div class="w-full max-w-7xl mx-auto px-4 md:px-8">
+<div class="w-full">
     
     <!-- VISÃO GERAL (TODAS AS CONTAS) — TRÍADE FINANCEIRA -->
     @if (contaId === null) {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
             
             <!-- Card 1: Dinheiro em Contas -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between relative overflow-hidden">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-2">
-                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
                             <i class="pi pi-wallet text-base"></i>
                         </div>
                         <div>
@@ -18,11 +18,11 @@
                     </div>
                 </div>
 
-                <div class="mt-1">
-                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-emerald-700">
+                <div>
+                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-emerald-700 block truncate">
                         {{ totalDinheiroContas | appMoeda }}
                     </span>
-                    <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5">
+                    <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5 min-h-5">
                         <span>Disponível em contas</span>
                         @if (totalReceitasPendentes > 0) {
                             <span class="text-emerald-600 font-semibold">• (+ {{ totalReceitasPendentes | appMoeda }} a receber)</span>
@@ -32,10 +32,10 @@
             </div>
 
             <!-- Card 2: Saldo Devedor Pendente (Faturas + Contas a Pagar) -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between relative overflow-hidden">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-2">
-                        <div class="w-9 h-9 rounded-xl bg-[#FDF4F4] border border-[#F5D5D5] text-[#C24E4E] flex items-center justify-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#FDF4F4] border border-[#F5D5D5] text-[#C24E4E] flex items-center justify-center shrink-0">
                             <i class="pi pi-credit-card text-base"></i>
                         </div>
                         <div>
@@ -45,11 +45,11 @@
                     </div>
                 </div>
 
-                <div class="mt-1">
-                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-[#C24E4E]">
+                <div>
+                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-[#C24E4E] block truncate">
                         - {{ totalSaldoDevedor | appMoeda }}
                     </span>
-                    <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5">
+                    <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5 min-h-5">
                         <span>Faturas: {{ totalFaturasCartoes | appMoeda }}</span>
                         @if (totalDespesasPendentes > 0) {
                             <span>• Pendentes: {{ totalDespesasPendentes | appMoeda }}</span>
@@ -59,25 +59,25 @@
             </div>
 
             <!-- Card 3: Balanço Líquido -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between relative overflow-hidden">
+            <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
                 <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-2">
-                        <div class="w-9 h-9 rounded-xl bg-purple-100 text-[#7843cd] flex items-center justify-center">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
                             <i class="pi pi-chart-line text-base"></i>
                         </div>
                         <div>
-                            <span class="text-xs font-bold uppercase tracking-wider text-[#7843cd]">Balanço Líquido</span>
+                            <span class="text-xs font-bold uppercase tracking-wider text-[#7843CD]">Balanço Líquido</span>
                             <p class="text-[11px] text-slate-400">Patrimônio líquido real</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-1">
-                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight"
+                <div>
+                    <span class="font-extrabold text-2xl lg:text-3xl tracking-tight block truncate"
                           [ngClass]="balancoLiquido >= 0 ? 'text-slate-900' : 'text-[#C24E4E]'">
                         {{ balancoLiquido | appMoeda }}
                     </span>
-                    <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 mt-1 gap-1">
+                    <div class="flex flex-wrap items-center justify-between text-xs text-slate-500 mt-1 gap-1 min-h-5">
                         @if (totalReceitasPendentes > 0) {
                             <span class="font-medium text-emerald-600">Proj.: {{ balancoProjetado | appMoeda }}</span>
                         } @else {
@@ -107,107 +107,124 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
                 
                 <!-- Card 1: Fatura Fechada (A Pagar Agora) -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-[#9E3636] flex items-center gap-1.5">
-                                <i class="pi pi-exclamation-circle text-xs"></i>
-                                Fatura Fechada (A Pagar)
-                            </span>
-                            <span class="text-[10px] font-bold bg-[#FDF4F4] text-[#9E3636] border border-[#F5D5D5] px-2 py-0.5 rounded-full">
-                                Pagar Agora
-                            </span>
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#FDF4F4] border border-[#F5D5D5] text-[#C24E4E] flex items-center justify-center shrink-0">
+                                <i class="pi pi-exclamation-circle text-base"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#9E3636]">Fatura Fechada</span>
+                                <p class="text-[11px] text-slate-400">Valor a pagar neste ciclo</p>
+                            </div>
                         </div>
-                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-[#C24E4E]">
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-[#C24E4E] block truncate">
                             - {{ faturaFechadaSelecionada | appMoeda }}
                         </span>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-[#F5D5D5] text-xs text-[#C24E4E] flex items-center justify-between">
-                        <span>{{ vencimentoFaturaSelecionada ? ('Vencimento: ' + (vencimentoFaturaSelecionada | date:'dd/MM/yyyy')) : 'Aguardando vencimento' }}</span>
-                        <i class="pi pi-calendar text-xs"></i>
+                        <div class="text-xs text-[#C24E4E] mt-1 flex items-center justify-between min-h-5">
+                            <span>{{ vencimentoFaturaSelecionada ? ('Vencimento: ' + (vencimentoFaturaSelecionada | date:'dd/MM/yyyy')) : 'Aguardando vencimento' }}</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card 2: Fatura em Aberto (Próximo Mês) -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-amber-200 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-amber-800 flex items-center gap-1.5">
-                                <i class="pi pi-clock text-xs"></i>
-                                Fatura em Aberto (Próximo Mês)
-                            </span>
-                            <span class="text-[10px] font-bold bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full">
-                                Em Aberto
-                            </span>
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F9DB70] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#FEF9E7] border border-[#F9DB70] text-[#B45309] flex items-center justify-center shrink-0">
+                                <i class="pi pi-clock text-base"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#B45309]">Fatura em Aberto</span>
+                                <p class="text-[11px] text-slate-400">Lançamentos do próximo mês</p>
+                            </div>
                         </div>
-                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-amber-900">
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900 block truncate">
                             - {{ faturaAbertaSelecionada | appMoeda }}
                         </span>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-amber-100 text-xs text-amber-700 flex items-center justify-between">
-                        <span>Lançamentos para o próximo ciclo</span>
-                        <i class="pi pi-shopping-bag text-xs"></i>
+                        <div class="text-xs text-slate-500 mt-1 flex items-center justify-between min-h-5">
+                            <span>Próximo ciclo de faturamento</span>
+                        </div>
                     </div>
                 </div>
 
                 <!-- Card 3: Total Devedor & Limite Disponível -->
-                <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-200 flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold uppercase tracking-wider text-[#7843cd] flex items-center gap-1.5">
-                                <i class="pi pi-credit-card text-xs"></i>
-                                Total Devedor & Limite
-                            </span>
-                            <span class="text-[10px] font-bold bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
-                                Consolidado
-                            </span>
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
+                                <i class="pi pi-credit-card text-base"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#7843CD]">Total Devedor & Limite</span>
+                                <p class="text-[11px] text-slate-400">Consolidado do cartão</p>
+                            </div>
                         </div>
-                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900">
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900 block truncate">
                             - {{ (faturaFechadaSelecionada + faturaAbertaSelecionada) | appMoeda }}
                         </span>
-                    </div>
-                    <div class="mt-3 pt-2 border-t border-purple-100 text-xs text-slate-600 flex items-center justify-between">
-                        <span>Disp.: <strong class="text-emerald-600">{{ (limiteDisponivelSelecionado ?? (limiteTotalSelecionado ? limiteTotalSelecionado - (faturaFechadaSelecionada + faturaAbertaSelecionada) : 0)) | appMoeda }}</strong></span>
-                        @if (limiteTotalSelecionado) {
-                            <span class="text-slate-400">Total: {{ limiteTotalSelecionado | appMoeda }}</span>
-                        }
+                        <div class="text-xs text-slate-600 mt-1 flex items-center justify-between min-h-5">
+                            <span>Disp.: <strong class="text-emerald-600">{{ (limiteDisponivelSelecionado ?? (limiteTotalSelecionado ? limiteTotalSelecionado - (faturaFechadaSelecionada + faturaAbertaSelecionada) : 0)) | appMoeda }}</strong></span>
+                            @if (limiteTotalSelecionado) {
+                                <span class="text-slate-400">Total: {{ limiteTotalSelecionado | appMoeda }}</span>
+                            }
+                        </div>
                     </div>
                 </div>
 
             </div>
         } @else {
-            <!-- SE A CONTA SELECIONADA FOR CONTA BANCÁRIA / CORRENTE -->
-            <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-stretch max-w-4xl mx-auto">
+            <!-- SE A CONTA SELECIONADA FOR CONTA BANCÁRIA / CORRENTE (TAMBÉM EM 3 CARDS PADRONIZADOS) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
                 
-                <!-- Card: Saldo Inicial -->
-                <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
-                    <div class="flex items-center justify-between mb-2">
-                        <p class="text-xs font-bold text-slate-500 uppercase tracking-wider">{{ subtituloInicial }}</p>
-                        <span class="text-xs px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 font-semibold">Inicial</span>
+                <!-- Card 1: Saldo Inicial -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
+                                <i class="pi pi-history text-base"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#7843CD]">{{ subtituloInicial }}</span>
+                                <p class="text-[11px] text-slate-400">Início do período filtrado</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-2">
-                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-800">
+                    <div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900 block truncate">
                             {{ saldoInicial | appMoeda }}
                         </span>
-                        <p class="text-xs text-slate-400 mt-1">{{ rodapeInicial }}</p>
+                        <div class="text-xs text-slate-500 mt-1 flex items-center min-h-5">
+                            <span>{{ rodapeInicial }}</span>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Card: Saldo Atual da Conta -->
-                <div class="flex-1 bg-white rounded-2xl p-5 shadow-sm border border-slate-200/80">
-                    <div class="flex items-center justify-between mb-2">
-                        <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
-                            {{ headerFinal }} ({{ contaSelecionadaNome }})
-                        </p>
-                        <span class="text-xs px-2 py-0.5 rounded-md font-semibold bg-emerald-100 text-emerald-700">
-                            Saldo Atual
-                        </span>
+                <!-- Card 2: Variação no Período -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F9DB70] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-[#FEF9E7] border border-[#F9DB70] text-[#B45309] flex items-center justify-center shrink-0">
+                                <i class="pi pi-arrows-v text-base"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#B45309]">Movimentação no Período</span>
+                                <p class="text-[11px] text-slate-400">Diferença entre saldo atual e inicial</p>
+                            </div>
+                        </div>
                     </div>
-                    <div class="mt-2">
-                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-slate-900">
-                            {{ saldoFinal | appMoeda }}
+                    <div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight block truncate"
+                              [ngClass]="(saldoFinal - saldoInicial) >= 0 ? 'text-emerald-700' : 'text-[#C24E4E]'">
+                            {{ (saldoFinal - saldoInicial) >= 0 ? '+ ' : '- ' }}{{ ((saldoFinal - saldoInicial) >= 0 ? (saldoFinal - saldoInicial) : -(saldoFinal - saldoInicial)) | appMoeda }}
                         </span>
-                        <div class="flex items-center gap-2 text-xs text-slate-500 mt-1">
+                        <div class="text-xs text-slate-500 mt-1 flex items-center gap-1.5 min-h-5">
                             @if (variacaoPercentual > 0) {
                                 <span class="text-emerald-600 font-semibold flex items-center gap-0.5">
                                     <i class="pi pi-arrow-up-right text-[10px]"></i>+{{ variacaoPercentual | number:'1.1-1' }}%
@@ -219,8 +236,31 @@
                                 </span>
                                 <span>no período</span>
                             } @else {
-                                <span>Sem variação no período</span>
+                                <span>Sem variação percentual</span>
                             }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card 3: Saldo Atual da Conta -->
+                <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+                    <div class="flex items-center justify-between mb-3">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
+                                <i class="pi pi-wallet text-base"></i>
+                            </div>
+                            <div>
+                                <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">{{ headerFinal }}</span>
+                                <p class="text-[11px] text-slate-400">{{ contaSelecionadaNome }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-emerald-700 block truncate">
+                            {{ saldoFinal | appMoeda }}
+                        </span>
+                        <div class="text-xs text-slate-500 mt-1 flex items-center min-h-5">
+                            <span>Saldo disponível na conta</span>
                         </div>
                     </div>
                 </div>

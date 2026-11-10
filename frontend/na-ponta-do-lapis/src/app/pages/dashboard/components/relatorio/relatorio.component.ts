@@ -16,37 +16,25 @@ import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-
    * sem impacto visual.
    */
   template: `
-    <section class="bg-white rounded-2xl p-6 shadow-sm">
+    <section class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
 
-     <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
-
-    <div class="flex justify-between items-center mb-5">
-
-        <h2 class="text-2xl font-bold text-slate-900">
+      <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-5">
+        <div>
+          <h2 class="section-title-npl">
             Relatório mensal
-        </h2>
+          </h2>
+          <p class="text-xs text-slate-500 mt-0.5">
+            Evolução acumulada do saldo ao longo dos meses
+          </p>
+        </div>
 
-        <select
-            class="
-            border
-            border-slate-200
-            rounded-lg
-            px-3
-            py-2
-            text-sm
-            text-slate-600">
+        <span class="badge-npl-amarelo self-start sm:self-auto">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
+          Ano atual
+        </span>
+      </div>
 
-            <option>
-                Ano atual
-            </option>
-
-        </select>
-
-    </div>
-
-
-    @if(chartData){
-
+      @if(chartData){
         <p-chart
             type="line"
             [data]="chartData"
@@ -55,12 +43,8 @@ import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-
                 height:'260px'
             }"
             class="w-full">
-
         </p-chart>
-
-    }
-
-</div>
+      }
 
     </section>
   `,
@@ -97,9 +81,16 @@ export class RelatorioComponent implements OnChanges {
                     data: valores,
                     fill:true,
                     tension:0.4,
-                    borderColor:'#3B82F6',
-                    backgroundColor: 'rgba(59,130,246,0.15)',
-                    pointRadius:4
+                    borderColor:'#7843CD',
+                    backgroundColor: 'rgba(120, 67, 205, 0.10)',
+                    borderWidth: 2.5,
+                    pointRadius: 4,
+                    pointBackgroundColor: '#EEC046',
+                    pointBorderColor: '#7843CD',
+                    pointBorderWidth: 2,
+                    pointHoverRadius: 6,
+                    pointHoverBackgroundColor: '#EEC046',
+                    pointHoverBorderColor: '#7843CD'
                 }
             ]
         };

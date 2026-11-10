@@ -40,20 +40,23 @@
 }
 
 .menuitem {
-    border-radius: 9px;
+    border-radius: 12px;
     padding: 14px 0;
     justify-content: center;
     align-items: center;
     height: 52px;
+    transition: all 0.2s ease;
 }
 
 .menuitem:hover {
-    background-color: #e8e8e8;
+    background-color: #f8f5ff;
+    color: #7843CD;
 }
 
 .menuitem.ativo {
     color: #7843CD;
-    font-weight:bold;
+    background-color: #f3e8ff;
+    font-weight: 600;
 }
 .menulabel{
     display: none;
@@ -70,6 +73,11 @@
 .sidebar.aberta .menuitem {
     padding: 14px 36px;
     justify-content: start;
+}
+
+.sidebar.aberta .menuitem.botao-nova-transacao {
+    padding: 14px 22px;
+    justify-content: center;
 }
 
 .botao-adicionar {

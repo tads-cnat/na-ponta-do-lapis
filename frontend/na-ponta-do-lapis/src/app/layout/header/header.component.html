@@ -12,12 +12,15 @@
             }
         </div>
         <div class="flex items-center gap-5 ">
-          <i class="pi pi-bell"></i>
-            <div><img class="h-12 w-12 rounded-full border-4 border-[#f9db70]  object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}"></div>
-            <div><p class="nomeUser font-medium">{{ nomeUsuario }}</p></div>
-            <div>
-                <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]!" (onClick)="logout()">Sair<i class="pi pi-sign-out "></i></p-button>
-            </div>
+          <div class="relative cursor-pointer text-slate-600 hover:text-[#7843CD] transition-colors p-1" title="Notificações">
+            <i class="pi pi-bell text-lg"></i>
+            <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-[#EEC046] rounded-full ring-2 ring-white"></span>
+          </div>
+          <div><img class="h-11 w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}"></div>
+          <div><p class="nomeUser font-medium text-slate-800">{{ nomeUsuario }}</p></div>
+          <div>
+              <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]! text-xs rounded-xl" (onClick)="logout()">Sair<i class="pi pi-sign-out "></i></p-button>
+          </div>
         </div>
     
     </div>

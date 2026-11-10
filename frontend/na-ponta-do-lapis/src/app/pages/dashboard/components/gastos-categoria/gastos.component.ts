@@ -8,11 +8,28 @@ import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-
 // (CRUD do usuário, ex.: Alimentação, Transporte, Saúde...). A cor de cada
 // categoria é atribuída pela posição (id ou índice) dentro desta paleta,
 // repetindo em ciclo caso existam mais categorias do que cores aqui.
+// ─── Paleta de cores de alto contraste ────────────────────────────────────────
+// Ordenada para máxima distinção visual entre fatias adjacentes no gráfico:
+// inicia com o Roxo (#7843CD) e Amarelo Ouro (#EEC046) da marca, seguidos por
+// matizes distantes no círculo cromático (Esmeralda, Carmim, Azul Oceano,
+// Laranja, Turquesa, Rosa Magenta, Verde Lima, Azul Royal, Terracota, Ciano...).
 const PALETA_CORES: string[] = [
-  '#E74C3C', '#E67E22', '#F1C40F', '#2ECC71', '#3498DB',
-  '#9B59B6', '#1ABC9C', '#95A5A6', '#E91E63', '#FF5722',
-  '#00BCD4', '#8BC34A', '#673AB7', '#FF9800', '#009688',
-  '#F06292', '#26C6DA', '#FFA726', '#AB47BC', '#5C6BC0',
+  '#7843CD', // 1. Roxo NPL
+  '#EEC046', // 2. Amarelo Ouro NPL
+  '#10B981', // 3. Verde Esmeralda
+  '#E11D48', // 4. Vermelho Carmim
+  '#0284C7', // 5. Azul Oceano
+  '#EA580C', // 6. Laranja Vibrante
+  '#0D9488', // 7. Turquesa Escuro
+  '#DB2777', // 8. Rosa Magenta
+  '#65A30D', // 9. Verde Lima
+  '#2563EB', // 10. Azul Royal
+  '#92400E', // 11. Terracota / Âmbar Escuro
+  '#06B6D4', // 12. Ciano Brilhante
+  '#C026D3', // 13. Fúcsia
+  '#475569', // 14. Grafite Azulado
+  '#DC2626', // 15. Vermelho Vivo
+  '#059669', // 16. Verde Floresta
 ];
 
 interface CategoriaVM {
@@ -28,11 +45,16 @@ interface CategoriaVM {
   standalone: true,
   imports: [ChartModule],
   template: `
-    <div class="bg-white rounded-2xl p-5 shadow-sm h-full flex flex-col">
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 h-full flex flex-col">
 
-      <h2 class="text-base font-bold text-gray-800 text-center mb-4">
-        Gastos por categoria
-      </h2>
+      <div class="mb-5">
+        <h2 class="section-title-npl">
+          Gastos por categoria
+        </h2>
+        <p class="text-xs text-slate-500 mt-0.5">
+          Distribuição das despesas realizadas
+        </p>
+      </div>
 
       <div class="flex items-start gap-4 flex-1 min-h-0">
 
@@ -65,16 +87,16 @@ interface CategoriaVM {
           GET /categorias) SEMPRE, independentemente de haver transações nelas.
           Categorias sem dados mostram "0%" para preservar a cor/rótulo.
         -->
-        <div class="flex-1 overflow-y-auto min-w-0 pr-0.5" style="max-height: 185px;">
+        <div class="flex-1 overflow-y-auto min-w-0 pr-1" style="max-height: 185px;">
           @for (cat of categorias; track cat.nome) {
-            <div class="flex items-center gap-1.5 py-[3px]">
-              <span class="w-2 h-2 rounded-full flex-shrink-0"
+            <div class="flex items-center gap-2 py-1">
+              <span class="w-3 h-3 rounded-md flex-shrink-0 shadow-2xs"
                     [style.background-color]="cat.cor">
               </span>
-              <span class="text-[11px] text-gray-600 flex-1 min-w-0 truncate">
+              <span class="text-xs text-slate-700 font-medium flex-1 min-w-0 truncate">
                 {{ cat.nome }}
               </span>
-              <span class="text-[11px] font-semibold text-gray-800 tabular-nums ml-1 flex-shrink-0">
+              <span class="text-xs font-bold text-slate-900 tabular-nums ml-1 flex-shrink-0">
                 {{ cat.percentual }}
               </span>
             </div>
@@ -126,7 +148,17 @@ export class GastosCategoriaComponent implements OnChanges {
       ? this.categorias_disponiveis
       : this.extrairCategoriasDasTransacoes();
 
-    this.categorias = baseCategorias.map((cat, index) => {
+    // Ordena primeiro as categorias com maior gasto no período para que as
+    // fatias ativas recebam sempre as primeiras cores de maior contraste da paleta
+    // e apareçam no topo da legenda.
+    const categoriasOrdenadas = [...baseCategorias].sort((a, b) => {
+      const valA = totalPorId[a.id] ?? 0;
+      const valB = totalPorId[b.id] ?? 0;
+      if (valB !== valA) return valB - valA;
+      return a.nome.localeCompare(b.nome);
+    });
+
+    this.categorias = categoriasOrdenadas.map((cat, index) => {
       const valor = totalPorId[cat.id] ?? 0;
       return {
         id:   cat.id,

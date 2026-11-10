@@ -23,7 +23,7 @@ export class SidebarComponent implements OnInit {
       {label: 'Transações', icon: 'transacao', routerLink:'/app/transacoes'},
       {label: 'Contas', icon: 'conta', routerLink:'/app/contas'},
       {label: 'Metas', icon: 'meta', routerLink:'/app/metas'},
-      {label: 'Familia', icon: 'familia', routerLink:'/app/familia'},
+      {label: 'Família', icon: 'familia', routerLink:'/app/familia'},
       {label: 'Perfil', icon:'ajuste', routerLink:'/app/perfil'},
     ]
     if (window.innerWidth < 769) {

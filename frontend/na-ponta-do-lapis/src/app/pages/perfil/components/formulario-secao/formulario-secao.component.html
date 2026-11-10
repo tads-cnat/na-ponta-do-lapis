@@ -3,7 +3,7 @@
   <!-- Cabeçalho da Seção -->
   <div *ngIf="titulo" class="flex flex-col gap-1">
     <div class="flex items-center gap-2">
-      <i *ngIf="icone" [class]="icone + ' text-indigo-600 text-base'"></i>
+      <i *ngIf="icone" [class]="icone + ' text-[#7843CD] text-base'"></i>
       <h2 class="text-slate-900 font-bold text-lg tracking-tight">{{ titulo }}</h2>
     </div>
     <p *ngIf="subtitulo" class="text-xs text-slate-500 font-normal m-0">{{ subtitulo }}</p>
@@ -19,7 +19,7 @@
 
       <!-- Input de Celular com DDI -->
       <div *ngIf="campo.key === 'celular'; else inputPadrao" 
-           class="flex items-center gap-2 w-full h-12 bg-slate-50/80 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-100/70 rounded-xl px-3 transition-all shadow-2xs">
+           class="flex items-center gap-2 w-full h-12 bg-slate-50/80 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-[#7843CD] focus-within:ring-4 focus-within:ring-[#F3E8FF] rounded-xl px-3 transition-all shadow-2xs">
         <div class="flex items-center gap-1 text-slate-500 font-semibold text-xs border-r border-slate-200 pr-2">
           <span>🇧🇷</span>
           <span>+55</span>
@@ -34,7 +34,7 @@
 
       <!-- Input Padrão e Senha -->
       <ng-template #inputPadrao>
-        <div class="relative w-full flex items-center bg-slate-50/80 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-indigo-600 focus-within:ring-4 focus-within:ring-indigo-100/70 rounded-xl px-3.5 h-12 transition-all shadow-2xs">
+        <div class="relative w-full flex items-center bg-slate-50/80 hover:bg-white focus-within:bg-white border border-slate-200 focus-within:border-[#7843CD] focus-within:ring-4 focus-within:ring-[#F3E8FF] rounded-xl px-3.5 h-12 transition-all shadow-2xs">
           
           <i *ngIf="campo.icon" [class]="campo.icon + ' text-slate-400 mr-2.5 text-sm'"></i>
 
@@ -50,7 +50,7 @@
             *ngIf="campo.type === 'password'"
             type="button"
             [attr.aria-label]="camposVisiveis[campo.key] ? 'Ocultar senha' : 'Mostrar senha'"
-            class="ml-2 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-indigo-600 hover:bg-slate-100 transition-colors cursor-pointer"
+            class="ml-2 w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-[#7843CD] hover:bg-slate-100 transition-colors cursor-pointer"
             (click)="alternarVisibilidade(campo)">
             <i [class]="camposVisiveis[campo.key] ? 'pi pi-eye-slash text-sm' : 'pi pi-eye text-sm'"></i>
           </button>
