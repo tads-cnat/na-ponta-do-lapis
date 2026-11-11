@@ -44,13 +44,15 @@ public class MetaService {
     private final AporteMetaRepository aporteMetaRepository;
     private final TransacaoRepository transacaoRepository;
     private final NotificacaoService notificacaoService;
+    private final ConquistaService conquistaService;
 
     public MetaService(MetaRepository metaRepository, CalculadoraMetaFactory factory,
                        ContaFinanceiraRepository contaFinanceiraRepository,
                        TipoCategoriaRepository tipoCategoriaRepository,
                        AporteMetaRepository aporteMetaRepository,
                        TransacaoRepository transacaoRepository,
-                       NotificacaoService notificacaoService) {
+                       NotificacaoService notificacaoService,
+                       ConquistaService conquistaService) {
         this.metaRepository = metaRepository;
         this.factory = factory;
         this.contaFinanceiraRepository = contaFinanceiraRepository;
@@ -58,6 +60,7 @@ public class MetaService {
         this.aporteMetaRepository = aporteMetaRepository;
         this.transacaoRepository = transacaoRepository;
         this.notificacaoService = notificacaoService;
+        this.conquistaService = conquistaService;
     }
 
     @Transactional(readOnly = true)
@@ -112,6 +115,7 @@ public class MetaService {
         }
 
         Meta metaSalva = metaRepository.save(novaMeta);
+        conquistaService.verificarConquistasCriacaoMeta(metaSalva, usuarioAutenticado);
         return montarResponseComProgresso(metaSalva);
     }
 
@@ -255,6 +259,7 @@ public class MetaService {
         }
 
         metaRepository.save(meta);
+        conquistaService.verificarConquistasAporte(meta, usuarioAutenticado);
         return AporteMetaResponseDTO.fromEntity(aporteSalvo);
     }
 

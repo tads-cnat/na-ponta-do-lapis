@@ -17,11 +17,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
+import com.npl.na_ponta_do_lapis.entity.Conquista;
 import com.npl.na_ponta_do_lapis.entity.Marcador;
 import com.npl.na_ponta_do_lapis.entity.Meta;
 import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.enums.CategoriaConquista;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
@@ -29,6 +31,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
+import com.npl.na_ponta_do_lapis.repository.ConquistaRepository;
 import com.npl.na_ponta_do_lapis.repository.MarcadorRepository;
 import com.npl.na_ponta_do_lapis.repository.MetaRepository;
 import com.npl.na_ponta_do_lapis.repository.TipoCategoriaRepository;
@@ -49,24 +52,29 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final MarcadorRepository marcadorRepository;
     private final TransacaoRepository transacaoRepository;
     private final MetaRepository metaRepository;
+    private final ConquistaRepository conquistaRepository;
 
     public DatabaseSeeder(UsuarioRepository usuarioRepository,
                           TipoCategoriaRepository categoriaRepository,
                           ContaFinanceiraRepository contaRepository,
                           MarcadorRepository marcadorRepository,
                           TransacaoRepository transacaoRepository,
-                          MetaRepository metaRepository) {
+                          MetaRepository metaRepository,
+                          ConquistaRepository conquistaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.categoriaRepository = categoriaRepository;
         this.contaRepository = contaRepository;
         this.marcadorRepository = marcadorRepository;
         this.transacaoRepository = transacaoRepository;
         this.metaRepository = metaRepository;
+        this.conquistaRepository = conquistaRepository;
     }
 
     @Override
     @Transactional
     public void run(String... args) {
+        popularConquistasPadrao();
+
         if (usuarioRepository.count() > 0) {
             corrigirContasLegadasSemTipo();
             log.info("[DatabaseSeeder] Banco de dados já possui registros cadastrados. Pulando carga inicial.");
@@ -491,6 +499,24 @@ public class DatabaseSeeder implements CommandLineRunner {
             m.setFamilia(usuario.getFamilia());
         }
         return m;
+    }
+
+    private void popularConquistasPadrao() {
+        if (conquistaRepository.count() == 0) {
+            log.info("[DatabaseSeeder] Inicializando catálogo de conquistas financeiras...");
+            List<Conquista> conquistas = List.of(
+                    new Conquista("PRIMEIRA_META", "Primeiro Passo", "Cadastrou a sua primeira meta financeira no sistema.", "pi-flag", 50, CategoriaConquista.METAS),
+                    new Conquista("PRIMEIRO_APORTE", "Cofrinho Aberto", "Fez o seu primeiro aporte financeiro em uma meta.", "pi-wallet", 50, CategoriaConquista.ECONOMIA),
+                    new Conquista("POUPADOR_BRONZE", "Poupador Bronze", "Realizou 5 aportes e manteve o ritmo das suas metas.", "pi-star", 100, CategoriaConquista.ECONOMIA),
+                    new Conquista("META_BATIDA_1", "Alvo Conquistado", "Concluiu com sucesso a sua primeira meta financeira!", "pi-check-circle", 150, CategoriaConquista.METAS),
+                    new Conquista("MESTRE_DAS_METAS", "Mestre dos Objetivos", "Concluiu 3 ou mais metas financeiras com êxito.", "pi-crown", 300, CategoriaConquista.METAS),
+                    new Conquista("ORCAMENTO_BLINDADO", "Orçamento Blindado", "Criou um teto de gastos para controlar despesas.", "pi-shield", 75, CategoriaConquista.DISCIPLINA),
+                    new Conquista("LIVRE_DE_DIVIDAS", "Adeus Dívida", "Criou uma meta para quitar dívidas e pendências financeiras.", "pi-bolt", 75, CategoriaConquista.DISCIPLINA),
+                    new Conquista("FAMILIA_UNIDA", "Finanças em Família", "Criou ou compartilhou uma meta com seu grupo familiar.", "pi-users", 100, CategoriaConquista.FAMILIA)
+            );
+            conquistaRepository.saveAll(conquistas);
+            log.info("[DatabaseSeeder] {} conquistas cadastradas no catálogo.", conquistas.size());
+        }
     }
 
 }

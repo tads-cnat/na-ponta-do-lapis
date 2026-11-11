@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface AporteMetaRepository extends JpaRepository<AporteMeta, Long> {
     List<AporteMeta> findByMetaIdOrderByDataAporteDesc(Long metaId);
+
+    long countByUsuarioId(Long usuarioId);
 }
 
