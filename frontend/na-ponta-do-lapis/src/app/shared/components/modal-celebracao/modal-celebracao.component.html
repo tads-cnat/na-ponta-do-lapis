@@ -1,0 +1,75 @@
+<div *ngIf="dados" 
+     class="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fadeIn"
+     (click)="fechar()">
+
+  <!-- Card Central Triunfal -->
+  <div class="relative w-full max-w-md bg-gradient-to-b from-[#2E1065] via-[#1E1B4B] to-[#0F172A] rounded-3xl p-8 border-2 border-[#EEC046]/40 shadow-[0_0_50px_rgba(238,192,70,0.35)] flex flex-col items-center text-center overflow-hidden animate-scaleUp"
+       (click)="$event.stopPropagation()">
+
+    <!-- Raios de Sol Giratórios de Fundo -->
+    <div class="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-gradient-to-tr from-[#EEC046]/20 via-[#7843CD]/25 to-transparent blur-3xl pointer-events-none"></div>
+    <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-amber-400/10 via-transparent to-transparent pointer-events-none"></div>
+
+    <!-- Botão de Fechar no Topo Direito -->
+    <button type="button" 
+            (click)="fechar()"
+            class="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/70 hover:text-white flex items-center justify-center transition-all cursor-pointer z-20">
+      <i class="pi pi-times text-xs"></i>
+    </button>
+
+    <!-- Insígnia da Medalha com Glow e Animação de Entrada -->
+    <div class="relative my-4 flex items-center justify-center">
+      <!-- Glow Pulsante de Fundo -->
+      <div class="absolute w-36 h-36 rounded-full bg-[#EEC046]/30 blur-2xl animate-pulse"></div>
+
+      <!-- Medalha Vetorial Exclusiva ou Ícone de Meta Batida -->
+      <app-medalha-conquista 
+        *ngIf="dados.tipo === 'CONQUISTA' && dados.idConquista"
+        [id]="dados.idConquista" 
+        [desbloqueada]="true" 
+        tamanho="xl"
+        class="relative z-10 animate-bounceSubtle">
+      </app-medalha-conquista>
+
+      <app-medalha-conquista 
+        *ngIf="dados.tipo === 'META_ATINGIDA'"
+        id="META_BATIDA_1" 
+        [desbloqueada]="true" 
+        tamanho="xl"
+        class="relative z-10 animate-bounceSubtle">
+      </app-medalha-conquista>
+    </div>
+
+    <!-- Tag Superior -->
+    <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#EEC046]/20 border border-[#EEC046]/40 text-[#EEC046] text-xs font-bold uppercase tracking-wider mb-2">
+      <span class="w-2 h-2 rounded-full bg-[#EEC046] animate-ping"></span>
+      {{ dados.tipo === 'CONQUISTA' ? 'Conquista Desbloqueada' : 'Objetivo Alcançado' }}
+    </div>
+
+    <!-- Título Principal -->
+    <h3 class="text-2xl font-black text-white tracking-tight m-0 mb-2">
+      {{ dados.titulo }}
+    </h3>
+
+    <!-- Subtítulo e Descrição -->
+    <p class="text-sm text-slate-300 font-medium leading-relaxed m-0 mb-6 max-w-xs">
+      {{ dados.subtitulo }}
+    </p>
+
+    <!-- Recompensa em XP (se houver) -->
+    <div *ngIf="dados.pontosXp" class="flex items-center gap-2 px-4 py-2 rounded-2xl bg-white/10 border border-white/15 mb-6 shadow-inner">
+      <span class="text-xs text-white/70 font-semibold uppercase tracking-wider">Recompensa</span>
+      <span class="text-sm font-black text-[#EEC046]">+{{ dados.pontosXp }} XP</span>
+    </div>
+
+    <!-- Botão de Ação -->
+    <button type="button" 
+            (click)="fechar()"
+            class="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-[#EEC046] via-[#FBBF24] to-[#F59E0B] hover:brightness-110 text-slate-950 font-black text-sm shadow-[0_4px_20px_rgba(238,192,70,0.4)] transition-all cursor-pointer">
+      Continuar Evoluindo
+    </button>
+
+  </div>
+
+</div>
+

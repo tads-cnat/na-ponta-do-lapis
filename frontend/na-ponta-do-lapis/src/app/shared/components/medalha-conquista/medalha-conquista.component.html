@@ -1,0 +1,314 @@
+<div class="inline-flex items-center justify-center relative select-none"
+     [style.width.px]="tamanhoPx" 
+     [style.height.px]="tamanhoPx">
+
+  <!-- ==================== ESTADO BLOQUEADO (METAL GRAFITE + CADEADO) ==================== -->
+  <svg *ngIf="!desbloqueada" 
+       [attr.width]="tamanhoPx" 
+       [attr.height]="tamanhoPx" 
+       viewBox="0 0 100 100" 
+       fill="none" 
+       xmlns="http://www.w3.org/2000/svg"
+       class="drop-shadow-sm transition-transform duration-300">
+    <defs>
+      <linearGradient id="bgLock" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#334155" />
+        <stop offset="50%" stop-color="#1E293B" />
+        <stop offset="100%" stop-color="#0F172A" />
+      </linearGradient>
+      <linearGradient id="ringLock" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#64748B" />
+        <stop offset="100%" stop-color="#334155" />
+      </linearGradient>
+      <linearGradient id="goldAccent" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#94A3B8" />
+        <stop offset="100%" stop-color="#64748B" />
+      </linearGradient>
+    </defs>
+    <!-- Anel Externo Chanfrado -->
+    <circle cx="50" cy="50" r="46" fill="url(#ringLock)" stroke="#475569" stroke-width="2" />
+    <circle cx="50" cy="50" r="41" fill="url(#bgLock)" stroke="#334155" stroke-width="1.5" />
+    <!-- Marcações de Pontos Sutis -->
+    <circle cx="50" cy="14" r="2" fill="#64748B" />
+    <circle cx="50" cy="86" r="2" fill="#64748B" />
+    <circle cx="14" cy="50" r="2" fill="#64748B" />
+    <circle cx="86" cy="50" r="2" fill="#64748B" />
+    <!-- Cadeado de Segurança Esculpido -->
+    <path d="M38 46 V37 A12 12 0 0 1 62 37 V46" stroke="url(#goldAccent)" stroke-width="5" stroke-linecap="round" fill="none" />
+    <rect x="33" y="46" width="34" height="26" rx="6" fill="#1E293B" stroke="#64748B" stroke-width="2.5" />
+    <circle cx="50" cy="57" r="3.5" fill="#94A3B8" />
+    <path d="M50 60.5 V65" stroke="#94A3B8" stroke-width="2.5" stroke-linecap="round" />
+  </svg>
+
+  <!-- ==================== ESTADO DESBLOQUEADO (MEDALHAS VETORIAIS EXCLUSIVAS) ==================== -->
+  <ng-container *ngIf="desbloqueada">
+
+    <!-- 1. PRIMEIRA_META: Bússola Dourada & Alvo Estratégico -->
+    <svg *ngIf="id === 'PRIMEIRA_META'" 
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-md hover:scale-105 transition-transform duration-300">
+      <defs>
+        <linearGradient id="goldGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FDE047" />
+          <stop offset="50%" stop-color="#EEC046" />
+          <stop offset="100%" stop-color="#D97706" />
+        </linearGradient>
+        <linearGradient id="purpleRing1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#7843CD" />
+          <stop offset="100%" stop-color="#4C1D95" />
+        </linearGradient>
+      </defs>
+      <circle cx="50" cy="50" r="46" fill="url(#goldGrad1)" stroke="#B45309" stroke-width="1.5" />
+      <circle cx="50" cy="50" r="40" fill="url(#purpleRing1)" stroke="#FDE047" stroke-width="2" />
+      <circle cx="50" cy="50" r="32" fill="#2E1065" stroke="#EEC046" stroke-dasharray="3 3" stroke-width="1.5" />
+      <!-- Bússola / Estrela Náutica Dourada -->
+      <polygon points="50,22 55,45 78,50 55,55 50,78 45,55 22,50 45,45" fill="url(#goldGrad1)" />
+      <polygon points="50,22 50,50 55,45" fill="#FFFBEB" opacity="0.6" />
+      <polygon points="78,50 50,50 55,55" fill="#B45309" opacity="0.5" />
+      <polygon points="50,78 50,50 45,55" fill="#FFFBEB" opacity="0.6" />
+      <polygon points="22,50 50,50 45,45" fill="#B45309" opacity="0.5" />
+      <circle cx="50" cy="50" r="4" fill="#FEF08A" stroke="#78350F" stroke-width="1" />
+    </svg>
+
+    <!-- 2. PRIMEIRO_APORTE: Moeda / Cofre Reluzente com Anel de Ouro -->
+    <svg *ngIf="id === 'PRIMEIRO_APORTE'" 
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-md hover:scale-105 transition-transform duration-300">
+      <defs>
+        <linearGradient id="emeraldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#34D399" />
+          <stop offset="60%" stop-color="#059669" />
+          <stop offset="100%" stop-color="#064E3B" />
+        </linearGradient>
+        <linearGradient id="coinGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FEF08A" />
+          <stop offset="50%" stop-color="#EEC046" />
+          <stop offset="100%" stop-color="#B45309" />
+        </linearGradient>
+      </defs>
+      <!-- Base Moeda Octogonal -->
+      <polygon points="50,4 82,18 96,50 82,82 50,96 18,82 4,50 18,18" fill="url(#coinGold)" stroke="#78350F" stroke-width="2" />
+      <circle cx="50" cy="50" r="37" fill="url(#emeraldGrad)" stroke="#FEF08A" stroke-width="2" />
+      <circle cx="50" cy="50" r="31" fill="#064E3B" stroke="#34D399" stroke-dasharray="2 2" stroke-width="1.5" />
+      <!-- Símbolo de Aporte / Porquinho Cofre Estilizado em Ouro -->
+      <path d="M34 56 C34 44 44 34 56 34 C64 34 70 38 72 44 L75 44 C76 44 77 45 77 47 L77 50 C77 52 76 53 75 53 L72 54 C70 62 62 67 52 67 L48 67 L48 70 C48 71 47 72 46 72 L42 72 C41 72 40 71 40 70 L40 66 C36 63 34 60 34 56 Z" fill="url(#coinGold)" stroke="#78350F" stroke-width="1.5" />
+      <!-- Olho e Fenda da Moeda -->
+      <ellipse cx="64" cy="42" rx="1.5" ry="2" fill="#1E293B" />
+      <rect x="48" y="30" width="8" height="2.5" rx="1.25" fill="#FEF08A" stroke="#78350F" stroke-width="0.8" />
+    </svg>
+
+    <!-- 3. POUPADOR_BRONZE: Medalha Estrela Tripla com Fita Violeta -->
+    <svg *ngIf="id === 'POUPADOR_BRONZE'" 
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-md hover:scale-105 transition-transform duration-300">
+      <defs>
+        <linearGradient id="bronzeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FDBA74" />
+          <stop offset="50%" stop-color="#D97706" />
+          <stop offset="100%" stop-color="#7C2D12" />
+        </linearGradient>
+        <linearGradient id="ribbonGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#8B5CF6" />
+          <stop offset="100%" stop-color="#5B21B6" />
+        </linearGradient>
+      </defs>
+      <!-- Fitas de Medalha no Topo/Trás -->
+      <path d="M32 6 L24 38 L38 34 Z" fill="url(#ribbonGrad)" stroke="#4C1D95" stroke-width="1" />
+      <path d="M68 6 L76 38 L62 34 Z" fill="url(#ribbonGrad)" stroke="#4C1D95" stroke-width="1" />
+      <!-- Medalha Circular Bronzeada -->
+      <circle cx="50" cy="56" r="38" fill="url(#bronzeGrad)" stroke="#7C2D12" stroke-width="2.5" />
+      <circle cx="50" cy="56" r="32" fill="#451A03" stroke="#FDBA74" stroke-width="2" />
+      <!-- Estrela Central e Pequenas Estrelas Laterais -->
+      <polygon points="50,34 54,46 67,46 56,54 60,67 50,59 40,67 44,54 33,46 46,46" fill="url(#bronzeGrad)" stroke="#FEF3C7" stroke-width="1" />
+      <circle cx="50" cy="54" r="3" fill="#FEF3C7" />
+    </svg>
+
+    <!-- 4. META_BATIDA_1: Coroa de Ouro e Ramos de Louros Imperial -->
+    <svg *ngIf="id === 'META_BATIDA_1'" 
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-md hover:scale-105 transition-transform duration-300">
+      <defs>
+        <linearGradient id="goldCrown" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFFBEB" />
+          <stop offset="30%" stop-color="#FCD34D" />
+          <stop offset="70%" stop-color="#EEC046" />
+          <stop offset="100%" stop-color="#B45309" />
+        </linearGradient>
+        <linearGradient id="emeraldBadge" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#10B981" />
+          <stop offset="100%" stop-color="#047857" />
+        </linearGradient>
+      </defs>
+      <!-- Disco com Louros -->
+      <circle cx="50" cy="50" r="46" fill="url(#goldCrown)" stroke="#78350F" stroke-width="2" />
+      <circle cx="50" cy="50" r="39" fill="url(#emeraldBadge)" stroke="#FEF08A" stroke-width="2" />
+      <!-- Ramos de Louro Circulares -->
+      <path d="M26 50 C26 36 34 26 44 23 M26 50 C26 64 34 74 44 77" stroke="#FEF08A" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <path d="M74 50 C74 36 66 26 56 23 M74 50 C74 64 66 74 56 77" stroke="#FEF08A" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <!-- Coroa Imperial Majestosa -->
+      <path d="M35 60 L32 40 L42 49 L50 33 L58 49 L68 40 L65 60 Z" fill="url(#goldCrown)" stroke="#78350F" stroke-width="1.5" />
+      <rect x="34" y="60" width="32" height="6" rx="2" fill="url(#goldCrown)" stroke="#78350F" stroke-width="1" />
+      <circle cx="32" cy="39" r="2" fill="#EF4444" />
+      <circle cx="50" cy="32" r="2.5" fill="#3B82F6" />
+      <circle cx="68" cy="39" r="2" fill="#EF4444" />
+    </svg>
+
+    <!-- 5. MESTRE_DAS_METAS: Troféu Supremo NPL com Diamante Lapidado -->
+    <svg *ngIf="id === 'MESTRE_DAS_METAS'" 
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-lg hover:scale-105 transition-transform duration-300">
+      <defs>
+        <linearGradient id="supremoGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FFFBEB" />
+          <stop offset="40%" stop-color="#FBBF24" />
+          <stop offset="100%" stop-color="#92400E" />
+        </linearGradient>
+        <linearGradient id="supremoPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#6B21A8" />
+          <stop offset="60%" stop-color="#4C1D95" />
+          <stop offset="100%" stop-color="#2E1065" />
+        </linearGradient>
+      </defs>
+      <!-- Insígnia Decagonal Lapidada -->
+      <polygon points="50,2 78,11 96,35 96,65 78,89 50,98 22,89 4,65 4,35 22,11" fill="url(#supremoGold)" stroke="#78350F" stroke-width="2" />
+      <circle cx="50" cy="50" r="38" fill="url(#supremoPurple)" stroke="#FEF08A" stroke-width="2" />
+      <!-- Taça do Troféu Alado -->
+      <path d="M36 30 C36 46 44 54 50 56 C56 54 64 46 64 30 Z" fill="url(#supremoGold)" stroke="#78350F" stroke-width="1.5" />
+      <!-- Alças do Troféu -->
+      <path d="M36 33 C26 33 26 44 36 47" stroke="url(#supremoGold)" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M64 33 C74 33 74 44 64 47" stroke="url(#supremoGold)" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <!-- Base e Pedestal -->
+      <rect x="46" y="56" width="8" height="12" fill="url(#supremoGold)" stroke="#78350F" stroke-width="1" />
+      <path d="M38 68 L62 68 L66 76 L34 76 Z" fill="url(#supremoGold)" stroke="#78350F" stroke-width="1.5" />
+      <!-- Estrela Reluzente na Taça -->
+      <polygon points="50,36 52,41 57,41 53,44 55,49 50,46 45,49 47,44 43,41 48,41" fill="#FFFFFF" />
+    </svg>
+
+    <!-- 6. ORCAMENTO_BLINDADO: Escudo de Aço & Platina com Brasão Dourado -->
+    <svg *ngIf="id === 'ORCAMENTO_BLINDADO'" 
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-md hover:scale-105 transition-transform duration-300">
+      <defs>
+        <linearGradient id="shieldPlate" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#E2E8F0" />
+          <stop offset="40%" stop-color="#94A3B8" />
+          <stop offset="100%" stop-color="#475569" />
+        </linearGradient>
+        <linearGradient id="shieldGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FDE047" />
+          <stop offset="60%" stop-color="#EEC046" />
+          <stop offset="100%" stop-color="#B45309" />
+        </linearGradient>
+      </defs>
+      <!-- Brasão de Fundo -->
+      <circle cx="50" cy="50" r="46" fill="url(#shieldGold)" stroke="#78350F" stroke-width="2" />
+      <circle cx="50" cy="50" r="40" fill="#1E293B" />
+      <!-- Escudo Medieval Futurista -->
+      <path d="M50 18 L76 26 C76 56 62 72 50 82 C38 72 24 56 24 26 Z" fill="url(#shieldPlate)" stroke="url(#shieldGold)" stroke-width="2.5" />
+      <!-- Núcleo de Proteção e Viga Dourada -->
+      <path d="M50 25 L68 31 C68 53 58 65 50 72 C42 65 32 53 32 31 Z" fill="#0F172A" />
+      <polygon points="50,33 54,43 64,43 56,49 59,59 50,53 41,59 44,49 36,43 46,43" fill="url(#shieldGold)" />
+      <!-- Checkmark de Invulnerabilidade -->
+      <path d="M42 52 L48 58 L59 45" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    </svg>
+
+    <!-- 7. LIVRE_DE_DIVIDAS: Raio de Liberdade & Cadeado Rompido em Ouro -->
+    <svg *ngIf="id === 'LIVRE_DE_DIVIDAS'" 
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-md hover:scale-105 transition-transform duration-300">
+      <defs>
+        <linearGradient id="electricGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#38BDF8" />
+          <stop offset="50%" stop-color="#0284C7" />
+          <stop offset="100%" stop-color="#075985" />
+        </linearGradient>
+        <linearGradient id="boltGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FEF08A" />
+          <stop offset="50%" stop-color="#F59E0B" />
+          <stop offset="100%" stop-color="#D97706" />
+        </linearGradient>
+      </defs>
+      <!-- Base Circular de Alta Energia -->
+      <circle cx="50" cy="50" r="46" fill="url(#boltGold)" stroke="#B45309" stroke-width="2" />
+      <circle cx="50" cy="50" r="39" fill="url(#electricGrad)" stroke="#FEF08A" stroke-width="2" />
+      <circle cx="50" cy="50" r="32" fill="#0C4A6E" stroke="#38BDF8" stroke-dasharray="3 3" stroke-width="1.5" />
+      <!-- Raio de Liberdade Dinâmico -->
+      <polygon points="54,16 32,50 48,50 42,82 72,42 54,42" fill="url(#boltGold)" stroke="#FFFFFF" stroke-width="1.5" />
+      <polygon points="54,16 46,42 48,50 54,42" fill="#FFFFFF" opacity="0.6" />
+    </svg>
+
+    <!-- 8. FAMILIA_UNIDA: Brasão dos Nós de Honra Familiar -->
+    <svg *ngIf="id === 'FAMILIA_UNIDA'" 
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-md hover:scale-105 transition-transform duration-300">
+      <defs>
+        <linearGradient id="familyPink" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#F43F5E" />
+          <stop offset="50%" stop-color="#BE123C" />
+          <stop offset="100%" stop-color="#881337" />
+        </linearGradient>
+        <linearGradient id="familyGold" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FEF08A" />
+          <stop offset="50%" stop-color="#EEC046" />
+          <stop offset="100%" stop-color="#B45309" />
+        </linearGradient>
+      </defs>
+      <!-- Brasão Floral Octogonal -->
+      <polygon points="50,4 82,18 96,50 82,82 50,96 18,82 4,50 18,18" fill="url(#familyGold)" stroke="#78350F" stroke-width="2" />
+      <circle cx="50" cy="50" r="38" fill="url(#familyPink)" stroke="#FEF08A" stroke-width="2" />
+      <!-- Anéis Entrelaçados de Família & Corações Vetoriais -->
+      <path d="M40 40 C32 30 20 40 28 52 L50 74 L72 52 C80 40 68 30 60 40 L50 50 Z" fill="url(#familyGold)" stroke="#78350F" stroke-width="1.5" />
+      <!-- Silhuetas de União -->
+      <circle cx="42" cy="46" r="4" fill="#FFFFFF" />
+      <circle cx="58" cy="46" r="4" fill="#FFFFFF" />
+    </svg>
+
+    <!-- Fallback Genérico caso algum ID novo seja adicionado no futuro -->
+    <svg *ngIf="id !== 'PRIMEIRA_META' && id !== 'PRIMEIRO_APORTE' && id !== 'POUPADOR_BRONZE' && id !== 'META_BATIDA_1' && id !== 'MESTRE_DAS_METAS' && id !== 'ORCAMENTO_BLINDADO' && id !== 'LIVRE_DE_DIVIDAS' && id !== 'FAMILIA_UNIDA'"
+         [attr.width]="tamanhoPx" 
+         [attr.height]="tamanhoPx" 
+         viewBox="0 0 100 100" 
+         fill="none" 
+         xmlns="http://www.w3.org/2000/svg"
+         class="drop-shadow-md">
+      <circle cx="50" cy="50" r="46" fill="#EEC046" stroke="#B45309" stroke-width="2" />
+      <circle cx="50" cy="50" r="38" fill="#6214CC" stroke="#FDE047" stroke-width="2" />
+      <polygon points="50,26 56,38 70,38 59,47 63,60 50,52 37,60 41,47 30,38 44,38" fill="#EEC046" stroke="#FEF08A" stroke-width="1" />
+    </svg>
+
+  </ng-container>
+
+</div>
+

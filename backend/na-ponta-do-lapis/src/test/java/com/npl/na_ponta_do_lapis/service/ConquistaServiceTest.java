@@ -94,7 +94,7 @@ class ConquistaServiceTest {
 
         assertThat(desbloqueou).isTrue();
         verify(usuarioConquistaRepository).save(any(UsuarioConquista.class));
-        verify(notificacaoService).criarNotificacao(eq(usuario), anyString(), anyString(), any(), eq("/perfil?aba=conquistas"));
+        verify(notificacaoService).criarNotificacao(eq(usuario), eq("Nova Conquista Desbloqueada!"), anyString(), any(), eq("/perfil?aba=conquistas"));
     }
 
     @Test

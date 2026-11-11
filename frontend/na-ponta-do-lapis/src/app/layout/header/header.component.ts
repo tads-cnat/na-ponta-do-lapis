@@ -11,10 +11,11 @@ import { SidebarService } from '../../service/sidebar-service.service';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { Notificacao } from '../../model/INotificacao.model';
+import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, PrimeNGModuleModule, IconComponent],
+  imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -93,6 +94,19 @@ export class HeaderComponent implements OnInit {
       default:
         return 'pi pi-bell text-slate-600 bg-slate-100';
     }
+  }
+
+  public extrairIdConquista(mensagem: string): string {
+    const m = (mensagem || '').toLowerCase();
+    if (m.includes('primeiro passo') || m.includes('primeira meta')) return 'PRIMEIRA_META';
+    if (m.includes('cofrinho') || m.includes('primeiro aporte')) return 'PRIMEIRO_APORTE';
+    if (m.includes('bronze')) return 'POUPADOR_BRONZE';
+    if (m.includes('alvo') || m.includes('primeira meta')) return 'META_BATIDA_1';
+    if (m.includes('mestre')) return 'MESTRE_DAS_METAS';
+    if (m.includes('blindado')) return 'ORCAMENTO_BLINDADO';
+    if (m.includes('dívida') || m.includes('divida')) return 'LIVRE_DE_DIVIDAS';
+    if (m.includes('família') || m.includes('familia')) return 'FAMILIA_UNIDA';
+    return 'PRIMEIRA_META';
   }
 
   public carregarDadosUsuario(){

@@ -122,7 +122,7 @@ public class ConquistaService {
         try {
             notificacaoService.criarNotificacao(
                     usuario,
-                    "Nova Conquista Desbloqueada! 🏆",
+                    "Nova Conquista Desbloqueada!",
                     "Você desbloqueou '" + conquista.getTitulo() + "' (+" + conquista.getPontosXp() + " XP)!",
                     TipoNotificacao.CONQUISTA_DESBLOQUEADA,
                     "/perfil?aba=conquistas"

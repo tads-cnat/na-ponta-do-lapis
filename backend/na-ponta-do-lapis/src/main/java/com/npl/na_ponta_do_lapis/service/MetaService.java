@@ -235,7 +235,7 @@ public class MetaService {
             meta.setStatus(StatusMeta.CONCLUIDA);
             notificacaoService.criarNotificacao(
                     usuarioAutenticado,
-                    "🎉 Meta Concluída: " + meta.getNome(),
+                    "Meta Concluída: " + meta.getNome(),
                     "Parabéns! Você alcançou o objetivo de R$ " + meta.getValor() + " na meta " + meta.getNome() + "!",
                     TipoNotificacao.META_ATINGIDA,
                     "/metas"
@@ -243,7 +243,7 @@ public class MetaService {
         } else if (progressoAntes < 80.0 && progressoDepois >= 80.0) {
             notificacaoService.criarNotificacao(
                     usuarioAutenticado,
-                    "🎯 Meta quase lá: " + meta.getNome(),
+                    "Meta quase lá: " + meta.getNome(),
                     "Você já atingiu " + String.format("%.0f", progressoDepois) + "% da meta " + meta.getNome() + ". Falta pouco!",
                     TipoNotificacao.META_ALERTA_80,
                     "/metas"
@@ -251,7 +251,7 @@ public class MetaService {
         } else if (progressoAntes < 50.0 && progressoDepois >= 50.0) {
             notificacaoService.criarNotificacao(
                     usuarioAutenticado,
-                    "🚩 Metade do caminho: " + meta.getNome(),
+                    "Metade do caminho: " + meta.getNome(),
                     "Você alcançou 50% da meta " + meta.getNome() + ". Continue assim!",
                     TipoNotificacao.META_ALERTA_50,
                     "/metas"
