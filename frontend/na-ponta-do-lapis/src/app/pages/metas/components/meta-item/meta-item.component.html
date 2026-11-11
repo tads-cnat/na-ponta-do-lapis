@@ -1,4 +1,5 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-white hover:border-[#D1C4FF] hover:shadow-xs transition-all">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         
@@ -269,32 +270,62 @@
                         </clipPath>
                     </defs>
                 </svg>
+=======
+<div class="p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-white hover:border-[#D1C4FF] hover:shadow-xs transition-all">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
+        
+        <!-- Bloco Esquerdo: Ícone + Título + Detalhes -->
+        <div class="flex items-start min-w-0">
+            <!-- Avatar do Tipo de Meta -->
+            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 mr-3.5 border shadow-2xs mt-0.5"
+                 [ngClass]="{
+                    'bg-purple-50 text-[#7843CD] border-purple-200/80': meta.tipoMeta === 'POUPANCA',
+                    'bg-rose-50 text-[#C24E4E] border-rose-200/80': meta.tipoMeta === 'GASTO',
+                    'bg-indigo-50 text-indigo-600 border-indigo-200/80': meta.tipoMeta === 'DIVIDA'
+                 }">
+                <i class="text-xl"
+                   [ngClass]="{
+                      'pi pi-wallet': meta.tipoMeta === 'POUPANCA',
+                      'pi pi-sliders-h': meta.tipoMeta === 'GASTO',
+                      'pi pi-arrow-circle-down': meta.tipoMeta === 'DIVIDA'
+                   }"></i>
+>>>>>>> 66a280e (refactor(metas): integra porcentagem a barra de progresso e padroniza identificacao visual por tipo de meta)
             </div>
+
+            <!-- Informações -->
             <div class="min-w-0">
-                <div class="flex items-center gap-2 flex-wrap">
-                    <p class="font-bold text-base sm:text-lg text-slate-900 truncate">{{meta.nome}}</p>
-                    <span [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'badge-npl-vermelho' : 'badge-npl-amarelo'">{{meta.progresso}}%</span>
-                    @if (meta.familiar) {
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            <i class="pi pi-users text-[9px] mr-0.5"></i> Família
+                <!-- Tag do Tipo (Padronizada para todos os tipos) -->
+                <div class="flex items-center gap-1.5 flex-wrap mb-1">
+                    @if (meta.tipoMeta === 'POUPANCA') {
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-[#7843CD] border border-purple-200/70">
+                            <i class="pi pi-wallet text-[9px]"></i> Juntar Dinheiro
                         </span>
-                    }
-                    @if (meta.tipoMeta === 'GASTO') {
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                              [ngClass]="meta.progresso >= 100 ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-rose-50 text-rose-700 border border-rose-200'">
-                            <i class="pi pi-sliders-h text-[9px] mr-0.5"></i> Teto de Gastos
+                    } @else if (meta.tipoMeta === 'GASTO') {
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                              [ngClass]="meta.progresso >= 100 ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-rose-50 text-[#C24E4E] border border-rose-200/70'">
+                            <i class="pi pi-sliders-h text-[9px]"></i> Teto de Gastos
                         </span>
                     } @else if (meta.tipoMeta === 'DIVIDA') {
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
-                            <i class="pi pi-arrow-circle-down text-[9px] mr-0.5"></i> Quitar Dívida
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70">
+                            <i class="pi pi-arrow-circle-down text-[9px]"></i> Quitar Dívida
+                        </span>
+                    }
+
+                    @if (meta.familiar) {
+                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+                            <i class="pi pi-users text-[9px]"></i> Família
                         </span>
                     }
                 </div>
-                
-                <div class="flex items-center gap-2 flex-wrap text-xs text-slate-500 mt-0.5">
+
+                <!-- Nome da Meta -->
+                <h3 class="font-bold text-base sm:text-lg text-slate-900 truncate m-0 leading-tight">{{ meta.nome }}</h3>
+
+                <!-- Escopos & Metadados -->
+                <div class="flex items-center gap-2 flex-wrap text-xs text-slate-500 mt-1">
                     <span>
-                        {{ meta.tipoMeta === 'GASTO' ? 'Teto: ' : 'Alvo: ' }}
-                        <strong class="text-slate-700">{{ meta.valorTotal | appMoeda }}</strong>
+                        {{ meta.tipoMeta === 'GASTO' ? 'Teto Alvo: ' : 'Objetivo: ' }}
+                        <strong class="text-slate-800">{{ meta.valorTotal | appMoeda }}</strong>
                     </span>
 
                     <span class="text-slate-300">•</span>
@@ -340,24 +371,33 @@
                     }
                 </div>
 
+                <!-- Motivação / Descrição -->
                 @if (meta.descricao) {
-                    <p class="text-xs text-slate-600 italic mt-1.5 line-clamp-2 bg-slate-100/70 border border-slate-200/50 rounded-lg px-2.5 py-1">
+                    <p class="text-xs text-slate-600 italic mt-2 line-clamp-2 bg-slate-50 border border-slate-200/60 rounded-lg px-2.5 py-1">
                         <i class="pi pi-comment text-[10px] text-slate-400 mr-1 not-italic"></i>
                         “{{ meta.descricao }}”
                     </p>
                 }
             </div>
         </div>
-        <div class="flex items-center justify-between sm:justify-end gap-3">
+
+        <!-- Bloco Direito: Valores e Botões de Ação -->
+        <div class="flex items-center justify-between sm:justify-end gap-4 shrink-0 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100">
             <div class="text-left sm:text-end">
-                <p class="font-extrabold text-base"
-                   [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'text-[#C24E4E]' : 'text-emerald-600'">
+                <p class="text-[11px] uppercase tracking-wider font-semibold text-slate-400 mb-0.5">
+                    {{ meta.tipoMeta === 'GASTO' ? 'Gasto Atual' : (meta.tipoMeta === 'DIVIDA' ? 'Amortizado' : 'Acumulado') }}
+                </p>
+                <p class="font-extrabold text-base sm:text-lg leading-tight"
+                   [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'text-[#C24E4E]' : 'text-slate-900'">
                     {{ meta.valorAtual | appMoeda }}
                 </p>
-                <p class="text-xs text-slate-500">
-                    {{ meta.tipoMeta === 'GASTO' ? (meta.progresso >= 100 ? 'teto estourado' : 'restam ' + (valorFalta | appMoeda)) : 'faltam ' + (valorFalta | appMoeda) }}
+                <p class="text-xs mt-0.5"
+                   [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'text-[#C24E4E] font-bold' : 'text-slate-500'">
+                    {{ meta.tipoMeta === 'GASTO' ? (meta.progresso >= 100 ? 'Teto ultrapassado!' : 'Restam ' + (valorFalta | appMoeda)) : 'Faltam ' + (valorFalta | appMoeda) }}
                 </p>
             </div>
+
+            <!-- Ações -->
             <div class="flex items-center gap-1.5 shrink-0">
                 @if (meta.tipoMeta !== 'GASTO') {
                     <p-button icon="pi pi-plus"
@@ -373,9 +413,26 @@
         </div>
     </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
     <p-progressbar class="h-2.5!" [value]="meta.progresso" color="linear-gradient(119deg, #7843CD, #EEC046)" showValue="false" />
 >>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
 =======
     <p-progressbar class="h-2.5!" [value]="progressoLimitado" [color]="corBarraProgresso" [showValue]="false" />
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+
+    <!-- Barra de Progresso com Porcentagem Integrada -->
+    <div class="mt-3 pt-2.5 border-t border-slate-100/80">
+        <div class="flex items-center justify-between text-xs mb-1.5">
+            <span class="text-slate-500 font-medium">
+                {{ meta.tipoMeta === 'GASTO' ? (meta.progresso >= 100 ? '⚠️ Teto Ultrapassado' : 'Consumo do Teto') : 'Progresso Atingido' }}
+            </span>
+            <span class="font-extrabold text-xs"
+                  [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'text-[#C24E4E]' : (meta.progresso >= 100 ? 'text-emerald-600' : 'text-slate-700')">
+                {{ meta.progresso }}%
+            </span>
+        </div>
+        <p-progressbar class="h-2.5!" [value]="progressoLimitado" [color]="corBarraProgresso" [showValue]="false" />
+    </div>
+>>>>>>> 66a280e (refactor(metas): integra porcentagem a barra de progresso e padroniza identificacao visual por tipo de meta)
 </div>
