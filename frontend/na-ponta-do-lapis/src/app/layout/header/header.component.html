@@ -54,10 +54,17 @@
                          [class.bg-[#FEF9E7]/40]="!n.lida"
                          (click)="marcarComoLida(n)">
                       @if (n.tipo === 'CONQUISTA_DESBLOQUEADA') {
-                        <app-medalha-conquista [id]="extrairIdConquista(n.mensagem)" [desbloqueada]="true" tamanho="sm" class="shrink-0"></app-medalha-conquista>
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                          <app-medalha-conquista [id]="extrairIdConquista(n.mensagem)" [desbloqueada]="true" tamanho="sm"></app-medalha-conquista>
+                        </div>
+                      } @else if (n.tipo === 'META_ATINGIDA') {
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                          <app-medalha-conquista id="META_BATIDA_1" [desbloqueada]="true" tamanho="sm"></app-medalha-conquista>
+                        </div>
                       } @else {
-                        <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-                             [ngClass]="obterIconeTipo(n.tipo)">
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                             [ngClass]="obterBgIcone(n.tipo)">
+                          <i class="pi text-sm" [ngClass]="obterIcone(n.tipo)"></i>
                         </div>
                       }
                       <div class="flex-1 min-w-0">

@@ -54,8 +54,39 @@ export class MetasComponent implements OnInit {
   metaParaAporte: MetaResponse | null = null;
   filtroFamiliar: 'todas' | 'individuais' | 'familia' = 'todas';
   temFamilia: boolean = false;
+  tipoMetaSelecionado = signal<string>('POUPANCA');
 
   today = new Date();
+
+  opcoesContaForm = computed(() => {
+    const tipo = this.tipoMetaSelecionado();
+    const contasOriginais = this.contas() || [];
+    if (tipo === 'GASTO') {
+      return [
+        { id: null, nome: 'Todas as contas (Orçamento Global)' },
+        ...contasOriginais
+      ];
+    }
+    return [
+      { id: null, nome: 'Nenhuma (cofrinho geral)' },
+      ...contasOriginais
+    ];
+  });
+
+  opcoesCategoriaForm = computed(() => {
+    const tipo = this.tipoMetaSelecionado();
+    const categoriasOriginais = this.categorias() || [];
+    if (tipo === 'GASTO') {
+      return [
+        { id: null, nome: 'Todas as categorias (Orçamento Geral do Mês)' },
+        ...categoriasOriginais
+      ];
+    }
+    return [
+      { id: null, nome: 'Nenhuma categoria específica' },
+      ...categoriasOriginais
+    ];
+  });
 
   metasFiltradas = computed(() => {
     const lista = this.metas();
@@ -184,24 +215,39 @@ export class MetasComponent implements OnInit {
     });
   }
 
+  selecionarTipoMeta(tipo: string): void {
+    this.metaForm.get('tipoMeta')?.setValue(tipo);
+    this.tipoMetaSelecionado.set(tipo);
+    if (this.metaForm.get('contaId')?.value === undefined) {
+      this.metaForm.get('contaId')?.setValue(null);
+    }
+    if (this.metaForm.get('categoriaId')?.value === undefined) {
+      this.metaForm.get('categoriaId')?.setValue(null);
+    }
+  }
+
   abrirDialog(meta?: MetaResponse): void {
     if (meta) {
       this.metaSelecionada = meta;
+      this.tipoMetaSelecionado.set(meta.tipoMeta);
       this.metaForm.patchValue({
         nome: meta.nome,
         descricao: meta.descricao,
         valor: meta.valorTotal,
-        contaId: meta.contaId,
-        categoriaId: meta.categoriaId,
+        contaId: meta.contaId ?? null,
+        categoriaId: meta.categoriaId ?? null,
         familiar: meta.familiar,
         dataLimite: meta.dataLimite ? new Date(meta.dataLimite) : null,
         tipoMeta: meta.tipoMeta,
       });
     } else {
       this.metaSelecionada = null;
+      this.tipoMetaSelecionado.set('POUPANCA');
       this.metaForm.reset({
         tipoMeta: 'POUPANCA',
         familiar: false,
+        contaId: null,
+        categoriaId: null,
       });
     }
     this.exibirDialog = true;

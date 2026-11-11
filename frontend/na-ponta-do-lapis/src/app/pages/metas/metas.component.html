@@ -174,7 +174,7 @@
       </label>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <button type="button"
-                (click)="metaForm.get('tipoMeta')?.setValue('POUPANCA')"
+                (click)="selecionarTipoMeta('POUPANCA')"
                 class="flex items-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer text-left"
                 [ngClass]="metaForm.get('tipoMeta')?.value === 'POUPANCA'
                   ? 'border-[#7843CD] bg-[#7843CD]/5 text-slate-900 shadow-xs'
@@ -190,7 +190,7 @@
         </button>
 
         <button type="button"
-                (click)="metaForm.get('tipoMeta')?.setValue('GASTO')"
+                (click)="selecionarTipoMeta('GASTO')"
                 class="flex items-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer text-left"
                 [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO'
                   ? 'border-[#C24E4E] bg-rose-50/50 text-slate-900 shadow-xs'
@@ -206,7 +206,7 @@
         </button>
 
         <button type="button"
-                (click)="metaForm.get('tipoMeta')?.setValue('DIVIDA')"
+                (click)="selecionarTipoMeta('DIVIDA')"
                 class="flex items-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer text-left"
                 [ngClass]="metaForm.get('tipoMeta')?.value === 'DIVIDA'
                   ? 'border-indigo-600 bg-indigo-50/50 text-slate-900 shadow-xs'
@@ -289,16 +289,15 @@
           </label>
           <p-select 
             formControlName="contaId" 
-            [options]="contas()" 
+            [options]="opcoesContaForm()" 
             optionLabel="nome" 
             optionValue="id" 
-            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Todas as contas' : 'Nenhuma (cofrinho geral)'" 
-            [showClear]="true"
+            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Selecione a conta ou Global' : 'Selecione uma conta'" 
             [appendTo]="'body'"
             fluid>
           </p-select>
           <small class="text-slate-400 text-[10px] leading-tight">
-            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Deixe vazio para monitorar todas' : (metaForm.get('tipoMeta')?.value === 'POUPANCA' ? 'Onde guardar saldo aportado' : 'Conta sugerida para quitação') }}
+            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Selecione Todas as contas para teto global ou restrinja a uma conta' : (metaForm.get('tipoMeta')?.value === 'POUPANCA' ? 'Conta bancária onde os aportes serão guardados' : 'Conta sugerida para quitação') }}
           </small>
         </div>
 
@@ -309,16 +308,15 @@
           </label>
           <p-select
             formControlName="categoriaId"
-            [options]="categorias()"
+            [options]="opcoesCategoriaForm()"
             optionLabel="nome"
             optionValue="id"
-            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Todas as categorias (Geral)' : 'Selecione uma categoria'"
-            [showClear]="true"
+            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Selecione a categoria ou Geral' : 'Selecione uma categoria'"
             [appendTo]="'body'"
             fluid>
           </p-select>
           <small class="text-slate-400 text-[10px] leading-tight">
-            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Deixe vazio para teto geral' : 'Classificação opcional da meta' }}
+            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Selecione Todas as categorias para o orçamento geral ou escolha uma categoria' : 'Classificação opcional da meta' }}
           </small>
         </div>
 
