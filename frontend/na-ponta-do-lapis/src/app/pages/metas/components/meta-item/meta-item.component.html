@@ -1,21 +1,11 @@
 <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-white hover:border-[#D1C4FF] hover:shadow-xs transition-all">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
         
-        <!-- Bloco Esquerdo: Ícone + Título + Detalhes -->
+        <!-- Bloco Esquerdo: Ícone Original + Título + Detalhes -->
         <div class="flex items-start min-w-0">
-            <!-- Avatar do Tipo de Meta -->
-            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 mr-3.5 border shadow-2xs mt-0.5"
-                 [ngClass]="{
-                    'bg-purple-50 text-[#7843CD] border-purple-200/80': meta.tipoMeta === 'POUPANCA',
-                    'bg-rose-50 text-[#C24E4E] border-rose-200/80': meta.tipoMeta === 'GASTO',
-                    'bg-indigo-50 text-indigo-600 border-indigo-200/80': meta.tipoMeta === 'DIVIDA'
-                 }">
-                <i class="text-xl"
-                   [ngClass]="{
-                      'pi pi-wallet': meta.tipoMeta === 'POUPANCA',
-                      'pi pi-sliders-h': meta.tipoMeta === 'GASTO',
-                      'pi pi-arrow-circle-down': meta.tipoMeta === 'DIVIDA'
-                   }"></i>
+            <!-- Ícone Original da Meta -->
+            <div class="bg-[#FEF9E7] border border-[#F9DB70]/80 w-12 h-12 flex items-center justify-center rounded-2xl mr-3.5 shrink-0 shadow-2xs mt-0.5">
+                <img src="/meta-icon.svg" alt="Ícone da Meta" class="w-7 h-7" />
             </div>
 
             <!-- Informações -->
