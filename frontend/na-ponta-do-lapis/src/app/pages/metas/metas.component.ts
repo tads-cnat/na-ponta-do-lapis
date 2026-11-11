@@ -28,6 +28,7 @@ import { InputMoedaComponent } from '../../shared/components/input-moeda/input-m
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { CelebracaoService } from '../../shared/service/celebracao.service';
+<<<<<<< HEAD
 import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem } from '../../shared/components/ilustracao-meta/ilustracao-meta.component';
 
 @Component({
@@ -56,6 +57,8 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
+=======
+>>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
 
 @Component({
   selector: 'app-metas',
@@ -296,9 +299,13 @@ export class MetasComponent implements OnInit {
   private messageService = inject(MessageService);
   private notificacaoService = inject(NotificacaoService);
 <<<<<<< HEAD
+<<<<<<< HEAD
   private celebracaoService = inject(CelebracaoService);
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+  private celebracaoService = inject(CelebracaoService);
+>>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
   private fb = inject(FormBuilder);
 
   constructor() {
@@ -591,19 +598,33 @@ export class MetasComponent implements OnInit {
   salvarAporte(): void {
     if (this.aporteForm.invalid || !this.metaParaAporte) return;
 
+    const metaAlvo = this.metaParaAporte;
     const payload: AporteMetaRequest = this.aporteForm.value;
-    this.metasService.registrarAporte(this.metaParaAporte.id, payload).subscribe({
+    const valorAporte = Number(payload.valor) || 0;
+    const valorAtual = Number(metaAlvo.valorAtual) || 0;
+    const valorTotal = Number(metaAlvo.valorTotal) || 0;
+    const bateuMeta = (valorAtual + valorAporte) >= valorTotal;
+
+    this.metasService.registrarAporte(metaAlvo.id, payload).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Aporte realizado com sucesso!',
-          detail: `Valor adicionado à meta "${this.metaParaAporte?.nome}"`,
-          life: 4000,
-        });
+        if (bateuMeta) {
+          this.celebracaoService.celebrarMetaAtingida(metaAlvo.nome, valorTotal);
+        } else {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Aporte realizado com sucesso!',
+            detail: `Valor adicionado à meta "${metaAlvo.nome}"`,
+            life: 4000,
+          });
+        }
         this.fecharDialogAporte();
         this.carregarMetas();
+<<<<<<< HEAD
         this.notificacaoService.carregarNotificacoes();
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+        this.notificacaoService.recarregarImediatamente();
+>>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
       },
       error: (err) => {
         this.messageService.add({
@@ -658,9 +679,13 @@ export class MetasComponent implements OnInit {
           this.fecharDialog();
           this.messageService.add({ severity: 'success', summary: 'Nova meta criada com sucesso!', life: 3000 });
 <<<<<<< HEAD
+<<<<<<< HEAD
           this.notificacaoService.recarregarImediatamente();
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+          this.notificacaoService.recarregarImediatamente();
+>>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
         },
         error: (error) => {
           this.messageService.add({

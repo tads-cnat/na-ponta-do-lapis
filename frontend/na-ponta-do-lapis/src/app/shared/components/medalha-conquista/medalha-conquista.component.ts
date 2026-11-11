@@ -15,7 +15,11 @@ export class MedalhaConquistaComponent {
 
   get tamanhoPx(): number {
     switch (this.tamanho) {
+<<<<<<< HEAD
       case 'sm': return 36;
+=======
+      case 'sm': return 40;
+>>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
       case 'md': return 56;
       case 'lg': return 84;
       case 'xl': return 120;

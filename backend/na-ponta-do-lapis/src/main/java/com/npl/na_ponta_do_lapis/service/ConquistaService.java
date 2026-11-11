@@ -123,10 +123,14 @@ public class ConquistaService {
             notificacaoService.criarNotificacao(
                     usuario,
 <<<<<<< HEAD
+<<<<<<< HEAD
                     "Nova Conquista Desbloqueada!",
 =======
                     "Nova Conquista Desbloqueada! 🏆",
 >>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
+=======
+                    "Nova Conquista Desbloqueada!",
+>>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
                     "Você desbloqueou '" + conquista.getTitulo() + "' (+" + conquista.getPontosXp() + " XP)!",
                     TipoNotificacao.CONQUISTA_DESBLOQUEADA,
                     "/perfil?aba=conquistas"

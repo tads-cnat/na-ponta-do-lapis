@@ -53,6 +53,7 @@ export class CelebracaoService {
   public dispararEfeitoConfetes(): void {
     try {
       const cores = ['#EEC046', '#7843CD', '#10B981', '#FDE047', '#FFFFFF', '#C084FC'];
+<<<<<<< HEAD
       const zIndexConfetes = 999999; // Garante que voe na frente de qualquer modal, overlay ou toast
 
       // 1. Canhão Central Inicial de Alta Velocidade
@@ -95,6 +96,44 @@ export class CelebracaoService {
           zIndex: zIndexConfetes
         });
       }, 550);
+=======
+
+      // Canhão Central
+      confetti({
+        particleCount: 80,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: cores,
+        disableForReducedMotion: true
+      });
+
+      // Canhões Laterais em rajadas sucessivas
+      setTimeout(() => {
+        confetti({
+          particleCount: 50,
+          angle: 60,
+          spread: 70,
+          origin: { x: 0.05, y: 0.75 },
+          colors: cores
+        });
+        confetti({
+          particleCount: 50,
+          angle: 120,
+          spread: 70,
+          origin: { x: 0.95, y: 0.75 },
+          colors: cores
+        });
+      }, 250);
+
+      setTimeout(() => {
+        confetti({
+          particleCount: 60,
+          spread: 120,
+          origin: { y: 0.5 },
+          colors: cores
+        });
+      }, 500);
+>>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
     } catch (e) {
       console.warn('Efeito de confetes não suportado ou bloqueado no ambiente:', e);
     }

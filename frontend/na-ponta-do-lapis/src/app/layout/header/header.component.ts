@@ -12,6 +12,7 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { Notificacao } from '../../model/INotificacao.model';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
 
 @Component({
@@ -23,6 +24,13 @@ import { MedalhaConquistaComponent } from '../../shared/components/medalha-conqu
   selector: 'app-header',
   imports: [CommonModule, PrimeNGModuleModule, IconComponent],
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
+
+@Component({
+  selector: 'app-header',
+  imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent],
+>>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -153,6 +161,19 @@ export class HeaderComponent implements OnInit {
     }
   }
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+
+  public extrairIdConquista(mensagem: string): string {
+    const m = (mensagem || '').toLowerCase();
+    if (m.includes('primeiro passo') || m.includes('primeira meta')) return 'PRIMEIRA_META';
+    if (m.includes('cofrinho') || m.includes('primeiro aporte')) return 'PRIMEIRO_APORTE';
+    if (m.includes('bronze')) return 'POUPADOR_BRONZE';
+    if (m.includes('alvo') || m.includes('primeira meta')) return 'META_BATIDA_1';
+    if (m.includes('mestre')) return 'MESTRE_DAS_METAS';
+    if (m.includes('blindado')) return 'ORCAMENTO_BLINDADO';
+    if (m.includes('dívida') || m.includes('divida')) return 'LIVRE_DE_DIVIDAS';
+    if (m.includes('família') || m.includes('familia')) return 'FAMILIA_UNIDA';
+    return 'PRIMEIRA_META';
+  }
 
   public carregarDadosUsuario(){
    const usuario:TokenPayload | null = StorageService.getUsuarioDecodificado()
