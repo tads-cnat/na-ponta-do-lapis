@@ -34,6 +34,7 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
     @Query("""
         SELECT COALESCE(SUM(t.valor), 0) FROM Transacao t
         WHERE t.tipo = com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao.DESPESA
+        AND (t.descricao IS NULL OR t.descricao NOT LIKE 'Aporte na meta:%')
         AND (:usuarioId IS NULL OR t.contaFinanceira.usuario.id = :usuarioId)
         AND (:familiaId IS NULL OR t.contaFinanceira.usuario.familia.id = :familiaId)
         AND (:contaId IS NULL OR t.contaFinanceira.id = :contaId)

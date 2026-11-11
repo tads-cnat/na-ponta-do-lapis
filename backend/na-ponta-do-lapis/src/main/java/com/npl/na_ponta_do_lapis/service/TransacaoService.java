@@ -13,6 +13,7 @@ import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.exception.NotFoundException;
 import com.npl.na_ponta_do_lapis.web.exception.TransacaoNaoExisteException;
 import jakarta.transaction.Transactional;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -36,6 +37,9 @@ public class TransacaoService {
     private final TipoCategoraService tipoCategoriaService;
 
     private final ContaFinanceiraService contaFinanceiraService;
+
+    @Autowired(required = false)
+    private MetaService metaService;
 
     public TransacaoService(TransacaoRepository transacaoRepository, TipoCategoraService tipoCategoriaService, ContaFinanceiraService contaFinanceiraService, UsuarioService usuarioService, MarcadorService marcadorService) {
         this.transacaoRepository = transacaoRepository;
@@ -83,7 +87,9 @@ public class TransacaoService {
         }
 
         aplicarImpactoSaldo(novaTransacao);
-        return List.of(transacaoRepository.save(novaTransacao));
+        Transacao salva = transacaoRepository.save(novaTransacao);
+        notificarMetasGasto(conta);
+        return List.of(salva);
     }
 
     @Transactional
@@ -112,7 +118,9 @@ public class TransacaoService {
             transacoesParaSalvar.add(transacao);
         }
 
-        return transacaoRepository.saveAll(transacoesParaSalvar);
+        List<Transacao> salvas = transacaoRepository.saveAll(transacoesParaSalvar);
+        notificarMetasGasto(conta);
+        return salvas;
     }
 
     private void aplicarMetadadosParcelamento(Transacao transacao, TransacaoFaturaDTO dto) {
@@ -187,6 +195,7 @@ public class TransacaoService {
             }
             gerarParcelasFuturas(salva.getGrupoParcelamento());
         }
+        notificarMetasGasto(novaContaFinanceira);
         return salva;
     }
 
@@ -292,7 +301,9 @@ public class TransacaoService {
 
         transacao.setEstado(EstadoTransacao.REALIZADA);
         aplicarImpactoSaldo(transacao);
-        return transacaoRepository.save(transacao);
+        Transacao salva = transacaoRepository.save(transacao);
+        notificarMetasGasto(transacao.getContaFinanceira());
+        return salva;
     }
 
     // -------------------------------------------------------------------------
@@ -356,7 +367,9 @@ public class TransacaoService {
             }
         }
 
-        return transacaoRepository.saveAll(parcelas);
+        List<Transacao> salvas = transacaoRepository.saveAll(parcelas);
+        notificarMetasGasto(conta);
+        return salvas;
     }
 
     @Transactional
@@ -554,6 +567,12 @@ public class TransacaoService {
         if (marcador == null || marcador.getUsuario() == null || email == null
                 || !email.equals(marcador.getUsuario().getEmail())) {
             throw new AccessDeniedException("Você não tem permissão para usar esse marcador.");
+        }
+    }
+
+    private void notificarMetasGasto(ContaFinanceira conta) {
+        if (metaService != null && conta != null && conta.getUsuario() != null) {
+            metaService.verificarTetosDeGasto(conta.getUsuario());
         }
     }
 }

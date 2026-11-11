@@ -80,19 +80,55 @@
               </svg>
         </div>
         <div class="min-w-0">
-          <div class="flex items-center gap-2 flex-wrap">
-            <p class="font-bold text-sm sm:text-base text-slate-900 truncate">{{meta.nome}}</p>
-            <span class="badge-npl-amarelo text-[11px]! py-0.5! px-2!">{{meta.progresso}}%</span>
+          <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+            @if (ehConcluida) {
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80">
+                <i class="pi pi-check-circle text-[9px]"></i> Concluída
+              </span>
+            } @else if (ehExpirada) {
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/80">
+                <i class="pi pi-clock text-[9px]"></i> Expirada
+              </span>
+            } @else if (ehEstourada) {
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300">
+                <i class="pi pi-exclamation-triangle text-[9px]"></i> Estourada
+              </span>
+            } @else if (meta.tipoMeta === 'GASTO') {
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-[#C24E4E] border border-rose-200/70">
+                <i class="pi pi-sliders-h text-[9px]"></i> Teto de Gastos
+              </span>
+            } @else if (meta.tipoMeta === 'DIVIDA') {
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70">
+                <i class="pi pi-arrow-circle-down text-[9px]"></i> Quitar Dívida
+              </span>
+            } @else {
+              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-[#7843CD] border border-purple-200/70">
+                <i class="pi pi-wallet text-[9px]"></i> Juntar Dinheiro
+              </span>
+            }
           </div>
-          <p class="text-[11px] text-slate-500 mt-0.5">Meta: {{ meta.valorTotal | appMoeda }}</p>
+          <p class="font-bold text-sm sm:text-base text-slate-900 truncate m-0">{{meta.nome}}</p>
+          <p class="text-[11px] text-slate-500 mt-0.5">
+            {{ meta.tipoMeta === 'GASTO' ? 'Teto: ' : 'Meta: ' }} {{ meta.valorTotal | appMoeda }}
+          </p>
         </div>
       </div>
       <div class="flex items-center shrink-0">
         <div class="text-end">
-          <p class="text-emerald-600 font-extrabold text-sm">{{ meta.valorAtual | appMoeda }}</p>
-          <p class="text-[11px] text-slate-500">faltam {{ valorFalta | appMoeda }}</p>
+          <p class="font-extrabold text-sm m-0"
+             [ngClass]="ehEstourada ? 'text-[#C24E4E]' : 'text-emerald-600'">
+            {{ meta.valorAtual | appMoeda }}
+          </p>
+          <p class="text-[11px] m-0"
+             [ngClass]="ehEstourada ? 'text-[#C24E4E] font-semibold' : 'text-slate-500'">
+            {{ ehConcluida ? 'Concluída 🎉' : (ehEstourada ? 'Teto ultrapassado' : (meta.tipoMeta === 'GASTO' ? 'restam ' : 'faltam ') + (valorFalta | appMoeda)) }}
+          </p>
         </div>
       </div>
     </div>
-    <p-progressbar class="h-2.5!" [value]="meta.progresso" color="linear-gradient(119deg, #7843CD, #EEC046)" showValue="false" />
+    <div class="flex items-center justify-between text-[11px] text-slate-500 mb-1">
+      <span>{{ meta.tipoMeta === 'GASTO' ? 'Consumo do teto' : 'Progresso' }}</span>
+      <span class="font-bold" [ngClass]="ehEstourada ? 'text-[#C24E4E]' : (ehConcluida ? 'text-emerald-600' : 'text-slate-700')">{{ meta.progresso }}%</span>
+    </div>
+    <p-progressbar class="h-2.5!" [value]="progressoLimitado" [color]="corBarraProgresso" [showValue]="false" />
 </div>

@@ -149,6 +149,12 @@
                                   (onClick)="onAportar()">
                         </p-button>
                     }
+                    <p-button icon="pi pi-history"
+                              styleClass="w-9 h-9 rounded-xl bg-slate-50 text-slate-600 border border-slate-200 hover:bg-purple-50 hover:text-[#7843CD] hover:border-purple-200 transition-all p-0 flex items-center justify-center cursor-pointer"
+                              pTooltip="Histórico de Aportes"
+                              tooltipPosition="top"
+                              (onClick)="onVerHistorico()">
+                    </p-button>
                 }
                 <p-button icon="pi pi-pencil" styleClass="btn-icon-edit-npl" pTooltip="Editar meta" tooltipPosition="top" (onClick)="onEditar()"></p-button>
                 <p-button icon="pi pi-trash" styleClass="btn-icon-delete-npl" pTooltip="Excluir meta" tooltipPosition="top" (onClick)="onDeletar()"></p-button>

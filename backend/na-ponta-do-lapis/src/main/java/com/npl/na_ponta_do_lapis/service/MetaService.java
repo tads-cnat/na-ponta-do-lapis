@@ -115,6 +115,20 @@ public class MetaService {
         }
 
         Meta metaSalva = metaRepository.save(novaMeta);
+
+        if (metaSalva.getTipoMeta() != TipoMeta.GASTO
+                && metaSalva.getValorAtual() != null
+                && metaSalva.getValorAtual().compareTo(BigDecimal.ZERO) > 0) {
+            AporteMeta aporteInicial = new AporteMeta(
+                    metaSalva,
+                    usuarioAutenticado,
+                    conta,
+                    metaSalva.getValorAtual(),
+                    "Saldo inicial já guardado"
+            );
+            aporteMetaRepository.save(aporteInicial);
+        }
+
         conquistaService.verificarConquistasCriacaoMeta(metaSalva, usuarioAutenticado);
         return montarResponseComProgresso(metaSalva);
     }
@@ -185,39 +199,44 @@ public class MetaService {
                 throw new ContaIdNaoExisteException("Conta de origem não pertence ao usuário");
             }
 
-            // 1. Debita da conta de origem
-            contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(dto.valor()));
-            contaFinanceiraRepository.save(contaOrigem);
+            // Só movimenta saldo contábil se a conta de origem for diferente da conta vinculada à meta
+            // (se for a mesma conta, o dinheiro já está guardado nela — apenas registra o aporte no objetivo!)
+            boolean mesmaContaDaMeta = meta.getConta() != null && meta.getConta().getId().equals(contaOrigem.getId());
+            if (!mesmaContaDaMeta) {
+                // 1. Debita da conta de origem
+                contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(dto.valor()));
+                contaFinanceiraRepository.save(contaOrigem);
 
-            // 2. Busca categoria adequada para o extrato (Investimentos ou Outros)
-            TipoCategoria categoriaExtrato = tipoCategoriaRepository.findByNome("Outros").orElse(null);
+                // 2. Busca categoria adequada para o extrato (Investimentos ou Outros)
+                TipoCategoria categoriaExtrato = tipoCategoriaRepository.findByNome("Outros").orElse(null);
 
-            // 3. Registra a Transação de Saída no Extrato Financeiro
-            Transacao transacaoSaida = new Transacao();
-            transacaoSaida.setDescricao("Aporte na meta: " + meta.getNome());
-            transacaoSaida.setValor(dto.valor());
-            transacaoSaida.setTipo(TipoTransacao.DESPESA);
-            transacaoSaida.setEstado(EstadoTransacao.REALIZADA);
-            transacaoSaida.setDataHora(LocalDateTime.now());
-            transacaoSaida.setContaFinanceira(contaOrigem);
-            transacaoSaida.setCategoria(categoriaExtrato);
-            transacaoRepository.save(transacaoSaida);
+                // 3. Registra a Transação de Saída no Extrato Financeiro
+                Transacao transacaoSaida = new Transacao();
+                transacaoSaida.setDescricao("Aporte na meta: " + meta.getNome());
+                transacaoSaida.setValor(dto.valor());
+                transacaoSaida.setTipo(TipoTransacao.DESPESA);
+                transacaoSaida.setEstado(EstadoTransacao.REALIZADA);
+                transacaoSaida.setDataHora(LocalDateTime.now());
+                transacaoSaida.setContaFinanceira(contaOrigem);
+                transacaoSaida.setCategoria(categoriaExtrato);
+                transacaoRepository.save(transacaoSaida);
 
-            // 4. Se a Meta possui uma conta destino vinculada diferente da origem, credita nela (Transferência)
-            if (meta.getConta() != null && !meta.getConta().getId().equals(contaOrigem.getId())) {
-                ContaFinanceira contaDestino = meta.getConta();
-                contaDestino.setSaldo(contaDestino.getSaldo().add(dto.valor()));
-                contaFinanceiraRepository.save(contaDestino);
+                // 4. Se a Meta possui uma conta destino vinculada diferente da origem, credita nela (Transferência)
+                if (meta.getConta() != null) {
+                    ContaFinanceira contaDestino = meta.getConta();
+                    contaDestino.setSaldo(contaDestino.getSaldo().add(dto.valor()));
+                    contaFinanceiraRepository.save(contaDestino);
 
-                Transacao transacaoEntrada = new Transacao();
-                transacaoEntrada.setDescricao("Recebimento de aporte meta: " + meta.getNome());
-                transacaoEntrada.setValor(dto.valor());
-                transacaoEntrada.setTipo(TipoTransacao.RECEITA);
-                transacaoEntrada.setEstado(EstadoTransacao.REALIZADA);
-                transacaoEntrada.setDataHora(LocalDateTime.now());
-                transacaoEntrada.setContaFinanceira(contaDestino);
-                transacaoEntrada.setCategoria(categoriaExtrato);
-                transacaoRepository.save(transacaoEntrada);
+                    Transacao transacaoEntrada = new Transacao();
+                    transacaoEntrada.setDescricao("Recebimento de aporte meta: " + meta.getNome());
+                    transacaoEntrada.setValor(dto.valor());
+                    transacaoEntrada.setTipo(TipoTransacao.RECEITA);
+                    transacaoEntrada.setEstado(EstadoTransacao.REALIZADA);
+                    transacaoEntrada.setDataHora(LocalDateTime.now());
+                    transacaoEntrada.setContaFinanceira(contaDestino);
+                    transacaoEntrada.setCategoria(categoriaExtrato);
+                    transacaoRepository.save(transacaoEntrada);
+                }
             }
         }
 
@@ -273,6 +292,72 @@ public class MetaService {
                 .stream()
                 .map(AporteMetaResponseDTO::fromEntity)
                 .toList();
+    }
+
+    @Transactional
+    public void verificarTetosDeGasto(Usuario usuarioAutenticado) {
+        if (usuarioAutenticado == null) return;
+        Long familiaId = usuarioAutenticado.getFamilia() != null ? usuarioAutenticado.getFamilia().getId() : null;
+        List<Meta> metas = familiaId != null
+                ? metaRepository.findByUsuarioIdOuFamiliaId(usuarioAutenticado.getId(), familiaId)
+                : metaRepository.findByUsuarioId(usuarioAutenticado.getId());
+
+        LocalDate hoje = LocalDate.now();
+        for (Meta meta : metas) {
+            if (meta.getTipoMeta() != TipoMeta.GASTO || meta.getStatus() == StatusMeta.CANCELADA) {
+                continue;
+            }
+            if (meta.getDataLimite() != null && hoje.isAfter(meta.getDataLimite())) {
+                continue;
+            }
+
+            BigDecimal valorAnteriorSalvo = meta.getValorAtual() != null ? meta.getValorAtual() : BigDecimal.ZERO;
+            StatusMeta statusAnterior = meta.getStatus();
+
+            LocalDateTime inicio = meta.getDataInicio() != null
+                    ? meta.getDataInicio().atStartOfDay()
+                    : YearMonth.from(hoje).atDay(1).atStartOfDay();
+            LocalDateTime fim = meta.getDataLimite() != null
+                    ? meta.getDataLimite().atTime(23, 59, 59)
+                    : YearMonth.from(hoje).atEndOfMonth().atTime(23, 59, 59);
+
+            Long uId = meta.getFamilia() == null ? meta.getUsuario().getId() : null;
+            Long fId = meta.getFamilia() != null ? meta.getFamilia().getId() : null;
+            Long contaId = meta.getConta() != null ? meta.getConta().getId() : null;
+            Long catId = meta.getCategoria() != null ? meta.getCategoria().getId() : null;
+
+            BigDecimal novoValorGasto = transacaoRepository.calcularTotalDespesas(uId, fId, contaId, catId, inicio, fim);
+            double progressoAntes = calcularPercentual(valorAnteriorSalvo, meta.getValor());
+            double progressoDepois = calcularPercentual(novoValorGasto, meta.getValor());
+
+            meta.setValorAtual(novoValorGasto);
+
+            if (novoValorGasto.compareTo(meta.getValor()) >= 0) {
+                meta.setStatus(StatusMeta.ESTOURADA);
+                if (statusAnterior != StatusMeta.ESTOURADA && progressoAntes < 100.0) {
+                    notificacaoService.criarNotificacao(
+                            meta.getUsuario(),
+                            "Teto de Gastos Ultrapassado: " + meta.getNome(),
+                            "Atenção! Seus gastos atingiram R$ " + novoValorGasto + " e ultrapassaram o limite de R$ " + meta.getValor() + " em " + meta.getNome() + ".",
+                            TipoNotificacao.META_ESTOURADA,
+                            "/metas"
+                    );
+                }
+            } else {
+                meta.setStatus(StatusMeta.EM_ANDAMENTO);
+                if (progressoAntes < 80.0 && progressoDepois >= 80.0) {
+                    notificacaoService.criarNotificacao(
+                            meta.getUsuario(),
+                            "Alerta de Teto (80%): " + meta.getNome(),
+                            "Cuidado! Você já consumiu " + String.format("%.0f", progressoDepois) + "% do teto definido para " + meta.getNome() + ".",
+                            TipoNotificacao.META_ALERTA_80,
+                            "/metas"
+                    );
+                }
+            }
+
+            metaRepository.save(meta);
+        }
     }
 
     private void validarAcessoMeta(Meta meta, Usuario usuario) {
