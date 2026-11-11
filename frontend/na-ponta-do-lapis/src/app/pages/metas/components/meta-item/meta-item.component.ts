@@ -67,6 +67,7 @@ export class MetaItemComponent {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   get diasRestantes(): number | null {
     if (!this.meta.dataLimite) return null;
     const limite = new Date(this.meta.dataLimite);
@@ -105,6 +106,12 @@ export class MetaItemComponent {
 
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+  get ehConcluida(): boolean {
+    return (this.meta.progresso || 0) >= 100 || (this.meta.valorAtual || 0) >= (this.meta.valorTotal || 0);
+  }
+
+>>>>>>> 92f13b0 (feat(metas): padroniza modal de exclusao, adiciona filtros por status/tipo e reordena ajustes de perfil)
   get progressoLimitado(): number {
     return Math.min(100, Math.round(this.meta.progresso || 0));
   }
