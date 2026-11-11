@@ -6,6 +6,7 @@ import { BotoesAcaoComponent } from '../botoes-acao/botoes-acao.component';
 import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/formulario-secao.component';
 import { IntegracoesPerfilComponent } from '../integracoes-perfil/integracoes-perfil.component';
 import { ConquistasPerfilComponent } from '../conquistas-perfil/conquistas-perfil.component';
+import { IconeBandeiraComponent } from '../../../../shared/components/icone-bandeira/icone-bandeira.component';
 import { UsuarioService } from '../../service/perfil.services';
 import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
@@ -16,7 +17,7 @@ import { Usuario } from '../../../../model/IUsuario.models';
 @Component({
   selector: 'app-ajustes-do-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
   templateUrl: './ajustes-do-perfil.component.html'
 })
 export class AjustesPerfilComponent implements OnInit {

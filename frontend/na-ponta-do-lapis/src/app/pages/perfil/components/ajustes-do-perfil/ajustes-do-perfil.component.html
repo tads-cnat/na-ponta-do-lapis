@@ -133,18 +133,11 @@
                 : 'flex items-center justify-between p-4 rounded-2xl border-2 border-slate-200/80 bg-white hover:bg-slate-50 text-slate-700 font-medium transition-all cursor-pointer text-left'">
               
               <div class="flex items-center gap-3.5 min-w-0">
-                <!-- Distintivo Monetário Tipográfico -->
-                <div class="w-10 h-10 rounded-xl flex items-center justify-center font-black text-xs shrink-0 shadow-2xs"
-                     [ngClass]="{
-                       'bg-emerald-500/10 border border-emerald-500/25 text-emerald-700': op.codigo === 'BRL',
-                       'bg-blue-500/10 border border-blue-500/25 text-blue-700': op.codigo === 'USD',
-                       'bg-[#6214CC]/10 border border-[#6214CC]/25 text-[#6214CC]': op.codigo === 'EUR'
-                     }">
-                  {{ op.simbolo }}
-                </div>
+                <!-- Bandeira Oficial do País (@edusites/bandeiras-paises) -->
+                <app-icone-bandeira [moedaOuPais]="op.codigo" [tamanho]="36" class="shrink-0"></app-icone-bandeira>
                 <div class="flex flex-col min-w-0">
-                  <span class="text-sm font-bold leading-tight truncate">{{ op.nome }}</span>
-                  <span class="text-xs text-slate-500 font-normal">{{ op.codigo }}</span>
+                  <span class="text-sm font-bold leading-tight truncate text-slate-900">{{ op.nome }}</span>
+                  <span class="text-xs text-slate-500 font-normal">{{ op.simbolo }} • {{ op.codigo }}</span>
                 </div>
               </div>
 
