@@ -53,27 +53,27 @@ class MetaDTOTest {
     private static MetaDTO dtoValido() {
         return new MetaDTO("Reserva de Emergência", "Guardar dinheiro para imprevistos",
                 new BigDecimal("5000.00"), "https://link-da-foto.com/image.png",
-                LocalDate.now().plusDays(30), TipoMeta.POUPANCA, 1L);
+                LocalDate.now().plusDays(30), TipoMeta.POUPANCA, 1L, null, false);
     }
 
     private static MetaDTO comNome(String nome) {
         MetaDTO b = dtoValido();
-        return new MetaDTO(nome, b.descricao(), b.valor(), b.fotoUrl(), b.dataLimite(), b.tipoMeta(), b.contaId());
+        return new MetaDTO(nome, b.descricao(), b.valor(), b.fotoUrl(), b.dataLimite(), b.tipoMeta(), b.contaId(), b.categoriaId(), b.familiar());
     }
 
     private static MetaDTO comValor(BigDecimal valor) {
         MetaDTO b = dtoValido();
-        return new MetaDTO(b.nome(), b.descricao(), valor, b.fotoUrl(), b.dataLimite(), b.tipoMeta(), b.contaId());
+        return new MetaDTO(b.nome(), b.descricao(), valor, b.fotoUrl(), b.dataLimite(), b.tipoMeta(), b.contaId(), b.categoriaId(), b.familiar());
     }
 
     private static MetaDTO comDataLimite(LocalDate dataLimite) {
         MetaDTO b = dtoValido();
-        return new MetaDTO(b.nome(), b.descricao(), b.valor(), b.fotoUrl(), dataLimite, b.tipoMeta(), b.contaId());
+        return new MetaDTO(b.nome(), b.descricao(), b.valor(), b.fotoUrl(), dataLimite, b.tipoMeta(), b.contaId(), b.categoriaId(), b.familiar());
     }
 
     private static MetaDTO comTipoMeta(TipoMeta tipoMeta) {
         MetaDTO b = dtoValido();
-        return new MetaDTO(b.nome(), b.descricao(), b.valor(), b.fotoUrl(), b.dataLimite(), tipoMeta, b.contaId());
+        return new MetaDTO(b.nome(), b.descricao(), b.valor(), b.fotoUrl(), b.dataLimite(), tipoMeta, b.contaId(), b.categoriaId(), b.familiar());
     }
 
     private static Set<String> mensagens(MetaDTO dto, String campo) {
@@ -98,14 +98,14 @@ class MetaDTOTest {
         void camposOpcionaisDevemAceitarNull() {
             MetaDTO dto = new MetaDTO("Reserva",
                             null, new BigDecimal("100.00"), null, null,
-                            TipoMeta.GASTO, null);
+                            TipoMeta.GASTO, null, null, false);
             assertThat(validator.validate(dto)).isEmpty();
         }
 
         @Test
         @DisplayName("vários campos inválidos geram violações em cada um deles")
         void variosCamposInvalidos() {
-            MetaDTO dto = new MetaDTO(null, null, null, null, null, null, null);
+            MetaDTO dto = new MetaDTO(null, null, null, null, null, null, null, null, null);
 
             Set<String> campos = validator.validate(dto).stream()
                     .map(v -> v.getPropertyPath().toString())
@@ -268,7 +268,7 @@ class MetaDTOTest {
         @DisplayName("aceita campos opcionais nulos sem lançar exceção")
         void deveAceitarOpcionaisNulos() {
             MetaDTO dto = new MetaDTO("Reserva", null, new BigDecimal("100.00"), null, null,
-                    TipoMeta.GASTO, null);
+                    TipoMeta.GASTO, null, null, false);
 
             Meta meta = dto.toEntity();
 

@@ -120,7 +120,7 @@ class MetaTest {
         meta.setDataInicio(LocalDate.of(2026, 1, 10));
         meta.setDataLimite(LocalDate.of(2026, 12, 31));
         meta.setDataEncerramento(LocalDate.of(2026, 11, 30));
-        meta.setTipoMeta(TipoMeta.PRAZO_FIXO);
+        meta.setTipoMeta(TipoMeta.POUPANCA);
         meta.setUsuario(usuario);
         meta.setConta(conta);
 
@@ -134,7 +134,7 @@ class MetaTest {
                 () -> assertThat(meta.getDataInicio()).isEqualTo(LocalDate.of(2026, 1, 10)),
                 () -> assertThat(meta.getDataLimite()).isEqualTo(LocalDate.of(2026, 12, 31)),
                 () -> assertThat(meta.getDataEncerramento()).isEqualTo(LocalDate.of(2026, 11, 30)),
-                () -> assertThat(meta.getTipoMeta()).isEqualTo(TipoMeta.PRAZO_FIXO),
+                () -> assertThat(meta.getTipoMeta()).isEqualTo(TipoMeta.POUPANCA),
                 () -> assertThat(meta.getUsuario()).isSameAs(usuario),
                 () -> assertThat(meta.getConta()).isSameAs(conta)
         );

@@ -115,4 +115,23 @@ public class MetaController {
                 .toList()
         );
     }
+
+    @Operation(summary = "Registrar um aporte em uma meta")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA')")
+    @PostMapping("/{id}/aportes")
+    public ResponseEntity<com.npl.na_ponta_do_lapis.web.dto.AporteMetaResponseDTO> registrarAporte(
+            @PathVariable Long id,
+            @RequestBody @Valid com.npl.na_ponta_do_lapis.web.dto.AporteMetaDTO dto,
+            @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(metaService.registrarAporte(id, dto, usuario));
+    }
+
+    @Operation(summary = "Listar aportes realizados em uma meta")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA')")
+    @GetMapping("/{id}/aportes")
+    public ResponseEntity<List<com.npl.na_ponta_do_lapis.web.dto.AporteMetaResponseDTO>> listarAportes(
+            @PathVariable Long id,
+            @AuthenticationPrincipal Usuario usuario) {
+        return ResponseEntity.ok(metaService.listarAportes(id, usuario));
+    }
 }
