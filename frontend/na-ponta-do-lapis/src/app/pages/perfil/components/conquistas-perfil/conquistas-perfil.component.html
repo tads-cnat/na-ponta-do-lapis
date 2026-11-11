@@ -37,9 +37,13 @@
           
           <div class="flex items-center gap-4">
             <!-- Insígnia do Nível -->
-            <div class="relative flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 shadow-inner">
-              <i class="pi pi-trophy text-2xl sm:text-3xl text-[#EEC046]"></i>
-              <span class="absolute -bottom-2 -right-1 px-2 py-0.5 rounded-full bg-[#EEC046] text-slate-950 font-black text-[11px] shadow-sm">
+            <div class="relative flex items-center justify-center">
+              <app-medalha-conquista 
+                id="MESTRE_DAS_METAS" 
+                [desbloqueada]="true" 
+                tamanho="md">
+              </app-medalha-conquista>
+              <span class="absolute -bottom-2 -right-1 px-2 py-0.5 rounded-full bg-[#EEC046] text-slate-950 font-black text-[11px] shadow-md border border-amber-500">
                 Nv. {{ perfil.nivel }}
               </span>
             </div>
@@ -197,14 +201,13 @@
 
         <div class="flex items-start gap-3.5 relative z-10">
           
-          <!-- Ícone da Medalha -->
-          <div 
-            [class]="c.desbloqueada 
-              ? 'w-12 h-12 rounded-xl bg-gradient-to-br from-[#EEC046] to-[#D99A1C] text-slate-950 flex items-center justify-center shadow-sm shrink-0'
-              : 'w-12 h-12 rounded-xl bg-slate-200 text-slate-400 flex items-center justify-center shrink-0'">
-            <i class="pi {{ c.icone }} text-lg" *ngIf="c.desbloqueada"></i>
-            <i class="pi pi-lock text-base" *ngIf="!c.desbloqueada"></i>
-          </div>
+          <!-- Medalha Vetorial Exclusiva NPL -->
+          <app-medalha-conquista 
+            [id]="c.id" 
+            [desbloqueada]="c.desbloqueada" 
+            tamanho="md"
+            class="shrink-0">
+          </app-medalha-conquista>
 
           <div class="flex flex-col min-w-0 flex-1">
             <div class="flex items-center justify-between gap-2 mb-1">

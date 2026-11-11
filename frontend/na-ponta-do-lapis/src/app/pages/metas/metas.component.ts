@@ -21,6 +21,7 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
+import { CelebracaoService } from '../../shared/service/celebracao.service';
 
 @Component({
   selector: 'app-metas',
@@ -92,6 +93,7 @@ export class MetasComponent implements OnInit {
   private router = inject(Router);
   private messageService = inject(MessageService);
   private notificacaoService = inject(NotificacaoService);
+  private celebracaoService = inject(CelebracaoService);
   private fb = inject(FormBuilder);
 
   constructor() {
@@ -226,18 +228,28 @@ export class MetasComponent implements OnInit {
   salvarAporte(): void {
     if (this.aporteForm.invalid || !this.metaParaAporte) return;
 
+    const metaAlvo = this.metaParaAporte;
     const payload: AporteMetaRequest = this.aporteForm.value;
-    this.metasService.registrarAporte(this.metaParaAporte.id, payload).subscribe({
+    const valorAporte = Number(payload.valor) || 0;
+    const valorAtual = Number(metaAlvo.valorAtual) || 0;
+    const valorTotal = Number(metaAlvo.valorTotal) || 0;
+    const bateuMeta = (valorAtual + valorAporte) >= valorTotal;
+
+    this.metasService.registrarAporte(metaAlvo.id, payload).subscribe({
       next: () => {
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Aporte realizado com sucesso!',
-          detail: `Valor adicionado à meta "${this.metaParaAporte?.nome}"`,
-          life: 4000,
-        });
+        if (bateuMeta) {
+          this.celebracaoService.celebrarMetaAtingida(metaAlvo.nome, valorTotal);
+        } else {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Aporte realizado com sucesso!',
+            detail: `Valor adicionado à meta "${metaAlvo.nome}"`,
+            life: 4000,
+          });
+        }
         this.fecharDialogAporte();
         this.carregarMetas();
-        this.notificacaoService.carregarNotificacoes();
+        this.notificacaoService.recarregarImediatamente();
       },
       error: (err) => {
         this.messageService.add({
@@ -271,6 +283,7 @@ export class MetasComponent implements OnInit {
           this.metas.update((metas) => metas.map((m) => (m.id === updatedMeta.id ? updatedMeta : m)));
           this.fecharDialog();
           this.messageService.add({ severity: 'success', summary: 'Meta atualizada com sucesso!', life: 3000 });
+          this.notificacaoService.recarregarImediatamente();
         },
         error: (error) => {
           this.messageService.add({
@@ -287,6 +300,7 @@ export class MetasComponent implements OnInit {
           this.metas.update((metas) => [...metas, newMeta]);
           this.fecharDialog();
           this.messageService.add({ severity: 'success', summary: 'Nova meta criada com sucesso!', life: 3000 });
+          this.notificacaoService.recarregarImediatamente();
         },
         error: (error) => {
           this.messageService.add({

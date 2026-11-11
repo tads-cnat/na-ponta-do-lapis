@@ -1,13 +1,14 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, Observable, Subscription, timer, tap } from 'rxjs';
 import { environment } from '@env';
 import { Notificacao, ContadorNaoLidasResponse } from '../../model/INotificacao.model';
+import { CelebracaoService } from './celebracao.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class NotificacaoService {
+export class NotificacaoService implements OnDestroy {
   private readonly baseUrl = `${environment.apiBaseUrl}/notificacoes`;
 
   private notificacoesSubject = new BehaviorSubject<Notificacao[]>([]);
@@ -16,19 +17,80 @@ export class NotificacaoService {
   private totalNaoLidasSubject = new BehaviorSubject<number>(0);
   public totalNaoLidas$ = this.totalNaoLidasSubject.asObservable();
 
-  constructor(private http: HttpClient) {}
+  private idsConhecidos = new Set<number>();
+  private primeiraCarga = true;
+  private pollingSub?: Subscription;
 
-  public carregarNotificacoes(): void {
+  constructor(
+    private http: HttpClient,
+    private celebracaoService: CelebracaoService
+  ) {
+    this.iniciarPolling();
+  }
+
+  public iniciarPolling(): void {
+    if (this.pollingSub) return;
+    // Polling periódico a cada 8 segundos
+    this.pollingSub = timer(0, 8000).subscribe(() => {
+      this.carregarNotificacoes();
+    });
+  }
+
+  public carregarNotificacoes(forcarCelebracao = false): void {
     this.http.get<Notificacao[]>(this.baseUrl).subscribe({
       next: (notificacoes) => {
+        this.processarNovasNotificacoes(notificacoes, forcarCelebracao);
         this.notificacoesSubject.next(notificacoes);
         const naoLidas = notificacoes.filter((n) => !n.lida).length;
         this.totalNaoLidasSubject.next(naoLidas);
       },
       error: () => {
-        // Falha silenciosa para não quebrar a navegação principal
+        // Falha silenciosa para não poluir console em caso de token expirado
       }
     });
+  }
+
+  public recarregarImediatamente(): void {
+    this.carregarNotificacoes(true);
+  }
+
+  private processarNovasNotificacoes(notificacoes: Notificacao[], forcarCelebracao: boolean): void {
+    if (this.primeiraCarga) {
+      notificacoes.forEach((n) => this.idsConhecidos.add(n.id));
+      this.primeiraCarga = false;
+      return;
+    }
+
+    const novas = notificacoes.filter((n) => !this.idsConhecidos.has(n.id));
+    novas.forEach((n) => {
+      this.idsConhecidos.add(n.id);
+
+      // Gatilho triunfal de celebração com confetes caso seja conquista ou meta
+      if (n.tipo === 'CONQUISTA_DESBLOQUEADA') {
+        // Tenta inferir ID da conquista ou título
+        const matchTitulo = n.mensagem.match(/'([^']+)'/);
+        const tituloConquista = matchTitulo ? matchTitulo[1] : n.titulo;
+        const matchXp = n.mensagem.match(/\+(\d+)\s*XP/);
+        const xp = matchXp ? parseInt(matchXp[1], 10) : 50;
+
+        this.celebracaoService.celebrarConquista(tituloConquista, n.mensagem, xp, this.inferirIdConquista(tituloConquista));
+      } else if (n.tipo === 'META_ATINGIDA') {
+        this.celebracaoService.celebrarMetaAtingida(n.titulo.replace('Meta Concluída: ', ''), 0);
+      }
+    });
+  }
+
+  private inferirIdConquista(titulo: string): string {
+    const t = titulo.toLowerCase();
+    if (t.includes('primeiro passo') || t.includes('primeira meta')) return 'PRIMEIRA_META';
+    if (t.includes('cofrinho') || t.includes('primeiro aporte')) return 'PRIMEIRO_APORTE';
+    if (t.includes('bronze')) return 'POUPADOR_BRONZE';
+    if (t.includes('alvo') || t.includes('primeira meta')) return 'META_BATIDA_1';
+    if (t.includes('mestre')) return 'MESTRE_DAS_METAS';
+    if (t.includes('blindado')) return 'ORCAMENTO_BLINDADO';
+    if (t.includes('dívida') || t.includes('divida')) return 'LIVRE_DE_DIVIDAS';
+    if (t.includes('família') || t.includes('familia')) return 'FAMILIA_UNIDA';
+    return 'PRIMEIRA_META';
   }
 
   public atualizarContadorNaoLidas(): void {
@@ -73,5 +135,10 @@ export class NotificacaoService {
       })
     );
   }
-}
 
+  ngOnDestroy(): void {
+    if (this.pollingSub) {
+      this.pollingSub.unsubscribe();
+    }
+  }
+}

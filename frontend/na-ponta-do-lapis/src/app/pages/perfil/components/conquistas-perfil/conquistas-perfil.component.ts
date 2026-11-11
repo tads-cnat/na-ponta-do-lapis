@@ -2,11 +2,12 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConquistaService } from '../../../../shared/service/conquista.service';
 import { PerfilGamificado, ConquistaItem, CategoriaConquista } from '../../../../model/IConquista.models';
+import { MedalhaConquistaComponent } from '../../../../shared/components/medalha-conquista/medalha-conquista.component';
 
 @Component({
   selector: 'app-conquistas-perfil',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, MedalhaConquistaComponent],
   templateUrl: './conquistas-perfil.component.html',
   styleUrl: './conquistas-perfil.component.css'
 })
