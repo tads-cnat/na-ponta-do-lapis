@@ -7,10 +7,14 @@ import { ContaFinanceiraService } from '../contas/service/contas.service';
 import { TransacoesService } from '../transacoes/service/transacoes.service';
 import { AuthService } from '../../auth/service/auth.service';
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest, AporteMetaResponse } from '@models/IMetas.models';
 =======
 import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest } from '@models/IMetas.models';
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest, AporteMetaResponse } from '@models/IMetas.models';
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
 
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -104,6 +108,7 @@ export class MetasComponent implements OnInit {
 <<<<<<< HEAD
   exibirDialogExclusao: boolean = false;
   exibirDialogHistorico: boolean = false;
+<<<<<<< HEAD
   metaParaAporte: MetaResponse | null = null;
   metaParaExcluir: MetaResponse | null = null;
   metaParaHistorico: MetaResponse | null = null;
@@ -246,8 +251,13 @@ export class MetasComponent implements OnInit {
 =======
   exibirDialogExclusao: boolean = false;
 >>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
+=======
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   metaParaAporte: MetaResponse | null = null;
   metaParaExcluir: MetaResponse | null = null;
+  metaParaHistorico: MetaResponse | null = null;
+  historicoAportes = signal<AporteMetaResponse[]>([]);
+  carregandoHistorico = signal<boolean>(false);
   
   // Novos Filtros Ricos: Status, Tipo e Origem
   filtroStatus = signal<'todas' | 'em_andamento' | 'concluidas' | 'expiradas'>('todas');
@@ -359,13 +369,32 @@ export class MetasComponent implements OnInit {
     return lista;
   });
 
+  // Separação Contábil: Quando não está filtrando especificamente por GASTO,
+  // os cards de resumo refletem apenas objetivos de acúmulo/amortização (POUPANCA / DIVIDA),
+  // evitando que despesas de Tetos de Gastos inflamem o "Total Arrecadado".
+  metasBaseResumo = computed(() => {
+    const lista = this.metasFiltradas();
+    if (this.filtroTipo() === 'GASTO') {
+      return lista.filter(m => m.tipoMeta === 'GASTO');
+    }
+    return lista.filter(m => m.tipoMeta !== 'GASTO');
+  });
+
+  contagemTetosGasto = computed(() => {
+    return this.metasFiltradas().filter(m => m.tipoMeta === 'GASTO').length;
+  });
+
   totalMetas = computed(() => {
-    return this.metasFiltradas().reduce((sum, m) => sum + (m.valorTotal || 0), 0);
+    return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorTotal || 0), 0);
   });
 
   totalAcumulado = computed(() => {
+<<<<<<< HEAD
     return this.metasFiltradas().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+    return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   });
 
   totalRestante = computed(() => {
@@ -421,10 +450,14 @@ export class MetasComponent implements OnInit {
       descricao: [''],
       valor: [null, [Validators.required, Validators.min(0.01)]],
 <<<<<<< HEAD
+<<<<<<< HEAD
       valorInicial: [null],
       fotoUrl: ['cofrinho'],
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+      valorInicial: [null],
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
       contaId: [null],
       categoriaId: [null],
       familiar: [false],
@@ -656,6 +689,7 @@ export class MetasComponent implements OnInit {
       this.metaForm.reset({
         tipoMeta: 'POUPANCA',
         familiar: false,
+        valorInicial: null,
         contaId: null,
         categoriaId: null,
 >>>>>>> 92c4c90 (fix(ui): alinhar icones de notificacao, remover badge de moeda redundante, estilizar select de moedas e adicionar opcoes explicitas de escopo nos forms de meta)
@@ -701,6 +735,9 @@ export class MetasComponent implements OnInit {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   abrirHistorico(meta: MetaResponse): void {
     this.metaParaHistorico = meta;
     this.historicoAportes.set([]);
@@ -814,7 +851,10 @@ export class MetasComponent implements OnInit {
       descricao: formValue.descricao,
       valor: formValue.valor,
       valorInicial: (!this.metaSelecionada && formValue.tipoMeta !== 'GASTO' && valorInicialNum > 0) ? valorInicialNum : undefined,
+<<<<<<< HEAD
       fotoUrl: formValue.fotoUrl || 'cofrinho',
+=======
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
       contaId: formValue.contaId,
       categoriaId: formValue.categoriaId,
       familiar: formValue.familiar,

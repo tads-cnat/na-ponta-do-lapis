@@ -39,9 +39,13 @@ export class MetaItemComponent {
   @Output() editarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
   @Output() aportarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
 <<<<<<< HEAD
+<<<<<<< HEAD
   @Output() verHistorico: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+  @Output() verHistorico: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
 
   onDeletar(): void {
     this.deletarMeta.emit(this.meta.id);
@@ -56,12 +60,18 @@ export class MetaItemComponent {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   onVerHistorico(): void {
     this.verHistorico.emit(this.meta);
   }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   get valorFalta(): number {
     return Math.max(0, this.meta.valorTotal - (this.meta.valorAtual || 0));
   }

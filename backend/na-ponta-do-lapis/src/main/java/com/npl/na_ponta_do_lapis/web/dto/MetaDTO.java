@@ -48,13 +48,19 @@ public record MetaDTO(
 
         @Schema(example = "false")
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
         Boolean familiar,
 
         @Schema(example = "0.00")
         BigDecimal valorInicial
+<<<<<<< HEAD
 =======
         Boolean familiar
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
 ) {
     public MetaDTO(String nome, String descricao, BigDecimal valor, String fotoUrl, LocalDate dataLimite,
                    TipoMeta tipoMeta, Long contaId, Long categoriaId, Boolean familiar) {

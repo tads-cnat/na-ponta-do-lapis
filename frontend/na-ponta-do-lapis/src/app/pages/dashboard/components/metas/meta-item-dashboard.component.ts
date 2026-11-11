@@ -13,8 +13,12 @@ import { IlustracaoMetaComponent } from "../../../../shared/components/ilustraca
 
 @Component({
   selector: 'app-meta-item-dashboard',
+<<<<<<< HEAD
   imports: [ProgressBarModule, AppMoedaPipe],
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
+=======
+  imports: [CommonModule, ProgressBarModule, AppMoedaPipe],
+>>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   templateUrl: './meta-item-dashboard.html',
 })
 
