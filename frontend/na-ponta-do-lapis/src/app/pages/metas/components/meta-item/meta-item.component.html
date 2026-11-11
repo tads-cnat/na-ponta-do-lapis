@@ -83,20 +83,48 @@
                 <div class="flex items-center gap-2.5 flex-wrap">
                     <p class="font-bold text-base sm:text-lg text-slate-900 truncate">{{meta.nome}}</p>
                     <span class="badge-npl-amarelo">{{meta.progresso}}%</span>
+                    @if (meta.familiar) {
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            <i class="pi pi-users text-[9px] mr-0.5"></i> Família
+                        </span>
+                    }
+                    @if (meta.tipoMeta === 'GASTO') {
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
+                            Teto de Gastos
+                        </span>
+                    }
                 </div>
-                <p class="text-xs text-slate-500 mt-0.5">Meta total: <strong class="text-slate-700">{{ meta.valorTotal | appMoeda }}</strong></p>
+                <p class="text-xs text-slate-500 mt-0.5">
+                    Meta: <strong class="text-slate-700">{{ meta.valorTotal | appMoeda }}</strong>
+                    @if (meta.categoriaNome) {
+                        <span class="text-slate-400"> • Categoria: {{ meta.categoriaNome }}</span>
+                    }
+                </p>
             </div>
         </div>
-        <div class="flex items-center justify-between sm:justify-end gap-4">
+        <div class="flex items-center justify-between sm:justify-end gap-3">
             <div class="text-left sm:text-end">
-                <p class="text-emerald-600 font-extrabold text-base">{{ meta.valorAtual | appMoeda }}</p>
-                <p class="text-xs text-slate-500">faltam {{ valorFalta | appMoeda }}</p>
+                <p class="font-extrabold text-base"
+                   [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'text-[#C24E4E]' : 'text-emerald-600'">
+                    {{ meta.valorAtual | appMoeda }}
+                </p>
+                <p class="text-xs text-slate-500">
+                    {{ meta.tipoMeta === 'GASTO' ? (meta.progresso >= 100 ? 'teto estourado' : 'restam ' + (valorFalta | appMoeda)) : 'faltam ' + (valorFalta | appMoeda) }}
+                </p>
             </div>
-            <div class="flex items-center gap-2 shrink-0">
+            <div class="flex items-center gap-1.5 shrink-0">
+                @if (meta.tipoMeta !== 'GASTO') {
+                    <p-button icon="pi pi-plus"
+                              styleClass="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:text-emerald-800 transition-all p-0 flex items-center justify-center cursor-pointer"
+                              pTooltip="Adicionar Aporte"
+                              tooltipPosition="top"
+                              (onClick)="onAportar()">
+                    </p-button>
+                }
                 <p-button icon="pi pi-pencil" styleClass="btn-icon-edit-npl" pTooltip="Editar meta" tooltipPosition="top" (onClick)="onEditar()"></p-button>
                 <p-button icon="pi pi-trash" styleClass="btn-icon-delete-npl" pTooltip="Excluir meta" tooltipPosition="top" (onClick)="onDeletar()"></p-button>
             </div>
         </div>
     </div>
-    <p-progressbar class="h-2.5!" [value]="meta.progresso" color="linear-gradient(119deg, #7843CD, #EEC046)" showValue="false" />
+    <p-progressbar class="h-2.5!" [value]="progressoLimitado" [color]="corBarraProgresso" [showValue]="false" />
 </div>

@@ -49,7 +49,9 @@ class MetaJsonTest {
     void deveSerializarResposta() throws IOException {
         MetaResponseDTO dto = new MetaResponseDTO(10L, "Reserva", "Desc",
                 new BigDecimal("5000.00"), new BigDecimal("1250.00"), "https://x.com/y.png",
-                LocalDate.of(2026, 12, 31), TipoMeta.POUPANCA, 7L, 3L, 25.0);
+                LocalDate.of(2026, 12, 31), TipoMeta.POUPANCA,
+                com.npl.na_ponta_do_lapis.entity.enums.StatusMeta.EM_ANDAMENTO,
+                7L, "Usuario Teste", 3L, "Conta Teste", null, null, null, false, 25.0);
 
         JsonContent<MetaResponseDTO> json = saida.write(dto);
 

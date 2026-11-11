@@ -339,12 +339,12 @@ public class DatabaseSeeder implements CommandLineRunner {
         List<Meta> metas = new ArrayList<>();
         // Lucas
         metas.add(criarMeta("Reserva de Emergência", "Guardar dinheiro para imprevistos (3 a 6 meses de contas)", new BigDecimal("4000.00"), new BigDecimal("1500.00"), "https://link-da-foto.com/reserva.png", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uLucas));
-        metas.add(criarMeta("Troca de Notebook", "Economizar para novo computador de trabalho", new BigDecimal("3200.00"), new BigDecimal("1800.00"), "https://link-da-foto.com/notebook.png", LocalDate.of(ano, 2, 1), LocalDate.of(ano, 11, 30), TipoMeta.PRAZO_FIXO, uLucas));
+        metas.add(criarMeta("Troca de Notebook", "Economizar para novo computador de trabalho", new BigDecimal("3200.00"), new BigDecimal("1800.00"), "https://link-da-foto.com/notebook.png", LocalDate.of(ano, 2, 1), LocalDate.of(ano, 11, 30), TipoMeta.POUPANCA, uLucas));
         metas.add(criarMeta("Limite Supermercado", "Controle mensal com compras de mercado", new BigDecimal("600.00"), new BigDecimal("318.45"), "https://link-da-foto.com/mercado.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uLucas));
 
         // Bruno
         metas.add(criarMeta("Fundo de Reserva", "Guardar em caixinha com liquidez diária", new BigDecimal("6000.00"), new BigDecimal("3200.00"), "https://link-da-foto.com/reserva.png", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uBruno));
-        metas.add(criarMeta("Revisão e Seguro do Carro", "Poupar para revisão preventiva anual", new BigDecimal("2000.00"), new BigDecimal("1250.00"), "https://link-da-foto.com/carro.png", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 10, 31), TipoMeta.PRAZO_FIXO, uBruno));
+        metas.add(criarMeta("Revisão e Seguro do Carro", "Poupar para revisão preventiva anual", new BigDecimal("2000.00"), new BigDecimal("1250.00"), "https://link-da-foto.com/carro.png", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 10, 31), TipoMeta.POUPANCA, uBruno));
         metas.add(criarMeta("Limite Alimentação e Delivery", "Controle mensal de almoço fora e iFood", new BigDecimal("850.00"), new BigDecimal("583.70"), "https://link-da-foto.com/alimentacao.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uBruno));
 
         // Eduardo
@@ -352,7 +352,7 @@ public class DatabaseSeeder implements CommandLineRunner {
         metas.add(criarMeta("Limite Lazer e Saídas", "Controle de despesas em finais de semana", new BigDecimal("180.00"), new BigDecimal("75.90"), "https://link-da-foto.com/lazer.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uEduardo));
 
         // Pedro
-        metas.add(criarMeta("Curso Técnico / Certificação", "Investir em capacitação profissional", new BigDecimal("1000.00"), new BigDecimal("450.00"), "https://link-da-foto.com/curso.png", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 11, 30), TipoMeta.PRAZO_FIXO, uPedro));
+        metas.add(criarMeta("Curso Técnico / Certificação", "Investir em capacitação profissional", new BigDecimal("1000.00"), new BigDecimal("450.00"), "https://link-da-foto.com/curso.png", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 11, 30), TipoMeta.POUPANCA, uPedro));
         metas.add(criarMeta("Limite Mensal de Lazer", "Manter gastos recreativos sob controle", new BigDecimal("150.00"), new BigDecimal("87.50"), "https://link-da-foto.com/lazer.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uPedro));
 
         metaRepository.saveAll(metas);
@@ -486,6 +486,10 @@ public class DatabaseSeeder implements CommandLineRunner {
         m.setDataLimite(dataLimite);
         m.setTipoMeta(tipoMeta);
         m.setUsuario(usuario);
+        m.setStatus(com.npl.na_ponta_do_lapis.entity.enums.StatusMeta.EM_ANDAMENTO);
+        if (usuario.getFamilia() != null && ("Reserva de Emergência".equals(nome) || "Fundo de Reserva".equals(nome))) {
+            m.setFamilia(usuario.getFamilia());
+        }
         return m;
     }
 

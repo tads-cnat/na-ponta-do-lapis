@@ -59,13 +59,25 @@ public class Meta {
     @Column(name = "tipo_meta", nullable = false)
     private TipoMeta tipoMeta;
 
-    @ManyToOne()
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private com.npl.na_ponta_do_lapis.entity.enums.StatusMeta status = com.npl.na_ponta_do_lapis.entity.enums.StatusMeta.EM_ANDAMENTO;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "conta_financeira_id")
     private ContaFinanceira conta;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "categoria_id")
+    private TipoCategoria categoria;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "familia_id")
+    private Familia familia;
 
     public Meta() {
     }
@@ -172,5 +184,29 @@ public class Meta {
     
     public ContaFinanceira getConta() {
         return conta;
+    }
+
+    public com.npl.na_ponta_do_lapis.entity.enums.StatusMeta getStatus() {
+        return status;
+    }
+
+    public void setStatus(com.npl.na_ponta_do_lapis.entity.enums.StatusMeta status) {
+        this.status = status;
+    }
+
+    public TipoCategoria getCategoria() {
+        return categoria;
+    }
+
+    public void setCategoria(TipoCategoria categoria) {
+        this.categoria = categoria;
+    }
+
+    public Familia getFamilia() {
+        return familia;
+    }
+
+    public void setFamilia(Familia familia) {
+        this.familia = familia;
     }
 }

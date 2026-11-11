@@ -41,7 +41,13 @@ public record MetaDTO(
         TipoMeta tipoMeta,
 
         @Schema(example = "1")
-        Long contaId
+        Long contaId,
+
+        @Schema(example = "1")
+        Long categoriaId,
+
+        @Schema(example = "false")
+        Boolean familiar
 ) {
     public Meta toEntity() {
         Meta meta = new Meta();

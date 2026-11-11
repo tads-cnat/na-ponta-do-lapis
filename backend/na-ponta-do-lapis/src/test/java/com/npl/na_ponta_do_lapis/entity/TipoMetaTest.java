@@ -17,8 +17,7 @@ class TipoMetaTest {
     @CsvSource({
             "POUPANCA, Poupança",
             "GASTO, Gasto",
-            "DIVIDA, Dívida",
-            "PRAZO_FIXO, Prazo Fixo"
+            "DIVIDA, Dívida"
     })
 
     @DisplayName("getNome() retorna o rótulo legível de cada constante")
@@ -31,7 +30,7 @@ class TipoMetaTest {
     void nomesDasConstantesDevemSerEstaveis() {
         assertThat(TipoMeta.values())
                 .extracting(Enum::name)
-                .containsExactlyInAnyOrder("POUPANCA", "GASTO", "DIVIDA", "PRAZO_FIXO");
+                .containsExactlyInAnyOrder("POUPANCA", "GASTO", "DIVIDA");
     }
 
     @Test
