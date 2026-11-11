@@ -98,6 +98,7 @@ export class MetasComponent implements OnInit {
   exibirDialog: boolean = false;
   exibirDialogAporte: boolean = false;
 <<<<<<< HEAD
+<<<<<<< HEAD
   exibirDialogExclusao: boolean = false;
   exibirDialogHistorico: boolean = false;
   metaParaAporte: MetaResponse | null = null;
@@ -239,7 +240,11 @@ export class MetasComponent implements OnInit {
   totalAcumulado = computed(() => {
     return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
 =======
+=======
+  exibirDialogExclusao: boolean = false;
+>>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
   metaParaAporte: MetaResponse | null = null;
+  metaParaExcluir: MetaResponse | null = null;
   filtroFamiliar: 'todas' | 'individuais' | 'familia' = 'todas';
   temFamilia: boolean = false;
   tipoMetaSelecionado = signal<string>('POUPANCA');
@@ -449,6 +454,7 @@ export class MetasComponent implements OnInit {
     });
   }
 
+<<<<<<< HEAD
   deletarMeta(id: number): void {
 <<<<<<< HEAD
     const meta = this.metas().find(m => m.id === id);
@@ -480,20 +486,45 @@ export class MetasComponent implements OnInit {
     this.metaForm.get('fotoUrl')?.setValue(id);
 =======
     this.metasService.deletarMeta(id).subscribe({
+=======
+  solicitarExclusao(meta: MetaResponse): void {
+    this.metaParaExcluir = meta;
+    this.exibirDialogExclusao = true;
+  }
+
+  cancelarExclusao(): void {
+    this.exibirDialogExclusao = false;
+    this.metaParaExcluir = null;
+  }
+
+  confirmarExclusao(): void {
+    if (!this.metaParaExcluir) return;
+    const metaAlvo = this.metaParaExcluir;
+    this.metasService.deletarMeta(metaAlvo.id).subscribe({
+>>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
       next: () => {
-        this.metas.update((metas) => metas.filter((m) => m.id !== id));
+        this.metas.update((metas) => metas.filter((m) => m.id !== metaAlvo.id));
         this.messageService.add({ severity: 'success', summary: 'Meta excluída com sucesso!', life: 3000 });
+        this.cancelarExclusao();
+        this.notificacaoService.recarregarImediatamente();
       },
       error: (error) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Erro ao deletar meta',
+          summary: 'Erro ao excluir meta',
           detail: error.error?.message || error.message,
           life: 5000,
         });
       },
     });
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+  }
+
+  deletarMeta(id: number): void {
+    const meta = this.metas().find(m => m.id === id);
+    if (meta) {
+      this.solicitarExclusao(meta);
+    }
   }
 
   selecionarTipoMeta(tipo: string): void {

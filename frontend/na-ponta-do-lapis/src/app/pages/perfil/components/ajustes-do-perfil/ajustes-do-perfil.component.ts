@@ -17,11 +17,14 @@ import { IntegracoesPerfilComponent } from '../integracoes-perfil/integracoes-pe
 <<<<<<< HEAD
 import { ConquistasPerfilComponent } from '../conquistas-perfil/conquistas-perfil.component';
 import { IconeBandeiraComponent } from '../../../../shared/components/icone-bandeira/icone-bandeira.component';
+<<<<<<< HEAD
 =======
 >>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
 =======
 import { ConquistasPerfilComponent } from '../conquistas-perfil/conquistas-perfil.component';
 >>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
+=======
+>>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
 import { UsuarioService } from '../../service/perfil.services';
 import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
@@ -44,6 +47,7 @@ import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/
   standalone: true,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
   imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
 =======
   imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent],
@@ -51,6 +55,9 @@ import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/
 =======
   imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent],
 >>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
+=======
+  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
+>>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
   templateUrl: './ajustes-do-perfil.component.html'
 })
 export class AjustesPerfilComponent implements OnInit {

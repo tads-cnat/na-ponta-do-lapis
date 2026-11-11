@@ -15,8 +15,11 @@ import { ITransacoes } from "../../../../model/ITransacoes.model";
 import { CommonModule, DecimalPipe } from "@angular/common";
 import { IContas, ehCartaoCredito } from "../../../../model/IContas.models";
 import { ITransacoes } from "../../../../model/ITransacoes.model";
+<<<<<<< HEAD
 import { ICotacao } from "../../../../model/ICotacao.models";
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
+=======
+>>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
 import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 
 @Component({
@@ -337,6 +340,7 @@ export class CardsResumoComponent {
   @Input() contas: IContas[] = [];
   @Input() transacoes: ITransacoes[] = [];
 <<<<<<< HEAD
+<<<<<<< HEAD
 
   readonly mesesNomes = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -351,6 +355,8 @@ export class CardsResumoComponent {
   @Input() cotacaoDolar?: ICotacao;
 >>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
   @Input() cotacaoEuro?: ICotacao;
+=======
+>>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
 
   readonly mesesNomes = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
