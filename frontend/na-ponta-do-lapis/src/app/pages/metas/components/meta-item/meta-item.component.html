@@ -274,8 +274,9 @@
 <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-white hover:border-[#D1C4FF] hover:shadow-xs transition-all">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
         
-        <!-- Bloco Esquerdo: Ícone + Título + Detalhes -->
+        <!-- Bloco Esquerdo: Ícone Original + Título + Detalhes -->
         <div class="flex items-start min-w-0">
+<<<<<<< HEAD
             <!-- Avatar do Tipo de Meta -->
             <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 mr-3.5 border shadow-2xs mt-0.5"
                  [ngClass]="{
@@ -290,6 +291,11 @@
                       'pi pi-arrow-circle-down': meta.tipoMeta === 'DIVIDA'
                    }"></i>
 >>>>>>> 66a280e (refactor(metas): integra porcentagem a barra de progresso e padroniza identificacao visual por tipo de meta)
+=======
+            <!-- Ícone Original da Meta -->
+            <div class="bg-[#FEF9E7] border border-[#F9DB70]/80 w-12 h-12 flex items-center justify-center rounded-2xl mr-3.5 shrink-0 shadow-2xs mt-0.5">
+                <img src="/meta-icon.svg" alt="Ícone da Meta" class="w-7 h-7" />
+>>>>>>> 5b1f512 (fix(metas): restaura icone original da meta e isola svg em public/meta-icon.svg)
             </div>
 
             <!-- Informações -->

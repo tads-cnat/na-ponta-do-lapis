@@ -73,4 +73,8 @@
             <rect width="30.6565" height="30.6565" fill="white" />
         </clipPath>
     </defs>
+<<<<<<< HEAD
 </svg>
+=======
+</svg>
+>>>>>>> 5b1f512 (fix(metas): restaura icone original da meta e isola svg em public/meta-icon.svg)
