@@ -53,42 +53,48 @@ export class CelebracaoService {
   public dispararEfeitoConfetes(): void {
     try {
       const cores = ['#EEC046', '#7843CD', '#10B981', '#FDE047', '#FFFFFF', '#C084FC'];
+      const zIndexConfetes = 999999; // Garante que voe na frente de qualquer modal, overlay ou toast
 
-      // Canhão Central
+      // 1. Canhão Central Inicial de Alta Velocidade
       confetti({
-        particleCount: 80,
+        particleCount: 100,
         spread: 100,
         origin: { y: 0.6 },
         colors: cores,
+        zIndex: zIndexConfetes,
         disableForReducedMotion: true
       });
 
-      // Canhões Laterais em rajadas sucessivas
-      setTimeout(() => {
-        confetti({
-          particleCount: 50,
-          angle: 60,
-          spread: 70,
-          origin: { x: 0.05, y: 0.75 },
-          colors: cores
-        });
-        confetti({
-          particleCount: 50,
-          angle: 120,
-          spread: 70,
-          origin: { x: 0.95, y: 0.75 },
-          colors: cores
-        });
-      }, 250);
-
+      // 2. Canhões Laterais em rajadas cruzadas
       setTimeout(() => {
         confetti({
           particleCount: 60,
-          spread: 120,
-          origin: { y: 0.5 },
-          colors: cores
+          angle: 60,
+          spread: 75,
+          origin: { x: 0.05, y: 0.7 },
+          colors: cores,
+          zIndex: zIndexConfetes
         });
-      }, 500);
+        confetti({
+          particleCount: 60,
+          angle: 120,
+          spread: 75,
+          origin: { x: 0.95, y: 0.7 },
+          colors: cores,
+          zIndex: zIndexConfetes
+        });
+      }, 250);
+
+      // 3. Chuva Dourada Descendente do Topo
+      setTimeout(() => {
+        confetti({
+          particleCount: 80,
+          spread: 140,
+          origin: { y: 0.3 },
+          colors: cores,
+          zIndex: zIndexConfetes
+        });
+      }, 550);
     } catch (e) {
       console.warn('Efeito de confetes não suportado ou bloqueado no ambiente:', e);
     }
