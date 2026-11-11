@@ -2,12 +2,19 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ConquistaService } from '../../../../shared/service/conquista.service';
 import { PerfilGamificado, ConquistaItem, CategoriaConquista } from '../../../../model/IConquista.models';
+<<<<<<< HEAD
 import { MedalhaConquistaComponent } from '../../../../shared/components/medalha-conquista/medalha-conquista.component';
+=======
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
 
 @Component({
   selector: 'app-conquistas-perfil',
   standalone: true,
+<<<<<<< HEAD
   imports: [CommonModule, MedalhaConquistaComponent],
+=======
+  imports: [CommonModule],
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
   templateUrl: './conquistas-perfil.component.html',
   styleUrl: './conquistas-perfil.component.css'
 })

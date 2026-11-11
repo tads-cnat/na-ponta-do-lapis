@@ -74,7 +74,11 @@
         </clipPath>
     </defs>
 <<<<<<< HEAD
+<<<<<<< HEAD
 </svg>
 =======
 </svg>
 >>>>>>> 5b1f512 (fix(metas): restaura icone original da meta e isola svg em public/meta-icon.svg)
+=======
+</svg>
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)

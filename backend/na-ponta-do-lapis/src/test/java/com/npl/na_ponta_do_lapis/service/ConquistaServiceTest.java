@@ -94,7 +94,11 @@ class ConquistaServiceTest {
 
         assertThat(desbloqueou).isTrue();
         verify(usuarioConquistaRepository).save(any(UsuarioConquista.class));
+<<<<<<< HEAD
         verify(notificacaoService).criarNotificacao(eq(usuario), eq("Nova Conquista Desbloqueada!"), anyString(), any(), eq("/perfil?aba=conquistas"));
+=======
+        verify(notificacaoService).criarNotificacao(eq(usuario), anyString(), anyString(), any(), eq("/perfil?aba=conquistas"));
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
     }
 
     @Test

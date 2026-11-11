@@ -55,9 +55,13 @@ public class MetaService {
     private final TransacaoRepository transacaoRepository;
     private final NotificacaoService notificacaoService;
 <<<<<<< HEAD
+<<<<<<< HEAD
     private final ConquistaService conquistaService;
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+    private final ConquistaService conquistaService;
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
 
     public MetaService(MetaRepository metaRepository, CalculadoraMetaFactory factory,
                        ContaFinanceiraRepository contaFinanceiraRepository,
@@ -65,11 +69,16 @@ public class MetaService {
                        AporteMetaRepository aporteMetaRepository,
                        TransacaoRepository transacaoRepository,
 <<<<<<< HEAD
+<<<<<<< HEAD
                        NotificacaoService notificacaoService,
                        ConquistaService conquistaService) {
 =======
                        NotificacaoService notificacaoService) {
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+                       NotificacaoService notificacaoService,
+                       ConquistaService conquistaService) {
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
         this.metaRepository = metaRepository;
         this.factory = factory;
         this.contaFinanceiraRepository = contaFinanceiraRepository;
@@ -78,9 +87,13 @@ public class MetaService {
         this.transacaoRepository = transacaoRepository;
         this.notificacaoService = notificacaoService;
 <<<<<<< HEAD
+<<<<<<< HEAD
         this.conquistaService = conquistaService;
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+        this.conquistaService = conquistaService;
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
     }
 
     @Transactional(readOnly = true)
@@ -135,6 +148,7 @@ public class MetaService {
         }
 
         Meta metaSalva = metaRepository.save(novaMeta);
+<<<<<<< HEAD
 
         if (metaSalva.getTipoMeta() != TipoMeta.GASTO
                 && metaSalva.getValorAtual() != null
@@ -149,6 +163,8 @@ public class MetaService {
             aporteMetaRepository.save(aporteInicial);
         }
 
+=======
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
         conquistaService.verificarConquistasCriacaoMeta(metaSalva, usuarioAutenticado);
         return montarResponseComProgresso(metaSalva);
     }
@@ -295,6 +311,7 @@ public class MetaService {
         }
 
         metaRepository.save(meta);
+        conquistaService.verificarConquistasAporte(meta, usuarioAutenticado);
         return AporteMetaResponseDTO.fromEntity(aporteSalvo);
     }
 

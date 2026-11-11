@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.npl.na_ponta_do_lapis.entity.Conquista;
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
+import com.npl.na_ponta_do_lapis.entity.Conquista;
 import com.npl.na_ponta_do_lapis.entity.Marcador;
 import com.npl.na_ponta_do_lapis.entity.Meta;
 import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
@@ -32,6 +33,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.ConquistaRepository;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
+import com.npl.na_ponta_do_lapis.repository.ConquistaRepository;
 import com.npl.na_ponta_do_lapis.repository.MarcadorRepository;
 import com.npl.na_ponta_do_lapis.repository.MetaRepository;
 import com.npl.na_ponta_do_lapis.repository.TipoCategoriaRepository;
@@ -753,6 +755,9 @@ public class DatabaseSeeder implements CommandLineRunner {
     }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
     private void popularConquistasPadrao() {
         if (conquistaRepository.count() == 0) {
             log.info("[DatabaseSeeder] Inicializando catálogo de conquistas financeiras...");
@@ -771,6 +776,9 @@ public class DatabaseSeeder implements CommandLineRunner {
         }
     }
 
+<<<<<<< HEAD
 =======
 >>>>>>> 54fce67 (chore: atualiza seeders)
+=======
+>>>>>>> 4b9c67c (feat(gamificacao): implementar sistema de conquistas, niveis de saude financeira, xp e aba no perfil)
 }
