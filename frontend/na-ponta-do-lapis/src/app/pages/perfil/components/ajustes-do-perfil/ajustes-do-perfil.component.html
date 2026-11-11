@@ -14,6 +14,17 @@
         <span class="text-xs sm:text-sm">Ajustes do Perfil</span>
       </button>
 
+      <!-- Aba: Conquistas & Nível -->
+      <button type="button"
+              (click)="abaAtiva = 'conquistas'"
+              [class]="abaAtiva === 'conquistas' 
+                ? 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer' 
+                : 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer'">
+        <i class="pi pi-trophy text-sm" [ngClass]="abaAtiva === 'conquistas' ? 'text-[#EEC046]' : 'text-slate-400'"></i>
+        <span class="text-xs sm:text-sm">Conquistas & Nível</span>
+        <span class="text-[10px] bg-purple-100 text-[#6214CC] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-purple-200/80">XP</span>
+      </button>
+
       <!-- Aba: Conexões & IA -->
       <button type="button"
               (click)="abaAtiva = 'integracoes'"
@@ -202,7 +213,12 @@
     </app-botoes-acao>
   </div>
 
-  <!-- Conteúdo Aba 2: Integrações e Chaves de API -->
+  <!-- Conteúdo Aba 2: Conquistas & Gamificação -->
+  <div *ngIf="abaAtiva === 'conquistas'" class="w-full">
+    <app-conquistas-perfil></app-conquistas-perfil>
+  </div>
+
+  <!-- Conteúdo Aba 3: Integrações e Chaves de API -->
   <div *ngIf="abaAtiva === 'integracoes'" class="w-full">
     <app-integracoes-perfil></app-integracoes-perfil>
   </div>
