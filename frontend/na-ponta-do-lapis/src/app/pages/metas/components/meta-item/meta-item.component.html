@@ -80,26 +80,81 @@
                 </svg>
             </div>
             <div class="min-w-0">
-                <div class="flex items-center gap-2.5 flex-wrap">
+                <div class="flex items-center gap-2 flex-wrap">
                     <p class="font-bold text-base sm:text-lg text-slate-900 truncate">{{meta.nome}}</p>
-                    <span class="badge-npl-amarelo">{{meta.progresso}}%</span>
+                    <span [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'badge-npl-vermelho' : 'badge-npl-amarelo'">{{meta.progresso}}%</span>
                     @if (meta.familiar) {
                         <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
                             <i class="pi pi-users text-[9px] mr-0.5"></i> Família
                         </span>
                     }
                     @if (meta.tipoMeta === 'GASTO') {
-                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200">
-                            Teto de Gastos
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full"
+                              [ngClass]="meta.progresso >= 100 ? 'bg-rose-100 text-rose-800 border border-rose-300' : 'bg-rose-50 text-rose-700 border border-rose-200'">
+                            <i class="pi pi-sliders-h text-[9px] mr-0.5"></i> Teto de Gastos
+                        </span>
+                    } @else if (meta.tipoMeta === 'DIVIDA') {
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200">
+                            <i class="pi pi-arrow-circle-down text-[9px] mr-0.5"></i> Quitar Dívida
                         </span>
                     }
                 </div>
-                <p class="text-xs text-slate-500 mt-0.5">
-                    Meta: <strong class="text-slate-700">{{ meta.valorTotal | appMoeda }}</strong>
-                    @if (meta.categoriaNome) {
-                        <span class="text-slate-400"> • Categoria: {{ meta.categoriaNome }}</span>
+                
+                <div class="flex items-center gap-2 flex-wrap text-xs text-slate-500 mt-0.5">
+                    <span>
+                        {{ meta.tipoMeta === 'GASTO' ? 'Teto: ' : 'Alvo: ' }}
+                        <strong class="text-slate-700">{{ meta.valorTotal | appMoeda }}</strong>
+                    </span>
+
+                    <span class="text-slate-300">•</span>
+
+                    @if (meta.tipoMeta === 'GASTO') {
+                        <span class="text-slate-600">
+                            <i class="pi pi-credit-card text-[11px] text-slate-400 mr-0.5"></i>
+                            {{ meta.contaNome ? meta.contaNome : 'Todas as contas' }}
+                        </span>
+                        <span class="text-slate-300">•</span>
+                        <span class="text-slate-600">
+                            <i class="pi pi-tag text-[11px] text-slate-400 mr-0.5"></i>
+                            {{ meta.categoriaNome ? meta.categoriaNome : 'Todas as categorias' }}
+                        </span>
+                    } @else if (meta.tipoMeta === 'POUPANCA') {
+                        <span class="text-slate-600">
+                            <i class="pi pi-wallet text-[11px] text-slate-400 mr-0.5"></i>
+                            {{ meta.contaNome ? meta.contaNome : 'Cofrinho geral' }}
+                        </span>
+                        @if (meta.categoriaNome) {
+                            <span class="text-slate-300">•</span>
+                            <span class="text-slate-600">{{ meta.categoriaNome }}</span>
+                        }
+                    } @else {
+                        @if (meta.contaNome) {
+                            <span class="text-slate-600">
+                                <i class="pi pi-credit-card text-[11px] text-slate-400 mr-0.5"></i>
+                                {{ meta.contaNome }}
+                            </span>
+                        }
+                        @if (meta.categoriaNome) {
+                            <span class="text-slate-300">•</span>
+                            <span class="text-slate-600">{{ meta.categoriaNome }}</span>
+                        }
                     }
-                </p>
+
+                    @if (meta.dataLimite) {
+                        <span class="text-slate-300">•</span>
+                        <span class="text-slate-500">
+                            <i class="pi pi-calendar text-[11px] text-slate-400 mr-0.5"></i>
+                            Até {{ meta.dataLimite | date:'dd/MM/yyyy' }}
+                        </span>
+                    }
+                </div>
+
+                @if (meta.descricao) {
+                    <p class="text-xs text-slate-600 italic mt-1.5 line-clamp-2 bg-slate-100/70 border border-slate-200/50 rounded-lg px-2.5 py-1">
+                        <i class="pi pi-comment text-[10px] text-slate-400 mr-1 not-italic"></i>
+                        “{{ meta.descricao }}”
+                    </p>
+                }
             </div>
         </div>
         <div class="flex items-center justify-between sm:justify-end gap-3">

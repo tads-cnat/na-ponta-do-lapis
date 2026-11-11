@@ -30,4 +30,23 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
     boolean existsByPluggyTransactionId(String pluggyTransactionId);
 
     java.util.Optional<Transacao> findByPluggyTransactionId(String pluggyTransactionId);
+
+    @Query("""
+        SELECT COALESCE(SUM(t.valor), 0) FROM Transacao t
+        WHERE t.tipo = com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao.DESPESA
+        AND (:usuarioId IS NULL OR t.contaFinanceira.usuario.id = :usuarioId)
+        AND (:familiaId IS NULL OR t.contaFinanceira.usuario.familia.id = :familiaId)
+        AND (:contaId IS NULL OR t.contaFinanceira.id = :contaId)
+        AND (:categoriaId IS NULL OR t.categoria.id = :categoriaId)
+        AND t.dataHora >= :inicio
+        AND t.dataHora <= :fim
+    """)
+    java.math.BigDecimal calcularTotalDespesas(
+            @Param("usuarioId") Long usuarioId,
+            @Param("familiaId") Long familiaId,
+            @Param("contaId") Long contaId,
+            @Param("categoriaId") Long categoriaId,
+            @Param("inicio") java.time.LocalDateTime inicio,
+            @Param("fim") java.time.LocalDateTime fim
+    );
 }
