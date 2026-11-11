@@ -34,6 +34,10 @@ export class MetaItemComponent {
     return Math.max(0, this.meta.valorTotal - (this.meta.valorAtual || 0));
   }
 
+  get ehConcluida(): boolean {
+    return (this.meta.progresso || 0) >= 100 || (this.meta.valorAtual || 0) >= (this.meta.valorTotal || 0);
+  }
+
   get progressoLimitado(): number {
     return Math.min(100, Math.round(this.meta.progresso || 0));
   }
