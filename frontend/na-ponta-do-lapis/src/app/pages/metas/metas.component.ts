@@ -242,8 +242,39 @@ export class MetasComponent implements OnInit {
   metaParaAporte: MetaResponse | null = null;
   filtroFamiliar: 'todas' | 'individuais' | 'familia' = 'todas';
   temFamilia: boolean = false;
+  tipoMetaSelecionado = signal<string>('POUPANCA');
 
   today = new Date();
+
+  opcoesContaForm = computed(() => {
+    const tipo = this.tipoMetaSelecionado();
+    const contasOriginais = this.contas() || [];
+    if (tipo === 'GASTO') {
+      return [
+        { id: null, nome: 'Todas as contas (Orçamento Global)' },
+        ...contasOriginais
+      ];
+    }
+    return [
+      { id: null, nome: 'Nenhuma (cofrinho geral)' },
+      ...contasOriginais
+    ];
+  });
+
+  opcoesCategoriaForm = computed(() => {
+    const tipo = this.tipoMetaSelecionado();
+    const categoriasOriginais = this.categorias() || [];
+    if (tipo === 'GASTO') {
+      return [
+        { id: null, nome: 'Todas as categorias (Orçamento Geral do Mês)' },
+        ...categoriasOriginais
+      ];
+    }
+    return [
+      { id: null, nome: 'Nenhuma categoria específica' },
+      ...categoriasOriginais
+    ];
+  });
 
   metasFiltradas = computed(() => {
     const lista = this.metas();
@@ -465,6 +496,17 @@ export class MetasComponent implements OnInit {
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   }
 
+  selecionarTipoMeta(tipo: string): void {
+    this.metaForm.get('tipoMeta')?.setValue(tipo);
+    this.tipoMetaSelecionado.set(tipo);
+    if (this.metaForm.get('contaId')?.value === undefined) {
+      this.metaForm.get('contaId')?.setValue(null);
+    }
+    if (this.metaForm.get('categoriaId')?.value === undefined) {
+      this.metaForm.get('categoriaId')?.setValue(null);
+    }
+  }
+
   abrirDialog(meta?: MetaResponse): void {
     if (meta) {
       this.metaSelecionada = meta;
@@ -474,6 +516,7 @@ export class MetasComponent implements OnInit {
         descricao: meta.descricao,
         valor: meta.valorTotal,
 <<<<<<< HEAD
+<<<<<<< HEAD
         fotoUrl: meta.fotoUrl || 'cofrinho',
         contaId: meta.contaId ?? null,
         categoriaId: meta.categoriaId ?? null,
@@ -481,12 +524,17 @@ export class MetasComponent implements OnInit {
         contaId: meta.contaId,
         categoriaId: meta.categoriaId,
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+        contaId: meta.contaId ?? null,
+        categoriaId: meta.categoriaId ?? null,
+>>>>>>> 92c4c90 (fix(ui): alinhar icones de notificacao, remover badge de moeda redundante, estilizar select de moedas e adicionar opcoes explicitas de escopo nos forms de meta)
         familiar: meta.familiar,
         dataLimite: meta.dataLimite ? new Date(meta.dataLimite) : null,
         tipoMeta: meta.tipoMeta,
       });
     } else {
       this.metaSelecionada = null;
+<<<<<<< HEAD
 <<<<<<< HEAD
       this.tipoMetaSelecionado.set('POUPANCA');
       this.metaForm.reset({
@@ -501,6 +549,14 @@ export class MetasComponent implements OnInit {
         tipoMeta: 'POUPANCA',
         familiar: false,
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+      this.tipoMetaSelecionado.set('POUPANCA');
+      this.metaForm.reset({
+        tipoMeta: 'POUPANCA',
+        familiar: false,
+        contaId: null,
+        categoriaId: null,
+>>>>>>> 92c4c90 (fix(ui): alinhar icones de notificacao, remover badge de moeda redundante, estilizar select de moedas e adicionar opcoes explicitas de escopo nos forms de meta)
       });
     }
     this.exibirDialog = true;
