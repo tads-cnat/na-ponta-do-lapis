@@ -21,11 +21,15 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 @Component({
   selector: 'app-meta-item',
 <<<<<<< HEAD
+<<<<<<< HEAD
   imports: [Button, ProgressBarModule, AppMoedaPipe],
 >>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
 =======
   imports: [Button, ProgressBarModule, TooltipModule, AppMoedaPipe],
 >>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
+=======
+  imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe],
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   templateUrl: './meta-item.component.html',
   styleUrl: './meta-item.component.css',
 })
@@ -34,7 +38,10 @@ export class MetaItemComponent {
   @Output() deletarMeta: EventEmitter<number> = new EventEmitter<number>();
   @Output() editarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
   @Output() aportarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
+<<<<<<< HEAD
   @Output() verHistorico: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
+=======
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 
   onDeletar(): void {
     this.deletarMeta.emit(this.meta.id);
@@ -48,14 +55,18 @@ export class MetaItemComponent {
     this.aportarMeta.emit(this.meta);
   }
 
+<<<<<<< HEAD
   onVerHistorico(): void {
     this.verHistorico.emit(this.meta);
   }
 
+=======
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   get valorFalta(): number {
     return Math.max(0, this.meta.valorTotal - (this.meta.valorAtual || 0));
   }
 
+<<<<<<< HEAD
   get diasRestantes(): number | null {
     if (!this.meta.dataLimite) return null;
     const limite = new Date(this.meta.dataLimite);
@@ -92,18 +103,28 @@ export class MetaItemComponent {
     return Math.ceil(this.valorFalta / meses);
   }
 
+=======
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   get progressoLimitado(): number {
     return Math.min(100, Math.round(this.meta.progresso || 0));
   }
 
   get corBarraProgresso(): string {
     if (this.meta.tipoMeta === 'GASTO') {
+<<<<<<< HEAD
       if (this.ehEstourada) return 'linear-gradient(119deg, #C24E4E, #AB3E3E)';
       if (this.meta.progresso >= 80) return 'linear-gradient(119deg, #F59E0B, #D97706)';
       return 'linear-gradient(119deg, #10B981, #059669)';
     }
     if (this.ehConcluida) return 'linear-gradient(119deg, #10B981, #059669)';
     if (this.ehExpirada) return 'linear-gradient(119deg, #F59E0B, #D97706)';
+=======
+      if (this.meta.progresso >= 100) return 'linear-gradient(119deg, #C24E4E, #AB3E3E)';
+      if (this.meta.progresso >= 80) return 'linear-gradient(119deg, #F59E0B, #D97706)';
+      return 'linear-gradient(119deg, #10B981, #059669)';
+    }
+    if (this.meta.progresso >= 100) return 'linear-gradient(119deg, #10B981, #059669)';
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
     return 'linear-gradient(119deg, #7843CD, #EEC046)';
   }
 }

@@ -1,9 +1,13 @@
 package com.npl.na_ponta_do_lapis.service;
 
 import java.math.BigDecimal;
+<<<<<<< HEAD
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
+=======
+import java.time.LocalDateTime;
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -44,15 +48,22 @@ public class MetaService {
     private final AporteMetaRepository aporteMetaRepository;
     private final TransacaoRepository transacaoRepository;
     private final NotificacaoService notificacaoService;
+<<<<<<< HEAD
     private final ConquistaService conquistaService;
+=======
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 
     public MetaService(MetaRepository metaRepository, CalculadoraMetaFactory factory,
                        ContaFinanceiraRepository contaFinanceiraRepository,
                        TipoCategoriaRepository tipoCategoriaRepository,
                        AporteMetaRepository aporteMetaRepository,
                        TransacaoRepository transacaoRepository,
+<<<<<<< HEAD
                        NotificacaoService notificacaoService,
                        ConquistaService conquistaService) {
+=======
+                       NotificacaoService notificacaoService) {
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
         this.metaRepository = metaRepository;
         this.factory = factory;
         this.contaFinanceiraRepository = contaFinanceiraRepository;
@@ -60,7 +71,10 @@ public class MetaService {
         this.aporteMetaRepository = aporteMetaRepository;
         this.transacaoRepository = transacaoRepository;
         this.notificacaoService = notificacaoService;
+<<<<<<< HEAD
         this.conquistaService = conquistaService;
+=======
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
     }
 
     @Transactional(readOnly = true)
@@ -181,6 +195,129 @@ public class MetaService {
 
         validarAcessoMeta(meta, usuarioAutenticado);
         metaRepository.delete(meta);
+<<<<<<< HEAD
+=======
+    }
+
+    @Transactional
+    public AporteMetaResponseDTO registrarAporte(Long metaId, AporteMetaDTO dto, Usuario usuarioAutenticado) {
+        Meta meta = metaRepository.findById(metaId)
+                .orElseThrow(MetaNaoEncontradaException::new);
+
+        validarAcessoMeta(meta, usuarioAutenticado);
+
+        ContaFinanceira contaOrigem = null;
+        if (dto.contaOrigemId() != null) {
+            contaOrigem = contaFinanceiraRepository.findById(dto.contaOrigemId())
+                    .orElseThrow(() -> new ContaIdNaoExisteException("Conta de origem não encontrada"));
+
+            if (!contaOrigem.getUsuario().getId().equals(usuarioAutenticado.getId())) {
+                throw new ContaIdNaoExisteException("Conta de origem não pertence ao usuário");
+            }
+
+            // 1. Debita da conta de origem
+            contaOrigem.setSaldo(contaOrigem.getSaldo().subtract(dto.valor()));
+            contaFinanceiraRepository.save(contaOrigem);
+
+            // 2. Busca categoria adequada para o extrato (Investimentos ou Outros)
+            TipoCategoria categoriaExtrato = tipoCategoriaRepository.findByNome("Outros").orElse(null);
+
+            // 3. Registra a Transação de Saída no Extrato Financeiro
+            Transacao transacaoSaida = new Transacao();
+            transacaoSaida.setDescricao("Aporte na meta: " + meta.getNome());
+            transacaoSaida.setValor(dto.valor());
+            transacaoSaida.setTipo(TipoTransacao.DESPESA);
+            transacaoSaida.setEstado(EstadoTransacao.REALIZADA);
+            transacaoSaida.setDataHora(LocalDateTime.now());
+            transacaoSaida.setContaFinanceira(contaOrigem);
+            transacaoSaida.setCategoria(categoriaExtrato);
+            transacaoRepository.save(transacaoSaida);
+
+            // 4. Se a Meta possui uma conta destino vinculada diferente da origem, credita nela (Transferência)
+            if (meta.getConta() != null && !meta.getConta().getId().equals(contaOrigem.getId())) {
+                ContaFinanceira contaDestino = meta.getConta();
+                contaDestino.setSaldo(contaDestino.getSaldo().add(dto.valor()));
+                contaFinanceiraRepository.save(contaDestino);
+
+                Transacao transacaoEntrada = new Transacao();
+                transacaoEntrada.setDescricao("Recebimento de aporte meta: " + meta.getNome());
+                transacaoEntrada.setValor(dto.valor());
+                transacaoEntrada.setTipo(TipoTransacao.RECEITA);
+                transacaoEntrada.setEstado(EstadoTransacao.REALIZADA);
+                transacaoEntrada.setDataHora(LocalDateTime.now());
+                transacaoEntrada.setContaFinanceira(contaDestino);
+                transacaoEntrada.setCategoria(categoriaExtrato);
+                transacaoRepository.save(transacaoEntrada);
+            }
+        }
+
+        AporteMeta aporte = new AporteMeta(meta, usuarioAutenticado, contaOrigem, dto.valor(), dto.observacao());
+        AporteMeta aporteSalvo = aporteMetaRepository.save(aporte);
+
+        BigDecimal valorAnterior = meta.getValorAtual() != null ? meta.getValorAtual() : BigDecimal.ZERO;
+        BigDecimal novoValor = valorAnterior.add(dto.valor());
+        meta.setValorAtual(novoValor);
+
+        double progressoAntes = calcularPercentual(valorAnterior, meta.getValor());
+        double progressoDepois = calcularPercentual(novoValor, meta.getValor());
+
+        if (novoValor.compareTo(meta.getValor()) >= 0 && meta.getStatus() != StatusMeta.CONCLUIDA) {
+            meta.setStatus(StatusMeta.CONCLUIDA);
+            notificacaoService.criarNotificacao(
+                    usuarioAutenticado,
+                    "🎉 Meta Concluída: " + meta.getNome(),
+                    "Parabéns! Você alcançou o objetivo de R$ " + meta.getValor() + " na meta " + meta.getNome() + "!",
+                    TipoNotificacao.META_ATINGIDA,
+                    "/metas"
+            );
+        } else if (progressoAntes < 80.0 && progressoDepois >= 80.0) {
+            notificacaoService.criarNotificacao(
+                    usuarioAutenticado,
+                    "🎯 Meta quase lá: " + meta.getNome(),
+                    "Você já atingiu " + String.format("%.0f", progressoDepois) + "% da meta " + meta.getNome() + ". Falta pouco!",
+                    TipoNotificacao.META_ALERTA_80,
+                    "/metas"
+            );
+        } else if (progressoAntes < 50.0 && progressoDepois >= 50.0) {
+            notificacaoService.criarNotificacao(
+                    usuarioAutenticado,
+                    "🚩 Metade do caminho: " + meta.getNome(),
+                    "Você alcançou 50% da meta " + meta.getNome() + ". Continue assim!",
+                    TipoNotificacao.META_ALERTA_50,
+                    "/metas"
+            );
+        }
+
+        metaRepository.save(meta);
+        return AporteMetaResponseDTO.fromEntity(aporteSalvo);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AporteMetaResponseDTO> listarAportes(Long metaId, Usuario usuarioAutenticado) {
+        Meta meta = metaRepository.findById(metaId)
+                .orElseThrow(MetaNaoEncontradaException::new);
+
+        validarAcessoMeta(meta, usuarioAutenticado);
+        return aporteMetaRepository.findByMetaIdOrderByDataAporteDesc(metaId)
+                .stream()
+                .map(AporteMetaResponseDTO::fromEntity)
+                .toList();
+    }
+
+    private void validarAcessoMeta(Meta meta, Usuario usuario) {
+        boolean ehDono = meta.getUsuario().getId().equals(usuario.getId());
+        boolean ehMembroFamilia = meta.getFamilia() != null && usuario.getFamilia() != null
+                && meta.getFamilia().getId().equals(usuario.getFamilia().getId());
+
+        if (!ehDono && !ehMembroFamilia) {
+            throw new MetaNaoEncontradaException();
+        }
+    }
+
+    private double calcularPercentual(BigDecimal atual, BigDecimal total) {
+        if (total == null || total.compareTo(BigDecimal.ZERO) <= 0) return 0.0;
+        return (atual.divide(total, 4, java.math.RoundingMode.HALF_UP).doubleValue()) * 100.0;
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
     }
 
     @Transactional

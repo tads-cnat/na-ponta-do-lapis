@@ -47,10 +47,14 @@ public record MetaDTO(
         Long categoriaId,
 
         @Schema(example = "false")
+<<<<<<< HEAD
         Boolean familiar,
 
         @Schema(example = "0.00")
         BigDecimal valorInicial
+=======
+        Boolean familiar
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 ) {
     public MetaDTO(String nome, String descricao, BigDecimal valor, String fotoUrl, LocalDate dataLimite,
                    TipoMeta tipoMeta, Long contaId, Long categoriaId, Boolean familiar) {

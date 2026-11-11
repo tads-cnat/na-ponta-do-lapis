@@ -1,14 +1,26 @@
+<<<<<<< HEAD
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subscription, timer, tap } from 'rxjs';
 import { environment } from '@env';
 import { Notificacao, ContadorNaoLidasResponse } from '../../model/INotificacao.model';
 import { CelebracaoService } from './celebracao.service';
+=======
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { environment } from '@env';
+import { Notificacao, ContadorNaoLidasResponse } from '../../model/INotificacao.model';
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 
 @Injectable({
   providedIn: 'root'
 })
+<<<<<<< HEAD
 export class NotificacaoService implements OnDestroy {
+=======
+export class NotificacaoService {
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   private readonly baseUrl = `${environment.apiBaseUrl}/notificacoes`;
 
   private notificacoesSubject = new BehaviorSubject<Notificacao[]>([]);
@@ -17,6 +29,7 @@ export class NotificacaoService implements OnDestroy {
   private totalNaoLidasSubject = new BehaviorSubject<number>(0);
   public totalNaoLidas$ = this.totalNaoLidasSubject.asObservable();
 
+<<<<<<< HEAD
   private idsConhecidos = new Set<number>();
   private primeiraCarga = true;
   private pollingSub?: Subscription;
@@ -40,16 +53,28 @@ export class NotificacaoService implements OnDestroy {
     this.http.get<Notificacao[]>(this.baseUrl).subscribe({
       next: (notificacoes) => {
         this.processarNovasNotificacoes(notificacoes, forcarCelebracao);
+=======
+  constructor(private http: HttpClient) {}
+
+  public carregarNotificacoes(): void {
+    this.http.get<Notificacao[]>(this.baseUrl).subscribe({
+      next: (notificacoes) => {
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
         this.notificacoesSubject.next(notificacoes);
         const naoLidas = notificacoes.filter((n) => !n.lida).length;
         this.totalNaoLidasSubject.next(naoLidas);
       },
       error: () => {
+<<<<<<< HEAD
         // Falha silenciosa para não poluir console em caso de token expirado
+=======
+        // Falha silenciosa para não quebrar a navegação principal
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
       }
     });
   }
 
+<<<<<<< HEAD
   public recarregarImediatamente(): void {
     this.carregarNotificacoes(true);
   }
@@ -93,6 +118,8 @@ export class NotificacaoService implements OnDestroy {
     return 'PRIMEIRA_META';
   }
 
+=======
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   public atualizarContadorNaoLidas(): void {
     this.http.get<ContadorNaoLidasResponse>(`${this.baseUrl}/nao-lidas/count`).subscribe({
       next: (res) => this.totalNaoLidasSubject.next(res.totalNaoLidas),
@@ -135,6 +162,7 @@ export class NotificacaoService implements OnDestroy {
       })
     );
   }
+<<<<<<< HEAD
 
   ngOnDestroy(): void {
     if (this.pollingSub) {
@@ -142,3 +170,7 @@ export class NotificacaoService implements OnDestroy {
     }
   }
 }
+=======
+}
+
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)

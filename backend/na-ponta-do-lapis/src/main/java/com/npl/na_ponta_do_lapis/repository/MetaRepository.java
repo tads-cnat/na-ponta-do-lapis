@@ -12,10 +12,13 @@ public interface MetaRepository extends JpaRepository<Meta, Long> {
 
     List<Meta> findByUsuarioId(Long usuarioId);
 
+<<<<<<< HEAD
     long countByUsuarioId(Long usuarioId);
 
     long countByUsuarioIdAndStatus(Long usuarioId, StatusMeta status);
 
+=======
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
     @Query("SELECT m FROM Meta m WHERE m.usuario.id = :usuarioId OR (m.familia IS NOT NULL AND m.familia.id = :familiaId)")
     List<Meta> findByUsuarioIdOuFamiliaId(@Param("usuarioId") Long usuarioId, @Param("familiaId") Long familiaId);
 

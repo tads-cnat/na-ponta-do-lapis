@@ -11,11 +11,18 @@ import { SidebarService } from '../../service/sidebar-service.service';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { Notificacao } from '../../model/INotificacao.model';
+<<<<<<< HEAD
 import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
 
 @Component({
   selector: 'app-header',
   imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent],
+=======
+
+@Component({
+  selector: 'app-header',
+  imports: [CommonModule, PrimeNGModuleModule, IconComponent],
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -78,6 +85,7 @@ export class HeaderComponent implements OnInit {
     this.notificacaoService.excluirNotificacao(id).subscribe();
   }
 
+<<<<<<< HEAD
   public obterIcone(tipo: string): string {
     switch (tipo) {
       case 'META_ATINGIDA':
@@ -126,6 +134,25 @@ export class HeaderComponent implements OnInit {
     if (m.includes('família') || m.includes('familia')) return 'FAMILIA_UNIDA';
     return 'PRIMEIRA_META';
   }
+=======
+  public obterIconeTipo(tipo: string): string {
+    switch (tipo) {
+      case 'META_ATINGIDA':
+        return 'pi pi-check-circle text-emerald-600 bg-emerald-50';
+      case 'META_ESTOURADA':
+        return 'pi pi-exclamation-triangle text-rose-600 bg-rose-50';
+      case 'META_ALERTA_50':
+      case 'META_ALERTA_80':
+        return 'pi pi-flag text-amber-600 bg-amber-50';
+      case 'CONQUISTA_DESBLOQUEADA':
+        return 'pi pi-trophy text-[#7843CD] bg-[#7843CD]/10';
+      case 'FAMILIA_CONVITE':
+        return 'pi pi-users text-blue-600 bg-blue-50';
+      default:
+        return 'pi pi-bell text-slate-600 bg-slate-100';
+    }
+  }
+>>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 
   public carregarDadosUsuario(){
    const usuario:TokenPayload | null = StorageService.getUsuarioDecodificado()
