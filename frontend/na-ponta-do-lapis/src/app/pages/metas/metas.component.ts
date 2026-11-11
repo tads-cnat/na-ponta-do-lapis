@@ -6,7 +6,7 @@ import { MetasService } from './services/metas.service';
 import { ContaFinanceiraService } from '../contas/service/contas.service';
 import { TransacoesService } from '../transacoes/service/transacoes.service';
 import { AuthService } from '../../auth/service/auth.service';
-import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest } from '@models/IMetas.models';
+import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest, AporteMetaResponse } from '@models/IMetas.models';
 
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -53,8 +53,12 @@ export class MetasComponent implements OnInit {
   exibirDialog: boolean = false;
   exibirDialogAporte: boolean = false;
   exibirDialogExclusao: boolean = false;
+  exibirDialogHistorico: boolean = false;
   metaParaAporte: MetaResponse | null = null;
   metaParaExcluir: MetaResponse | null = null;
+  metaParaHistorico: MetaResponse | null = null;
+  historicoAportes = signal<AporteMetaResponse[]>([]);
+  carregandoHistorico = signal<boolean>(false);
   
   // Novos Filtros Ricos: Status, Tipo e Origem
   filtroStatus = signal<'todas' | 'em_andamento' | 'concluidas' | 'expiradas'>('todas');
@@ -166,12 +170,27 @@ export class MetasComponent implements OnInit {
     return lista;
   });
 
+  // Separação Contábil: Quando não está filtrando especificamente por GASTO,
+  // os cards de resumo refletem apenas objetivos de acúmulo/amortização (POUPANCA / DIVIDA),
+  // evitando que despesas de Tetos de Gastos inflamem o "Total Arrecadado".
+  metasBaseResumo = computed(() => {
+    const lista = this.metasFiltradas();
+    if (this.filtroTipo() === 'GASTO') {
+      return lista.filter(m => m.tipoMeta === 'GASTO');
+    }
+    return lista.filter(m => m.tipoMeta !== 'GASTO');
+  });
+
+  contagemTetosGasto = computed(() => {
+    return this.metasFiltradas().filter(m => m.tipoMeta === 'GASTO').length;
+  });
+
   totalMetas = computed(() => {
-    return this.metasFiltradas().reduce((sum, m) => sum + (m.valorTotal || 0), 0);
+    return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorTotal || 0), 0);
   });
 
   totalAcumulado = computed(() => {
-    return this.metasFiltradas().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
+    return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
   });
 
   totalRestante = computed(() => {
@@ -203,6 +222,7 @@ export class MetasComponent implements OnInit {
       nome: ['', [Validators.required, Validators.minLength(3)]],
       descricao: [''],
       valor: [null, [Validators.required, Validators.min(0.01)]],
+      valorInicial: [null],
       contaId: [null],
       categoriaId: [null],
       familiar: [false],
@@ -338,6 +358,7 @@ export class MetasComponent implements OnInit {
       this.metaForm.reset({
         tipoMeta: 'POUPANCA',
         familiar: false,
+        valorInicial: null,
         contaId: null,
         categoriaId: null,
       });
@@ -370,6 +391,35 @@ export class MetasComponent implements OnInit {
     this.exibirDialogAporte = false;
     this.metaParaAporte = null;
     this.aporteForm.reset();
+  }
+
+  abrirHistorico(meta: MetaResponse): void {
+    this.metaParaHistorico = meta;
+    this.historicoAportes.set([]);
+    this.carregandoHistorico.set(true);
+    this.exibirDialogHistorico = true;
+
+    this.metasService.listarAportes(meta.id).subscribe({
+      next: (aportes) => {
+        this.historicoAportes.set(aportes || []);
+        this.carregandoHistorico.set(false);
+      },
+      error: () => {
+        this.carregandoHistorico.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao carregar histórico',
+          detail: 'Não foi possível buscar os aportes desta meta.',
+          life: 4000,
+        });
+      },
+    });
+  }
+
+  fecharDialogHistorico(): void {
+    this.exibirDialogHistorico = false;
+    this.metaParaHistorico = null;
+    this.historicoAportes.set([]);
   }
 
   salvarAporte(): void {
@@ -416,10 +466,12 @@ export class MetasComponent implements OnInit {
     if (this.metaForm.invalid) return;
 
     const formValue = this.metaForm.value;
+    const valorInicialNum = Number(formValue.valorInicial) || 0;
     const metaData: MetaRequest = {
       nome: formValue.nome,
       descricao: formValue.descricao,
       valor: formValue.valor,
+      valorInicial: (!this.metaSelecionada && formValue.tipoMeta !== 'GASTO' && valorInicialNum > 0) ? valorInicialNum : undefined,
       contaId: formValue.contaId,
       categoriaId: formValue.categoriaId,
       familiar: formValue.familiar,

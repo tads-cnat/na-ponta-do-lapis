@@ -47,8 +47,16 @@ public record MetaDTO(
         Long categoriaId,
 
         @Schema(example = "false")
-        Boolean familiar
+        Boolean familiar,
+
+        @Schema(example = "0.00")
+        BigDecimal valorInicial
 ) {
+    public MetaDTO(String nome, String descricao, BigDecimal valor, String fotoUrl, LocalDate dataLimite,
+                   TipoMeta tipoMeta, Long contaId, Long categoriaId, Boolean familiar) {
+        this(nome, descricao, valor, fotoUrl, dataLimite, tipoMeta, contaId, categoriaId, familiar, null);
+    }
+
     public Meta toEntity() {
         Meta meta = new Meta();
         meta.setNome(this.nome);
@@ -57,7 +65,11 @@ public record MetaDTO(
         meta.setFotoUrl(this.fotoUrl);
         meta.setDataLimite(this.dataLimite);
         meta.setTipoMeta(this.tipoMeta);
-        meta.setValorAtual(BigDecimal.ZERO);
+        if (this.tipoMeta != TipoMeta.GASTO && this.valorInicial != null && this.valorInicial.compareTo(BigDecimal.ZERO) > 0) {
+            meta.setValorAtual(this.valorInicial);
+        } else {
+            meta.setValorAtual(BigDecimal.ZERO);
+        }
         return meta;
     }
 }

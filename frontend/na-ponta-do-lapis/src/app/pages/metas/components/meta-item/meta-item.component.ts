@@ -17,6 +17,7 @@ export class MetaItemComponent {
   @Output() deletarMeta: EventEmitter<number> = new EventEmitter<number>();
   @Output() editarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
   @Output() aportarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
+  @Output() verHistorico: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
 
   onDeletar(): void {
     this.deletarMeta.emit(this.meta.id);
@@ -28,6 +29,10 @@ export class MetaItemComponent {
 
   onAportar(): void {
     this.aportarMeta.emit(this.meta);
+  }
+
+  onVerHistorico(): void {
+    this.verHistorico.emit(this.meta);
   }
 
   get valorFalta(): number {

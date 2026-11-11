@@ -10,6 +10,7 @@ export interface MetaRequest {
     nome: string;
     descricao?: string;
     valor: number;
+    valorInicial?: number;
     fotoUrl?: string;
     dataLimite?: string | Date;
     tipoMeta: TipoMeta;

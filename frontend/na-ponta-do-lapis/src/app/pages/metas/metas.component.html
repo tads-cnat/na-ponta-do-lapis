@@ -8,19 +8,23 @@
     </div>
   </div>
 
-  <!-- CARDS DE RESUMO (PADRÃO TRÍADE FINANCEIRA DO DESIGN SYSTEM) -->
+  <!-- CARDS DE RESUMO (PADRÃO TRÍADE FINANCEIRA DO DESIGN SYSTEM - COM SEPARAÇÃO CONTÁBIL) -->
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
 
-    <!-- Card 1: Valor Total das Metas (Roxo da Marca) -->
+    <!-- Card 1: Valor Total das Metas / Limite Total Orçado -->
     <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
-            <i class="pi pi-bullseye text-base"></i>
+            <i class="pi text-base" [ngClass]="filtroTipo() === 'GASTO' ? 'pi-sliders-h' : 'pi-bullseye'"></i>
           </div>
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-[#7843CD]">Valor Total das Metas</span>
-            <p class="text-[11px] text-slate-400">Soma dos seus objetivos</p>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#7843CD]">
+              {{ filtroTipo() === 'GASTO' ? 'Limite Total Orçado' : 'Valor Total das Metas' }}
+            </span>
+            <p class="text-[11px] text-slate-400">
+              {{ filtroTipo() === 'GASTO' ? 'Soma dos tetos de despesas' : 'Soma dos objetivos de acúmulo' }}
+            </p>
           </div>
         </div>
       </div>
@@ -30,47 +34,64 @@
           {{ totalMetas() | appMoeda }}
         </span>
         <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5 min-h-5">
-          <span class="font-semibold text-[#7843CD]">{{ metas().length }}</span>
-          <span>meta(s) ativa(s) no momento</span>
+          <span class="font-semibold text-[#7843CD]">{{ metasBaseResumo().length }}</span>
+          <span>{{ filtroTipo() === 'GASTO' ? 'teto(s) de gasto listado(s)' : 'meta(s) de acúmulo/quitação' }}</span>
+          @if (filtroTipo() === 'todos' && contagemTetosGasto() > 0) {
+            <span class="text-slate-400 text-[11px]">• +{{ contagemTetosGasto() }} {{ contagemTetosGasto() === 1 ? 'teto de gasto' : 'tetos de gasto' }}</span>
+          }
         </div>
       </div>
     </div>
 
-    <!-- Card 2: Total Arrecadado (Verde Receita) -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+    <!-- Card 2: Total Arrecadado / Gasto Atual no Período -->
+    <div class="bg-white rounded-2xl p-5 shadow-sm border flex flex-col justify-between min-h-[136px] relative overflow-hidden"
+         [ngClass]="filtroTipo() === 'GASTO' ? 'border-rose-100' : 'border-emerald-100'">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0">
-            <i class="pi pi-check-circle text-base"></i>
+          <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+               [ngClass]="filtroTipo() === 'GASTO' ? 'bg-rose-100 text-[#C24E4E]' : 'bg-emerald-100 text-emerald-700'">
+            <i class="pi text-base" [ngClass]="filtroTipo() === 'GASTO' ? 'pi-chart-pie' : 'pi-check-circle'"></i>
           </div>
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-emerald-800">Total Arrecadado</span>
-            <p class="text-[11px] text-slate-400">Valor já poupado nas contas</p>
+            <span class="text-xs font-bold uppercase tracking-wider"
+                  [ngClass]="filtroTipo() === 'GASTO' ? 'text-[#C24E4E]' : 'text-emerald-800'">
+              {{ filtroTipo() === 'GASTO' ? 'Gasto no Período' : 'Total Arrecadado' }}
+            </span>
+            <p class="text-[11px] text-slate-400">
+              {{ filtroTipo() === 'GASTO' ? 'Consumo acumulado nos tetos' : 'Valor já poupado ou amortizado' }}
+            </p>
           </div>
         </div>
       </div>
 
       <div>
-        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight text-emerald-700 block truncate">
-          + {{ totalAcumulado() | appMoeda }}
+        <span class="font-extrabold text-2xl lg:text-3xl tracking-tight block truncate"
+              [ngClass]="filtroTipo() === 'GASTO' ? 'text-[#C24E4E]' : 'text-emerald-700'">
+          {{ filtroTipo() === 'GASTO' ? '' : '+ ' }}{{ totalAcumulado() | appMoeda }}
         </span>
         <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5 min-h-5">
-          <span class="text-emerald-600 font-semibold">{{ progressoGeral() }}% concluído</span>
-          <span>• do objetivo global</span>
+          <span class="font-semibold" [ngClass]="filtroTipo() === 'GASTO' ? 'text-[#C24E4E]' : 'text-emerald-600'">
+            {{ progressoGeral() }}% {{ filtroTipo() === 'GASTO' ? 'consumido' : 'concluído' }}
+          </span>
+          <span>• {{ filtroTipo() === 'GASTO' ? 'do limite total' : 'do objetivo global' }}</span>
         </div>
       </div>
     </div>
 
-    <!-- Card 3: Falta Arrecadar (Amarelo Ouro da Marca) -->
+    <!-- Card 3: Falta Arrecadar / Margem Disponível -->
     <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F9DB70] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-[#FEF9E7] border border-[#F9DB70] text-[#B45309] flex items-center justify-center shrink-0">
-            <i class="pi pi-flag text-base"></i>
+            <i class="pi text-base" [ngClass]="filtroTipo() === 'GASTO' ? 'pi-shield' : 'pi-flag'"></i>
           </div>
           <div>
-            <span class="text-xs font-bold uppercase tracking-wider text-[#B45309]">Falta Arrecadar</span>
-            <p class="text-[11px] text-slate-400">Restante para atingir 100%</p>
+            <span class="text-xs font-bold uppercase tracking-wider text-[#B45309]">
+              {{ filtroTipo() === 'GASTO' ? 'Margem Disponível' : 'Falta Arrecadar' }}
+            </span>
+            <p class="text-[11px] text-slate-400">
+              {{ filtroTipo() === 'GASTO' ? 'Saldo livre dentro dos tetos' : 'Restante para atingir 100%' }}
+            </p>
           </div>
         </div>
       </div>
@@ -80,7 +101,7 @@
           {{ totalRestante() | appMoeda }}
         </span>
         <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5 min-h-5">
-          <span>Continue poupando para concluir</span>
+          <span>{{ filtroTipo() === 'GASTO' ? 'Mantenha seus gastos sob controle' : 'Continue poupando para concluir' }}</span>
         </div>
       </div>
     </div>
@@ -199,6 +220,7 @@
               (deletarMeta)="solicitarExclusao(meta)"
               (editarMeta)="abrirDialog($event)"
               (aportarMeta)="abrirDialogAporte($event)"
+              (verHistorico)="abrirHistorico($event)"
             >
             </app-meta-item>
           </li>
@@ -297,7 +319,8 @@
 
     <!-- NOME E VALOR ALVO -->
     <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-      <div class="sm:col-span-7 flex flex-col gap-1.5">
+      <div class="flex flex-col gap-1.5"
+           [ngClass]="(!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') ? 'sm:col-span-6' : 'sm:col-span-7'">
         <label for="nome" class="font-semibold text-sm text-slate-700">
           {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Nome do Limite' : (metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'Nome da Dívida' : 'Nome do Objetivo') }}
         </label>
@@ -309,7 +332,8 @@
         }
       </div>
       
-      <div class="sm:col-span-5 flex flex-col gap-1.5">
+      <div class="flex flex-col gap-1.5"
+           [ngClass]="(!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') ? 'sm:col-span-3' : 'sm:col-span-5'">
         <label for="valor" class="font-semibold text-sm text-slate-700">
           {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Valor Limite' : 'Valor Alvo' }}
         </label>
@@ -323,6 +347,21 @@
           <small class="text-red-500 text-xs">Informe um valor maior que zero</small>
         }
       </div>
+
+      @if (!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') {
+        <div class="sm:col-span-3 flex flex-col gap-1.5">
+          <label for="valorInicial" class="font-semibold text-sm text-slate-700">
+            {{ metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'Já Amortizado' : 'Já Guardado' }}
+          </label>
+          <app-input-moeda 
+            formControlName="valorInicial" 
+            inputId="valorInicial" 
+            tamanho="md" 
+            placeholder="0,00">
+          </app-input-moeda>
+          <small class="text-slate-400 text-[11px] leading-tight">Saldo inicial (opcional)</small>
+        </div>
+      }
     </div>
 
     <!-- DETALHES ADICIONAIS: PRAZO, CONTA E CATEGORIA -->
@@ -562,6 +601,102 @@
       <p-button label="Confirmar Aporte" icon="pi pi-check" size="small"
                 styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
                 (onClick)="salvarAporte()" [disabled]="aporteForm.invalid"></p-button>
+    </div>
+  </ng-template>
+
+</p-dialog>
+
+<!-- MODAL DE HISTÓRICO / EXTRATO DE APORTES -->
+<p-dialog
+  [(visible)]="exibirDialogHistorico"
+  [modal]="true"
+  [closable]="true"
+  [style]="{ width: '34rem', maxWidth: '95vw' }"
+  [breakpoints]="{ '640px': '95vw' }">
+
+  <ng-template pTemplate="header">
+    <div class="flex items-center gap-3">
+      <div class="w-10 h-10 rounded-2xl bg-purple-100 text-[#7843CD] flex items-center justify-center shrink-0">
+        <i class="pi pi-history text-lg"></i>
+      </div>
+      <div>
+        <h2 class="text-base font-bold text-slate-900 m-0">Extrato de Aportes</h2>
+        <p class="text-xs text-slate-400 m-0 truncate max-w-64 sm:max-w-80">
+          {{ metaParaHistorico?.nome }}
+        </p>
+      </div>
+    </div>
+  </ng-template>
+
+  <div class="flex flex-col gap-4 py-2">
+    <!-- Resumo Rápido da Meta -->
+    @if (metaParaHistorico) {
+      <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+        <div>
+          <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400 block">Acumulado Atual</span>
+          <span class="text-base font-extrabold text-emerald-700">{{ metaParaHistorico.valorAtual | appMoeda }}</span>
+        </div>
+        <div class="text-right">
+          <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400 block">Objetivo Total</span>
+          <span class="text-base font-bold text-slate-800">{{ metaParaHistorico.valorTotal | appMoeda }}</span>
+        </div>
+      </div>
+    }
+
+    <!-- Lista Cronológica de Aportes -->
+    @if (carregandoHistorico()) {
+      <div class="py-10 text-center text-slate-400 text-xs flex flex-col items-center gap-2">
+        <i class="pi pi-spin pi-spinner text-xl text-[#7843CD]"></i>
+        <span>Carregando histórico de aportes...</span>
+      </div>
+    } @else {
+      <div class="max-h-80 overflow-y-auto pr-1 flex flex-col gap-2.5">
+        @for (aporte of historicoAportes(); track aporte.id) {
+          <div class="p-3.5 rounded-xl border border-slate-200/80 bg-white flex items-start justify-between gap-3 hover:border-purple-200 transition-all">
+            <div class="flex items-start gap-3 min-w-0">
+              <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/70 flex items-center justify-center shrink-0 mt-0.5">
+                <i class="pi pi-arrow-up-right text-xs"></i>
+              </div>
+              <div class="min-w-0">
+                <p class="text-xs font-bold text-slate-900 m-0 truncate">
+                  {{ aporte.observacao || 'Aporte realizado' }}
+                </p>
+                <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-slate-500 mt-0.5">
+                  <span>{{ aporte.dataAporte | date:'dd/MM/yyyy HH:mm' }}</span>
+                  @if (aporte.usuarioNome) {
+                    <span>•</span>
+                    <span class="font-medium text-slate-600">{{ aporte.usuarioNome }}</span>
+                  }
+                  @if (aporte.contaOrigemNome) {
+                    <span>•</span>
+                    <span class="text-slate-500">
+                      <i class="pi pi-wallet text-[10px] mr-0.5"></i>{{ aporte.contaOrigemNome }}
+                    </span>
+                  }
+                </div>
+              </div>
+            </div>
+            <div class="text-right shrink-0">
+              <span class="text-xs sm:text-sm font-extrabold text-emerald-700">
+                + {{ aporte.valor | appMoeda }}
+              </span>
+            </div>
+          </div>
+        } @empty {
+          <div class="py-8 text-center flex flex-col items-center justify-center gap-1.5 text-slate-400">
+            <i class="pi pi-inbox text-2xl text-slate-300"></i>
+            <p class="text-xs font-semibold text-slate-600 m-0">Nenhum aporte registrado ainda</p>
+            <p class="text-[11px] text-slate-400 m-0">Use o botão "+" no card da meta para registrar seu primeiro aporte.</p>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <ng-template pTemplate="footer">
+    <div class="flex justify-end w-full pt-2">
+      <p-button label="Fechar" severity="secondary" [outlined]="true" size="small"
+                styleClass="rounded-xl! text-xs px-4" (onClick)="fecharDialogHistorico()"></p-button>
     </div>
   </ng-template>
 
