@@ -4,6 +4,7 @@ public enum StatusMeta {
     EM_ANDAMENTO("Em Andamento"),
     CONCLUIDA("Concluída"),
     ESTOURADA("Estourada"),
+    EXPIRADA("Expirada"),
     CANCELADA("Cancelada");
 
     private final String descricao;

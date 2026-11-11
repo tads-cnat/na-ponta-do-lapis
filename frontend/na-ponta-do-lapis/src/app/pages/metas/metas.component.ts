@@ -57,7 +57,7 @@ export class MetasComponent implements OnInit {
   metaParaExcluir: MetaResponse | null = null;
   
   // Novos Filtros Ricos: Status, Tipo e Origem
-  filtroStatus = signal<'todas' | 'em_andamento' | 'concluidas'>('todas');
+  filtroStatus = signal<'todas' | 'em_andamento' | 'concluidas' | 'expiradas'>('todas');
   filtroTipo = signal<'todos' | 'POUPANCA' | 'GASTO' | 'DIVIDA'>('todos');
   filtroOrigem = signal<'todas' | 'individuais' | 'familia'>('todas');
   
@@ -74,9 +74,32 @@ export class MetasComponent implements OnInit {
     { label: 'Metas da Família', value: 'familia' },
   ];
 
+  ehMetaConcluida(m: MetaResponse): boolean {
+    if (m.tipoMeta === 'GASTO') {
+      return m.status === 'CONCLUIDA';
+    }
+    return m.status === 'CONCLUIDA' || (m.progresso || 0) >= 100 || (m.valorAtual || 0) >= (m.valorTotal || 0);
+  }
+
+  ehMetaExpirada(m: MetaResponse): boolean {
+    if (this.ehMetaConcluida(m)) return false;
+    if (m.status === 'EXPIRADA') return true;
+    if (!m.dataLimite) return false;
+    const limite = new Date(m.dataLimite);
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    limite.setHours(0, 0, 0, 0);
+    return limite.getTime() < hoje.getTime();
+  }
+
+  ehMetaEmAndamento(m: MetaResponse): boolean {
+    return !this.ehMetaConcluida(m) && !this.ehMetaExpirada(m);
+  }
+
   contagemTodas = computed(() => this.metas().length);
-  contagemEmAndamento = computed(() => this.metas().filter(m => (m.progresso || 0) < 100 && (m.valorAtual || 0) < (m.valorTotal || 0)).length);
-  contagemConcluidas = computed(() => this.metas().filter(m => (m.progresso || 0) >= 100 || (m.valorAtual || 0) >= (m.valorTotal || 0)).length);
+  contagemEmAndamento = computed(() => this.metas().filter(m => this.ehMetaEmAndamento(m)).length);
+  contagemConcluidas = computed(() => this.metas().filter(m => this.ehMetaConcluida(m)).length);
+  contagemExpiradas = computed(() => this.metas().filter(m => this.ehMetaExpirada(m)).length);
 
   temFamilia: boolean = false;
   tipoMetaSelecionado = signal<string>('POUPANCA');
@@ -119,9 +142,11 @@ export class MetasComponent implements OnInit {
     // 1. Filtro por status
     const status = this.filtroStatus();
     if (status === 'concluidas') {
-      lista = lista.filter(m => (m.progresso || 0) >= 100 || (m.valorAtual || 0) >= (m.valorTotal || 0));
+      lista = lista.filter(m => this.ehMetaConcluida(m));
     } else if (status === 'em_andamento') {
-      lista = lista.filter(m => (m.progresso || 0) < 100 && (m.valorAtual || 0) < (m.valorTotal || 0));
+      lista = lista.filter(m => this.ehMetaEmAndamento(m));
+    } else if (status === 'expiradas') {
+      lista = lista.filter(m => this.ehMetaExpirada(m));
     }
 
     // 2. Filtro por tipo de meta

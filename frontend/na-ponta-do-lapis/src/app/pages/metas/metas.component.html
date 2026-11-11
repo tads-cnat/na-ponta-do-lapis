@@ -137,6 +137,20 @@
               {{ contagemConcluidas() }}
             </span>
           </button>
+
+          @if (contagemExpiradas() > 0) {
+            <button type="button"
+                    (click)="filtroStatus.set('expiradas')"
+                    class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
+                    [ngClass]="filtroStatus() === 'expiradas' ? 'bg-white text-amber-900 shadow-2xs font-bold' : 'text-amber-700 hover:text-amber-900'">
+              <i class="pi pi-clock text-xs text-amber-600"></i>
+              <span>Expiradas</span>
+              <span class="text-[10px] px-1.5 py-0.2 rounded-full"
+                    [ngClass]="filtroStatus() === 'expiradas' ? 'bg-amber-100 text-amber-900 font-bold' : 'bg-amber-100/70 text-amber-800'">
+                {{ contagemExpiradas() }}
+              </span>
+            </button>
+          }
         </div>
       </div>
       

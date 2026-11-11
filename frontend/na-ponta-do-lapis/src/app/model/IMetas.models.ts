@@ -1,5 +1,5 @@
 export type TipoMeta = 'POUPANCA' | 'GASTO' | 'DIVIDA';
-export type StatusMeta = 'EM_ANDAMENTO' | 'CONCLUIDA' | 'ESTOURADA' | 'CANCELADA';
+export type StatusMeta = 'EM_ANDAMENTO' | 'CONCLUIDA' | 'ESTOURADA' | 'EXPIRADA' | 'CANCELADA';
 
 export interface TipoMetaResponse {
     id: string;
