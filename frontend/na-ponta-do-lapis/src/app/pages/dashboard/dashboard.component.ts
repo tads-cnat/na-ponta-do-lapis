@@ -13,8 +13,6 @@ import { ContaFinanceiraService } from '../contas/service/contas.service';
 import { MessageService } from 'primeng/api';
 import { MetasService } from '../metas/services/metas.service';
 import { TransacoesService } from '../transacoes/service/transacoes.service';
-import { DashboardService } from './service/dashboard.service';
-import { ICotacao } from '../../model/ICotacao.models';
 import { Categoria } from '../../model/ITransacoes.model';
 
 @Component({
@@ -63,8 +61,6 @@ import { Categoria } from '../../model/ITransacoes.model';
         class="block w-full"
         [contas]="contas"
         [transacoes]="transacoes"
-        [cotacaoDolar]="cotacaoDolar"
-        [cotacaoEuro]="cotacaoEuro"
         >
         </app-cards-resumo>
 
@@ -109,8 +105,6 @@ export class DashboardComponent implements OnInit {
 
   transacaoService = inject(TransacoesService);
 
-  dashboardService = inject(DashboardService);
-
   private messageService = inject(MessageService);
 
   private cdr = inject(ChangeDetectorRef);
@@ -123,10 +117,6 @@ export class DashboardComponent implements OnInit {
 
   saldoAtual: number = 0;
 
-  cotacaoDolar?: ICotacao;
-
-  cotacaoEuro?: ICotacao;
-
   metas: MetaResponse[] = [];
 
   categorias: Categoria[] = [];
@@ -134,7 +124,6 @@ export class DashboardComponent implements OnInit {
   ngOnInit(): void {
     this.buscarContas();
     this.buscarTransacoes();
-    this.buscarCotacoes();
     this.buscarMetas();
     this.buscarCategorias();
   }
@@ -182,30 +171,6 @@ export class DashboardComponent implements OnInit {
             life: 2000
           });
           this.cdr.detectChanges();
-      }
-    });
-  }
-
-  buscarCotacoes(): void {
-    this.dashboardService.listarCotacoes('USD-BRL').subscribe({
-      next: (res) => {
-        this.cotacaoDolar = res;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error("Erro ao buscar dólar", err);
-
-      }
-    });
-
-    this.dashboardService.listarCotacoes('EUR-BRL').subscribe({
-      next: (res) =>  {
-        this.cotacaoEuro = res;
-        this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error("Erro ao buscar euro", err);
-
       }
     });
   }

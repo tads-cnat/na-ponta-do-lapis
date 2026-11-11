@@ -51,7 +51,9 @@ export class MetasComponent implements OnInit {
   categorias = signal<any[]>([]);
   exibirDialog: boolean = false;
   exibirDialogAporte: boolean = false;
+  exibirDialogExclusao: boolean = false;
   metaParaAporte: MetaResponse | null = null;
+  metaParaExcluir: MetaResponse | null = null;
   filtroFamiliar: 'todas' | 'individuais' | 'familia' = 'todas';
   temFamilia: boolean = false;
   tipoMetaSelecionado = signal<string>('POUPANCA');
@@ -198,21 +200,42 @@ export class MetasComponent implements OnInit {
     });
   }
 
-  deletarMeta(id: number): void {
-    this.metasService.deletarMeta(id).subscribe({
+  solicitarExclusao(meta: MetaResponse): void {
+    this.metaParaExcluir = meta;
+    this.exibirDialogExclusao = true;
+  }
+
+  cancelarExclusao(): void {
+    this.exibirDialogExclusao = false;
+    this.metaParaExcluir = null;
+  }
+
+  confirmarExclusao(): void {
+    if (!this.metaParaExcluir) return;
+    const metaAlvo = this.metaParaExcluir;
+    this.metasService.deletarMeta(metaAlvo.id).subscribe({
       next: () => {
-        this.metas.update((metas) => metas.filter((m) => m.id !== id));
+        this.metas.update((metas) => metas.filter((m) => m.id !== metaAlvo.id));
         this.messageService.add({ severity: 'success', summary: 'Meta excluída com sucesso!', life: 3000 });
+        this.cancelarExclusao();
+        this.notificacaoService.recarregarImediatamente();
       },
       error: (error) => {
         this.messageService.add({
           severity: 'error',
-          summary: 'Erro ao deletar meta',
+          summary: 'Erro ao excluir meta',
           detail: error.error?.message || error.message,
           life: 5000,
         });
       },
     });
+  }
+
+  deletarMeta(id: number): void {
+    const meta = this.metas().find(m => m.id === id);
+    if (meta) {
+      this.solicitarExclusao(meta);
+    }
   }
 
   selecionarTipoMeta(tipo: string): void {
