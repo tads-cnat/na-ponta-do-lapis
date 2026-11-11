@@ -89,41 +89,87 @@
 
   <!-- CARD PRINCIPAL DE METAS -->
   <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
-      <div>
-        <div class="flex items-center gap-2.5">
-          <h2 class="section-title-npl m-0">Seus Objetivos</h2>
-          <span class="badge-npl-amarelo">
-            <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
-            {{ metasFiltradas().length }} {{ metasFiltradas().length === 1 ? 'meta' : 'metas' }}
-          </span>
-        </div>
-        <p class="text-xs text-slate-500 mt-0.5">Progresso individual e familiar de cada meta cadastrada</p>
-      </div>
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
       
-      <div class="flex items-center gap-2 flex-wrap">
-        <div class="flex items-center p-1 bg-slate-100 rounded-xl text-xs font-semibold">
-          <button type="button"
-                  (click)="filtroFamiliar = 'todas'"
-                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer"
-                  [ngClass]="filtroFamiliar === 'todas' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
-            Todas
-          </button>
-          <button type="button"
-                  (click)="filtroFamiliar = 'individuais'"
-                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer"
-                  [ngClass]="filtroFamiliar === 'individuais' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
-            Individuais
-          </button>
-          <button type="button"
-                  (click)="filtroFamiliar = 'familia'"
-                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer"
-                  [ngClass]="filtroFamiliar === 'familia' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
-            Família
-          </button>
+      <!-- Lado Esquerdo: Título e Status Tabs (Todas, Em Andamento, Concluídas) -->
+      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
+        <div>
+          <div class="flex items-center gap-2.5">
+            <h2 class="section-title-npl m-0">Seus Objetivos</h2>
+            <span class="badge-npl-amarelo">
+              <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
+              {{ metasFiltradas().length }} {{ metasFiltradas().length === 1 ? 'meta' : 'metas' }}
+            </span>
+          </div>
+          <p class="text-xs text-slate-500 mt-0.5">Acompanhe seu progresso e mantenha suas metas em dia</p>
         </div>
 
-        <p-button size="small" (onClick)="abrirDialog()" styleClass="btn-npl-primary rounded-xl! px-3.5 py-2 text-xs sm:text-sm font-semibold shadow-xs self-start sm:self-auto">
+        <!-- Abas de Status: Todas, Em Andamento, Concluídas -->
+        <div class="flex items-center p-1 bg-slate-100 rounded-xl text-xs font-semibold self-start sm:self-auto">
+          <button type="button"
+                  (click)="filtroStatus.set('todas')"
+                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
+                  [ngClass]="filtroStatus() === 'todas' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+            <span>Todas</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full"
+                  [ngClass]="filtroStatus() === 'todas' ? 'bg-slate-100 text-slate-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
+              {{ contagemTodas() }}
+            </span>
+          </button>
+          <button type="button"
+                  (click)="filtroStatus.set('em_andamento')"
+                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
+                  [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+            <span>Em Andamento</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full"
+                  [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-purple-100 text-[#7843CD] font-bold' : 'bg-slate-200/70 text-slate-500'">
+              {{ contagemEmAndamento() }}
+            </span>
+          </button>
+          <button type="button"
+                  (click)="filtroStatus.set('concluidas')"
+                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
+                  [ngClass]="filtroStatus() === 'concluidas' ? 'bg-white text-emerald-800 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+            <i class="pi pi-check-circle text-xs text-emerald-600"></i>
+            <span>Concluídas</span>
+            <span class="text-[10px] px-1.5 py-0.2 rounded-full"
+                  [ngClass]="filtroStatus() === 'concluidas' ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
+              {{ contagemConcluidas() }}
+            </span>
+          </button>
+        </div>
+      </div>
+      
+      <!-- Lado Direito: Filtros adicionais (Tipo de Meta, Origem) + Botão Nova Meta -->
+      <div class="flex items-center gap-2.5 flex-wrap">
+        
+        <!-- Filtro por Tipo de Meta -->
+        <p-select 
+          [options]="opcoesFiltroTipo" 
+          optionLabel="label" 
+          optionValue="value"
+          [ngModel]="filtroTipo()" 
+          (ngModelChange)="filtroTipo.set($event)"
+          placeholder="Tipo de Meta"
+          styleClass="w-44 text-xs rounded-xl! border-slate-200"
+          [appendTo]="'body'">
+        </p-select>
+
+        <!-- Filtro por Origem (Individual vs Família) - exibido se tem família -->
+        @if (temFamilia) {
+          <p-select 
+            [options]="opcoesFiltroOrigem" 
+            optionLabel="label" 
+            optionValue="value"
+            [ngModel]="filtroOrigem()" 
+            (ngModelChange)="filtroOrigem.set($event)"
+            placeholder="Origem"
+            styleClass="w-38 text-xs rounded-xl! border-slate-200"
+            [appendTo]="'body'">
+          </p-select>
+        }
+
+        <p-button size="small" (onClick)="abrirDialog()" styleClass="btn-npl-primary rounded-xl! px-3.5 py-2 text-xs sm:text-sm font-semibold shadow-xs self-start sm:self-auto shrink-0">
           <i class="pi pi-plus mr-1.5"></i>
           <span>Nova Meta</span>
         </p-button>
@@ -371,37 +417,72 @@
 
 </p-dialog>
 
-<!-- MODAL DE CONFIRMAÇÃO DE EXCLUSÃO -->
+<!-- DIALOG — CONFIRMAR EXCLUSÃO DE META (PADRÃO DO SISTEMA) -->
 <p-dialog
-  header="Confirmar Exclusão"
+  header="Excluir Meta"
   [(visible)]="exibirDialogExclusao"
   [modal]="true"
-  [closable]="true"
-  [style]="{ width: '28rem' }"
-  [breakpoints]="{ '640px': '92vw' }">
-  
-  <div class="flex items-start gap-3.5 pt-2">
-    <div class="w-10 h-10 rounded-xl bg-rose-50 text-[#C24E4E] border border-rose-200/80 flex items-center justify-center shrink-0">
-      <i class="pi pi-exclamation-triangle text-lg"></i>
+  [draggable]="false"
+  [resizable]="false"
+  styleClass="rounded-3xl!"
+  [style]="{ width: '32rem', maxWidth: '95vw' }"
+  [breakpoints]="{ '640px': '95vw' }">
+
+  <div class="flex flex-col gap-6 py-4">
+
+    <div class="flex items-center gap-4">
+      <div class="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center shrink-0">
+        <i class="pi pi-trash text-red-500 text-2xl"></i>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="text-xl font-semibold text-slate-900">
+          Confirmar exclusão
+        </span>
+        <span class="text-slate-500 text-xs sm:text-sm">
+          Esta ação não poderá ser desfeita.
+        </span>
+      </div>
     </div>
-    <div class="flex-1">
-      <h3 class="text-sm font-bold text-slate-900 m-0">Excluir meta financeira?</h3>
-      <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
-        Tem certeza que deseja excluir a meta <strong class="text-slate-800">"{{ metaParaExcluir?.nome }}"</strong>? 
-        Essa ação não poderá ser desfeita e seu histórico será removido.
-      </p>
+
+    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-5">
+      <span class="text-slate-400 text-xs block mb-1 uppercase tracking-wider font-semibold">
+        Meta selecionada
+      </span>
+      <span class="text-xl font-bold text-slate-900 block truncate">
+        {{ metaParaExcluir?.nome }}
+      </span>
+      <div class="flex items-center gap-2 mt-2 text-xs text-slate-500">
+        <span>Valor: <strong class="text-slate-800">{{ metaParaExcluir?.valorTotal | appMoeda }}</strong></span>
+        <span>•</span>
+        <span>Progresso: <strong class="text-slate-800">{{ metaParaExcluir?.progresso }}%</strong></span>
+      </div>
     </div>
+
   </div>
 
   <ng-template pTemplate="footer">
-    <div class="flex items-center justify-end gap-2 w-full pt-3 border-t border-slate-100">
-      <p-button label="Cancelar" severity="secondary" [outlined]="true" size="small"
-                styleClass="rounded-xl! text-xs px-4" (onClick)="cancelarExclusao()"></p-button>
-      <p-button label="Sim, Excluir" icon="pi pi-trash" size="small"
-                styleClass="rounded-xl! text-xs px-4 bg-[#C24E4E]! hover:bg-[#a33b3b]! border-none text-white font-semibold shadow-xs"
-                (onClick)="confirmarExclusao()"></p-button>
+    <div class="flex justify-end gap-2 w-full pt-2">
+      <p-button
+        label="Cancelar"
+        severity="secondary"
+        [outlined]="true"
+        size="small"
+        styleClass="rounded-xl! text-xs px-4"
+        (onClick)="cancelarExclusao()">
+      </p-button>
+
+      <p-button
+        label="Confirmar Exclusão"
+        icon="pi pi-trash"
+        severity="danger"
+        size="small"
+        styleClass="rounded-xl! text-xs px-4 font-semibold"
+        (onClick)="confirmarExclusao()">
+      </p-button>
     </div>
   </ng-template>
+
 </p-dialog>
 
 <!-- MODAL DE APORTE NA META -->

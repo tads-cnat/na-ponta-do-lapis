@@ -10,7 +10,7 @@ import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest } from '
 
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext'; 
 import { DatePicker } from 'primeng/datepicker';
@@ -32,6 +32,7 @@ import { CelebracaoService } from '../../shared/service/celebracao.service';
     DialogModule,
     InputTextModule,
     ReactiveFormsModule,
+    FormsModule,
     DatePicker,
     Select,
     Textarea,
@@ -54,7 +55,29 @@ export class MetasComponent implements OnInit {
   exibirDialogExclusao: boolean = false;
   metaParaAporte: MetaResponse | null = null;
   metaParaExcluir: MetaResponse | null = null;
-  filtroFamiliar: 'todas' | 'individuais' | 'familia' = 'todas';
+  
+  // Novos Filtros Ricos: Status, Tipo e Origem
+  filtroStatus = signal<'todas' | 'em_andamento' | 'concluidas'>('todas');
+  filtroTipo = signal<'todos' | 'POUPANCA' | 'GASTO' | 'DIVIDA'>('todos');
+  filtroOrigem = signal<'todas' | 'individuais' | 'familia'>('todas');
+  
+  opcoesFiltroTipo = [
+    { label: 'Todos os tipos', value: 'todos' },
+    { label: 'Juntar Dinheiro', value: 'POUPANCA' },
+    { label: 'Teto de Gastos', value: 'GASTO' },
+    { label: 'Quitar Dívida', value: 'DIVIDA' },
+  ];
+
+  opcoesFiltroOrigem = [
+    { label: 'Todas as origens', value: 'todas' },
+    { label: 'Minhas Metas', value: 'individuais' },
+    { label: 'Metas da Família', value: 'familia' },
+  ];
+
+  contagemTodas = computed(() => this.metas().length);
+  contagemEmAndamento = computed(() => this.metas().filter(m => (m.progresso || 0) < 100 && (m.valorAtual || 0) < (m.valorTotal || 0)).length);
+  contagemConcluidas = computed(() => this.metas().filter(m => (m.progresso || 0) >= 100 || (m.valorAtual || 0) >= (m.valorTotal || 0)).length);
+
   temFamilia: boolean = false;
   tipoMetaSelecionado = signal<string>('POUPANCA');
 
@@ -91,9 +114,30 @@ export class MetasComponent implements OnInit {
   });
 
   metasFiltradas = computed(() => {
-    const lista = this.metas();
-    if (this.filtroFamiliar === 'familia') return lista.filter((m) => m.familiar);
-    if (this.filtroFamiliar === 'individuais') return lista.filter((m) => !m.familiar);
+    let lista = this.metas();
+
+    // 1. Filtro por status
+    const status = this.filtroStatus();
+    if (status === 'concluidas') {
+      lista = lista.filter(m => (m.progresso || 0) >= 100 || (m.valorAtual || 0) >= (m.valorTotal || 0));
+    } else if (status === 'em_andamento') {
+      lista = lista.filter(m => (m.progresso || 0) < 100 && (m.valorAtual || 0) < (m.valorTotal || 0));
+    }
+
+    // 2. Filtro por tipo de meta
+    const tipo = this.filtroTipo();
+    if (tipo !== 'todos') {
+      lista = lista.filter(m => m.tipoMeta === tipo);
+    }
+
+    // 3. Filtro por origem (Individual vs Família)
+    const origem = this.filtroOrigem();
+    if (origem === 'familia') {
+      lista = lista.filter(m => m.familiar);
+    } else if (origem === 'individuais') {
+      lista = lista.filter(m => !m.familiar);
+    }
+
     return lista;
   });
 
@@ -283,6 +327,15 @@ export class MetasComponent implements OnInit {
   }
 
   abrirDialogAporte(meta: MetaResponse): void {
+    if ((meta.progresso || 0) >= 100 || (meta.valorAtual || 0) >= (meta.valorTotal || 0)) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Meta já concluída!',
+        detail: `A meta "${meta.nome}" já atingiu 100% do objetivo financeiro.`,
+        life: 3000,
+      });
+      return;
+    }
     this.metaParaAporte = meta;
     this.aporteForm.reset();
     this.exibirDialogAporte = true;
@@ -302,11 +355,14 @@ export class MetasComponent implements OnInit {
     const valorAporte = Number(payload.valor) || 0;
     const valorAtual = Number(metaAlvo.valorAtual) || 0;
     const valorTotal = Number(metaAlvo.valorTotal) || 0;
-    const bateuMeta = (valorAtual + valorAporte) >= valorTotal;
+
+    // Só comemora se a meta NÃO estava concluída e atingiu 100% EXATAMENTE com este aporte
+    const jaEstavaConcluida = valorAtual >= valorTotal;
+    const concluiuAgora = !jaEstavaConcluida && (valorAtual + valorAporte) >= valorTotal;
 
     this.metasService.registrarAporte(metaAlvo.id, payload).subscribe({
       next: () => {
-        if (bateuMeta) {
+        if (concluiuAgora) {
           this.celebracaoService.celebrarMetaAtingida(metaAlvo.nome, valorTotal);
         } else {
           this.messageService.add({

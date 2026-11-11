@@ -116,12 +116,21 @@
             <!-- Ações -->
             <div class="flex items-center gap-1.5 shrink-0">
                 @if (meta.tipoMeta !== 'GASTO') {
-                    <p-button icon="pi pi-plus"
-                              styleClass="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:text-emerald-800 transition-all p-0 flex items-center justify-center cursor-pointer"
-                              pTooltip="Adicionar Aporte"
-                              tooltipPosition="top"
-                              (onClick)="onAportar()">
-                    </p-button>
+                    @if (ehConcluida) {
+                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-bold text-xs select-none"
+                              pTooltip="Meta atingida com sucesso! 🎉"
+                              tooltipPosition="top">
+                            <i class="pi pi-check-circle text-xs text-emerald-600"></i>
+                            <span>Concluída</span>
+                        </span>
+                    } @else {
+                        <p-button icon="pi pi-plus"
+                                  styleClass="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:text-emerald-800 transition-all p-0 flex items-center justify-center cursor-pointer"
+                                  pTooltip="Adicionar Aporte"
+                                  tooltipPosition="top"
+                                  (onClick)="onAportar()">
+                        </p-button>
+                    }
                 }
                 <p-button icon="pi pi-pencil" styleClass="btn-icon-edit-npl" pTooltip="Editar meta" tooltipPosition="top" (onClick)="onEditar()"></p-button>
                 <p-button icon="pi pi-trash" styleClass="btn-icon-delete-npl" pTooltip="Excluir meta" tooltipPosition="top" (onClick)="onDeletar()"></p-button>
