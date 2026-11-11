@@ -291,9 +291,10 @@ public class MetaService {
     }
 
     private MetaResponseDTO montarResponseComProgresso(Meta meta) {
-        BigDecimal valorAtual = meta.getValorAtual();
+        BigDecimal valorAtual = meta.getValorAtual() != null ? meta.getValorAtual() : BigDecimal.ZERO;
+        LocalDate hoje = LocalDate.now();
+
         if (meta.getTipoMeta() == TipoMeta.GASTO) {
-            LocalDate hoje = LocalDate.now();
             LocalDateTime inicio = meta.getDataInicio() != null
                     ? meta.getDataInicio().atStartOfDay()
                     : YearMonth.from(hoje).atDay(1).atStartOfDay();
@@ -311,7 +312,20 @@ public class MetaService {
 
             if (valorAtual.compareTo(meta.getValor()) >= 0) {
                 meta.setStatus(StatusMeta.ESTOURADA);
+            } else if (meta.getDataLimite() != null && hoje.isAfter(meta.getDataLimite())) {
+                // Prazo do limite encerrou e o usuário respeitou o teto financeiro
+                meta.setStatus(StatusMeta.CONCLUIDA);
             } else {
+                meta.setStatus(StatusMeta.EM_ANDAMENTO);
+            }
+        } else {
+            // POUPANCA ou DIVIDA
+            if (valorAtual.compareTo(meta.getValor()) >= 0) {
+                meta.setStatus(StatusMeta.CONCLUIDA);
+            } else if (meta.getDataLimite() != null && hoje.isAfter(meta.getDataLimite())) {
+                // Prazo limite expirou sem atingir o objetivo
+                meta.setStatus(StatusMeta.EXPIRADA);
+            } else if (meta.getStatus() != StatusMeta.CANCELADA) {
                 meta.setStatus(StatusMeta.EM_ANDAMENTO);
             }
         }
