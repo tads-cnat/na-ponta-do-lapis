@@ -15,7 +15,7 @@ export class MedalhaConquistaComponent {
 
   get tamanhoPx(): number {
     switch (this.tamanho) {
-      case 'sm': return 40;
+      case 'sm': return 36;
       case 'md': return 56;
       case 'lg': return 84;
       case 'xl': return 120;

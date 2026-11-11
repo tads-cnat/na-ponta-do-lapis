@@ -78,21 +78,39 @@ export class HeaderComponent implements OnInit {
     this.notificacaoService.excluirNotificacao(id).subscribe();
   }
 
-  public obterIconeTipo(tipo: string): string {
+  public obterIcone(tipo: string): string {
     switch (tipo) {
       case 'META_ATINGIDA':
-        return 'pi pi-check-circle text-emerald-600 bg-emerald-50';
+        return 'pi-check-circle text-emerald-600';
       case 'META_ESTOURADA':
-        return 'pi pi-exclamation-triangle text-rose-600 bg-rose-50';
+        return 'pi-exclamation-triangle text-rose-600';
       case 'META_ALERTA_50':
       case 'META_ALERTA_80':
-        return 'pi pi-flag text-amber-600 bg-amber-50';
+        return 'pi-flag text-amber-600';
       case 'CONQUISTA_DESBLOQUEADA':
-        return 'pi pi-trophy text-[#7843CD] bg-[#7843CD]/10';
+        return 'pi-trophy text-[#7843CD]';
       case 'FAMILIA_CONVITE':
-        return 'pi pi-users text-blue-600 bg-blue-50';
+        return 'pi-users text-blue-600';
       default:
-        return 'pi pi-bell text-slate-600 bg-slate-100';
+        return 'pi-bell text-slate-600';
+    }
+  }
+
+  public obterBgIcone(tipo: string): string {
+    switch (tipo) {
+      case 'META_ATINGIDA':
+        return 'bg-emerald-50 border border-emerald-100/80';
+      case 'META_ESTOURADA':
+        return 'bg-rose-50 border border-rose-100/80';
+      case 'META_ALERTA_50':
+      case 'META_ALERTA_80':
+        return 'bg-amber-50 border border-amber-100/80';
+      case 'CONQUISTA_DESBLOQUEADA':
+        return 'bg-[#7843CD]/10 border border-[#7843CD]/20';
+      case 'FAMILIA_CONVITE':
+        return 'bg-blue-50 border border-blue-100/80';
+      default:
+        return 'bg-slate-100 border border-slate-200/80';
     }
   }
 
