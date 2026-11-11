@@ -2,12 +2,18 @@ package com.npl.na_ponta_do_lapis.service;
 
 import java.math.BigDecimal;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 =======
 import java.time.LocalDateTime;
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.YearMonth;
+>>>>>>> 12284f1 (fix(metas): estabiliza layout de criacao sem saltos, exibe motivacao no card e calcula teto de gastos flexivel por conta/categoria)
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -513,10 +519,16 @@ public class MetaService {
     }
 
     private MetaResponseDTO montarResponseComProgresso(Meta meta) {
+<<<<<<< HEAD
         BigDecimal valorAtual = meta.getValorAtual() != null ? meta.getValorAtual() : BigDecimal.ZERO;
         LocalDate hoje = LocalDate.now();
 
         if (meta.getTipoMeta() == TipoMeta.GASTO) {
+=======
+        BigDecimal valorAtual = meta.getValorAtual();
+        if (meta.getTipoMeta() == TipoMeta.GASTO) {
+            LocalDate hoje = LocalDate.now();
+>>>>>>> 12284f1 (fix(metas): estabiliza layout de criacao sem saltos, exibe motivacao no card e calcula teto de gastos flexivel por conta/categoria)
             LocalDateTime inicio = meta.getDataInicio() != null
                     ? meta.getDataInicio().atStartOfDay()
                     : YearMonth.from(hoje).atDay(1).atStartOfDay();
@@ -534,6 +546,7 @@ public class MetaService {
 
             if (valorAtual.compareTo(meta.getValor()) >= 0) {
                 meta.setStatus(StatusMeta.ESTOURADA);
+<<<<<<< HEAD
             } else if (meta.getDataLimite() != null && hoje.isAfter(meta.getDataLimite())) {
                 // Prazo do limite encerrou e o usuário respeitou o teto financeiro
                 meta.setStatus(StatusMeta.CONCLUIDA);
@@ -550,6 +563,11 @@ public class MetaService {
             } else if (meta.getStatus() != StatusMeta.CANCELADA) {
                 meta.setStatus(StatusMeta.EM_ANDAMENTO);
             }
+=======
+            } else {
+                meta.setStatus(StatusMeta.EM_ANDAMENTO);
+            }
+>>>>>>> 12284f1 (fix(metas): estabiliza layout de criacao sem saltos, exibe motivacao no card e calcula teto de gastos flexivel por conta/categoria)
         }
 
         CalculadoraMetaStrategy calculadora = factory.obterCalculadora(meta.getTipoMeta());
