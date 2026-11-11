@@ -68,6 +68,9 @@ export class MetaItemComponent {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
   get diasRestantes(): number | null {
     if (!this.meta.dataLimite) return null;
     const limite = new Date(this.meta.dataLimite);
@@ -78,6 +81,7 @@ export class MetaItemComponent {
     return Math.round(diffMs / (1000 * 60 * 60 * 24));
   }
 
+<<<<<<< HEAD
   get ehConcluida(): boolean {
     if (this.meta.tipoMeta === 'GASTO') {
       return this.meta.status === 'CONCLUIDA';
@@ -107,8 +111,32 @@ export class MetaItemComponent {
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 =======
+=======
+>>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
   get ehConcluida(): boolean {
-    return (this.meta.progresso || 0) >= 100 || (this.meta.valorAtual || 0) >= (this.meta.valorTotal || 0);
+    if (this.meta.tipoMeta === 'GASTO') {
+      return this.meta.status === 'CONCLUIDA';
+    }
+    return this.meta.status === 'CONCLUIDA' || (this.meta.progresso || 0) >= 100 || (this.meta.valorAtual || 0) >= (this.meta.valorTotal || 0);
+  }
+
+  get ehEstourada(): boolean {
+    return this.meta.status === 'ESTOURADA' || (this.meta.tipoMeta === 'GASTO' && this.meta.progresso >= 100);
+  }
+
+  get ehExpirada(): boolean {
+    if (this.ehConcluida) return false;
+    if (this.meta.status === 'EXPIRADA') return true;
+    const dias = this.diasRestantes;
+    return dias !== null && dias < 0;
+  }
+
+  get ritmoMensal(): number | null {
+    if (this.ehConcluida || this.ehExpirada || this.meta.tipoMeta === 'GASTO') return null;
+    const dias = this.diasRestantes;
+    if (dias === null || dias <= 0) return null;
+    const meses = Math.max(1, Math.round(dias / 30.4));
+    return Math.ceil(this.valorFalta / meses);
   }
 
 >>>>>>> 92f13b0 (feat(metas): padroniza modal de exclusao, adiciona filtros por status/tipo e reordena ajustes de perfil)
@@ -118,6 +146,7 @@ export class MetaItemComponent {
 
   get corBarraProgresso(): string {
     if (this.meta.tipoMeta === 'GASTO') {
+<<<<<<< HEAD
 <<<<<<< HEAD
       if (this.ehEstourada) return 'linear-gradient(119deg, #C24E4E, #AB3E3E)';
       if (this.meta.progresso >= 80) return 'linear-gradient(119deg, #F59E0B, #D97706)';
@@ -132,6 +161,14 @@ export class MetaItemComponent {
     }
     if (this.meta.progresso >= 100) return 'linear-gradient(119deg, #10B981, #059669)';
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+      if (this.ehEstourada) return 'linear-gradient(119deg, #C24E4E, #AB3E3E)';
+      if (this.meta.progresso >= 80) return 'linear-gradient(119deg, #F59E0B, #D97706)';
+      return 'linear-gradient(119deg, #10B981, #059669)';
+    }
+    if (this.ehConcluida) return 'linear-gradient(119deg, #10B981, #059669)';
+    if (this.ehExpirada) return 'linear-gradient(119deg, #F59E0B, #D97706)';
+>>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
     return 'linear-gradient(119deg, #7843CD, #EEC046)';
   }
 }

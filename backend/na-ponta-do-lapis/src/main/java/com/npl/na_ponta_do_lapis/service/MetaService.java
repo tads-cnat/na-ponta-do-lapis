@@ -537,6 +537,7 @@ public class MetaService {
 
     private MetaResponseDTO montarResponseComProgresso(Meta meta) {
 <<<<<<< HEAD
+<<<<<<< HEAD
         BigDecimal valorAtual = meta.getValorAtual() != null ? meta.getValorAtual() : BigDecimal.ZERO;
         LocalDate hoje = LocalDate.now();
 
@@ -546,6 +547,12 @@ public class MetaService {
         if (meta.getTipoMeta() == TipoMeta.GASTO) {
             LocalDate hoje = LocalDate.now();
 >>>>>>> 12284f1 (fix(metas): estabiliza layout de criacao sem saltos, exibe motivacao no card e calcula teto de gastos flexivel por conta/categoria)
+=======
+        BigDecimal valorAtual = meta.getValorAtual() != null ? meta.getValorAtual() : BigDecimal.ZERO;
+        LocalDate hoje = LocalDate.now();
+
+        if (meta.getTipoMeta() == TipoMeta.GASTO) {
+>>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
             LocalDateTime inicio = meta.getDataInicio() != null
                     ? meta.getDataInicio().atStartOfDay()
                     : YearMonth.from(hoje).atDay(1).atStartOfDay();
@@ -564,6 +571,9 @@ public class MetaService {
             if (valorAtual.compareTo(meta.getValor()) >= 0) {
                 meta.setStatus(StatusMeta.ESTOURADA);
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
             } else if (meta.getDataLimite() != null && hoje.isAfter(meta.getDataLimite())) {
                 // Prazo do limite encerrou e o usuário respeitou o teto financeiro
                 meta.setStatus(StatusMeta.CONCLUIDA);
@@ -580,11 +590,14 @@ public class MetaService {
             } else if (meta.getStatus() != StatusMeta.CANCELADA) {
                 meta.setStatus(StatusMeta.EM_ANDAMENTO);
             }
+<<<<<<< HEAD
 =======
             } else {
                 meta.setStatus(StatusMeta.EM_ANDAMENTO);
             }
 >>>>>>> 12284f1 (fix(metas): estabiliza layout de criacao sem saltos, exibe motivacao no card e calcula teto de gastos flexivel por conta/categoria)
+=======
+>>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
         }
 
         CalculadoraMetaStrategy calculadora = factory.obterCalculadora(meta.getTipoMeta());
