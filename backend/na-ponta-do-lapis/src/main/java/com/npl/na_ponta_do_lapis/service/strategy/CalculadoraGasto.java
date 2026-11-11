@@ -16,11 +16,13 @@ public class CalculadoraGasto implements CalculadoraMetaStrategy {
 
     @Override
     public double calcularProgresso(BigDecimal valorAtual, BigDecimal limiteGasto) {
-        if (limiteGasto.compareTo(BigDecimal.ZERO) <= 0) {
+        if (limiteGasto == null || limiteGasto.compareTo(BigDecimal.ZERO) <= 0) {
             return 0.0;
         }
-        double progresso = (valorAtual.divide(limiteGasto, 2, java.math.RoundingMode.HALF_UP).doubleValue()) * 100;
-        return Math.min(progresso, 100.0);
+        if (valorAtual == null) {
+            return 0.0;
+        }
+        return Math.round((valorAtual.divide(limiteGasto, 4, java.math.RoundingMode.HALF_UP).doubleValue() * 100.0) * 10.0) / 10.0;
     }
 
 }

@@ -1,7 +1,9 @@
 package com.npl.na_ponta_do_lapis.service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -97,6 +99,9 @@ public class MetaService {
         }
 
         Meta novaMeta = dto.toEntity();
+        if (novaMeta.getDataInicio() == null) {
+            novaMeta.setDataInicio(LocalDate.now());
+        }
         novaMeta.setUsuario(usuarioAutenticado);
         novaMeta.setConta(conta);
         novaMeta.setCategoria(categoria);
@@ -281,8 +286,33 @@ public class MetaService {
     }
 
     private MetaResponseDTO montarResponseComProgresso(Meta meta) {
+        BigDecimal valorAtual = meta.getValorAtual();
+        if (meta.getTipoMeta() == TipoMeta.GASTO) {
+            LocalDate hoje = LocalDate.now();
+            LocalDateTime inicio = meta.getDataInicio() != null
+                    ? meta.getDataInicio().atStartOfDay()
+                    : YearMonth.from(hoje).atDay(1).atStartOfDay();
+            LocalDateTime fim = meta.getDataLimite() != null
+                    ? meta.getDataLimite().atTime(23, 59, 59)
+                    : YearMonth.from(hoje).atEndOfMonth().atTime(23, 59, 59);
+
+            Long usuarioId = meta.getFamilia() == null ? meta.getUsuario().getId() : null;
+            Long familiaId = meta.getFamilia() != null ? meta.getFamilia().getId() : null;
+            Long contaId = meta.getConta() != null ? meta.getConta().getId() : null;
+            Long categoriaId = meta.getCategoria() != null ? meta.getCategoria().getId() : null;
+
+            valorAtual = transacaoRepository.calcularTotalDespesas(usuarioId, familiaId, contaId, categoriaId, inicio, fim);
+            meta.setValorAtual(valorAtual);
+
+            if (valorAtual.compareTo(meta.getValor()) >= 0) {
+                meta.setStatus(StatusMeta.ESTOURADA);
+            } else {
+                meta.setStatus(StatusMeta.EM_ANDAMENTO);
+            }
+        }
+
         CalculadoraMetaStrategy calculadora = factory.obterCalculadora(meta.getTipoMeta());
-        double progresso = calculadora.calcularProgresso(meta.getValorAtual(), meta.getValor());
+        double progresso = calculadora.calcularProgresso(valorAtual, meta.getValor());
         return new MetaResponseDTO(meta, progresso);
     }
 }

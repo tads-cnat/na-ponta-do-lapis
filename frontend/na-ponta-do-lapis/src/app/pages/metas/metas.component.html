@@ -167,6 +167,7 @@
   <form [formGroup]="metaForm" class="flex flex-col gap-6 pt-2">
     
     <!-- ETAPA 1: ESCOLHA DO TIPO DE META (3 PILARES ESSENCIAIS) -->
+    <!-- ETAPA 1: TIPO DE OBJETIVO -->
     <div>
       <label class="font-bold text-xs uppercase tracking-wider text-slate-500 block mb-2.5">
         1. Tipo de Objetivo Financeiro
@@ -174,9 +175,10 @@
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <button type="button"
                 (click)="metaForm.get('tipoMeta')?.setValue('POUPANCA')"
-                [class]="metaForm.get('tipoMeta')?.value === 'POUPANCA'
-                  ? 'flex items-center gap-3 p-4 rounded-2xl border-2 border-[#7843CD] bg-[#7843CD]/5 text-slate-900 transition-all shadow-xs cursor-pointer text-left'
-                  : 'flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600 transition-all cursor-pointer text-left'">
+                class="flex items-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer text-left"
+                [ngClass]="metaForm.get('tipoMeta')?.value === 'POUPANCA'
+                  ? 'border-[#7843CD] bg-[#7843CD]/5 text-slate-900 shadow-xs'
+                  : 'border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600'">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                [ngClass]="metaForm.get('tipoMeta')?.value === 'POUPANCA' ? 'bg-[#7843CD] text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
             <i class="pi pi-wallet text-base"></i>
@@ -189,24 +191,26 @@
 
         <button type="button"
                 (click)="metaForm.get('tipoMeta')?.setValue('GASTO')"
-                [class]="metaForm.get('tipoMeta')?.value === 'GASTO'
-                  ? 'flex items-center gap-3 p-4 rounded-2xl border-2 border-[#C24E4E] bg-rose-50/50 text-slate-900 transition-all shadow-xs cursor-pointer text-left'
-                  : 'flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600 transition-all cursor-pointer text-left'">
+                class="flex items-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer text-left"
+                [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO'
+                  ? 'border-[#C24E4E] bg-rose-50/50 text-slate-900 shadow-xs'
+                  : 'border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600'">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'bg-[#C24E4E] text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
             <i class="pi pi-sliders-h text-base"></i>
           </div>
           <div class="min-w-0">
             <span class="text-xs sm:text-sm font-bold block leading-tight text-slate-900">Teto de Gastos</span>
-            <span class="text-[11px] text-slate-400 block mt-0.5">Limite mensal por categoria</span>
+            <span class="text-[11px] text-slate-400 block mt-0.5">Limite de despesas geral ou por conta</span>
           </div>
         </button>
 
         <button type="button"
                 (click)="metaForm.get('tipoMeta')?.setValue('DIVIDA')"
-                [class]="metaForm.get('tipoMeta')?.value === 'DIVIDA'
-                  ? 'flex items-center gap-3 p-4 rounded-2xl border-2 border-indigo-600 bg-indigo-50/50 text-slate-900 transition-all shadow-xs cursor-pointer text-left'
-                  : 'flex items-center gap-3 p-4 rounded-2xl border border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600 transition-all cursor-pointer text-left'">
+                class="flex items-center gap-3 p-4 rounded-2xl border-2 transition-all cursor-pointer text-left"
+                [ngClass]="metaForm.get('tipoMeta')?.value === 'DIVIDA'
+                  ? 'border-indigo-600 bg-indigo-50/50 text-slate-900 shadow-xs'
+                  : 'border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600'">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
                [ngClass]="metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'bg-indigo-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
             <i class="pi pi-arrow-circle-down text-base"></i>
@@ -227,7 +231,7 @@
       <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
         <div class="sm:col-span-7 flex flex-col gap-1.5">
           <label for="nome" class="font-semibold text-sm text-slate-700">Nome do Objetivo</label>
-          <input pInputText id="nome" formControlName="nome" placeholder="Ex: Viagem de Férias, Reserva de Emergência..." fluid />
+          <input pInputText id="nome" formControlName="nome" placeholder="Ex: Viagem de Férias, Teto de Mercado..." fluid />
           @if (metaForm.get('nome')?.invalid && metaForm.get('nome')?.touched) {
             <small class="text-red-500 text-xs">Mínimo de 3 caracteres</small>
           }
@@ -250,14 +254,16 @@
       </div>
     </div>
 
-    <!-- ETAPA 3: VÍNCULOS, CATEGORIA E DATA -->
+    <!-- ETAPA 3: VÍNCULOS, CATEGORIA E DATA (Sem layout jumps!) -->
     <div>
       <label class="font-bold text-xs uppercase tracking-wider text-slate-500 block mb-2.5">
         3. Configurações & Vínculos
       </label>
-      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        
+        <!-- 1. Data Limite -->
         <div class="flex flex-col gap-1.5">
-          <label for="dataLimite" class="font-semibold text-sm text-slate-700">
+          <label for="dataLimite" class="font-semibold text-xs text-slate-700">
             Data Limite (Opcional)
           </label>
           <p-datepicker 
@@ -266,43 +272,59 @@
             dateFormat="dd/mm/yy" 
             [showIcon]="true" 
             [minDate]="today"
+            [showClear]="true"
             [appendTo]="'body'"
-            placeholder="Selecione a data limite"
+            placeholder="Selecione data"
             fluid>
           </p-datepicker>
+          <small class="text-slate-400 text-[10px] leading-tight">
+            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Fim do período do teto' : 'Prazo estimado' }}
+          </small>
         </div>
 
-        <div class="flex flex-col gap-1.5" *ngIf="metaForm.get('tipoMeta')?.value === 'GASTO'">
-          <label for="categoriaId" class="font-semibold text-sm text-slate-700">Categoria Monitorada</label>
-          <p-select
-            formControlName="categoriaId"
-            [options]="categorias()"
-            optionLabel="nome"
-            optionValue="id"
-            placeholder="Selecione a categoria"
-            [appendTo]="'body'"
-            fluid>
-          </p-select>
-        </div>
-
-        <!-- Conta Destino Opcional: apenas para Poupança -->
-        <div class="flex flex-col gap-1.5" *ngIf="metaForm.get('tipoMeta')?.value === 'POUPANCA'">
-          <label for="contaId" class="font-semibold text-sm text-slate-700">Conta Destino / Onde guardar (Opcional)</label>
+        <!-- 2. Conta Vinculada -->
+        <div class="flex flex-col gap-1.5">
+          <label for="contaId" class="font-semibold text-xs text-slate-700">
+            {{ metaForm.get('tipoMeta')?.value === 'POUPANCA' ? 'Conta de Destino' : (metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Conta a Monitorar' : 'Conta de Pagamento') }}
+          </label>
           <p-select 
             formControlName="contaId" 
             [options]="contas()" 
             optionLabel="nome" 
             optionValue="id" 
-            placeholder="Nenhuma conta (cofrinho geral)" 
+            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Todas as contas' : 'Nenhuma (cofrinho geral)'" 
+            [showClear]="true"
             [appendTo]="'body'"
             fluid>
           </p-select>
-          <small class="text-slate-400 text-[11px]">Se informada, aportes com conta de origem transferem saldo para cá.</small>
+          <small class="text-slate-400 text-[10px] leading-tight">
+            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Deixe vazio para monitorar todas' : (metaForm.get('tipoMeta')?.value === 'POUPANCA' ? 'Onde guardar saldo aportado' : 'Conta sugerida para quitação') }}
+          </small>
+        </div>
+
+        <!-- 3. Categoria -->
+        <div class="flex flex-col gap-1.5">
+          <label for="categoriaId" class="font-semibold text-xs text-slate-700">
+            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Categoria Monitorada' : 'Categoria (Opcional)' }}
+          </label>
+          <p-select
+            formControlName="categoriaId"
+            [options]="categorias()"
+            optionLabel="nome"
+            optionValue="id"
+            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Todas as categorias (Geral)' : 'Selecione uma categoria'"
+            [showClear]="true"
+            [appendTo]="'body'"
+            fluid>
+          </p-select>
+          <small class="text-slate-400 text-[10px] leading-tight">
+            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Deixe vazio para teto geral' : 'Classificação opcional da meta' }}
+          </small>
         </div>
 
         <!-- Meta Compartilhada Familiar -->
         @if (temFamilia) {
-          <div class="sm:col-span-2 p-3.5 rounded-2xl border border-indigo-100 bg-indigo-50/40 flex items-center justify-between">
+          <div class="sm:col-span-3 p-3 rounded-2xl border border-indigo-100 bg-indigo-50/40 flex items-center justify-between">
             <div class="flex items-center gap-3">
               <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
                 <i class="pi pi-users text-sm"></i>
@@ -315,7 +337,7 @@
             <p-checkbox formControlName="familiar" [binary]="true" inputId="familiarCheck"></p-checkbox>
           </div>
         } @else {
-          <div class="sm:col-span-2 p-3 rounded-2xl border border-slate-200/80 bg-slate-50 flex items-center justify-between gap-3">
+          <div class="sm:col-span-3 p-3 rounded-2xl border border-slate-200/80 bg-slate-50 flex items-center justify-between gap-3">
             <div class="flex items-center gap-2.5">
               <i class="pi pi-info-circle text-slate-400 text-sm"></i>
               <p class="text-xs text-slate-500 m-0">Quer criar uma meta compartilhada? Você ainda não possui um grupo familiar ativo.</p>
@@ -330,7 +352,7 @@
       </div>
     </div>
 
-    <!-- ETAPA 4: OBSERVAÇÕES -->
+    <!-- ETAPA 4: OBSERVAÇÕES E MOTIVAÇÃO -->
     <div class="flex flex-col gap-1.5">
       <label for="descricao" class="font-semibold text-sm text-slate-700">Descrição ou Motivação (Opcional)</label>
       <textarea 
@@ -338,7 +360,7 @@
         id="descricao" 
         rows="2" 
         formControlName="descricao" 
-        placeholder="Adicione um detalhe ou motivo para manter o foco..."
+        placeholder="Por que este objetivo é importante? Ex: Viagem de fim de ano, manter compras de mercado sob controle..."
         class="w-full resize-none">
       </textarea>
     </div>

@@ -225,6 +225,36 @@
   letter-spacing: 0.025em;
 }
 
+/* Badge Vermelho / Alerta */
+.badge-npl-vermelho {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background-color: #FEF2F2;
+  color: #B91C1C;
+  border: 1px solid #FECACA;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  letter-spacing: 0.025em;
+}
+
+/* Badge Verde / Sucesso */
+.badge-npl-verde {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  background-color: #ECFDF5;
+  color: #047857;
+  border: 1px solid #A7F3D0;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.25rem 0.625rem;
+  letter-spacing: 0.025em;
+}
+
 /* Detalhe de Borda e Acento Amarelo NPL */
 .accent-npl-border {
   border-color: #F9DB70 !important;
