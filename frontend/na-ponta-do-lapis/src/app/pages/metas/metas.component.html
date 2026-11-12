@@ -12,7 +12,8 @@
   <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
 
     <!-- Card 1: Valor Total das Metas / Limite Total Orçado -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+    <div
+      class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
@@ -37,24 +38,26 @@
           <span class="font-semibold text-[#7843CD]">{{ metasBaseResumo().length }}</span>
           <span>{{ filtroTipo() === 'GASTO' ? 'teto(s) de gasto listado(s)' : 'meta(s) de acúmulo/quitação' }}</span>
           @if (filtroTipo() === 'todos' && contagemTetosGasto() > 0) {
-            <span class="text-slate-400 text-[11px]">• +{{ contagemTetosGasto() }} {{ contagemTetosGasto() === 1 ? 'teto de gasto' : 'tetos de gasto' }}</span>
+          <span class="text-slate-400 text-[11px]">• +{{ contagemTetosGasto() }} {{ contagemTetosGasto() === 1 ? 'teto
+            de gasto' : 'tetos de gasto' }}</span>
           }
         </div>
       </div>
     </div>
 
     <!-- Card 2: Total Arrecadado / Gasto Atual no Período -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm border flex flex-col justify-between min-h-[136px] relative overflow-hidden"
-         [ngClass]="filtroTipo() === 'GASTO' ? 'border-rose-100' : 'border-emerald-100'">
+    <div
+      class="bg-white rounded-2xl p-5 shadow-sm border flex flex-col justify-between min-h-[136px] relative overflow-hidden"
+      [ngClass]="filtroTipo() === 'GASTO' ? 'border-rose-100' : 'border-emerald-100'">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
           <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-               [ngClass]="filtroTipo() === 'GASTO' ? 'bg-rose-100 text-[#C24E4E]' : 'bg-emerald-100 text-emerald-700'">
+            [ngClass]="filtroTipo() === 'GASTO' ? 'bg-rose-100 text-[#C24E4E]' : 'bg-emerald-100 text-emerald-700'">
             <i class="pi text-base" [ngClass]="filtroTipo() === 'GASTO' ? 'pi-chart-pie' : 'pi-check-circle'"></i>
           </div>
           <div>
             <span class="text-xs font-bold uppercase tracking-wider"
-                  [ngClass]="filtroTipo() === 'GASTO' ? 'text-[#C24E4E]' : 'text-emerald-800'">
+              [ngClass]="filtroTipo() === 'GASTO' ? 'text-[#C24E4E]' : 'text-emerald-800'">
               {{ filtroTipo() === 'GASTO' ? 'Gasto no Período' : 'Total Arrecadado' }}
             </span>
             <p class="text-[11px] text-slate-400">
@@ -66,7 +69,7 @@
 
       <div>
         <span class="font-extrabold text-2xl lg:text-3xl tracking-tight block truncate"
-              [ngClass]="filtroTipo() === 'GASTO' ? 'text-[#C24E4E]' : 'text-emerald-700'">
+          [ngClass]="filtroTipo() === 'GASTO' ? 'text-[#C24E4E]' : 'text-emerald-700'">
           {{ filtroTipo() === 'GASTO' ? '' : '+ ' }}{{ totalAcumulado() | appMoeda }}
         </span>
         <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5 min-h-5">
@@ -79,10 +82,12 @@
     </div>
 
     <!-- Card 3: Falta Arrecadar / Margem Disponível -->
-    <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F9DB70] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
+    <div
+      class="bg-white rounded-2xl p-5 shadow-sm border border-[#F9DB70] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
       <div class="flex items-center justify-between mb-3">
         <div class="flex items-center gap-3">
-          <div class="w-10 h-10 rounded-xl bg-[#FEF9E7] border border-[#F9DB70] text-[#B45309] flex items-center justify-center shrink-0">
+          <div
+            class="w-10 h-10 rounded-xl bg-[#FEF9E7] border border-[#F9DB70] text-[#B45309] flex items-center justify-center shrink-0">
             <i class="pi text-base" [ngClass]="filtroTipo() === 'GASTO' ? 'pi-shield' : 'pi-flag'"></i>
           </div>
           <div>
@@ -101,7 +106,8 @@
           {{ totalRestante() | appMoeda }}
         </span>
         <div class="text-xs text-slate-500 mt-1 flex flex-wrap items-center gap-1.5 min-h-5">
-          <span>{{ filtroTipo() === 'GASTO' ? 'Mantenha seus gastos sob controle' : 'Continue poupando para concluir' }}</span>
+          <span>{{ filtroTipo() === 'GASTO' ? 'Mantenha seus gastos sob controle' : 'Continue poupando para concluir'
+            }}</span>
         </div>
       </div>
     </div>
@@ -110,7 +116,7 @@
 
   <!-- CARD PRINCIPAL DE METAS -->
   <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-100">
-    
+
     <!-- CABEÇALHO DA SEÇÃO: TÍTULO, SUBTÍTULO E AÇÃO PRINCIPAL -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100/90">
       <div>
@@ -125,7 +131,8 @@
       </div>
 
       <!-- Botão Nova Meta em posição de destaque como CTA principal -->
-      <p-button size="small" (onClick)="abrirDialog()" styleClass="btn-npl-primary rounded-xl! px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-xs self-start sm:self-auto shrink-0 cursor-pointer">
+      <p-button size="small" (onClick)="abrirDialog()"
+        styleClass="btn-npl-primary rounded-xl! px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-xs self-start sm:self-auto shrink-0 cursor-pointer">
         <i class="pi pi-plus mr-1.5"></i>
         <span>Nova Meta</span>
       </p-button>
@@ -133,48 +140,45 @@
 
     <!-- BARRA DE CONTROLE: ABAS DE STATUS E FILTROS COMPLEMENTARES -->
     <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 pt-4 mb-6">
-      
+
       <!-- Abas de Status: Todas, Em Andamento, Concluídas, Expiradas -->
       <div class="flex items-center p-1 bg-slate-100/80 rounded-xl text-xs font-semibold overflow-x-auto max-w-full">
-        <button type="button"
-                (click)="filtroStatus.set('todas')"
-                class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
-                [ngClass]="filtroStatus() === 'todas' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+        <button type="button" (click)="filtroStatus.set('todas')"
+          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+          [ngClass]="filtroStatus() === 'todas' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
           <span>Todas</span>
           <span class="text-[10px] px-1.5 py-0.2 rounded-full"
-                [ngClass]="filtroStatus() === 'todas' ? 'bg-slate-100 text-slate-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
+            [ngClass]="filtroStatus() === 'todas' ? 'bg-slate-100 text-slate-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
             {{ contagemTodas() }}
           </span>
         </button>
-        <button type="button"
-                (click)="filtroStatus.set('em_andamento')"
-                class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
-                [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+        <button type="button" (click)="filtroStatus.set('em_andamento')"
+          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+          [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
           <span>Em Andamento</span>
           <span class="text-[10px] px-1.5 py-0.2 rounded-full"
-                [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-purple-100 text-[#7843CD] font-bold' : 'bg-slate-200/70 text-slate-500'">
+            [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-purple-100 text-[#7843CD] font-bold' : 'bg-slate-200/70 text-slate-500'">
             {{ contagemEmAndamento() }}
           </span>
         </button>
-        <button type="button"
-                (click)="filtroStatus.set('concluidas')"
-                class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
-                [ngClass]="filtroStatus() === 'concluidas' ? 'bg-white text-emerald-800 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+        <button type="button" (click)="filtroStatus.set('concluidas')"
+          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+          [ngClass]="filtroStatus() === 'concluidas' ? 'bg-white text-emerald-800 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
           <i class="pi pi-check-circle text-xs text-emerald-600"></i>
           <span>Concluídas</span>
           <span class="text-[10px] px-1.5 py-0.2 rounded-full"
-                [ngClass]="filtroStatus() === 'concluidas' ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
+            [ngClass]="filtroStatus() === 'concluidas' ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
             {{ contagemConcluidas() }}
           </span>
         </button>
-        <button type="button"
-                (click)="filtroStatus.set('expiradas')"
-                class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
-                [ngClass]="filtroStatus() === 'expiradas' ? 'bg-white text-amber-900 shadow-2xs font-bold' : (contagemExpiradas() > 0 ? 'text-amber-700 hover:text-amber-900' : 'text-slate-500 hover:text-slate-800')">
-          <i class="pi pi-clock text-xs" [ngClass]="contagemExpiradas() > 0 || filtroStatus() === 'expiradas' ? 'text-amber-600' : 'text-slate-400'"></i>
+        <button type="button" (click)="filtroStatus.set('expiradas')"
+          class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+          [ngClass]="filtroStatus() === 'expiradas' ? 'bg-white text-amber-900 shadow-2xs font-bold' : (contagemExpiradas() > 0 ? 'text-amber-700 hover:text-amber-900' : 'text-slate-500 hover:text-slate-800')">
+          <i class="pi pi-clock text-xs"
+            [ngClass]="contagemExpiradas() > 0 || filtroStatus() === 'expiradas' ? 'text-amber-600' : 'text-slate-400'"></i>
           <span>Expiradas</span>
           <span class="text-[10px] px-1.5 py-0.2 rounded-full"
-                [ngClass]="filtroStatus() === 'expiradas' ? 'bg-amber-100 text-amber-900 font-bold' : (contagemExpiradas() > 0 ? 'bg-amber-100/70 text-amber-800 font-bold' : 'bg-slate-200/70 text-slate-500')">
+            [ngClass]="filtroStatus() === 'expiradas' ? 'bg-amber-100 text-amber-900 font-bold' : (contagemExpiradas() > 0 ? 'bg-amber-100/70 text-amber-800 font-bold' : 'bg-slate-200/70 text-slate-500')">
             {{ contagemExpiradas() }}
           </span>
         </button>
@@ -183,29 +187,17 @@
       <!-- Filtros Complementares: Tipo e Origem -->
       <div class="flex items-center gap-2.5 flex-wrap">
         <!-- Filtro por Tipo de Meta -->
-        <p-select 
-          [options]="opcoesFiltroTipo" 
-          optionLabel="label" 
-          optionValue="value"
-          [ngModel]="filtroTipo()" 
-          (ngModelChange)="filtroTipo.set($event)"
-          placeholder="Tipo de Meta"
-          styleClass="w-44 text-xs rounded-xl! border-slate-200"
-          [appendTo]="'body'">
+        <p-select [options]="opcoesFiltroTipo" optionLabel="label" optionValue="value" [ngModel]="filtroTipo()"
+          (ngModelChange)="filtroTipo.set($event)" placeholder="Tipo de Meta"
+          styleClass="w-44 text-xs rounded-xl! border-slate-200" [appendTo]="'body'">
         </p-select>
 
         <!-- Filtro por Origem (Individual vs Família) - exibido se tem família -->
         @if (temFamilia) {
-          <p-select 
-            [options]="opcoesFiltroOrigem" 
-            optionLabel="label" 
-            optionValue="value"
-            [ngModel]="filtroOrigem()" 
-            (ngModelChange)="filtroOrigem.set($event)"
-            placeholder="Origem"
-            styleClass="w-38 text-xs rounded-xl! border-slate-200"
-            [appendTo]="'body'">
-          </p-select>
+        <p-select [options]="opcoesFiltroOrigem" optionLabel="label" optionValue="value" [ngModel]="filtroOrigem()"
+          (ngModelChange)="filtroOrigem.set($event)" placeholder="Origem"
+          styleClass="w-38 text-xs rounded-xl! border-slate-200" [appendTo]="'body'">
+        </p-select>
         }
       </div>
 
@@ -214,36 +206,29 @@
     <div class="overflow-y-auto max-h-140 pr-1">
       <ul class="flex flex-col gap-4">
         @for(meta of metasFiltradas(); track meta.id) {
-          <li>
-            <app-meta-item 
-              [meta]="meta"
-              (deletarMeta)="solicitarExclusao(meta)"
-              (editarMeta)="abrirDialog($event)"
-              (aportarMeta)="abrirDialogAporte($event)"
-              (verHistorico)="abrirHistorico($event)"
-            >
-            </app-meta-item>
-          </li>
+        <li>
+          <app-meta-item [meta]="meta" (deletarMeta)="solicitarExclusao(meta)" (editarMeta)="abrirDialog($event)"
+            (aportarMeta)="abrirDialogAporte($event)" (verHistorico)="abrirHistorico($event)">
+          </app-meta-item>
+        </li>
         } @empty {
-          <div class="py-12 text-center flex flex-col items-center justify-center gap-2 text-slate-400">
-            <div class="w-12 h-12 rounded-2xl bg-[#FEF9E7] border border-[#F9DB70] text-[#B45309] flex items-center justify-center mb-1">
-              <i class="pi pi-bullseye text-xl"></i>
-            </div>
-            <p class="text-sm font-semibold text-slate-700">Nenhuma meta cadastrada ainda</p>
-            <p class="text-xs text-slate-400">Clique em "Nova Meta" para começar a planejar seus objetivos.</p>
+        <div class="py-12 text-center flex flex-col items-center justify-center gap-2 text-slate-400">
+          <div
+            class="w-12 h-12 rounded-2xl bg-[#FEF9E7] border border-[#F9DB70] text-[#B45309] flex items-center justify-center mb-1">
+            <i class="pi pi-bullseye text-xl"></i>
           </div>
+          <p class="text-sm font-semibold text-slate-700">Nenhuma meta cadastrada ainda</p>
+          <p class="text-xs text-slate-400">Clique em "Nova Meta" para começar a planejar seus objetivos.</p>
+        </div>
         }
       </ul>
     </div>
   </div>
 
 </div>
-<p-dialog
-  [(visible)]="exibirDialog"
-  [modal]="true"
-  [closable]="true"
-  [style]="{ width: '46rem', maxWidth: '96vw' }"
-  [breakpoints]="{ '960px': '88vw', '640px': '96vw' }"> 
+<p-dialog [(visible)]="exibirDialog" [modal]="true" [closable]="true" [draggable]="false" [resizable]="false"
+  styleClass="rounded-3xl!" [style]="{ width: '46rem', maxWidth: '96vw' }"
+  [breakpoints]="{ '960px': '88vw', '640px': '96vw' }">
 
   <ng-template pTemplate="header">
     <div class="flex items-center gap-3">
@@ -258,11 +243,12 @@
       </div>
     </div>
   </ng-template>
-  
+
   <form [formGroup]="metaForm" class="flex flex-col gap-5 pt-1">
 
-    <!-- MINI PREVIEW VIVO DA META -->
-    <div class="p-3.5 sm:p-4 rounded-2xl border border-purple-200/70 bg-gradient-to-r from-purple-50/40 via-white to-slate-50 flex items-center justify-between gap-3 shadow-2xs">
+    <!-- MINI PREVIEW DA META -->
+    <div
+      class="p-3.5 sm:p-4 rounded-2xl border border-purple-200/70 bg-gradient-to-r from-purple-50/40 via-white to-slate-50 flex items-center justify-between gap-3 shadow-2xs">
       <div class="flex items-center gap-3.5 min-w-0">
         <div class="shrink-0 shadow-2xs">
           <app-ilustracao-meta [icone]="metaForm.get('fotoUrl')?.value" tamanho="md"></app-ilustracao-meta>
@@ -270,15 +256,17 @@
         <div class="min-w-0">
           <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
             <span class="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full"
-                  [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO' 
+              [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO' 
                     ? 'bg-rose-50 text-[#C24E4E] border border-rose-200/70' 
                     : (metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'bg-indigo-50 text-indigo-700 border border-indigo-200/70' : 'bg-purple-50 text-[#7843CD] border border-purple-200/70')">
-              {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Teto de Gastos' : (metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'Quitar Dívida' : 'Juntar Dinheiro') }}
+              {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Teto de Gastos' : (metaForm.get('tipoMeta')?.value ===
+              'DIVIDA' ? 'Quitar Dívida' : 'Juntar Dinheiro') }}
             </span>
             @if (metaForm.get('familiar')?.value) {
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
-                <i class="pi pi-users text-[9px]"></i> Família
-              </span>
+            <span
+              class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200">
+              <i class="pi pi-users text-[9px]"></i> Família
+            </span>
             }
           </div>
           <p class="font-extrabold text-sm sm:text-base text-slate-900 truncate m-0 leading-tight">
@@ -287,20 +275,16 @@
           <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
             <span>
               {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Limite: ' : 'Alvo: ' }}
-              <strong class="text-slate-800">{{ metaForm.get('valor')?.value ? (metaForm.get('valor')?.value | appMoeda) : 'R$ 0,00' }}</strong>
+              <strong class="text-slate-800">{{ metaForm.get('valor')?.value ? (metaForm.get('valor')?.value | appMoeda)
+                : 'R$ 0,00' }}</strong>
             </span>
             @if (metaForm.get('dataLimite')?.value) {
-              <span class="text-slate-300">•</span>
-              <span><i class="pi pi-calendar text-[10px] mr-0.5 text-slate-400"></i>Até {{ metaForm.get('dataLimite')?.value | date:'dd/MM/yyyy' }}</span>
+            <span class="text-slate-300">•</span>
+            <span><i class="pi pi-calendar text-[10px] mr-0.5 text-slate-400"></i>Até {{
+              metaForm.get('dataLimite')?.value | date:'dd/MM/yyyy' }}</span>
             }
           </div>
         </div>
-      </div>
-      <div class="hidden sm:flex flex-col items-end text-end shrink-0 pl-2">
-        <span class="text-[10px] uppercase tracking-wider font-semibold text-slate-400">Preview Vivo</span>
-        <span class="text-xs font-bold text-emerald-600 inline-flex items-center gap-1 mt-0.5">
-          <i class="pi pi-eye text-xs"></i> Em tempo real
-        </span>
       </div>
     </div>
 
@@ -310,14 +294,12 @@
         1. Qual é o tipo de objetivo?
       </label>
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-        <button type="button"
-                (click)="selecionarTipoMeta('POUPANCA')"
-                class="flex items-center gap-3 p-3 rounded-2xl border-2 transition-all cursor-pointer text-left"
-                [ngClass]="metaForm.get('tipoMeta')?.value === 'POUPANCA'
+        <button type="button" (click)="selecionarTipoMeta('POUPANCA')"
+          class="flex items-center gap-3 p-3 rounded-2xl border-2 transition-all cursor-pointer text-left" [ngClass]="metaForm.get('tipoMeta')?.value === 'POUPANCA'
                   ? 'border-[#7843CD] bg-[#7843CD]/5 text-slate-900 shadow-xs'
                   : 'border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600'">
           <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-               [ngClass]="metaForm.get('tipoMeta')?.value === 'POUPANCA' ? 'bg-[#7843CD] text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
+            [ngClass]="metaForm.get('tipoMeta')?.value === 'POUPANCA' ? 'bg-[#7843CD] text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
             <i class="pi pi-wallet text-sm"></i>
           </div>
           <div class="min-w-0">
@@ -326,14 +308,12 @@
           </div>
         </button>
 
-        <button type="button"
-                (click)="selecionarTipoMeta('GASTO')"
-                class="flex items-center gap-3 p-3 rounded-2xl border-2 transition-all cursor-pointer text-left"
-                [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO'
+        <button type="button" (click)="selecionarTipoMeta('GASTO')"
+          class="flex items-center gap-3 p-3 rounded-2xl border-2 transition-all cursor-pointer text-left" [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO'
                   ? 'border-[#C24E4E] bg-rose-50/50 text-slate-900 shadow-xs'
                   : 'border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600'">
           <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-               [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'bg-[#C24E4E] text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
+            [ngClass]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'bg-[#C24E4E] text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
             <i class="pi pi-sliders-h text-sm"></i>
           </div>
           <div class="min-w-0">
@@ -342,14 +322,12 @@
           </div>
         </button>
 
-        <button type="button"
-                (click)="selecionarTipoMeta('DIVIDA')"
-                class="flex items-center gap-3 p-3 rounded-2xl border-2 transition-all cursor-pointer text-left"
-                [ngClass]="metaForm.get('tipoMeta')?.value === 'DIVIDA'
+        <button type="button" (click)="selecionarTipoMeta('DIVIDA')"
+          class="flex items-center gap-3 p-3 rounded-2xl border-2 transition-all cursor-pointer text-left" [ngClass]="metaForm.get('tipoMeta')?.value === 'DIVIDA'
                   ? 'border-indigo-600 bg-indigo-50/50 text-slate-900 shadow-xs'
                   : 'border-slate-200/80 bg-white hover:bg-slate-50 text-slate-600'">
           <div class="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-               [ngClass]="metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'bg-indigo-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
+            [ngClass]="metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'bg-indigo-600 text-white shadow-2xs' : 'bg-slate-100 text-slate-600'">
             <i class="pi pi-arrow-circle-down text-sm"></i>
           </div>
           <div class="min-w-0">
@@ -367,47 +345,40 @@
       </label>
       <div class="grid grid-cols-1 sm:grid-cols-12 gap-3.5">
         <div class="flex flex-col gap-1.5"
-             [ngClass]="(!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') ? 'sm:col-span-6' : 'sm:col-span-7'">
+          [ngClass]="(!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') ? 'sm:col-span-6' : 'sm:col-span-7'">
           <label for="nome" class="font-semibold text-xs sm:text-sm text-slate-700">
-            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Nome do Limite' : (metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'Nome da Dívida' : 'Nome do Objetivo') }}
+            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Nome do Limite' : (metaForm.get('tipoMeta')?.value ===
+            'DIVIDA' ? 'Nome da Dívida' : 'Nome do Objetivo') }}
           </label>
           <input pInputText id="nome" formControlName="nome"
-                 [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Ex: Alimentação, Delivery do Mês...' : (metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'Ex: Empréstimo, Fatura Renegociada...' : 'Ex: Viagem de Férias, Reserva de Emergência...')"
-                 fluid />
+            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Ex: Alimentação, Delivery do Mês...' : (metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'Ex: Empréstimo, Fatura Renegociada...' : 'Ex: Viagem de Férias, Reserva de Emergência...')"
+            fluid />
           @if (metaForm.get('nome')?.invalid && metaForm.get('nome')?.touched) {
-            <small class="text-red-500 text-xs">Digite um nome com pelo menos 3 caracteres</small>
+          <small class="text-red-500 text-xs">Digite um nome com pelo menos 3 caracteres</small>
           }
         </div>
-        
+
         <div class="flex flex-col gap-1.5"
-             [ngClass]="(!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') ? 'sm:col-span-3' : 'sm:col-span-5'">
+          [ngClass]="(!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') ? 'sm:col-span-3' : 'sm:col-span-5'">
           <label for="valor" class="font-semibold text-xs sm:text-sm text-slate-700">
             {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Valor Limite' : 'Valor Alvo' }}
           </label>
-          <app-input-moeda 
-            formControlName="valor" 
-            inputId="valor" 
-            tamanho="md" 
-            placeholder="0,00">
+          <app-input-moeda formControlName="valor" inputId="valor" tamanho="md" placeholder="0,00">
           </app-input-moeda>
           @if (metaForm.get('valor')?.invalid && metaForm.get('valor')?.touched) {
-            <small class="text-red-500 text-xs">Informe um valor maior que zero</small>
+          <small class="text-red-500 text-xs">Informe um valor maior que zero</small>
           }
         </div>
 
         @if (!metaSelecionada && metaForm.get('tipoMeta')?.value !== 'GASTO') {
-          <div class="sm:col-span-3 flex flex-col gap-1.5">
-            <label for="valorInicial" class="font-semibold text-xs sm:text-sm text-slate-700">
-              {{ metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'Já Amortizado' : 'Já Guardado' }}
-            </label>
-            <app-input-moeda 
-              formControlName="valorInicial" 
-              inputId="valorInicial" 
-              tamanho="md" 
-              placeholder="0,00">
-            </app-input-moeda>
-            <small class="text-slate-400 text-[11px] leading-tight">Saldo inicial (opcional)</small>
-          </div>
+        <div class="sm:col-span-3 flex flex-col gap-1.5">
+          <label for="valorInicial" class="font-semibold text-xs sm:text-sm text-slate-700">
+            {{ metaForm.get('tipoMeta')?.value === 'DIVIDA' ? 'Já Amortizado' : 'Já Guardado' }}
+          </label>
+          <app-input-moeda formControlName="valorInicial" inputId="valorInicial" tamanho="md" placeholder="0,00">
+          </app-input-moeda>
+          <small class="text-slate-400 text-[11px] leading-tight">Saldo inicial (opcional)</small>
+        </div>
         }
       </div>
     </div>
@@ -422,18 +393,17 @@
       </div>
       <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 p-2.5 rounded-2xl bg-slate-50/80 border border-slate-200/80">
         @for (item of catalogoIlustracoes; track item.id) {
-          <button type="button"
-                  (click)="selecionarIlustracao(item.id)"
-                  class="flex flex-col items-center justify-center p-2 rounded-xl border transition-all cursor-pointer text-center group"
-                  [ngClass]="metaForm.get('fotoUrl')?.value === item.id 
+        <button type="button" (click)="selecionarIlustracao(item.id)"
+          class="flex flex-col items-center justify-center p-2 rounded-xl border transition-all cursor-pointer text-center group"
+          [ngClass]="metaForm.get('fotoUrl')?.value === item.id 
                     ? 'border-[#7843CD] bg-purple-50/80 shadow-xs ring-2 ring-[#7843CD]/20' 
                     : 'border-slate-200/70 bg-white hover:bg-slate-100/80 hover:border-slate-300'">
-            <app-ilustracao-meta [icone]="item.id" tamanho="sm" class="pointer-events-none"></app-ilustracao-meta>
-            <span class="text-[11px] font-semibold mt-1.5 truncate max-w-full leading-tight"
-                  [ngClass]="metaForm.get('fotoUrl')?.value === item.id ? 'text-[#7843CD] font-bold' : 'text-slate-600 group-hover:text-slate-900'">
-              {{ item.nome }}
-            </span>
-          </button>
+          <app-ilustracao-meta [icone]="item.id" tamanho="sm" class="pointer-events-none"></app-ilustracao-meta>
+          <span class="text-[11px] font-semibold mt-1.5 truncate max-w-full leading-tight"
+            [ngClass]="metaForm.get('fotoUrl')?.value === item.id ? 'text-[#7843CD] font-bold' : 'text-slate-600 group-hover:text-slate-900'">
+            {{ item.nome }}
+          </span>
+        </button>
         }
       </div>
     </div>
@@ -447,88 +417,67 @@
         <!-- Data Limite -->
         <div class="flex flex-col gap-1.5">
           <label for="dataLimite" class="font-semibold text-xs text-slate-700">
-            Prazo (Opcional)
+            Prazo <span class="text-slate-400 font-normal text-[11px]">(opcional)</span>
           </label>
-          <p-datepicker 
-            formControlName="dataLimite" 
-            inputId="dataLimite" 
-            dateFormat="dd/mm/yy" 
-            [showIcon]="true" 
-            [minDate]="today"
-            [showClear]="true"
-            [appendTo]="'body'"
-            placeholder="Selecione data"
-            fluid>
+          <p-datepicker formControlName="dataLimite" inputId="dataLimite" dateFormat="dd/mm/yy" [showIcon]="true"
+            [minDate]="today" [showClear]="true" [appendTo]="'body'" placeholder="Selecione data" fluid>
           </p-datepicker>
-          <small class="text-slate-400 text-[11px] leading-tight">
-            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Fim do período do teto' : 'Data estimada para concluir' }}
-          </small>
         </div>
 
         <!-- Conta Vinculada -->
         <div class="flex flex-col gap-1.5">
           <label for="contaId" class="font-semibold text-xs text-slate-700">
-            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Conta a Monitorar' : 'Conta Bancária (Opcional)' }}
+            <span>{{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Conta a Monitorar' : 'Conta Bancária' }}</span>
+            @if (metaForm.get('tipoMeta')?.value !== 'GASTO') {
+              <span class="text-slate-400 font-normal text-[11px]"> (opcional)</span>
+            }
           </label>
-          <p-select 
-            formControlName="contaId" 
-            [options]="opcoesContaForm()" 
-            optionLabel="nome" 
-            optionValue="id" 
-            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Selecione a conta ou Global' : 'Selecione uma conta'" 
-            [appendTo]="'body'"
-            fluid>
+          <p-select formControlName="contaId" [options]="opcoesContaForm()" optionLabel="nome" optionValue="id"
+            [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Selecione a conta ou Global' : 'Selecione uma conta'"
+            [appendTo]="'body'" fluid>
           </p-select>
-          <small class="text-slate-400 text-[11px] leading-tight">
-            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Monitore todas ou restrinja a uma conta' : 'Onde o dinheiro ficará guardado' }}
-          </small>
         </div>
 
         <!-- Categoria -->
         <div class="flex flex-col gap-1.5">
           <label for="categoriaId" class="font-semibold text-xs text-slate-700">
-            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Categoria Monitorada' : 'Categoria (Opcional)' }}
+            <span>{{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Categoria Monitorada' : 'Categoria' }}</span>
+            @if (metaForm.get('tipoMeta')?.value !== 'GASTO') {
+              <span class="text-slate-400 font-normal text-[11px]"> (opcional)</span>
+            }
           </label>
-          <p-select
-            formControlName="categoriaId"
-            [options]="opcoesCategoriaForm()"
-            optionLabel="nome"
-            optionValue="id"
+          <p-select formControlName="categoriaId" [options]="opcoesCategoriaForm()" optionLabel="nome" optionValue="id"
             [placeholder]="metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Selecione a categoria ou Geral' : 'Selecione uma categoria'"
-            [appendTo]="'body'"
-            fluid>
+            [appendTo]="'body'" fluid>
           </p-select>
-          <small class="text-slate-400 text-[11px] leading-tight">
-            {{ metaForm.get('tipoMeta')?.value === 'GASTO' ? 'Monitore geral ou por categoria' : 'Classificação para seu objetivo' }}
-          </small>
         </div>
 
         <!-- Compartilhado Familiar -->
         @if (temFamilia) {
-          <div class="sm:col-span-3 p-3.5 rounded-2xl border border-indigo-100 bg-indigo-50/40 flex items-center justify-between">
-            <div class="flex items-center gap-3">
-              <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
-                <i class="pi pi-users text-sm"></i>
-              </div>
-              <div>
-                <p class="text-xs font-bold text-slate-900 m-0">Meta Familiar</p>
-                <p class="text-[11px] text-slate-500 m-0">Permite que todos os membros da família acompanhem e contribuam para este objetivo.</p>
-              </div>
+        <div
+          class="sm:col-span-3 p-3.5 rounded-2xl border border-indigo-100 bg-indigo-50/40 flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-8 h-8 rounded-xl bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0">
+              <i class="pi pi-users text-sm"></i>
             </div>
-            <p-checkbox formControlName="familiar" [binary]="true" inputId="familiarCheck"></p-checkbox>
+            <div>
+              <p class="text-xs font-bold text-slate-900 m-0">Meta Familiar</p>
+              <p class="text-[11px] text-slate-500 m-0">Permite que todos os membros da família acompanhem e contribuam
+                para este objetivo.</p>
+            </div>
           </div>
+          <p-checkbox formControlName="familiar" [binary]="true" inputId="familiarCheck"></p-checkbox>
+        </div>
         }
       </div>
     </div>
 
     <!-- BLOCO 4: MOTIVAÇÃO OU NOTAS -->
     <div class="flex flex-col gap-1.5">
-      <label for="descricao" class="font-semibold text-xs sm:text-sm text-slate-700">Motivação ou Observações (Opcional)</label>
-      <textarea 
-        pTextarea 
-        id="descricao" 
-        rows="2" 
-        formControlName="descricao" 
+      <label for="descricao" class="font-semibold text-xs sm:text-sm text-slate-700">
+        Motivação ou Observações <span class="text-slate-400 font-normal text-[11px]">(opcional)</span>
+      </label>
+      <textarea pTextarea id="descricao" rows="2" formControlName="descricao"
         placeholder="Por que este objetivo é importante? Ex: Viagem de férias em família, controlar pedidos por delivery..."
         class="w-full resize-none text-xs sm:text-sm">
       </textarea>
@@ -539,24 +488,18 @@
   <ng-template pTemplate="footer">
     <div class="flex items-center justify-end gap-2 w-full pt-3 border-t border-slate-100">
       <p-button label="Cancelar" severity="secondary" [outlined]="true" size="small"
-                styleClass="rounded-xl! text-xs px-4" (onClick)="fecharDialog()"></p-button>
+        styleClass="rounded-xl! text-xs px-4" (onClick)="fecharDialog()"></p-button>
       <p-button [label]="metaSelecionada ? 'Salvar Alterações' : 'Criar Meta'" icon="pi pi-check" size="small"
-                styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
-                (onClick)="salvarMeta()" [disabled]="metaForm.invalid"></p-button>
+        styleClass="rounded-xl! text-xs px-5 btn-npl-primary" (onClick)="salvarMeta()"
+        [disabled]="metaForm.invalid"></p-button>
     </div>
   </ng-template>
 
 </p-dialog>
 
 <!-- DIALOG — CONFIRMAR EXCLUSÃO DE META (PADRÃO DO SISTEMA) -->
-<p-dialog
-  header="Excluir Meta"
-  [(visible)]="exibirDialogExclusao"
-  [modal]="true"
-  [draggable]="false"
-  [resizable]="false"
-  styleClass="rounded-3xl!"
-  [style]="{ width: '32rem', maxWidth: '95vw' }"
+<p-dialog header="Excluir Meta" [(visible)]="exibirDialogExclusao" [modal]="true" [draggable]="false"
+  [resizable]="false" styleClass="rounded-3xl!" [style]="{ width: '32rem', maxWidth: '95vw' }"
   [breakpoints]="{ '640px': '95vw' }">
 
   <div class="flex flex-col gap-6 py-4">
@@ -594,22 +537,12 @@
 
   <ng-template pTemplate="footer">
     <div class="flex justify-end gap-2 w-full pt-2">
-      <p-button
-        label="Cancelar"
-        severity="secondary"
-        [outlined]="true"
-        size="small"
-        styleClass="rounded-xl! text-xs px-4"
-        (onClick)="cancelarExclusao()">
+      <p-button label="Cancelar" severity="secondary" [outlined]="true" size="small"
+        styleClass="rounded-xl! text-xs px-4" (onClick)="cancelarExclusao()">
       </p-button>
 
-      <p-button
-        label="Confirmar Exclusão"
-        icon="pi pi-trash"
-        severity="danger"
-        size="small"
-        styleClass="rounded-xl! text-xs px-4 font-semibold"
-        (onClick)="confirmarExclusao()">
+      <p-button label="Confirmar Exclusão" icon="pi pi-trash" severity="danger" size="small"
+        styleClass="rounded-xl! text-xs px-4 font-semibold" (onClick)="confirmarExclusao()">
       </p-button>
     </div>
   </ng-template>
@@ -617,12 +550,8 @@
 </p-dialog>
 
 <!-- MODAL DE APORTE NA META -->
-<p-dialog
-  header="Adicionar Aporte à Meta"
-  [(visible)]="exibirDialogAporte"
-  [modal]="true"
-  [closable]="true"
-  [style]="{ width: '28rem' }"
+<p-dialog header="Adicionar Aporte à Meta" [(visible)]="exibirDialogAporte" [modal]="true" [closable]="true"
+  [draggable]="false" [resizable]="false" styleClass="rounded-3xl!" [style]="{ width: '28rem', maxWidth: '95vw' }"
   [breakpoints]="{ '640px': '95vw' }">
 
   <form [formGroup]="aporteForm" class="flex flex-col gap-4 mt-2">
@@ -641,33 +570,27 @@
 
     <div class="flex flex-col gap-1.5">
       <label for="valorAporte" class="font-semibold text-sm text-slate-700">Valor do Aporte</label>
-      <app-input-moeda
-        formControlName="valor"
-        inputId="valorAporte"
-        tamanho="md"
-        placeholder="0,00">
+      <app-input-moeda formControlName="valor" inputId="valorAporte" tamanho="md" placeholder="0,00">
       </app-input-moeda>
       @if (aporteForm.get('valor')?.invalid && aporteForm.get('valor')?.touched) {
-        <small class="text-red-500 text-xs">Informe um valor válido maior que zero</small>
+      <small class="text-red-500 text-xs">Informe um valor válido maior que zero</small>
       }
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label for="contaOrigemId" class="font-semibold text-sm text-slate-700">Debitar da Conta (Opcional)</label>
-      <p-select
-        formControlName="contaOrigemId"
-        [options]="contas()"
-        optionLabel="nome"
-        optionValue="id"
-        placeholder="Nenhuma conta (aporte avulso)"
-        [appendTo]="'body'"
-        fluid>
+      <label for="contaOrigemId" class="font-semibold text-sm text-slate-700">
+        Debitar da Conta <span class="text-slate-400 font-normal text-[11px]">(opcional)</span>
+      </label>
+      <p-select formControlName="contaOrigemId" [options]="contas()" optionLabel="nome" optionValue="id"
+        placeholder="Nenhuma conta (aporte avulso)" [appendTo]="'body'" fluid>
       </p-select>
       <small class="text-slate-400 text-[11px]">Se selecionada, o valor será debitado do saldo da conta.</small>
     </div>
 
     <div class="flex flex-col gap-1.5">
-      <label for="obsAporte" class="font-semibold text-sm text-slate-700">Observação</label>
+      <label for="obsAporte" class="font-semibold text-sm text-slate-700">
+        Observação <span class="text-slate-400 font-normal text-[11px]">(opcional)</span>
+      </label>
       <input pInputText id="obsAporte" formControlName="observacao" placeholder="Ex: Economia do mês" fluid />
     </div>
   </form>
@@ -675,22 +598,18 @@
   <ng-template pTemplate="footer">
     <div class="flex justify-end gap-2 w-full pt-2">
       <p-button label="Cancelar" severity="secondary" [outlined]="true" size="small"
-                styleClass="rounded-xl! text-xs px-4" (onClick)="fecharDialogAporte()"></p-button>
+        styleClass="rounded-xl! text-xs px-4" (onClick)="fecharDialogAporte()"></p-button>
       <p-button label="Confirmar Aporte" icon="pi pi-check" size="small"
-                styleClass="rounded-xl! text-xs px-5 btn-npl-primary"
-                (onClick)="salvarAporte()" [disabled]="aporteForm.invalid"></p-button>
+        styleClass="rounded-xl! text-xs px-5 btn-npl-primary" (onClick)="salvarAporte()"
+        [disabled]="aporteForm.invalid"></p-button>
     </div>
   </ng-template>
 
 </p-dialog>
 
 <!-- MODAL DE HISTÓRICO / EXTRATO DE APORTES -->
-<p-dialog
-  [(visible)]="exibirDialogHistorico"
-  [modal]="true"
-  [closable]="true"
-  [style]="{ width: '34rem', maxWidth: '95vw' }"
-  [breakpoints]="{ '640px': '95vw' }">
+<p-dialog [(visible)]="exibirDialogHistorico" [modal]="true" [closable]="true" [draggable]="false" [resizable]="false"
+  styleClass="rounded-3xl!" [style]="{ width: '34rem', maxWidth: '95vw' }" [breakpoints]="{ '640px': '95vw' }">
 
   <ng-template pTemplate="header">
     <div class="flex items-center gap-3">
@@ -709,72 +628,75 @@
   <div class="flex flex-col gap-4 py-2">
     <!-- Resumo Rápido da Meta -->
     @if (metaParaHistorico) {
-      <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
-        <div>
-          <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400 block">Acumulado Atual</span>
-          <span class="text-base font-extrabold text-emerald-700">{{ metaParaHistorico.valorAtual | appMoeda }}</span>
-        </div>
-        <div class="text-right">
-          <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400 block">Objetivo Total</span>
-          <span class="text-base font-bold text-slate-800">{{ metaParaHistorico.valorTotal | appMoeda }}</span>
-        </div>
+    <div class="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 flex items-center justify-between">
+      <div>
+        <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400 block">Acumulado Atual</span>
+        <span class="text-base font-extrabold text-emerald-700">{{ metaParaHistorico.valorAtual | appMoeda }}</span>
       </div>
+      <div class="text-right">
+        <span class="text-[11px] uppercase tracking-wider font-semibold text-slate-400 block">Objetivo Total</span>
+        <span class="text-base font-bold text-slate-800">{{ metaParaHistorico.valorTotal | appMoeda }}</span>
+      </div>
+    </div>
     }
 
     <!-- Lista Cronológica de Aportes -->
     @if (carregandoHistorico()) {
-      <div class="py-10 text-center text-slate-400 text-xs flex flex-col items-center gap-2">
-        <i class="pi pi-spin pi-spinner text-xl text-[#7843CD]"></i>
-        <span>Carregando histórico de aportes...</span>
-      </div>
+    <div class="py-10 text-center text-slate-400 text-xs flex flex-col items-center gap-2">
+      <i class="pi pi-spin pi-spinner text-xl text-[#7843CD]"></i>
+      <span>Carregando histórico de aportes...</span>
+    </div>
     } @else {
-      <div class="max-h-80 overflow-y-auto pr-1 flex flex-col gap-2.5">
-        @for (aporte of historicoAportes(); track aporte.id) {
-          <div class="p-3.5 rounded-xl border border-slate-200/80 bg-white flex items-start justify-between gap-3 hover:border-purple-200 transition-all">
-            <div class="flex items-start gap-3 min-w-0">
-              <div class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/70 flex items-center justify-center shrink-0 mt-0.5">
-                <i class="pi pi-arrow-up-right text-xs"></i>
-              </div>
-              <div class="min-w-0">
-                <p class="text-xs font-bold text-slate-900 m-0 truncate">
-                  {{ aporte.observacao || 'Aporte realizado' }}
-                </p>
-                <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-slate-500 mt-0.5">
-                  <span>{{ aporte.dataAporte | date:'dd/MM/yyyy HH:mm' }}</span>
-                  @if (aporte.usuarioNome) {
-                    <span>•</span>
-                    <span class="font-medium text-slate-600">{{ aporte.usuarioNome }}</span>
-                  }
-                  @if (aporte.contaOrigemNome) {
-                    <span>•</span>
-                    <span class="text-slate-500">
-                      <i class="pi pi-wallet text-[10px] mr-0.5"></i>{{ aporte.contaOrigemNome }}
-                    </span>
-                  }
-                </div>
-              </div>
-            </div>
-            <div class="text-right shrink-0">
-              <span class="text-xs sm:text-sm font-extrabold text-emerald-700">
-                + {{ aporte.valor | appMoeda }}
+    <div class="max-h-80 overflow-y-auto pr-1 flex flex-col gap-2.5">
+      @for (aporte of historicoAportes(); track aporte.id) {
+      <div
+        class="p-3.5 rounded-xl border border-slate-200/80 bg-white flex items-start justify-between gap-3 hover:border-purple-200 transition-all">
+        <div class="flex items-start gap-3 min-w-0">
+          <div
+            class="w-8 h-8 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/70 flex items-center justify-center shrink-0 mt-0.5">
+            <i class="pi pi-arrow-up-right text-xs"></i>
+          </div>
+          <div class="min-w-0">
+            <p class="text-xs font-bold text-slate-900 m-0 truncate">
+              {{ aporte.observacao || 'Aporte realizado' }}
+            </p>
+            <div class="flex items-center gap-1.5 flex-wrap text-[11px] text-slate-500 mt-0.5">
+              <span>{{ aporte.dataAporte | date:'dd/MM/yyyy HH:mm' }}</span>
+              @if (aporte.usuarioNome) {
+              <span>•</span>
+              <span class="font-medium text-slate-600">{{ aporte.usuarioNome }}</span>
+              }
+              @if (aporte.contaOrigemNome) {
+              <span>•</span>
+              <span class="text-slate-500">
+                <i class="pi pi-wallet text-[10px] mr-0.5"></i>{{ aporte.contaOrigemNome }}
               </span>
+              }
             </div>
           </div>
-        } @empty {
-          <div class="py-8 text-center flex flex-col items-center justify-center gap-1.5 text-slate-400">
-            <i class="pi pi-inbox text-2xl text-slate-300"></i>
-            <p class="text-xs font-semibold text-slate-600 m-0">Nenhum aporte registrado ainda</p>
-            <p class="text-[11px] text-slate-400 m-0">Use o botão "+" no card da meta para registrar seu primeiro aporte.</p>
-          </div>
-        }
+        </div>
+        <div class="text-right shrink-0">
+          <span class="text-xs sm:text-sm font-extrabold text-emerald-700">
+            + {{ aporte.valor | appMoeda }}
+          </span>
+        </div>
       </div>
+      } @empty {
+      <div class="py-8 text-center flex flex-col items-center justify-center gap-1.5 text-slate-400">
+        <i class="pi pi-inbox text-2xl text-slate-300"></i>
+        <p class="text-xs font-semibold text-slate-600 m-0">Nenhum aporte registrado ainda</p>
+        <p class="text-[11px] text-slate-400 m-0">Use o botão "+" no card da meta para registrar seu primeiro aporte.
+        </p>
+      </div>
+      }
+    </div>
     }
   </div>
 
   <ng-template pTemplate="footer">
     <div class="flex justify-end w-full pt-2">
-      <p-button label="Fechar" severity="secondary" [outlined]="true" size="small"
-                styleClass="rounded-xl! text-xs px-4" (onClick)="fecharDialogHistorico()"></p-button>
+      <p-button label="Fechar" severity="secondary" [outlined]="true" size="small" styleClass="rounded-xl! text-xs px-4"
+        (onClick)="fecharDialogHistorico()"></p-button>
     </div>
   </ng-template>
 
