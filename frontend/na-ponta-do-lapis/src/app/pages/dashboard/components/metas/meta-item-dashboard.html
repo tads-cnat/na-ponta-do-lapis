@@ -38,6 +38,7 @@
 <div class="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/70 hover:bg-white hover:border-[#D1C4FF] transition-all">
     <div class="flex items-center justify-between gap-3 mb-2.5">
       <div class="flex items-center min-w-0">
+<<<<<<< HEAD
         <div class="bg-[#FEF9E7] border border-[#F9DB70]/80 h-11 w-11 flex items-center justify-center rounded-xl mr-3.5 shrink-0 shadow-2xs">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 31 31" fill="none">
 >>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
@@ -153,6 +154,10 @@
     </div>
     <p-progressbar class="h-2!" [value]="progressoLimitado" [color]="corBarraProgresso" [showValue]="false" />
 =======
+=======
+        <div class="mr-3.5 shrink-0 shadow-2xs">
+          <app-ilustracao-meta [icone]="meta.fotoUrl" tamanho="sm"></app-ilustracao-meta>
+>>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
         </div>
         <div class="min-w-0">
           <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
@@ -195,8 +200,8 @@
             {{ meta.valorAtual | appMoeda }}
           </p>
           <p class="text-[11px] m-0"
-             [ngClass]="ehEstourada ? 'text-[#C24E4E] font-semibold' : 'text-slate-500'">
-            {{ ehConcluida ? 'Concluída 🎉' : (ehEstourada ? 'Teto ultrapassado' : (meta.tipoMeta === 'GASTO' ? 'restam ' : 'faltam ') + (valorFalta | appMoeda)) }}
+             [ngClass]="ehEstourada ? 'text-[#C24E4E] font-semibold' : (ehConcluida ? 'text-emerald-600 font-semibold' : 'text-slate-500')">
+            {{ ehConcluida ? 'Total atingido' : (ehEstourada ? 'Teto ultrapassado' : (meta.tipoMeta === 'GASTO' ? 'restam ' : 'faltam ') + (valorFalta | appMoeda)) }}
           </p>
         </div>
       </div>

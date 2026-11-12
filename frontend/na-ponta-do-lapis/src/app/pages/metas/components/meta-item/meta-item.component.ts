@@ -8,6 +8,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { TooltipModule } from 'primeng/tooltip';
 import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 import { IlustracaoMetaComponent } from '../../../../shared/components/ilustracao-meta/ilustracao-meta.component';
+<<<<<<< HEAD
 
 @Component({
   selector: 'app-meta-item',
@@ -30,6 +31,12 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 =======
   imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe],
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+
+@Component({
+  selector: 'app-meta-item',
+  imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe, IlustracaoMetaComponent],
+>>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
   templateUrl: './meta-item.component.html',
   styleUrl: './meta-item.component.css',
 })

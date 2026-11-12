@@ -33,6 +33,9 @@ import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { CelebracaoService } from '../../shared/service/celebracao.service';
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
 import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem } from '../../shared/components/ilustracao-meta/ilustracao-meta.component';
 
 @Component({
@@ -91,6 +94,7 @@ import { NotificacaoService } from '../../shared/service/notificacao.service';
     ToastModule,
     InputMoedaComponent,
     AppMoedaPipe,
+    IlustracaoMetaComponent,
   ],
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   templateUrl: './metas.component.html',
@@ -306,6 +310,7 @@ export class MetasComponent implements OnInit {
 
   temFamilia: boolean = false;
   tipoMetaSelecionado = signal<string>('POUPANCA');
+  catalogoIlustracoes: IlustracaoMetaItem[] = CATALOGO_ILUSTRACOES_METAS;
 
   today = new Date();
 
@@ -453,11 +458,14 @@ export class MetasComponent implements OnInit {
 <<<<<<< HEAD
       valorInicial: [null],
       fotoUrl: ['cofrinho'],
+<<<<<<< HEAD
 =======
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 =======
       valorInicial: [null],
 >>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
+=======
+>>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
       contaId: [null],
       categoriaId: [null],
       familiar: [false],
@@ -632,6 +640,14 @@ export class MetasComponent implements OnInit {
   }
 
   selecionarTipoMeta(tipo: string): void {
+    const fotoAtual = this.metaForm.get('fotoUrl')?.value;
+    if (tipo === 'GASTO' && (fotoAtual === 'cofrinho' || !fotoAtual)) {
+      this.metaForm.get('fotoUrl')?.setValue('compras_mercado');
+    } else if (tipo === 'DIVIDA' && (fotoAtual === 'cofrinho' || !fotoAtual)) {
+      this.metaForm.get('fotoUrl')?.setValue('divida_quitacao');
+    } else if (tipo === 'POUPANCA' && (fotoAtual === 'compras_mercado' || fotoAtual === 'divida_quitacao')) {
+      this.metaForm.get('fotoUrl')?.setValue('cofrinho');
+    }
     this.metaForm.get('tipoMeta')?.setValue(tipo);
     this.tipoMetaSelecionado.set(tipo);
     if (this.metaForm.get('contaId')?.value === undefined) {
@@ -640,6 +656,10 @@ export class MetasComponent implements OnInit {
     if (this.metaForm.get('categoriaId')?.value === undefined) {
       this.metaForm.get('categoriaId')?.setValue(null);
     }
+  }
+
+  selecionarIlustracao(id: string): void {
+    this.metaForm.get('fotoUrl')?.setValue(id);
   }
 
   abrirDialog(meta?: MetaResponse): void {
@@ -652,6 +672,9 @@ export class MetasComponent implements OnInit {
         valor: meta.valorTotal,
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
         fotoUrl: meta.fotoUrl || 'cofrinho',
         contaId: meta.contaId ?? null,
         categoriaId: meta.categoriaId ?? null,
@@ -688,6 +711,7 @@ export class MetasComponent implements OnInit {
       this.tipoMetaSelecionado.set('POUPANCA');
       this.metaForm.reset({
         tipoMeta: 'POUPANCA',
+        fotoUrl: 'cofrinho',
         familiar: false,
         valorInicial: null,
         contaId: null,
@@ -852,9 +876,13 @@ export class MetasComponent implements OnInit {
       valor: formValue.valor,
       valorInicial: (!this.metaSelecionada && formValue.tipoMeta !== 'GASTO' && valorInicialNum > 0) ? valorInicialNum : undefined,
 <<<<<<< HEAD
+<<<<<<< HEAD
       fotoUrl: formValue.fotoUrl || 'cofrinho',
 =======
 >>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
+=======
+      fotoUrl: formValue.fotoUrl || 'cofrinho',
+>>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
       contaId: formValue.contaId,
       categoriaId: formValue.categoriaId,
       familiar: formValue.familiar,
