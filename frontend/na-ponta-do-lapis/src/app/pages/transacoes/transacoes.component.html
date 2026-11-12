@@ -800,10 +800,6 @@
                                     <span>Informe uma chave de API para habilitar a análise da fatura.</span>
                                 </span>
                             }
-                            <p class="text-[11px] text-slate-500 m-0 flex items-start gap-1.5">
-                                <i class="pi pi-lock text-[#7843CD] mt-0.5"></i>
-                                <span>Se salvar no perfil, a chave será criptografada. Se lembrada na sessão, ficará disponível temporariamente; você pode apagá-la quando quiser.</span>
-                            </p>
                         </div>
 
                         <!-- Checkbox para salvar chave no perfil permanentemente -->
@@ -841,9 +837,6 @@
                     </div>
                     <p class="text-xs text-amber-700 m-0">
                         {{ erroUpload || 'Esta fatura está protegida por senha. Informe a senha (normalmente os primeiros dígitos do CPF do titular) para continuar:' }}
-                    </p>
-                    <p class="text-[11px] text-amber-800 m-0">
-                        A senha é usada para abrir este PDF durante a análise e não é salva como senha da sua conta.
                     </p>
                     <div class="flex items-center gap-2 mt-1">
                         <input type="password" [(ngModel)]="senhaPdf" (keyup.enter)="enviarFaturaComSenha()"
@@ -936,10 +929,6 @@
                     <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
                         placeholder="Deixe vazio para usar a chave salva"
                         styleClass="w-full" inputStyleClass="w-full"></p-password>
-                    <p class="text-[11px] text-slate-500 m-0 flex items-start gap-1.5">
-                        <i class="pi pi-lock text-[#7843CD] mt-0.5"></i>
-                        <span>A chave é usada para acessar o provedor escolhido. Se optar por lembrá-la, ficará disponível temporariamente nesta sessão.</span>
-                    </p>
                 </div>
             </div>
 
