@@ -40,6 +40,7 @@ export class IlustracaoMetaComponent {
   get dimensoesContainer(): string {
     switch (this.tamanho) {
 <<<<<<< HEAD
+<<<<<<< HEAD
       case 'sm': return 'w-11 h-11 rounded-xl';
       case 'lg': return 'w-20 h-20 rounded-3xl';
       case 'md':
@@ -50,11 +51,18 @@ export class IlustracaoMetaComponent {
       case 'md':
       default: return 'w-12 h-12 rounded-2xl';
 >>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
+=======
+      case 'sm': return 'w-11 h-11 rounded-xl';
+      case 'lg': return 'w-20 h-20 rounded-3xl';
+      case 'md':
+      default: return 'w-14 h-14 rounded-2xl';
+>>>>>>> 315ff00 (feat(metas): substitui icones de linha por ilustracoes vetoriais ricas estilo Storyset/unDraw)
     }
   }
 
   get dimensoesSvg(): string {
     switch (this.tamanho) {
+<<<<<<< HEAD
 <<<<<<< HEAD
       case 'sm': return 'w-10 h-10';
       case 'lg': return 'w-18 h-18';
@@ -66,6 +74,12 @@ export class IlustracaoMetaComponent {
       case 'md':
       default: return 'w-7 h-7';
 >>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
+=======
+      case 'sm': return 'w-10 h-10';
+      case 'lg': return 'w-18 h-18';
+      case 'md':
+      default: return 'w-13 h-13';
+>>>>>>> 315ff00 (feat(metas): substitui icones de linha por ilustracoes vetoriais ricas estilo Storyset/unDraw)
     }
   }
 }
