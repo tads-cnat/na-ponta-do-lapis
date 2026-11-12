@@ -1,20 +1,20 @@
 <div class="p-4 sm:p-5 rounded-2xl border border-slate-200/80 bg-white hover:border-[#D1C4FF] hover:shadow-xs transition-all">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
         
-        <!-- Bloco Esquerdo: Ícone Original + Título + Detalhes -->
+        <!-- Bloco Esquerdo: Ilustração da Meta + Título + Detalhes -->
         <div class="flex items-start min-w-0">
-            <!-- Ícone Original da Meta -->
-            <div class="bg-[#FEF9E7] border border-[#F9DB70]/80 w-12 h-12 flex items-center justify-center rounded-2xl mr-3.5 shrink-0 shadow-2xs mt-0.5">
-                <img src="/meta-icon.svg" alt="Ícone da Meta" class="w-7 h-7" />
+            <!-- Ilustração Dinâmica da Meta -->
+            <div class="mr-3.5 shrink-0 shadow-2xs mt-0.5">
+                <app-ilustracao-meta [icone]="meta.fotoUrl" tamanho="md"></app-ilustracao-meta>
             </div>
 
             <!-- Informações -->
             <div class="min-w-0">
-                <!-- Tag do Tipo (Padronizada para todos os tipos) -->
+                <!-- Tag do Tipo e Status -->
                 <div class="flex items-center gap-1.5 flex-wrap mb-1">
                     @if (ehConcluida) {
                         <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                            <i class="pi pi-check-circle text-[9px]"></i> {{ meta.tipoMeta === 'GASTO' ? 'Teto Respeitado' : 'Meta Concluída' }}
+                            <i class="pi pi-check-circle text-[9px]"></i> Concluída
                         </span>
                     } @else if (ehExpirada) {
                         <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/80">
@@ -30,7 +30,7 @@
                         <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-[#7843CD] border border-purple-200/70">
                             <i class="pi pi-wallet text-[9px]"></i> Juntar Dinheiro
                         </span>
-                    } @else if (meta.tipoMeta === 'GASTO' && !ehEstourada && !ehConcluida) {
+                    } @else if (meta.tipoMeta === 'GASTO') {
                         <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-[#C24E4E] border border-rose-200/70">
                             <i class="pi pi-sliders-h text-[9px]"></i> Teto de Gastos
                         </span>
@@ -126,22 +126,21 @@
                     {{ meta.valorAtual | appMoeda }}
                 </p>
                 <p class="text-xs mt-0.5"
-                   [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'text-[#C24E4E] font-bold' : 'text-slate-500'">
-                    {{ meta.tipoMeta === 'GASTO' ? (meta.progresso >= 100 ? 'Teto ultrapassado!' : 'Restam ' + (valorFalta | appMoeda)) : 'Faltam ' + (valorFalta | appMoeda) }}
+                   [ngClass]="meta.tipoMeta === 'GASTO' && meta.progresso >= 100 ? 'text-[#C24E4E] font-bold' : (ehConcluida ? 'text-emerald-600 font-semibold' : 'text-slate-500')">
+                    @if (meta.tipoMeta === 'GASTO') {
+                        {{ meta.progresso >= 100 ? 'Teto ultrapassado' : 'Restam ' + (valorFalta | appMoeda) }}
+                    } @else if (ehConcluida) {
+                        Total atingido
+                    } @else {
+                        Faltam {{ valorFalta | appMoeda }}
+                    }
                 </p>
             </div>
 
             <!-- Ações -->
             <div class="flex items-center gap-1.5 shrink-0">
                 @if (meta.tipoMeta !== 'GASTO') {
-                    @if (ehConcluida) {
-                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200/80 font-bold text-xs select-none"
-                              pTooltip="Meta atingida com sucesso! 🎉"
-                              tooltipPosition="top">
-                            <i class="pi pi-check-circle text-xs text-emerald-600"></i>
-                            <span>Concluída</span>
-                        </span>
-                    } @else {
+                    @if (!ehConcluida) {
                         <p-button icon="pi pi-plus"
                                   styleClass="w-9 h-9 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 hover:text-emerald-800 transition-all p-0 flex items-center justify-center cursor-pointer"
                                   pTooltip="Adicionar Aporte"
@@ -197,13 +196,19 @@
         <div class="flex items-center justify-between text-xs mb-1.5">
             <span class="text-slate-500 font-medium">
                 @if (ehConcluida) {
-                    {{ meta.tipoMeta === 'GASTO' ? '🎉 Teto Respeitado com Sucesso' : '🎉 Meta 100% Concluída' }}
+                    <span class="text-emerald-700 font-semibold">
+                        {{ meta.tipoMeta === 'GASTO' ? 'Teto Respeitado' : 'Objetivo Alcançado' }}
+                    </span>
                 } @else if (ehExpirada) {
-                    <span class="text-amber-700 font-semibold">⚠️ Prazo Expirado ({{ meta.progresso }}% Alcançado)</span>
+                    <span class="text-amber-700 font-semibold">
+                        Prazo Expirado
+                    </span>
                 } @else if (ehEstourada) {
-                    <span class="text-[#C24E4E] font-semibold">⚠️ Teto Ultrapassado</span>
+                    <span class="text-[#C24E4E] font-semibold">
+                        Teto Ultrapassado
+                    </span>
                 } @else {
-                    {{ meta.tipoMeta === 'GASTO' ? 'Consumo do Teto' : 'Progresso Atingido' }}
+                    {{ meta.tipoMeta === 'GASTO' ? 'Consumo do Teto' : 'Progresso' }}
                 }
             </span>
             <span class="font-extrabold text-xs"

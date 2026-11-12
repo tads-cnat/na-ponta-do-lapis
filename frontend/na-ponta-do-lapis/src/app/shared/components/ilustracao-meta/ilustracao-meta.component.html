@@ -1,0 +1,119 @@
+<div class="flex items-center justify-center shrink-0 border transition-all"
+     [ngClass]="[dimensoesContainer, 
+       iconeAtivo === 'viagem' ? 'bg-sky-50 border-sky-200/80 text-sky-600' :
+       iconeAtivo === 'carro' ? 'bg-amber-50 border-amber-200/80 text-amber-600' :
+       iconeAtivo === 'casa' ? 'bg-emerald-50 border-emerald-200/80 text-emerald-600' :
+       iconeAtivo === 'educacao' ? 'bg-indigo-50 border-indigo-200/80 text-indigo-600' :
+       iconeAtivo === 'eletronicos' ? 'bg-cyan-50 border-cyan-200/80 text-cyan-600' :
+       iconeAtivo === 'compras_mercado' ? 'bg-orange-50 border-orange-200/80 text-orange-600' :
+       iconeAtivo === 'lazer' ? 'bg-rose-50 border-rose-200/80 text-rose-600' :
+       iconeAtivo === 'divida_quitacao' ? 'bg-slate-100 border-slate-300 text-slate-700' :
+       iconeAtivo === 'investimento' ? 'bg-teal-50 border-teal-200/80 text-teal-600' :
+       iconeAtivo === 'saude' ? 'bg-red-50 border-red-200/80 text-red-500' :
+       iconeAtivo === 'reserva' ? 'bg-purple-50 border-purple-200/80 text-[#7843CD]' :
+       'bg-[#FEF9E7] border-[#F9DB70]/80 text-[#B89558]'
+     ]">
+
+  <!-- 1. COFRINHO (PADRÃO) -->
+  @if (iconeAtivo === 'cofrinho') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2 1.5-5-1-6-1-6"/>
+      <path d="M2 9v1c0 1.1.9 2 2 2h1"/>
+      <circle cx="16" cy="11" r="1"/>
+      <path d="M10 6h4"/>
+    </svg>
+  }
+
+  <!-- 2. VIAGEM / FÉRIAS -->
+  @else if (iconeAtivo === 'viagem') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
+    </svg>
+  }
+
+  <!-- 3. CARRO / VEÍCULO -->
+  @else if (iconeAtivo === 'carro') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2 11 2 11.3 2 11.7V16c0 .6.4 1 1 1h2"/>
+      <circle cx="7" cy="17" r="2"/>
+      <path d="M9 17h6"/>
+      <circle cx="17" cy="17" r="2"/>
+    </svg>
+  }
+
+  <!-- 4. CASA / IMÓVEL -->
+  @else if (iconeAtivo === 'casa') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+      <polyline points="9 22 9 12 15 12 15 22"/>
+    </svg>
+  }
+
+  <!-- 5. EDUCAÇÃO / ESTUDOS -->
+  @else if (iconeAtivo === 'educacao') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+      <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+    </svg>
+  }
+
+  <!-- 6. ELETRÔNICOS / TECNOLOGIA -->
+  @else if (iconeAtivo === 'eletronicos') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="18" height="12" x="3" y="4" rx="2"/>
+      <path d="M2 20h20"/>
+    </svg>
+  }
+
+  <!-- 7. COMPRAS / MERCADO -->
+  @else if (iconeAtivo === 'compras_mercado') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="8" cy="21" r="1"/>
+      <circle cx="19" cy="21" r="1"/>
+      <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
+    </svg>
+  }
+
+  <!-- 8. LAZER / ENTRETENIMENTO -->
+  @else if (iconeAtivo === 'lazer') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+      <path d="M13 5v2"/>
+      <path d="M13 17v2"/>
+      <path d="M13 11v2"/>
+    </svg>
+  }
+
+  <!-- 9. QUITAR DÍVIDA / AMORTIZAÇÃO -->
+  @else if (iconeAtivo === 'divida_quitacao') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
+      <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
+      <path d="m10 16 2 2 4-4"/>
+    </svg>
+  }
+
+  <!-- 10. INVESTIMENTO / CRESCIMENTO -->
+  @else if (iconeAtivo === 'investimento') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="m3 3 7.07 10.51a1.5 1.5 0 0 0 2.45.09L16 9l5 7"/>
+      <path d="M21 9v7h-7"/>
+    </svg>
+  }
+
+  <!-- 11. SAÚDE / BEM-ESTAR -->
+  @else if (iconeAtivo === 'saude') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+    </svg>
+  }
+
+  <!-- 12. RESERVA / SEGURANÇA -->
+  @else if (iconeAtivo === 'reserva') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
+      <path d="m9 12 2 2 4-4"/>
+    </svg>
+  }
+</div>
+

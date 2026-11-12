@@ -1,0 +1,5 @@
+/* Estilos complementares do container de ilustrações */
+:host {
+  display: inline-block;
+}
+

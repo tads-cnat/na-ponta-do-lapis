@@ -3,10 +3,11 @@ import { CommonModule } from "@angular/common";
 import { MetaResponse } from "../../../../model/IMetas.models";
 import { ProgressBarModule } from "primeng/progressbar";
 import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
+import { IlustracaoMetaComponent } from "../../../../shared/components/ilustracao-meta/ilustracao-meta.component";
 
 @Component({
   selector: 'app-meta-item-dashboard',
-  imports: [CommonModule, ProgressBarModule, AppMoedaPipe],
+  imports: [CommonModule, ProgressBarModule, AppMoedaPipe, IlustracaoMetaComponent],
   templateUrl: './meta-item-dashboard.html',
 })
 
