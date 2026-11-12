@@ -1,119 +1,325 @@
-<div class="flex items-center justify-center shrink-0 border transition-all"
-     [ngClass]="[dimensoesContainer, 
-       iconeAtivo === 'viagem' ? 'bg-sky-50 border-sky-200/80 text-sky-600' :
-       iconeAtivo === 'carro' ? 'bg-amber-50 border-amber-200/80 text-amber-600' :
-       iconeAtivo === 'casa' ? 'bg-emerald-50 border-emerald-200/80 text-emerald-600' :
-       iconeAtivo === 'educacao' ? 'bg-indigo-50 border-indigo-200/80 text-indigo-600' :
-       iconeAtivo === 'eletronicos' ? 'bg-cyan-50 border-cyan-200/80 text-cyan-600' :
-       iconeAtivo === 'compras_mercado' ? 'bg-orange-50 border-orange-200/80 text-orange-600' :
-       iconeAtivo === 'lazer' ? 'bg-rose-50 border-rose-200/80 text-rose-600' :
-       iconeAtivo === 'divida_quitacao' ? 'bg-slate-100 border-slate-300 text-slate-700' :
-       iconeAtivo === 'investimento' ? 'bg-teal-50 border-teal-200/80 text-teal-600' :
-       iconeAtivo === 'saude' ? 'bg-red-50 border-red-200/80 text-red-500' :
-       iconeAtivo === 'reserva' ? 'bg-purple-50 border-purple-200/80 text-[#7843CD]' :
-       'bg-[#FEF9E7] border-[#F9DB70]/80 text-[#B89558]'
-     ]">
+<div class="relative flex items-center justify-center shrink-0 overflow-hidden transition-all select-none"
+     [ngClass]="dimensoesContainer">
 
-  <!-- 1. COFRINHO (PADRÃO) -->
+  <!-- 1. COFRINHO (POUPANÇA / ECONOMIA) -->
   @if (iconeAtivo === 'cofrinho') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M19 5c-1.5 0-2.8 1.4-3 2-3.5-1.5-11-.3-11 5 0 1.8 0 3 2 4.5V20h4v-2h3v2h4v-4c1-.5 1.7-1 2-2 1.5-5-1-6-1-6"/>
-      <path d="M2 9v1c0 1.1.9 2 2 2h1"/>
-      <circle cx="16" cy="11" r="1"/>
-      <path d="M10 6h4"/>
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <!-- Círculo de Fundo Suave -->
+      <circle cx="50" cy="50" r="46" fill="#FEF3C7" />
+      <circle cx="50" cy="50" r="42" fill="#FFFBEB" />
+      <!-- Sombra no Piso -->
+      <ellipse cx="50" cy="84" rx="28" ry="5" fill="#78350F" opacity="0.12" />
+      <!-- Patinhas -->
+      <rect x="34" y="68" width="9" height="12" rx="4" fill="#5B21B6" />
+      <rect x="55" y="68" width="9" height="12" rx="4" fill="#5B21B6" />
+      <!-- Corpo Principal do Porquinho -->
+      <rect x="22" y="38" width="52" height="36" rx="18" fill="#7843CD" />
+      <!-- Brilho Superior do Corpo -->
+      <path d="M28 42 C36 38, 58 38, 68 42" stroke="#A78BFA" stroke-width="2.5" stroke-linecap="round" fill="none" opacity="0.6" />
+      <!-- Orelha -->
+      <path d="M34 40 L40 26 C41 24, 44 25, 45 28 L47 40 Z" fill="#9061DF" />
+      <path d="M36 38 L41 29 L44 38 Z" fill="#C4B5FD" />
+      <!-- Focinho -->
+      <ellipse cx="22" cy="56" rx="8" ry="10" fill="#9061DF" stroke="#6D28D9" stroke-width="1.5" />
+      <circle cx="20" cy="53" r="1.8" fill="#4C1D95" />
+      <circle cx="20" cy="59" r="1.8" fill="#4C1D95" />
+      <!-- Olhinho Sorridente -->
+      <path d="M34 50 Q 37 46, 40 50" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" fill="none" />
+      <circle cx="37" cy="48" r="1.5" fill="#FFFFFF" />
+      <!-- Rabinho em Espiral -->
+      <path d="M74 52 C79 50, 81 44, 77 41 C74 39, 72 44, 75 46" stroke="#9061DF" stroke-width="3" stroke-linecap="round" fill="none" />
+      <!-- Fenda de Inserção -->
+      <rect x="46" y="36" width="14" height="4" rx="2" fill="#4C1D95" />
+      <!-- Moeda de Ouro Descendo -->
+      <g transform="translate(0, -2)">
+        <circle cx="53" cy="22" r="11" fill="#EEC046" stroke="#CA8A04" stroke-width="2" />
+        <circle cx="53" cy="22" r="8.5" fill="#FDE047" stroke="#F59E0B" stroke-width="1" stroke-dasharray="3 2" />
+        <text x="53" y="26" font-size="11" font-weight="900" fill="#78350F" text-anchor="middle" font-family="system-ui, sans-serif">$</text>
+      </g>
+      <!-- Estrelinhas de Brilho -->
+      <polygon points="70,16 72,21 77,22 73,25 74,30 70,27 66,30 67,25 63,22 68,21" fill="#FDE047" />
+      <circle cx="28" cy="26" r="2" fill="#FDE047" />
     </svg>
   }
 
-  <!-- 2. VIAGEM / FÉRIAS -->
-  @else if (iconeAtivo === 'viagem') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>
-    </svg>
-  }
-
-  <!-- 3. CARRO / VEÍCULO -->
-  @else if (iconeAtivo === 'carro') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.5 2.8C2 11 2 11.3 2 11.7V16c0 .6.4 1 1 1h2"/>
-      <circle cx="7" cy="17" r="2"/>
-      <path d="M9 17h6"/>
-      <circle cx="17" cy="17" r="2"/>
-    </svg>
-  }
-
-  <!-- 4. CASA / IMÓVEL -->
-  @else if (iconeAtivo === 'casa') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-      <polyline points="9 22 9 12 15 12 15 22"/>
-    </svg>
-  }
-
-  <!-- 5. EDUCAÇÃO / ESTUDOS -->
-  @else if (iconeAtivo === 'educacao') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-      <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-    </svg>
-  }
-
-  <!-- 6. ELETRÔNICOS / TECNOLOGIA -->
-  @else if (iconeAtivo === 'eletronicos') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <rect width="18" height="12" x="3" y="4" rx="2"/>
-      <path d="M2 20h20"/>
-    </svg>
-  }
-
-  <!-- 7. COMPRAS / MERCADO -->
-  @else if (iconeAtivo === 'compras_mercado') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <circle cx="8" cy="21" r="1"/>
-      <circle cx="19" cy="21" r="1"/>
-      <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>
-    </svg>
-  }
-
-  <!-- 8. LAZER / ENTRETENIMENTO -->
-  @else if (iconeAtivo === 'lazer') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M2 9a3 3 0 0 1 0 6v2a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-2a3 3 0 0 1 0-6V7a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
-      <path d="M13 5v2"/>
-      <path d="M13 17v2"/>
-      <path d="M13 11v2"/>
-    </svg>
-  }
-
-  <!-- 9. QUITAR DÍVIDA / AMORTIZAÇÃO -->
-  @else if (iconeAtivo === 'divida_quitacao') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <rect width="18" height="11" x="3" y="11" rx="2" ry="2"/>
-      <path d="M7 11V7a5 5 0 0 1 9.9-1"/>
-      <path d="m10 16 2 2 4-4"/>
-    </svg>
-  }
-
-  <!-- 10. INVESTIMENTO / CRESCIMENTO -->
-  @else if (iconeAtivo === 'investimento') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="m3 3 7.07 10.51a1.5 1.5 0 0 0 2.45.09L16 9l5 7"/>
-      <path d="M21 9v7h-7"/>
-    </svg>
-  }
-
-  <!-- 11. SAÚDE / BEM-ESTAR -->
-  @else if (iconeAtivo === 'saude') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
-    </svg>
-  }
-
-  <!-- 12. RESERVA / SEGURANÇA -->
+  <!-- 2. RESERVA (RESERVA DE EMERGÊNCIA / SEGURANÇA) -->
   @else if (iconeAtivo === 'reserva') {
-    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/>
-      <path d="m9 12 2 2 4-4"/>
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#EDE9FE" />
+      <ellipse cx="50" cy="85" rx="28" ry="5" fill="#4C1D95" opacity="0.1" />
+      <!-- Escudo Bicolor -->
+      <path d="M50 16 L22 28 V52 C22 70 50 84 50 84 Z" fill="#7843CD" />
+      <path d="M50 16 L78 28 V52 C78 70 50 84 50 84 Z" fill="#5B21B6" />
+      <!-- Borda de Destaque -->
+      <path d="M50 16 L22 28 V52 C22 70 50 84 C50 84 78 70 78 52 V28 Z" stroke="#EEC046" stroke-width="3" fill="none" />
+      <!-- Cadeado Dourado Central -->
+      <path d="M43 46 V38 A7 7 0 0 1 57 38 V46" fill="none" stroke="#FDE047" stroke-width="4" stroke-linecap="round" />
+      <rect x="37" y="45" width="26" height="20" rx="5" fill="#EEC046" stroke="#D97706" stroke-width="1.5" />
+      <!-- Fechadura -->
+      <circle cx="50" cy="53" r="2.5" fill="#78350F" />
+      <rect x="49" y="53" width="2" height="5" fill="#78350F" />
+      <!-- Estrelinhas de Segurança -->
+      <polygon points="50,22 51.5,26 55,27 52,29 53,33 50,31 47,33 48,29 45,27 48.5,26" fill="#FDE047" />
+      <circle cx="28" cy="40" r="2" fill="#FDE047" />
+      <circle cx="72" cy="40" r="2" fill="#FDE047" />
+    </svg>
+  }
+
+  <!-- 3. INVESTIMENTO (CRESCIMENTO / JUROS / PATRIMÔNIO) -->
+  @else if (iconeAtivo === 'investimento') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#D1FAE5" />
+      <ellipse cx="50" cy="85" rx="32" ry="5" fill="#065F46" opacity="0.1" />
+      <!-- Barras do Gráfico 3D Ascendente -->
+      <rect x="18" y="58" width="16" height="24" rx="4" fill="#6EE7B7" />
+      <rect x="38" y="42" width="16" height="40" rx="4" fill="#10B981" />
+      <rect x="58" y="26" width="16" height="56" rx="4" fill="#047857" />
+      <!-- Highlight das barras -->
+      <rect x="20" y="60" width="4" height="20" rx="2" fill="#A7F3D0" opacity="0.6" />
+      <rect x="40" y="44" width="4" height="36" rx="2" fill="#6EE7B7" opacity="0.6" />
+      <rect x="60" y="28" width="4" height="52" rx="2" fill="#34D399" opacity="0.6" />
+      <!-- Seta Curvilínea Ascendente -->
+      <path d="M16 54 Q 38 40, 72 18" stroke="#EEC046" stroke-width="4.5" stroke-linecap="round" fill="none" />
+      <polygon points="62,15 76,16 73,30" fill="#EEC046" />
+      <!-- Broto Verde de Rendimento -->
+      <path d="M66 26 C66 18, 58 14, 55 18 C55 24, 63 26, 66 26 Z" fill="#34D399" />
+      <path d="M66 26 C66 18, 74 14, 77 18 C77 24, 69 26, 66 26 Z" fill="#10B981" />
+      <!-- Moeda de Rendimento -->
+      <circle cx="28" cy="24" r="8" fill="#FDE047" stroke="#CA8A04" stroke-width="1.5" />
+      <text x="28" y="27" font-size="9" font-weight="bold" fill="#78350F" text-anchor="middle" font-family="system-ui, sans-serif">%</text>
+    </svg>
+  }
+
+  <!-- 4. VIAGEM (FÉRIAS / MALA / AVIÃO) -->
+  @else if (iconeAtivo === 'viagem') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#E0F2FE" />
+      <!-- Nuvens -->
+      <ellipse cx="26" cy="42" rx="14" ry="7" fill="#FFFFFF" opacity="0.8" />
+      <ellipse cx="78" cy="36" rx="12" ry="6" fill="#FFFFFF" opacity="0.8" />
+      <ellipse cx="48" cy="84" rx="26" ry="5" fill="#0C4A6E" opacity="0.12" />
+      <!-- Alça da Mala -->
+      <path d="M40 34 V18 H56 V34" stroke="#94A3B8" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <rect x="38" y="16" width="18" height="5" rx="2" fill="#475569" />
+      <!-- Mala de Viagem -->
+      <rect x="30" y="32" width="36" height="46" rx="8" fill="#7843CD" />
+      <!-- Frisos em Relevo -->
+      <line x1="38" y1="42" x2="58" y2="42" stroke="#9061DF" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="38" y1="52" x2="58" y2="52" stroke="#9061DF" stroke-width="2.5" stroke-linecap="round" />
+      <line x1="38" y1="62" x2="58" y2="62" stroke="#9061DF" stroke-width="2.5" stroke-linecap="round" />
+      <!-- Adesivo Redondo Dourado -->
+      <circle cx="54" cy="52" r="5" fill="#EEC046" />
+      <circle cx="54" cy="52" r="3.5" fill="#FDE047" />
+      <!-- Rodinhas -->
+      <rect x="34" y="76" width="6" height="7" rx="3" fill="#1E293B" />
+      <rect x="56" y="76" width="6" height="7" rx="3" fill="#1E293B" />
+      <!-- Rastro e Avião em Voo -->
+      <path d="M18 26 Q 44 8, 80 18" stroke="#7DD3FC" stroke-width="2" stroke-dasharray="3 3" fill="none" />
+      <g transform="translate(68, 12)">
+        <path d="M4 10 L16 16 L8 18 L6 22 L3 19 L-1 20 L1 16 L-5 15 Z" fill="#EEC046" stroke="#CA8A04" stroke-width="0.8" />
+      </g>
+    </svg>
+  }
+
+  <!-- 5. CARRO (VEÍCULO / CONQUISTA) -->
+  @else if (iconeAtivo === 'carro') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#FEF3C7" />
+      <ellipse cx="50" cy="82" rx="36" ry="5" fill="#78350F" opacity="0.12" />
+      <!-- Lataria Principal -->
+      <path d="M14 62 L18 50 C20 48, 24 46, 30 46 L68 46 C74 46, 80 50, 84 56 L86 64 C86 67, 83 69, 80 69 L18 69 C15 69, 13 66, 14 62 Z" fill="#7843CD" />
+      <!-- Cabine / Teto -->
+      <path d="M28 46 L38 30 C40 28, 43 27, 47 27 L64 27 C68 27, 72 30, 74 35 L78 46 Z" fill="#5B21B6" />
+      <!-- Janelas (Vidro Azul com Reflexo) -->
+      <path d="M39 32 L31 44 H48 V32 Z" fill="#BAE6FD" />
+      <path d="M52 32 V44 H72 L67 34 C66 33, 64 32, 62 32 Z" fill="#BAE6FD" />
+      <!-- Faróis Acesos -->
+      <path d="M82 56 L86 58 L85 64 L81 63 Z" fill="#FDE047" />
+      <polygon points="86,57 98,52 98,68 85,63" fill="#FEF08A" opacity="0.4" />
+      <!-- Rodas Esportivas -->
+      <g>
+        <circle cx="28" cy="69" r="10" fill="#1E293B" />
+        <circle cx="28" cy="69" r="5" fill="#E2E8F0" />
+        <circle cx="28" cy="69" r="2" fill="#7843CD" />
+      </g>
+      <g>
+        <circle cx="70" cy="69" r="10" fill="#1E293B" />
+        <circle cx="70" cy="69" r="5" fill="#E2E8F0" />
+        <circle cx="70" cy="69" r="2" fill="#7843CD" />
+      </g>
+      <!-- Brilho na Lataria -->
+      <path d="M32 50 H66" stroke="#A78BFA" stroke-width="2" stroke-linecap="round" />
+    </svg>
+  }
+
+  <!-- 6. CASA (CASA PRÓPRIA / IMÓVEL / REFORMA) -->
+  @else if (iconeAtivo === 'casa') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#DCFCE7" />
+      <ellipse cx="50" cy="85" rx="34" ry="5" fill="#14532D" opacity="0.1" />
+      <!-- Chaminé -->
+      <rect x="56" y="20" width="8" height="16" rx="2" fill="#9061DF" />
+      <!-- Fumaça estilizada da chaminé -->
+      <circle cx="60" cy="15" r="3" fill="#E2E8F0" opacity="0.8" />
+      <circle cx="63" cy="9" r="4" fill="#E2E8F0" opacity="0.6" />
+      <!-- Fachada Principal -->
+      <rect x="24" y="40" width="42" height="40" rx="3" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.5" />
+      <!-- Telhado Inclinado Roxo -->
+      <polygon points="18,42 45,18 72,42" fill="#7843CD" />
+      <polygon points="22,42 45,22 68,42" fill="#9061DF" opacity="0.3" />
+      <!-- Porta Acolhedora -->
+      <rect x="38" y="56" width="14" height="24" rx="2" fill="#EEC046" />
+      <circle cx="48" cy="68" r="1.5" fill="#78350F" />
+      <!-- Janela Iluminada -->
+      <rect x="34" y="40" width="22" height="12" rx="2" fill="#FEF08A" stroke="#EEC046" stroke-width="1.5" />
+      <line x1="45" y1="40" x2="45" y2="52" stroke="#EEC046" stroke-width="1.5" />
+      <!-- Arbusto e Flor no Jardim -->
+      <ellipse cx="72" cy="74" rx="10" ry="8" fill="#10B981" />
+      <ellipse cx="69" cy="76" rx="6" ry="6" fill="#34D399" />
+      <circle cx="74" cy="70" r="2" fill="#F43F5E" />
+    </svg>
+  }
+
+  <!-- 7. EDUCAÇÃO (ESTUDOS / FACULDADE / CAPELO) -->
+  @else if (iconeAtivo === 'educacao') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#E0E7FF" />
+      <ellipse cx="50" cy="85" rx="32" ry="5" fill="#312E81" opacity="0.1" />
+      <!-- Pilha de Livros Coloridos -->
+      <!-- Livro 1 (Verde) -->
+      <rect x="20" y="68" width="58" height="13" rx="3" fill="#10B981" />
+      <rect x="25" y="70" width="50" height="9" rx="1" fill="#F8FAFC" />
+      <!-- Livro 2 (Amarelo) -->
+      <rect x="24" y="54" width="52" height="13" rx="3" fill="#EEC046" />
+      <rect x="29" y="56" width="44" height="9" rx="1" fill="#F8FAFC" />
+      <!-- Livro 3 (Roxo) -->
+      <rect x="28" y="40" width="44" height="13" rx="3" fill="#7843CD" />
+      <rect x="33" y="42" width="36" height="9" rx="1" fill="#F8FAFC" />
+      <!-- Capelo de Formatura -->
+      <path d="M38 33 C38 37, 62 37, 62 33 V29 H38 Z" fill="#1E1B4B" />
+      <polygon points="50,14 76,24 50,34 24,24" fill="#312E81" />
+      <polygon points="50,15 73,24 50,33 27,24" fill="#4338CA" opacity="0.4" />
+      <!-- Botão e Tassel Dourado -->
+      <circle cx="50" cy="24" r="2.5" fill="#FDE047" />
+      <path d="M50 24 C59 26, 68 32, 70 41" stroke="#FDE047" stroke-width="2.5" fill="none" />
+      <rect x="68" y="41" width="4.5" height="9" rx="1" fill="#EEC046" />
+      <!-- Estrelinhas de Conquista -->
+      <polygon points="20,24 22,28 26,29 23,32 24,36 20,34 16,36 17,32 14,29 18,28" fill="#FDE047" />
+    </svg>
+  }
+
+  <!-- 8. ELETRÔNICOS (TECH / LAPTOP / CELULAR) -->
+  @else if (iconeAtivo === 'eletronicos') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#CFFAFE" />
+      <ellipse cx="50" cy="83" rx="34" ry="5" fill="#155E75" opacity="0.1" />
+      <!-- Tela do Laptop -->
+      <rect x="20" y="26" width="48" height="34" rx="4" fill="#1E293B" />
+      <rect x="23" y="29" width="42" height="28" rx="2" fill="#7843CD" />
+      <!-- Elementos na Tela -->
+      <rect x="27" y="34" width="16" height="8" rx="2" fill="#A78BFA" />
+      <rect x="46" y="34" width="15" height="18" rx="2" fill="#EEC046" />
+      <rect x="27" y="45" width="16" height="7" rx="2" fill="#10B981" />
+      <!-- Base / Teclado do Laptop -->
+      <path d="M12 60 L18 60 H70 L76 60 C78 60, 80 62, 78 64 L72 68 H16 L10 64 C8 62, 10 60, 12 60 Z" fill="#64748B" />
+      <rect x="38" y="62" width="12" height="3" rx="1" fill="#94A3B8" />
+      <!-- Smartphone ao Lado -->
+      <rect x="66" y="40" width="17" height="32" rx="4" fill="#0F172A" stroke="#94A3B8" stroke-width="1.5" />
+      <rect x="68.5" y="44" width="12" height="24" rx="2" fill="#10B981" />
+      <circle cx="74.5" cy="42" r="1" fill="#64748B" />
+    </svg>
+  }
+
+  <!-- 9. COMPRAS MERCADO (ALIMENTAÇÃO / CARRINHO / TETO) -->
+  @else if (iconeAtivo === 'compras_mercado') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#FFEDD5" />
+      <ellipse cx="50" cy="85" rx="30" ry="5" fill="#9A3412" opacity="0.12" />
+      <!-- Mantimentos dentro do Carrinho -->
+      <path d="M34 42 L24 22 C23 20, 26 18, 28 20 L40 38 Z" fill="#D97706" />
+      <rect x="42" y="24" width="10" height="22" rx="3" fill="#60A5FA" />
+      <rect x="44" y="20" width="6" height="4" rx="1" fill="#93C5FD" />
+      <circle cx="56" cy="38" r="7" fill="#EF4444" />
+      <path d="M56 31 C56 28, 59 26, 61 27" stroke="#15803D" stroke-width="2" fill="none" />
+      <!-- Cesta do Carrinho -->
+      <path d="M26 38 H68 L60 63 H32 Z" fill="#7843CD" opacity="0.2" stroke="#7843CD" stroke-width="3" stroke-linejoin="round" />
+      <!-- Grades da Cesta -->
+      <line x1="36" y1="38" x2="38" y2="63" stroke="#7843CD" stroke-width="2" />
+      <line x1="48" y1="38" x2="48" y2="63" stroke="#7843CD" stroke-width="2" />
+      <line x1="58" y1="38" x2="56" y2="63" stroke="#7843CD" stroke-width="2" />
+      <line x1="30" y1="50" x2="64" y2="50" stroke="#7843CD" stroke-width="2" />
+      <!-- Cabo / Pegador -->
+      <path d="M68 38 L76 33" stroke="#475569" stroke-width="3" stroke-linecap="round" />
+      <circle cx="76" cy="33" r="3" fill="#EF4444" />
+      <!-- Chassi e Rodinhas -->
+      <path d="M28 63 L32 73 H58" stroke="#475569" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+      <circle cx="34" cy="77" r="4.5" fill="#1E293B" />
+      <circle cx="58" cy="77" r="4.5" fill="#1E293B" />
+    </svg>
+  }
+
+  <!-- 10. LAZER (ENTRETENIMENTO / CINEMA / PIPOCA) -->
+  @else if (iconeAtivo === 'lazer') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#FFE4E6" />
+      <ellipse cx="50" cy="85" rx="30" ry="5" fill="#881337" opacity="0.1" />
+      <!-- Balde de Pipoca -->
+      <polygon points="26,44 32,80 58,80 64,44" fill="#EF4444" />
+      <!-- Listras Brancas -->
+      <polygon points="34,44 37,80 43,80 41,44" fill="#FFFFFF" />
+      <polygon points="49,44 47,80 53,80 56,44" fill="#FFFFFF" />
+      <!-- Pipocas Douradas Crocantes -->
+      <circle cx="34" cy="40" r="7" fill="#FDE047" stroke="#F59E0B" stroke-width="1.5" />
+      <circle cx="45" cy="36" r="8" fill="#FEF08A" stroke="#F59E0B" stroke-width="1.5" />
+      <circle cx="56" cy="39" r="7" fill="#FDE047" stroke="#F59E0B" stroke-width="1.5" />
+      <circle cx="40" cy="30" r="7" fill="#FDE047" stroke="#F59E0B" stroke-width="1.5" />
+      <circle cx="50" cy="28" r="8" fill="#EEC046" stroke="#D97706" stroke-width="1.5" />
+      <!-- Ingressos de Cinema com Estrelas -->
+      <g transform="rotate(22 66 54)">
+        <rect x="52" y="42" width="28" height="15" rx="2" fill="#7843CD" />
+        <circle cx="52" cy="49.5" r="3" fill="#FFE4E6" />
+        <circle cx="80" cy="49.5" r="3" fill="#FFE4E6" />
+        <polygon points="66,45 67,48 70,48 68,50 69,53 66,51 63,53 64,50 62,48 65,48" fill="#FDE047" />
+      </g>
+    </svg>
+  }
+
+  <!-- 11. SAÚDE (BEM-ESTAR / PLANO / CUIDADOS) -->
+  @else if (iconeAtivo === 'saude') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#FEE2E2" />
+      <ellipse cx="50" cy="85" rx="28" ry="5" fill="#7F1D1D" opacity="0.1" />
+      <!-- Coração Tridimensional -->
+      <path d="M50 76 C25 60, 15 44, 15 31 C15 19, 25 15, 35 15 C42 15, 47 19, 50 23 C53 19, 58 15, 65 15 C75 15, 85 19, 85 31 C85 44, 75 60, 50 76 Z" fill="#EF4444" />
+      <!-- Brilho no Topo -->
+      <path d="M25 25 C28 20, 33 18, 37 18" stroke="#FCA5A5" stroke-width="3" stroke-linecap="round" fill="none" />
+      <!-- Cruz Médica Branca -->
+      <rect x="44" y="32" width="12" height="26" rx="3" fill="#FFFFFF" />
+      <rect x="37" y="39" width="26" height="12" rx="3" fill="#FFFFFF" />
+      <!-- Linha de Pulso / Batimento Cardíaco Dourada -->
+      <path d="M18 56 H32 L36 46 L40 64 L44 50 L48 58 L52 56 H82" stroke="#FDE047" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+    </svg>
+  }
+
+  <!-- 12. DÍVIDA QUITAÇÃO (CADEADO ABERTO / LIBERDADE FINANCEIRA) -->
+  @else if (iconeAtivo === 'divida_quitacao') {
+    <svg xmlns="http://www.w3.org/2000/svg" [ngClass]="dimensoesSvg" viewBox="0 0 100 100" fill="none">
+      <circle cx="50" cy="50" r="46" fill="#CCFBF1" />
+      <ellipse cx="50" cy="85" rx="30" ry="5" fill="#115E59" opacity="0.12" />
+      <!-- Haste Aberta e Destrancada -->
+      <path d="M35 48 V28 C35 17, 53 17, 53 28 V36" fill="none" stroke="#94A3B8" stroke-width="6.5" stroke-linecap="round" />
+      <!-- Corpo Robusto do Cadeado Dourado -->
+      <rect x="23" y="42" width="54" height="40" rx="9" fill="#EEC046" stroke="#D97706" stroke-width="2" />
+      <rect x="27" y="46" width="46" height="16" rx="4" fill="#FDE047" opacity="0.5" />
+      <!-- Fechadura -->
+      <circle cx="50" cy="59" r="4" fill="#78350F" />
+      <polygon points="48,59 52,59 54,69 46,69" fill="#78350F" />
+      <!-- Elos Rompidos de Corrente -->
+      <path d="M14 44 C10 48, 12 56, 18 58" stroke="#94A3B8" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M86 44 C90 48, 88 56, 82 58" stroke="#94A3B8" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <!-- Selo Verde de "Quitado / OK" -->
+      <circle cx="70" cy="38" r="11" fill="#10B981" />
+      <path d="M66 38 L69 41 L75 35" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none" />
     </svg>
   }
 </div>
-
