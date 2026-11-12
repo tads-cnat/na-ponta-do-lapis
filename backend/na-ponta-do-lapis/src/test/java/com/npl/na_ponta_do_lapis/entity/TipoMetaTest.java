@@ -15,9 +15,9 @@ class TipoMetaTest {
 
     @ParameterizedTest(name = "{0} -> \"{1}\"")
     @CsvSource({
-            "POUPANCA, Poupança",
-            "GASTO, Gasto",
-            "DIVIDA, Dívida"
+            "POUPANCA, Juntar Dinheiro",
+            "GASTO, Teto de Gastos",
+            "DIVIDA, Quitar Dívida"
     })
 
     @DisplayName("getNome() retorna o rótulo legível de cada constante")
