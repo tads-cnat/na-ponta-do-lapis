@@ -16,6 +16,7 @@ class TipoMetaTest {
     @ParameterizedTest(name = "{0} -> \"{1}\"")
     @CsvSource({
 <<<<<<< HEAD
+<<<<<<< HEAD
             "POUPANCA, Juntar Dinheiro",
             "GASTO, Teto de Gastos",
             "DIVIDA, Quitar Dívida"
@@ -24,6 +25,11 @@ class TipoMetaTest {
             "GASTO, Gasto",
             "DIVIDA, Dívida"
 >>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
+=======
+            "POUPANCA, Juntar Dinheiro",
+            "GASTO, Teto de Gastos",
+            "DIVIDA, Quitar Dívida"
+>>>>>>> a6a7ce2 (test(metas): atualiza assercoes do TipoMetaTest e adiciona mock de entrada no meta-item spec)
     })
 
     @DisplayName("getNome() retorna o rótulo legível de cada constante")
