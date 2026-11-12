@@ -22,6 +22,7 @@ import { InputMoedaComponent } from '../../shared/components/input-moeda/input-m
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { CelebracaoService } from '../../shared/service/celebracao.service';
+import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem } from '../../shared/components/ilustracao-meta/ilustracao-meta.component';
 
 @Component({
   selector: 'app-metas',
@@ -40,6 +41,7 @@ import { CelebracaoService } from '../../shared/service/celebracao.service';
     ToastModule,
     InputMoedaComponent,
     AppMoedaPipe,
+    IlustracaoMetaComponent,
   ],
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
@@ -107,6 +109,7 @@ export class MetasComponent implements OnInit {
 
   temFamilia: boolean = false;
   tipoMetaSelecionado = signal<string>('POUPANCA');
+  catalogoIlustracoes: IlustracaoMetaItem[] = CATALOGO_ILUSTRACOES_METAS;
 
   today = new Date();
 
@@ -223,6 +226,7 @@ export class MetasComponent implements OnInit {
       descricao: [''],
       valor: [null, [Validators.required, Validators.min(0.01)]],
       valorInicial: [null],
+      fotoUrl: ['cofrinho'],
       contaId: [null],
       categoriaId: [null],
       familiar: [false],
@@ -328,6 +332,14 @@ export class MetasComponent implements OnInit {
   }
 
   selecionarTipoMeta(tipo: string): void {
+    const fotoAtual = this.metaForm.get('fotoUrl')?.value;
+    if (tipo === 'GASTO' && (fotoAtual === 'cofrinho' || !fotoAtual)) {
+      this.metaForm.get('fotoUrl')?.setValue('compras_mercado');
+    } else if (tipo === 'DIVIDA' && (fotoAtual === 'cofrinho' || !fotoAtual)) {
+      this.metaForm.get('fotoUrl')?.setValue('divida_quitacao');
+    } else if (tipo === 'POUPANCA' && (fotoAtual === 'compras_mercado' || fotoAtual === 'divida_quitacao')) {
+      this.metaForm.get('fotoUrl')?.setValue('cofrinho');
+    }
     this.metaForm.get('tipoMeta')?.setValue(tipo);
     this.tipoMetaSelecionado.set(tipo);
     if (this.metaForm.get('contaId')?.value === undefined) {
@@ -338,6 +350,10 @@ export class MetasComponent implements OnInit {
     }
   }
 
+  selecionarIlustracao(id: string): void {
+    this.metaForm.get('fotoUrl')?.setValue(id);
+  }
+
   abrirDialog(meta?: MetaResponse): void {
     if (meta) {
       this.metaSelecionada = meta;
@@ -346,6 +362,7 @@ export class MetasComponent implements OnInit {
         nome: meta.nome,
         descricao: meta.descricao,
         valor: meta.valorTotal,
+        fotoUrl: meta.fotoUrl || 'cofrinho',
         contaId: meta.contaId ?? null,
         categoriaId: meta.categoriaId ?? null,
         familiar: meta.familiar,
@@ -357,6 +374,7 @@ export class MetasComponent implements OnInit {
       this.tipoMetaSelecionado.set('POUPANCA');
       this.metaForm.reset({
         tipoMeta: 'POUPANCA',
+        fotoUrl: 'cofrinho',
         familiar: false,
         valorInicial: null,
         contaId: null,
@@ -472,6 +490,7 @@ export class MetasComponent implements OnInit {
       descricao: formValue.descricao,
       valor: formValue.valor,
       valorInicial: (!this.metaSelecionada && formValue.tipoMeta !== 'GASTO' && valorInicialNum > 0) ? valorInicialNum : undefined,
+      fotoUrl: formValue.fotoUrl || 'cofrinho',
       contaId: formValue.contaId,
       categoriaId: formValue.categoriaId,
       familiar: formValue.familiar,

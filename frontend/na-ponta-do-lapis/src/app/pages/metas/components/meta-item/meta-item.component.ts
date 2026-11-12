@@ -5,10 +5,11 @@ import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { TooltipModule } from 'primeng/tooltip';
 import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
+import { IlustracaoMetaComponent } from '../../../../shared/components/ilustracao-meta/ilustracao-meta.component';
 
 @Component({
   selector: 'app-meta-item',
-  imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe],
+  imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe, IlustracaoMetaComponent],
   templateUrl: './meta-item.component.html',
   styleUrl: './meta-item.component.css',
 })
