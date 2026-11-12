@@ -1,59 +1,52 @@
-<div class="p-3.5 rounded-2xl border border-slate-100 bg-slate-50/70 hover:bg-white hover:border-[#D1C4FF] transition-all">
+<div class="p-3.5 rounded-2xl border border-slate-100 bg-white hover:border-[#D1C4FF] hover:shadow-xs transition-all">
+    <!-- Linha Principal: Ícone + Título + Status + Valores -->
     <div class="flex items-center justify-between gap-3 mb-2.5">
       <div class="flex items-center min-w-0">
-        <div class="mr-3.5 shrink-0 shadow-2xs">
+        <div class="mr-3 shrink-0">
           <app-ilustracao-meta [icone]="meta.fotoUrl" tamanho="sm"></app-ilustracao-meta>
         </div>
         <div class="min-w-0">
-          <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
+          <div class="flex items-center gap-1.5 min-w-0">
+            <p class="font-bold text-sm text-slate-900 truncate m-0">{{ meta.nome }}</p>
             @if (ehConcluida) {
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80">
-                <i class="pi pi-check-circle text-[9px]"></i> Concluída
-              </span>
-            } @else if (ehExpirada) {
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/80">
-                <i class="pi pi-clock text-[9px]"></i> Expirada
+              <span class="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
+                <i class="pi pi-check text-[8px]"></i> Feita
               </span>
             } @else if (ehEstourada) {
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800 border border-rose-300">
-                <i class="pi pi-exclamation-triangle text-[9px]"></i> Estourada
+              <span class="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-rose-50 text-[#C24E4E] border border-rose-200 shrink-0">
+                <i class="pi pi-exclamation-triangle text-[8px]"></i> Estourada
               </span>
-            } @else if (meta.tipoMeta === 'GASTO') {
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-[#C24E4E] border border-rose-200/70">
-                <i class="pi pi-sliders-h text-[9px]"></i> Teto de Gastos
-              </span>
-            } @else if (meta.tipoMeta === 'DIVIDA') {
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/70">
-                <i class="pi pi-arrow-circle-down text-[9px]"></i> Quitar Dívida
-              </span>
-            } @else {
-              <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-purple-50 text-[#7843CD] border border-purple-200/70">
-                <i class="pi pi-wallet text-[9px]"></i> Juntar Dinheiro
+            } @else if (ehExpirada) {
+              <span class="inline-flex items-center gap-0.5 text-[9px] font-bold px-1.5 py-0.2 rounded-full bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
+                <i class="pi pi-clock text-[8px]"></i> Expirada
               </span>
             }
           </div>
-          <p class="font-bold text-sm sm:text-base text-slate-900 truncate m-0">{{meta.nome}}</p>
-          <p class="text-[11px] text-slate-500 mt-0.5">
-            {{ meta.tipoMeta === 'GASTO' ? 'Teto: ' : 'Meta: ' }} {{ meta.valorTotal | appMoeda }}
+          <p class="text-[11px] text-slate-400 mt-0.5 truncate">
+            {{ meta.tipoMeta === 'GASTO' ? 'Teto de Gastos' : (meta.tipoMeta === 'DIVIDA' ? 'Quitar Dívida' : 'Juntar Dinheiro') }}
           </p>
         </div>
       </div>
-      <div class="flex items-center shrink-0">
-        <div class="text-end">
-          <p class="font-extrabold text-sm m-0"
-             [ngClass]="ehEstourada ? 'text-[#C24E4E]' : 'text-emerald-600'">
-            {{ meta.valorAtual | appMoeda }}
-          </p>
-          <p class="text-[11px] m-0"
-             [ngClass]="ehEstourada ? 'text-[#C24E4E] font-semibold' : (ehConcluida ? 'text-emerald-600 font-semibold' : 'text-slate-500')">
-            {{ ehConcluida ? 'Total atingido' : (ehEstourada ? 'Teto ultrapassado' : (meta.tipoMeta === 'GASTO' ? 'restam ' : 'faltam ') + (valorFalta | appMoeda)) }}
-          </p>
-        </div>
+
+      <!-- Bloco de Valores -->
+      <div class="text-end shrink-0">
+        <p class="font-bold text-sm m-0 text-slate-900">
+          {{ meta.valorAtual | appMoeda }}
+          <span class="text-[11px] text-slate-400 font-normal">/ {{ meta.valorTotal | appMoeda }}</span>
+        </p>
+        <p class="text-[10px] m-0"
+           [ngClass]="ehEstourada ? 'text-[#C24E4E] font-semibold' : (ehConcluida ? 'text-emerald-600 font-semibold' : 'text-slate-400')">
+          {{ ehConcluida ? 'Total atingido' : (ehEstourada ? 'Teto ultrapassado' : (meta.tipoMeta === 'GASTO' ? 'restam ' : 'faltam ') + (valorFalta | appMoeda)) }}
+        </p>
       </div>
     </div>
-    <div class="flex items-center justify-between text-[11px] text-slate-500 mb-1">
-      <span>{{ meta.tipoMeta === 'GASTO' ? 'Consumo do teto' : 'Progresso' }}</span>
-      <span class="font-bold" [ngClass]="ehEstourada ? 'text-[#C24E4E]' : (ehConcluida ? 'text-emerald-600' : 'text-slate-700')">{{ meta.progresso }}%</span>
+
+    <!-- Barra de Progresso e Porcentagem -->
+    <div class="flex items-center justify-between text-[11px] text-slate-400 mb-1">
+      <span>{{ meta.tipoMeta === 'GASTO' ? 'Consumo' : 'Progresso' }}</span>
+      <span class="font-bold text-slate-700" [ngClass]="ehEstourada ? 'text-[#C24E4E]!' : (ehConcluida ? 'text-emerald-600!' : '')">
+        {{ meta.progresso }}%
+      </span>
     </div>
-    <p-progressbar class="h-2.5!" [value]="progressoLimitado" [color]="corBarraProgresso" [showValue]="false" />
+    <p-progressbar class="h-2!" [value]="progressoLimitado" [color]="corBarraProgresso" [showValue]="false" />
 </div>
