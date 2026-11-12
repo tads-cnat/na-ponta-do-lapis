@@ -484,7 +484,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1">
                         <div class="flex justify-between items-center">
-                            <label class="font-bold text-sm text-slate-700">Descrição *</label>
+                            <label class="font-bold text-sm text-slate-700">Descrição</label>
                             <span class="text-xs text-slate-400 font-medium">
                                 {{ formTransacao.get('descricao')?.value?.length || 0 }}/100
                             </span>
@@ -493,7 +493,7 @@
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm text-slate-700">Valor *</label>
+                        <label class="font-bold text-sm text-slate-700">Valor</label>
                         <app-input-moeda
                             formControlName="valor"
                             [moeda]="codigoMoeda"
@@ -505,14 +505,14 @@
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm text-slate-700">Conta *</label>
+                        <label class="font-bold text-sm text-slate-700">Conta</label>
                         <p-select [options]="opcoesConta" optionLabel="nome" optionValue="id"
                             formControlName="idContaFinanceira" placeholder="Selecione a conta" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
                     </div>
 
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm text-slate-700">Categoria *</label>
+                        <label class="font-bold text-sm text-slate-700">Categoria</label>
                         <p-select [options]="opcoesCategoria" optionLabel="nome" optionValue="id"
                             formControlName="idCategoria" placeholder="Selecione a categoria" [appendTo]="'body'"
                             styleClass="w-full"></p-select>
@@ -521,7 +521,7 @@
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div class="flex flex-col gap-1">
-                        <label class="font-bold text-sm text-slate-700">Data *</label>
+                        <label class="font-bold text-sm text-slate-700">Data</label>
                         <p-datePicker formControlName="dataHora" dateFormat="dd/mm/yy" showIcon="true"
                             placeholder="Selecione a data" [appendTo]="'body'" styleClass="w-full"></p-datePicker>
                     </div>
@@ -560,7 +560,9 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         @if (id) {
                         <div class="flex flex-col gap-1">
-                            <label class="font-bold text-sm text-slate-700">Valor total da compra (opcional)</label>
+                            <label class="font-bold text-sm text-slate-700">
+                                Valor total da compra <span class="text-slate-400 font-normal text-[11px]">(opcional)</span>
+                            </label>
                             <app-input-moeda
                                 formControlName="valorTotalCompra"
                                 [moeda]="codigoMoeda"

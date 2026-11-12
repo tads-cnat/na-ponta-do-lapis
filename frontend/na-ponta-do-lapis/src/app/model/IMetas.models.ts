@@ -1,36 +1,60 @@
-export enum TipoMeta{
-    POUPANCA,
-    GASTO,
-    DIVIDA,
-    PRAZO_FIXO
-}
+export type TipoMeta = 'POUPANCA' | 'GASTO' | 'DIVIDA';
+export type StatusMeta = 'EM_ANDAMENTO' | 'CONCLUIDA' | 'ESTOURADA' | 'EXPIRADA' | 'CANCELADA';
 
-export interface TipoMetaResponse{
+export interface TipoMetaResponse {
     id: string;
     nome: string;
 }
 
-export interface MetaRequest{
+export interface MetaRequest {
     nome: string;
     descricao?: string;
     valor: number;
+    valorInicial?: number;
     fotoUrl?: string;
-    dataLimite?: Date;
+    dataLimite?: string | Date;
     tipoMeta: TipoMeta;
     contaId?: number;
+    categoriaId?: number;
+    familiar?: boolean;
 }
 
-export interface MetaResponse{
-    id?: number;
+export interface MetaResponse {
+    id: number;
     nome: string;
     descricao?: string;
     valorTotal: number;
-    valorAtual?: number;
+    valorAtual: number;
     fotoUrl?: string;
-    dataLimite?: Date;
+    dataLimite?: string;
     tipoMeta: TipoMeta;
+    status: StatusMeta;
     usuarioId: number;
+    usuarioNome?: string;
     contaId?: number;
-    progresso?: number;
+    contaNome?: string;
+    categoriaId?: number;
+    categoriaNome?: string;
+    familiaId?: number;
+    familiar: boolean;
+    progresso: number;
+}
+
+export interface AporteMetaRequest {
+    valor: number;
+    contaOrigemId?: number;
+    observacao?: string;
+}
+
+export interface AporteMetaResponse {
+    id: number;
+    metaId: number;
+    usuarioId: number;
+    usuarioNome: string;
+    contaOrigemId?: number;
+    contaOrigemNome?: string;
+    valor: number;
+    observacao?: string;
+    dataAporte: string;
 }
 

@@ -1,24 +1,48 @@
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MetaItemComponent } from './components/meta-item/meta-item.component';
 import { MetasService } from './services/metas.service';
 import { ContaFinanceiraService } from '../contas/service/contas.service';
-import { MetaRequest, MetaResponse, TipoMetaResponse } from '@models/IMetas.models';
+import { TransacoesService } from '../transacoes/service/transacoes.service';
+import { AuthService } from '../../auth/service/auth.service';
+import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest, AporteMetaResponse } from '@models/IMetas.models';
 
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
-import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext'; 
 import { DatePicker } from 'primeng/datepicker';
 import { Select } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { Textarea } from 'primeng/textarea';
+import { CheckboxModule } from 'primeng/checkbox';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
+import { NotificacaoService } from '../../shared/service/notificacao.service';
+import { CelebracaoService } from '../../shared/service/celebracao.service';
+import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem } from '../../shared/components/ilustracao-meta/ilustracao-meta.component';
 
 @Component({
   selector: 'app-metas',
-  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent, AppMoedaPipe],
+  imports: [
+    CommonModule,
+    MetaItemComponent,
+    Button,
+    DialogModule,
+    InputTextModule,
+    ReactiveFormsModule,
+    FormsModule,
+    DatePicker,
+    Select,
+    Textarea,
+    CheckboxModule,
+    ToastModule,
+    InputMoedaComponent,
+    AppMoedaPipe,
+    IlustracaoMetaComponent,
+  ],
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
 })
@@ -27,14 +51,149 @@ export class MetasComponent implements OnInit {
   metas = signal<MetaResponse[]>([]);
   tiposMeta = signal<TipoMetaResponse[]>([]);
   contas = signal<any[]>([]);
+  categorias = signal<any[]>([]);
   exibirDialog: boolean = false;
+  exibirDialogAporte: boolean = false;
+  exibirDialogExclusao: boolean = false;
+  exibirDialogHistorico: boolean = false;
+  metaParaAporte: MetaResponse | null = null;
+  metaParaExcluir: MetaResponse | null = null;
+  metaParaHistorico: MetaResponse | null = null;
+  historicoAportes = signal<AporteMetaResponse[]>([]);
+  carregandoHistorico = signal<boolean>(false);
+  
+  // Novos Filtros Ricos: Status, Tipo e Origem
+  filtroStatus = signal<'todas' | 'em_andamento' | 'concluidas' | 'expiradas'>('todas');
+  filtroTipo = signal<'todos' | 'POUPANCA' | 'GASTO' | 'DIVIDA'>('todos');
+  filtroOrigem = signal<'todas' | 'individuais' | 'familia'>('todas');
+  
+  opcoesFiltroTipo = [
+    { label: 'Todos os tipos', value: 'todos' },
+    { label: 'Juntar Dinheiro', value: 'POUPANCA' },
+    { label: 'Teto de Gastos', value: 'GASTO' },
+    { label: 'Quitar Dívida', value: 'DIVIDA' },
+  ];
+
+  opcoesFiltroOrigem = [
+    { label: 'Todas as origens', value: 'todas' },
+    { label: 'Minhas Metas', value: 'individuais' },
+    { label: 'Metas da Família', value: 'familia' },
+  ];
+
+  ehMetaConcluida(m: MetaResponse): boolean {
+    if (m.tipoMeta === 'GASTO') {
+      return m.status === 'CONCLUIDA';
+    }
+    return m.status === 'CONCLUIDA' || (m.progresso || 0) >= 100 || (m.valorAtual || 0) >= (m.valorTotal || 0);
+  }
+
+  ehMetaExpirada(m: MetaResponse): boolean {
+    if (this.ehMetaConcluida(m)) return false;
+    if (m.status === 'EXPIRADA') return true;
+    if (!m.dataLimite) return false;
+    const limite = new Date(m.dataLimite);
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    limite.setHours(0, 0, 0, 0);
+    return limite.getTime() < hoje.getTime();
+  }
+
+  ehMetaEmAndamento(m: MetaResponse): boolean {
+    return !this.ehMetaConcluida(m) && !this.ehMetaExpirada(m);
+  }
+
+  contagemTodas = computed(() => this.metas().length);
+  contagemEmAndamento = computed(() => this.metas().filter(m => this.ehMetaEmAndamento(m)).length);
+  contagemConcluidas = computed(() => this.metas().filter(m => this.ehMetaConcluida(m)).length);
+  contagemExpiradas = computed(() => this.metas().filter(m => this.ehMetaExpirada(m)).length);
+
+  temFamilia: boolean = false;
+  tipoMetaSelecionado = signal<string>('POUPANCA');
+  catalogoIlustracoes: IlustracaoMetaItem[] = CATALOGO_ILUSTRACOES_METAS;
+
+  today = new Date();
+
+  opcoesContaForm = computed(() => {
+    const tipo = this.tipoMetaSelecionado();
+    const contasOriginais = this.contas() || [];
+    if (tipo === 'GASTO') {
+      return [
+        { id: null, nome: 'Todas as contas (Orçamento Global)' },
+        ...contasOriginais
+      ];
+    }
+    return [
+      { id: null, nome: 'Nenhuma (cofrinho geral)' },
+      ...contasOriginais
+    ];
+  });
+
+  opcoesCategoriaForm = computed(() => {
+    const tipo = this.tipoMetaSelecionado();
+    const categoriasOriginais = this.categorias() || [];
+    if (tipo === 'GASTO') {
+      return [
+        { id: null, nome: 'Todas as categorias (Orçamento Geral do Mês)' },
+        ...categoriasOriginais
+      ];
+    }
+    return [
+      { id: null, nome: 'Nenhuma categoria específica' },
+      ...categoriasOriginais
+    ];
+  });
+
+  metasFiltradas = computed(() => {
+    let lista = this.metas();
+
+    // 1. Filtro por status
+    const status = this.filtroStatus();
+    if (status === 'concluidas') {
+      lista = lista.filter(m => this.ehMetaConcluida(m));
+    } else if (status === 'em_andamento') {
+      lista = lista.filter(m => this.ehMetaEmAndamento(m));
+    } else if (status === 'expiradas') {
+      lista = lista.filter(m => this.ehMetaExpirada(m));
+    }
+
+    // 2. Filtro por tipo de meta
+    const tipo = this.filtroTipo();
+    if (tipo !== 'todos') {
+      lista = lista.filter(m => m.tipoMeta === tipo);
+    }
+
+    // 3. Filtro por origem (Individual vs Família)
+    const origem = this.filtroOrigem();
+    if (origem === 'familia') {
+      lista = lista.filter(m => m.familiar);
+    } else if (origem === 'individuais') {
+      lista = lista.filter(m => !m.familiar);
+    }
+
+    return lista;
+  });
+
+  // Separação Contábil: Quando não está filtrando especificamente por GASTO,
+  // os cards de resumo refletem apenas objetivos de acúmulo/amortização (POUPANCA / DIVIDA),
+  // evitando que despesas de Tetos de Gastos inflamem o "Total Arrecadado".
+  metasBaseResumo = computed(() => {
+    const lista = this.metasFiltradas();
+    if (this.filtroTipo() === 'GASTO') {
+      return lista.filter(m => m.tipoMeta === 'GASTO');
+    }
+    return lista.filter(m => m.tipoMeta !== 'GASTO');
+  });
+
+  contagemTetosGasto = computed(() => {
+    return this.metasFiltradas().filter(m => m.tipoMeta === 'GASTO').length;
+  });
 
   totalMetas = computed(() => {
-    return this.metas().reduce((sum, m) => sum + (m.valorTotal || 0), 0);
+    return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorTotal || 0), 0);
   });
 
   totalAcumulado = computed(() => {
-    return this.metas().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
+    return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
   });
 
   totalRestante = computed(() => {
@@ -47,91 +206,180 @@ export class MetasComponent implements OnInit {
     return Math.min(100, Math.round((this.totalAcumulado() / total) * 100));
   });
 
-  totalMetasFormatado = computed(() =>
-    this.totalMetas().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  );
-
-  totalAcumuladoFormatado = computed(() =>
-    this.totalAcumulado().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  );
-
   metaForm: FormGroup;
+  aporteForm: FormGroup;
   metaSelecionada: MetaResponse | null = null;
 
-  today = new Date();
+  private metasService = inject(MetasService);
+  private contasService = inject(ContaFinanceiraService);
+  private transacoesService = inject(TransacoesService);
+  private authService = inject(AuthService);
+  private router = inject(Router);
   private messageService = inject(MessageService);
+  private notificacaoService = inject(NotificacaoService);
+  private celebracaoService = inject(CelebracaoService);
+  private fb = inject(FormBuilder);
 
-  constructor(
-    private ContaFinanceiraService: ContaFinanceiraService,
-    private metasService: MetasService,
-    private fb: FormBuilder
-  ) {
+  constructor() {
     this.metaForm = this.fb.group({
       nome: ['', [Validators.required, Validators.minLength(3)]],
       descricao: [''],
-      valor: [0, [Validators.required, Validators.min(0.01)]],
-      contaId: [0],
-      dataLimite: [null, []],
-      tipoMeta: [null, Validators.required],
+      valor: [null, [Validators.required, Validators.min(0.01)]],
+      valorInicial: [null],
+      fotoUrl: ['cofrinho'],
+      contaId: [null],
+      categoriaId: [null],
+      familiar: [false],
+      dataLimite: [null],
+      tipoMeta: ['POUPANCA', Validators.required],
+    });
+
+    this.aporteForm = this.fb.group({
+      valor: [null, [Validators.required, Validators.min(0.01)]],
+      contaOrigemId: [null],
+      observacao: [''],
     });
   }
 
   ngOnInit(): void {
-    this.listarMetas();
-    this.listarContas();
+    this.verificarFamiliaUsuario();
+    this.carregarMetas();
+    this.carregarTiposMeta();
+    this.carregarContas();
+    this.carregarCategorias();
+  }
+
+  verificarFamiliaUsuario(): void {
+    this.authService.meusDados().subscribe({
+      next: (usuario) => {
+        this.temFamilia = usuario.idFamilia != null;
+      },
+      error: () => {
+        this.temFamilia = false;
+      },
+    });
+  }
+
+  irParaFamilia(): void {
+    this.fecharDialog();
+    this.router.navigateByUrl('/familia');
+  }
+
+  carregarTiposMeta(): void {
     this.metasService.listarTiposMeta().subscribe({
-      next: (tipos) => this.tiposMeta.set(tipos)
+      next: (response) => this.tiposMeta.set(response),
+      error: () => {},
     });
   }
 
-  listarContas(): void {
-    this.ContaFinanceiraService.listarContasUsuario().subscribe({
-      next: (response) => {
-        this.contas.set(response);
-      },
-      error: (error) => {
-        console.error('Erro ao listar contas do usuário:', error);
-      }
+  carregarContas(): void {
+    this.contasService.listarContasUsuario().subscribe({
+      next: (response: any) => this.contas.set(response),
+      error: () => {},
     });
   }
 
-  listarMetas(): void {
+  carregarCategorias(): void {
+    this.transacoesService.listarCategorias().subscribe({
+      next: (response) => this.categorias.set(response),
+      error: () => {},
+    });
+  }
+
+  carregarMetas(): void {
     this.metasService.listarMetas().subscribe({
-      next: (response) => {
-        this.metas.set(response);
+      next: (response) => this.metas.set(response),
+      error: (error) => console.error('Erro ao listar metas:', error),
+    });
+  }
+
+  solicitarExclusao(meta: MetaResponse): void {
+    this.metaParaExcluir = meta;
+    this.exibirDialogExclusao = true;
+  }
+
+  cancelarExclusao(): void {
+    this.exibirDialogExclusao = false;
+    this.metaParaExcluir = null;
+  }
+
+  confirmarExclusao(): void {
+    if (!this.metaParaExcluir) return;
+    const metaAlvo = this.metaParaExcluir;
+    this.metasService.deletarMeta(metaAlvo.id).subscribe({
+      next: () => {
+        this.metas.update((metas) => metas.filter((m) => m.id !== metaAlvo.id));
+        this.messageService.add({ severity: 'success', summary: 'Meta excluída com sucesso!', life: 3000 });
+        this.cancelarExclusao();
+        this.notificacaoService.recarregarImediatamente();
       },
       error: (error) => {
-        console.error('Erro ao listar metas:', error);
-      }
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao excluir meta',
+          detail: error.error?.message || error.message,
+          life: 5000,
+        });
+      },
     });
   }
 
   deletarMeta(id: number): void {
-    this.metasService.deletarMeta(id).subscribe({
-      next: () => {
-        this.metas.update( metas => metas.filter(meta => meta.id !== id));
-        this.messageService.add({ severity: 'success', summary: 'Meta deletada com sucesso!', life: 3000 });
-      },
-      error: (error) => {
-        this.messageService.add({ severity: 'error', summary: 'Erro ao deletar meta', detail: error.error?.message || error.message, life: 5000 });
-      }
-    });
+    const meta = this.metas().find(m => m.id === id);
+    if (meta) {
+      this.solicitarExclusao(meta);
+    }
+  }
+
+  selecionarTipoMeta(tipo: string): void {
+    const fotoAtual = this.metaForm.get('fotoUrl')?.value;
+    if (tipo === 'GASTO' && (fotoAtual === 'cofrinho' || !fotoAtual)) {
+      this.metaForm.get('fotoUrl')?.setValue('compras_mercado');
+    } else if (tipo === 'DIVIDA' && (fotoAtual === 'cofrinho' || !fotoAtual)) {
+      this.metaForm.get('fotoUrl')?.setValue('divida_quitacao');
+    } else if (tipo === 'POUPANCA' && (fotoAtual === 'compras_mercado' || fotoAtual === 'divida_quitacao')) {
+      this.metaForm.get('fotoUrl')?.setValue('cofrinho');
+    }
+    this.metaForm.get('tipoMeta')?.setValue(tipo);
+    this.tipoMetaSelecionado.set(tipo);
+    if (this.metaForm.get('contaId')?.value === undefined) {
+      this.metaForm.get('contaId')?.setValue(null);
+    }
+    if (this.metaForm.get('categoriaId')?.value === undefined) {
+      this.metaForm.get('categoriaId')?.setValue(null);
+    }
+  }
+
+  selecionarIlustracao(id: string): void {
+    this.metaForm.get('fotoUrl')?.setValue(id);
   }
 
   abrirDialog(meta?: MetaResponse): void {
     if (meta) {
       this.metaSelecionada = meta;
+      this.tipoMetaSelecionado.set(meta.tipoMeta);
       this.metaForm.patchValue({
         nome: meta.nome,
         descricao: meta.descricao,
         valor: meta.valorTotal,
-        contaId: meta.contaId,
-        dataLimite: meta.dataLimite,
+        fotoUrl: meta.fotoUrl || 'cofrinho',
+        contaId: meta.contaId ?? null,
+        categoriaId: meta.categoriaId ?? null,
+        familiar: meta.familiar,
+        dataLimite: meta.dataLimite ? new Date(meta.dataLimite) : null,
         tipoMeta: meta.tipoMeta,
       });
     } else {
       this.metaSelecionada = null;
-      this.metaForm.reset();
+      this.tipoMetaSelecionado.set('POUPANCA');
+      this.metaForm.reset({
+        tipoMeta: 'POUPANCA',
+        fotoUrl: 'cofrinho',
+        familiar: false,
+        valorInicial: null,
+        contaId: null,
+        categoriaId: null,
+      });
     }
     this.exibirDialog = true;
   }
@@ -142,45 +390,149 @@ export class MetasComponent implements OnInit {
     this.metaForm.reset();
   }
 
+  abrirDialogAporte(meta: MetaResponse): void {
+    if ((meta.progresso || 0) >= 100 || (meta.valorAtual || 0) >= (meta.valorTotal || 0)) {
+      this.messageService.add({
+        severity: 'info',
+        summary: 'Meta já concluída!',
+        detail: `A meta "${meta.nome}" já atingiu 100% do objetivo financeiro.`,
+        life: 3000,
+      });
+      return;
+    }
+    this.metaParaAporte = meta;
+    this.aporteForm.reset();
+    this.exibirDialogAporte = true;
+  }
+
+  fecharDialogAporte(): void {
+    this.exibirDialogAporte = false;
+    this.metaParaAporte = null;
+    this.aporteForm.reset();
+  }
+
+  abrirHistorico(meta: MetaResponse): void {
+    this.metaParaHistorico = meta;
+    this.historicoAportes.set([]);
+    this.carregandoHistorico.set(true);
+    this.exibirDialogHistorico = true;
+
+    this.metasService.listarAportes(meta.id).subscribe({
+      next: (aportes) => {
+        this.historicoAportes.set(aportes || []);
+        this.carregandoHistorico.set(false);
+      },
+      error: () => {
+        this.carregandoHistorico.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao carregar histórico',
+          detail: 'Não foi possível buscar os aportes desta meta.',
+          life: 4000,
+        });
+      },
+    });
+  }
+
+  fecharDialogHistorico(): void {
+    this.exibirDialogHistorico = false;
+    this.metaParaHistorico = null;
+    this.historicoAportes.set([]);
+  }
+
+  salvarAporte(): void {
+    if (this.aporteForm.invalid || !this.metaParaAporte) return;
+
+    const metaAlvo = this.metaParaAporte;
+    const payload: AporteMetaRequest = this.aporteForm.value;
+    const valorAporte = Number(payload.valor) || 0;
+    const valorAtual = Number(metaAlvo.valorAtual) || 0;
+    const valorTotal = Number(metaAlvo.valorTotal) || 0;
+
+    // Só comemora se a meta NÃO estava concluída e atingiu 100% EXATAMENTE com este aporte
+    const jaEstavaConcluida = valorAtual >= valorTotal;
+    const concluiuAgora = !jaEstavaConcluida && (valorAtual + valorAporte) >= valorTotal;
+
+    this.metasService.registrarAporte(metaAlvo.id, payload).subscribe({
+      next: () => {
+        if (concluiuAgora) {
+          this.celebracaoService.celebrarMetaAtingida(metaAlvo.nome, valorTotal);
+        } else {
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Aporte realizado com sucesso!',
+            detail: `Valor adicionado à meta "${metaAlvo.nome}"`,
+            life: 4000,
+          });
+        }
+        this.fecharDialogAporte();
+        this.carregarMetas();
+        this.notificacaoService.recarregarImediatamente();
+      },
+      error: (err) => {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao registrar aporte',
+          detail: err.error?.message || err.message,
+          life: 5000,
+        });
+      },
+    });
+  }
+
   salvarMeta(): void {
     if (this.metaForm.invalid) return;
 
     const formValue = this.metaForm.value;
+    const valorInicialNum = Number(formValue.valorInicial) || 0;
     const metaData: MetaRequest = {
       nome: formValue.nome,
       descricao: formValue.descricao,
       valor: formValue.valor,
+      valorInicial: (!this.metaSelecionada && formValue.tipoMeta !== 'GASTO' && valorInicialNum > 0) ? valorInicialNum : undefined,
+      fotoUrl: formValue.fotoUrl || 'cofrinho',
       contaId: formValue.contaId,
+      categoriaId: formValue.categoriaId,
+      familiar: formValue.familiar,
       dataLimite: formValue.dataLimite,
       tipoMeta: formValue.tipoMeta,
     };
 
     if (this.metaSelecionada) {
-      this.metasService.atualizarMeta(this.metaSelecionada.id!, metaData).subscribe({
+      this.metasService.atualizarMeta(this.metaSelecionada.id, metaData).subscribe({
         next: (updatedMeta) => {
-          this.metas.update(metas => metas.map(meta => meta.id === updatedMeta.id ? updatedMeta : meta));
+          this.metas.update((metas) => metas.map((m) => (m.id === updatedMeta.id ? updatedMeta : m)));
           this.fecharDialog();
           this.messageService.add({ severity: 'success', summary: 'Meta atualizada com sucesso!', life: 3000 });
+          this.notificacaoService.recarregarImediatamente();
         },
         error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'Erro ao atualizar meta', detail: error.error?.message || error.message, life: 5000 });
-        }
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro ao atualizar meta',
+            detail: error.error?.message || error.message,
+            life: 5000,
+          });
+        },
       });
     } else {
       this.metasService.criarMeta(metaData).subscribe({
         next: (newMeta) => {
-          this.metas.update(metas => [...metas, newMeta]);
+          this.metas.update((metas) => [...metas, newMeta]);
           this.fecharDialog();
-          this.messageService.add({ severity: 'success', summary: 'Meta criada com sucesso!', life: 3000 });
+          this.messageService.add({ severity: 'success', summary: 'Nova meta criada com sucesso!', life: 3000 });
+          this.notificacaoService.recarregarImediatamente();
         },
         error: (error) => {
-          this.messageService.add({ severity: 'error', summary: 'Erro ao criar meta', detail: error.error?.message || error.message, life: 5000 });
-        }
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Erro ao criar meta',
+            detail: error.error?.message || error.message,
+            life: 5000,
+          });
+        },
       });
     }
-
   }
-
-
- 
 }
+

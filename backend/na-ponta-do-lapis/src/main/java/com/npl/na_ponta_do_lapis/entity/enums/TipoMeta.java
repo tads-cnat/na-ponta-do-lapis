@@ -1,10 +1,9 @@
 package com.npl.na_ponta_do_lapis.entity.enums;
 
 public enum TipoMeta {
-    POUPANCA("Poupança"),
-    GASTO("Gasto"),
-    DIVIDA("Dívida"),
-    PRAZO_FIXO("Prazo Fixo");
+    POUPANCA("Juntar Dinheiro"),
+    GASTO("Teto de Gastos"),
+    DIVIDA("Quitar Dívida");
 
     private final String nome;
 

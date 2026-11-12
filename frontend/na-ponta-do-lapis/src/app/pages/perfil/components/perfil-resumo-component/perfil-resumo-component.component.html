@@ -41,8 +41,9 @@
             {{ obterPapelFormatado() }}
           </span>
 
-          <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-900 border border-amber-200">
-            {{ obterMoedaFormatada() }}
+          <span *ngIf="perfilGamificado" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-[#EEC046]/20 text-amber-950 border border-[#EEC046]/40" title="Seu Nível de Saúde Financeira">
+            <i class="pi pi-trophy text-[11px] text-amber-700"></i>
+            Nv. {{ perfilGamificado.nivel }} • {{ perfilGamificado.tituloNivel }}
           </span>
         </div>
       </div>

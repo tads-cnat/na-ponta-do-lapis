@@ -12,10 +12,84 @@
             }
         </div>
         <div class="flex items-center gap-5 ">
-          <div class="relative cursor-pointer text-slate-600 hover:text-[#7843CD] transition-colors p-1" title="Notificações">
+          <!-- Sino com Popover de Notificações -->
+          <div class="relative cursor-pointer text-slate-600 hover:text-[#7843CD] transition-colors p-1"
+               title="Notificações"
+               (click)="abrirNotificacoes($event, opNotificacoes)">
             <i class="pi pi-bell text-lg"></i>
-            <span class="absolute top-1 right-1 w-2.5 h-2.5 bg-[#EEC046] rounded-full ring-2 ring-white"></span>
+            @if (totalNaoLidas > 0) {
+              <span class="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1 bg-gradient-to-r from-[#EEC046] to-[#F59E0B] text-slate-950 font-black text-[10px] rounded-full ring-2 ring-white flex items-center justify-center shadow-sm animate-pulse">
+                {{ totalNaoLidas > 99 ? '99+' : totalNaoLidas }}
+              </span>
+            }
           </div>
+
+          <p-popover #opNotificacoes styleClass="w-80 sm:w-96 shadow-xl rounded-2xl border border-slate-100 overflow-hidden">
+            <div class="p-4 flex flex-col gap-3">
+              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div class="flex items-center gap-2">
+                  <span class="font-bold text-slate-900 text-sm">Notificações</span>
+                  @if (totalNaoLidas > 0) {
+                    <span class="badge-npl-amarelo text-[10px] py-0.5 px-2">{{ totalNaoLidas }} nova(s)</span>
+                  }
+                </div>
+                @if (notificacoes.length > 0) {
+                  <button type="button"
+                          (click)="marcarTodasComoLidas()"
+                          class="text-xs text-[#7843CD] hover:text-[#6214CC] font-semibold cursor-pointer">
+                    Marcar lidas
+                  </button>
+                }
+              </div>
+
+              <div class="max-h-80 overflow-y-auto flex flex-col divide-y divide-slate-100">
+                @if (notificacoes.length === 0) {
+                  <div class="py-8 text-center text-slate-400 flex flex-col items-center gap-2">
+                    <i class="pi pi-inbox text-3xl text-slate-300"></i>
+                    <p class="text-xs">Nenhuma notificação por enquanto.</p>
+                  </div>
+                } @else {
+                  @for (n of notificacoes; track n.id) {
+                    <div class="py-2.5 px-2 flex items-start gap-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group relative"
+                         [class.bg-[#FEF9E7]/40]="!n.lida"
+                         (click)="marcarComoLida(n)">
+                      @if (n.tipo === 'CONQUISTA_DESBLOQUEADA') {
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                          <app-medalha-conquista [id]="extrairIdConquista(n.mensagem)" [desbloqueada]="true" tamanho="sm"></app-medalha-conquista>
+                        </div>
+                      } @else if (n.tipo === 'META_ATINGIDA') {
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                          <app-medalha-conquista id="META_BATIDA_1" [desbloqueada]="true" tamanho="sm"></app-medalha-conquista>
+                        </div>
+                      } @else {
+                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
+                             [ngClass]="obterBgIcone(n.tipo)">
+                          <i class="pi text-sm" [ngClass]="obterIcone(n.tipo)"></i>
+                        </div>
+                      }
+                      <div class="flex-1 min-w-0">
+                        <div class="flex items-center justify-between gap-1">
+                          <p class="text-xs font-bold text-slate-900 truncate" [class.text-[#7843CD]]="!n.lida">{{ n.titulo }}</p>
+                          @if (!n.lida) {
+                            <span class="w-2 h-2 rounded-full bg-[#EEC046] shrink-0"></span>
+                          }
+                        </div>
+                        <p class="text-xs text-slate-600 line-clamp-2 mt-0.5 leading-snug">{{ n.mensagem }}</p>
+                        <span class="text-[10px] text-slate-400 mt-1 block">{{ n.dataCriacao | date:'short' }}</span>
+                      </div>
+                      <button type="button"
+                              (click)="excluirNotificacao($event, n.id)"
+                              class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 transition-opacity p-1"
+                              title="Remover">
+                        <i class="pi pi-times text-xs"></i>
+                      </button>
+                    </div>
+                  }
+                }
+              </div>
+            </div>
+          </p-popover>
+
           <div><img class="h-11 w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}"></div>
           <div><p class="nomeUser font-medium text-slate-800">{{ nomeUsuario }}</p></div>
           <div>

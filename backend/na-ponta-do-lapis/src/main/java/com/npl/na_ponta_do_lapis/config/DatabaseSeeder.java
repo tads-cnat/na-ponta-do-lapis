@@ -17,11 +17,13 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
+import com.npl.na_ponta_do_lapis.entity.Conquista;
 import com.npl.na_ponta_do_lapis.entity.Marcador;
 import com.npl.na_ponta_do_lapis.entity.Meta;
 import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
 import com.npl.na_ponta_do_lapis.entity.Transacao;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.npl.na_ponta_do_lapis.entity.enums.CategoriaConquista;
 import com.npl.na_ponta_do_lapis.entity.enums.EstadoTransacao;
 import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
@@ -29,6 +31,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.TipoConta;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoMeta;
 import com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
+import com.npl.na_ponta_do_lapis.repository.ConquistaRepository;
 import com.npl.na_ponta_do_lapis.repository.MarcadorRepository;
 import com.npl.na_ponta_do_lapis.repository.MetaRepository;
 import com.npl.na_ponta_do_lapis.repository.TipoCategoriaRepository;
@@ -49,24 +52,29 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final MarcadorRepository marcadorRepository;
     private final TransacaoRepository transacaoRepository;
     private final MetaRepository metaRepository;
+    private final ConquistaRepository conquistaRepository;
 
     public DatabaseSeeder(UsuarioRepository usuarioRepository,
                           TipoCategoriaRepository categoriaRepository,
                           ContaFinanceiraRepository contaRepository,
                           MarcadorRepository marcadorRepository,
                           TransacaoRepository transacaoRepository,
-                          MetaRepository metaRepository) {
+                          MetaRepository metaRepository,
+                          ConquistaRepository conquistaRepository) {
         this.usuarioRepository = usuarioRepository;
         this.categoriaRepository = categoriaRepository;
         this.contaRepository = contaRepository;
         this.marcadorRepository = marcadorRepository;
         this.transacaoRepository = transacaoRepository;
         this.metaRepository = metaRepository;
+        this.conquistaRepository = conquistaRepository;
     }
 
     @Override
     @Transactional
     public void run(String... args) {
+        popularConquistasPadrao();
+
         if (usuarioRepository.count() > 0) {
             corrigirContasLegadasSemTipo();
             log.info("[DatabaseSeeder] Banco de dados já possui registros cadastrados. Pulando carga inicial.");
@@ -335,25 +343,30 @@ public class DatabaseSeeder implements CommandLineRunner {
 
         transacaoRepository.saveAll(transacoes);
 
-        // 6. Metas Realistas e Acessíveis
+        // 6. Metas Realistas e Acessíveis com Ilustrações Temáticas
         List<Meta> metas = new ArrayList<>();
         // Lucas
-        metas.add(criarMeta("Reserva de Emergência", "Guardar dinheiro para imprevistos (3 a 6 meses de contas)", new BigDecimal("4000.00"), new BigDecimal("1500.00"), "https://link-da-foto.com/reserva.png", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uLucas));
-        metas.add(criarMeta("Troca de Notebook", "Economizar para novo computador de trabalho", new BigDecimal("3200.00"), new BigDecimal("1800.00"), "https://link-da-foto.com/notebook.png", LocalDate.of(ano, 2, 1), LocalDate.of(ano, 11, 30), TipoMeta.PRAZO_FIXO, uLucas));
-        metas.add(criarMeta("Limite Supermercado", "Controle mensal com compras de mercado", new BigDecimal("600.00"), new BigDecimal("318.45"), "https://link-da-foto.com/mercado.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uLucas));
+        metas.add(criarMeta("Reserva de Emergência", "Guardar dinheiro para imprevistos (3 a 6 meses de contas)", new BigDecimal("4000.00"), new BigDecimal("1500.00"), "reserva", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uLucas));
+        metas.add(criarMeta("Troca de Notebook", "Economizar para novo computador de trabalho", new BigDecimal("3200.00"), new BigDecimal("1800.00"), "eletronicos", LocalDate.of(ano, 2, 1), LocalDate.of(ano, 11, 30), TipoMeta.POUPANCA, uLucas));
+        metas.add(criarMeta("Limite Supermercado", "Controle mensal com compras de mercado", new BigDecimal("600.00"), new BigDecimal("318.45"), "compras_mercado", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uLucas));
+        metas.add(criarMeta("Viagem de Férias", "Viagem em família no final do ano", new BigDecimal("3500.00"), new BigDecimal("2100.00"), "viagem", LocalDate.of(ano, 2, 15), LocalDate.of(ano, 12, 20), TipoMeta.POUPANCA, uLucas));
+        metas.add(criarMeta("Quitar Empréstimo", "Amortização antecipada da renegociação", new BigDecimal("2500.00"), new BigDecimal("1800.00"), "divida_quitacao", LocalDate.of(ano, 1, 10), LocalDate.of(ano, 10, 10), TipoMeta.DIVIDA, uLucas));
 
         // Bruno
-        metas.add(criarMeta("Fundo de Reserva", "Guardar em caixinha com liquidez diária", new BigDecimal("6000.00"), new BigDecimal("3200.00"), "https://link-da-foto.com/reserva.png", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uBruno));
-        metas.add(criarMeta("Revisão e Seguro do Carro", "Poupar para revisão preventiva anual", new BigDecimal("2000.00"), new BigDecimal("1250.00"), "https://link-da-foto.com/carro.png", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 10, 31), TipoMeta.PRAZO_FIXO, uBruno));
-        metas.add(criarMeta("Limite Alimentação e Delivery", "Controle mensal de almoço fora e iFood", new BigDecimal("850.00"), new BigDecimal("583.70"), "https://link-da-foto.com/alimentacao.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uBruno));
+        metas.add(criarMeta("Fundo de Reserva", "Guardar em caixinha com liquidez diária", new BigDecimal("6000.00"), new BigDecimal("3200.00"), "cofrinho", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uBruno));
+        metas.add(criarMeta("Revisão e Seguro do Carro", "Poupar para revisão preventiva anual", new BigDecimal("2000.00"), new BigDecimal("1250.00"), "carro", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 10, 31), TipoMeta.POUPANCA, uBruno));
+        metas.add(criarMeta("Limite Alimentação e Delivery", "Controle mensal de almoço fora e iFood", new BigDecimal("850.00"), new BigDecimal("583.70"), "compras_mercado", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uBruno));
+        metas.add(criarMeta("Reforma da Casa", "Troca de pisos e pintura da sala", new BigDecimal("5000.00"), new BigDecimal("2200.00"), "casa", LocalDate.of(ano, 4, 1), LocalDate.of(ano, 11, 30), TipoMeta.POUPANCA, uBruno));
 
         // Eduardo
-        metas.add(criarMeta("Computador para Estudo", "Equipamento para faculdade e cursos", new BigDecimal("2000.00"), new BigDecimal("750.00"), "https://link-da-foto.com/estudo.png", LocalDate.of(ano, 2, 15), LocalDate.of(ano, 12, 15), TipoMeta.POUPANCA, uEduardo));
-        metas.add(criarMeta("Limite Lazer e Saídas", "Controle de despesas em finais de semana", new BigDecimal("180.00"), new BigDecimal("75.90"), "https://link-da-foto.com/lazer.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uEduardo));
+        metas.add(criarMeta("Computador para Estudo", "Equipamento para faculdade e cursos", new BigDecimal("2000.00"), new BigDecimal("750.00"), "eletronicos", LocalDate.of(ano, 2, 15), LocalDate.of(ano, 12, 15), TipoMeta.POUPANCA, uEduardo));
+        metas.add(criarMeta("Limite Lazer e Saídas", "Controle de despesas em finais de semana", new BigDecimal("180.00"), new BigDecimal("75.90"), "lazer", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uEduardo));
+        metas.add(criarMeta("Investimento Renda Fixa", "Aportes mensais no Tesouro Direto", new BigDecimal("3000.00"), new BigDecimal("1400.00"), "investimento", LocalDate.of(ano, 1, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uEduardo));
 
         // Pedro
-        metas.add(criarMeta("Curso Técnico / Certificação", "Investir em capacitação profissional", new BigDecimal("1000.00"), new BigDecimal("450.00"), "https://link-da-foto.com/curso.png", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 11, 30), TipoMeta.PRAZO_FIXO, uPedro));
-        metas.add(criarMeta("Limite Mensal de Lazer", "Manter gastos recreativos sob controle", new BigDecimal("150.00"), new BigDecimal("87.50"), "https://link-da-foto.com/lazer.png", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uPedro));
+        metas.add(criarMeta("Curso Técnico / Certificação", "Investir em capacitação profissional", new BigDecimal("1000.00"), new BigDecimal("450.00"), "educacao", LocalDate.of(ano, 3, 1), LocalDate.of(ano, 11, 30), TipoMeta.POUPANCA, uPedro));
+        metas.add(criarMeta("Limite Mensal de Lazer", "Manter gastos recreativos sob controle", new BigDecimal("150.00"), new BigDecimal("87.50"), "lazer", LocalDate.of(ano, mes, 1), LocalDate.of(ano, mes, hoje.lengthOfMonth()), TipoMeta.GASTO, uPedro));
+        metas.add(criarMeta("Plano de Saúde e Cuidados", "Reserva para exames e consultas", new BigDecimal("800.00"), new BigDecimal("500.00"), "saude", LocalDate.of(ano, 2, 1), LocalDate.of(ano, 12, 31), TipoMeta.POUPANCA, uPedro));
 
         metaRepository.saveAll(metas);
 
@@ -486,7 +499,29 @@ public class DatabaseSeeder implements CommandLineRunner {
         m.setDataLimite(dataLimite);
         m.setTipoMeta(tipoMeta);
         m.setUsuario(usuario);
+        m.setStatus(com.npl.na_ponta_do_lapis.entity.enums.StatusMeta.EM_ANDAMENTO);
+        if (usuario.getFamilia() != null && ("Reserva de Emergência".equals(nome) || "Fundo de Reserva".equals(nome))) {
+            m.setFamilia(usuario.getFamilia());
+        }
         return m;
+    }
+
+    private void popularConquistasPadrao() {
+        if (conquistaRepository.count() == 0) {
+            log.info("[DatabaseSeeder] Inicializando catálogo de conquistas financeiras...");
+            List<Conquista> conquistas = List.of(
+                    new Conquista("PRIMEIRA_META", "Primeiro Passo", "Cadastrou a sua primeira meta financeira no sistema.", "pi-flag", 50, CategoriaConquista.METAS),
+                    new Conquista("PRIMEIRO_APORTE", "Cofrinho Aberto", "Fez o seu primeiro aporte financeiro em uma meta.", "pi-wallet", 50, CategoriaConquista.ECONOMIA),
+                    new Conquista("POUPADOR_BRONZE", "Poupador Bronze", "Realizou 5 aportes e manteve o ritmo das suas metas.", "pi-star", 100, CategoriaConquista.ECONOMIA),
+                    new Conquista("META_BATIDA_1", "Alvo Conquistado", "Concluiu com sucesso a sua primeira meta financeira!", "pi-check-circle", 150, CategoriaConquista.METAS),
+                    new Conquista("MESTRE_DAS_METAS", "Mestre dos Objetivos", "Concluiu 3 ou mais metas financeiras com êxito.", "pi-crown", 300, CategoriaConquista.METAS),
+                    new Conquista("ORCAMENTO_BLINDADO", "Orçamento Blindado", "Criou um teto de gastos para controlar despesas.", "pi-shield", 75, CategoriaConquista.DISCIPLINA),
+                    new Conquista("LIVRE_DE_DIVIDAS", "Adeus Dívida", "Criou uma meta para quitar dívidas e pendências financeiras.", "pi-bolt", 75, CategoriaConquista.DISCIPLINA),
+                    new Conquista("FAMILIA_UNIDA", "Finanças em Família", "Criou ou compartilhou uma meta com seu grupo familiar.", "pi-users", 100, CategoriaConquista.FAMILIA)
+            );
+            conquistaRepository.saveAll(conquistas);
+            log.info("[DatabaseSeeder] {} conquistas cadastradas no catálogo.", conquistas.size());
+        }
     }
 
 }

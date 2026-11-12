@@ -2,7 +2,6 @@ import { Component, Input } from "@angular/core";
 import { CommonModule, DecimalPipe } from "@angular/common";
 import { IContas, ehCartaoCredito } from "../../../../model/IContas.models";
 import { ITransacoes } from "../../../../model/ITransacoes.model";
-import { ICotacao } from "../../../../model/ICotacao.models";
 import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 
 @Component({
@@ -140,8 +139,6 @@ import { AppMoedaPipe } from "../../../../shared/pipes/app-moeda.pipe";
 export class CardsResumoComponent {
   @Input() contas: IContas[] = [];
   @Input() transacoes: ITransacoes[] = [];
-  @Input() cotacaoDolar?: ICotacao;
-  @Input() cotacaoEuro?: ICotacao;
 
   readonly mesesNomes = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',

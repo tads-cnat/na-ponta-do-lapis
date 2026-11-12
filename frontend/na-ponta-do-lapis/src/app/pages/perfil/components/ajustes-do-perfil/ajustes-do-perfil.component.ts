@@ -5,6 +5,8 @@ import { ActivatedRoute } from '@angular/router';
 import { BotoesAcaoComponent } from '../botoes-acao/botoes-acao.component';
 import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/formulario-secao.component';
 import { IntegracoesPerfilComponent } from '../integracoes-perfil/integracoes-perfil.component';
+import { ConquistasPerfilComponent } from '../conquistas-perfil/conquistas-perfil.component';
+import { IconeBandeiraComponent } from '../../../../shared/components/icone-bandeira/icone-bandeira.component';
 import { UsuarioService } from '../../service/perfil.services';
 import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
@@ -15,12 +17,12 @@ import { Usuario } from '../../../../model/IUsuario.models';
 @Component({
   selector: 'app-ajustes-do-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
   templateUrl: './ajustes-do-perfil.component.html'
 })
 export class AjustesPerfilComponent implements OnInit {
   public perfilForm!: FormGroup;
-  public abaAtiva: 'dados' | 'integracoes' = 'dados';
+  public abaAtiva: 'dados' | 'conquistas' | 'integracoes' = 'dados';
   public moedaOriginalUsuario: string = 'BRL';
   public usuarioLogado: Usuario | null = null;
 
@@ -88,7 +90,10 @@ export class AjustesPerfilComponent implements OnInit {
   ngOnInit(): void {
     this.carregarDadosIniciais();
     this.route.queryParams.subscribe((params) => {
-      if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes' || params['aba'] === 'ia' || params['secao'] === 'ia') {
+      if (params['aba'] === 'conquistas' || params['tab'] === 'conquistas') {
+        this.abaAtiva = 'conquistas';
+        this.cdr.detectChanges();
+      } else if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes' || params['aba'] === 'ia' || params['secao'] === 'ia') {
         this.abaAtiva = 'integracoes';
         this.cdr.detectChanges();
       }

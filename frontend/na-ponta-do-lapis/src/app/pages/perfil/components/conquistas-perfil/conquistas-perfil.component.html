@@ -1,0 +1,263 @@
+<div class="w-full flex flex-col gap-8 font-sans">
+
+  <!-- Estado de Carregamento -->
+  <div *ngIf="carregando" class="flex flex-col gap-6 animate-pulse">
+    <div class="h-44 rounded-3xl bg-slate-100 w-full"></div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div class="h-36 rounded-2xl bg-slate-100" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+  </div>
+
+  <!-- Estado de Erro -->
+  <div *ngIf="!carregando && erroAoCarregar" class="p-8 rounded-3xl bg-red-50/60 border border-red-100 text-center flex flex-col items-center gap-3">
+    <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center">
+      <i class="pi pi-exclamation-triangle text-xl"></i>
+    </div>
+    <h3 class="text-slate-900 font-bold text-base m-0">Não foi possível carregar as conquistas</h3>
+    <p class="text-xs text-slate-500 max-w-sm m-0">Ocorreu um erro ao buscar seu nível e conquistas. Tente novamente em instantes.</p>
+    <button (click)="carregarDados()" class="mt-2 px-4 py-2 rounded-xl bg-[#6214CC] hover:bg-[#5110A8] text-white text-xs font-semibold shadow-xs cursor-pointer transition-all">
+      Tentar Novamente
+    </button>
+  </div>
+
+  <!-- Conteúdo Principal -->
+  <div *ngIf="!carregando && perfil" class="flex flex-col gap-8">
+
+    <!-- 1. HERO CARD: Nível de Saúde Financeira & Barra de XP -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#2D0A5E] via-[#4A1591] to-[#6214CC] text-white p-6 sm:p-8 shadow-lg border border-purple-500/20">
+      
+      <!-- Detalhe decorativo de fundo -->
+      <div class="absolute -right-10 -bottom-10 w-64 h-64 rounded-full bg-gradient-to-tr from-[#EEC046]/20 to-transparent blur-2xl pointer-events-none"></div>
+      <div class="absolute top-0 right-1/4 w-32 h-32 rounded-full bg-white/5 blur-xl pointer-events-none"></div>
+
+      <div class="relative z-10 flex flex-col gap-6">
+        
+        <!-- Topo do Card de Nível -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          
+          <div class="flex items-center gap-4">
+            <!-- Insígnia do Nível -->
+            <div class="relative flex items-center justify-center">
+              <app-medalha-conquista 
+                id="MESTRE_DAS_METAS" 
+                [desbloqueada]="true" 
+                tamanho="md">
+              </app-medalha-conquista>
+              <span class="absolute -bottom-2 -right-1 px-2 py-0.5 rounded-full bg-[#EEC046] text-slate-950 font-black text-[11px] shadow-md border border-amber-500">
+                Nv. {{ perfil.nivel }}
+              </span>
+            </div>
+
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs uppercase tracking-wider text-[#EEC046] font-bold">Saúde Financeira</span>
+                <span class="text-white/40">•</span>
+                <span class="text-xs text-white/80 font-medium">Nível {{ perfil.nivel }} de 5</span>
+              </div>
+              <h2 class="text-xl sm:text-2xl font-black text-white tracking-tight m-0">
+                {{ perfil.tituloNivel }}
+              </h2>
+            </div>
+          </div>
+
+          <!-- Total de XP -->
+          <div class="sm:text-right flex flex-col sm:items-end">
+            <span class="text-xs text-white/70 font-medium">Pontuação Total</span>
+            <div class="flex items-baseline gap-1.5">
+              <span class="text-2xl sm:text-3xl font-black text-[#EEC046]">{{ perfil.totalXp }}</span>
+              <span class="text-xs font-bold text-white/80">XP</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Barra de Progresso de XP até o Próximo Nível -->
+        <div class="flex flex-col gap-2 pt-2 border-t border-white/10">
+          <div class="flex items-center justify-between text-xs">
+            <span class="text-white/80 font-medium">
+              <span *ngIf="perfil.nivel < 5">
+                Progresso para o <strong>Nível {{ perfil.nivel + 1 }}</strong>
+              </span>
+              <span *ngIf="perfil.nivel >= 5" class="text-[#EEC046] font-bold flex items-center gap-1">
+                <i class="pi pi-star-fill text-[10px]"></i> Nível Máximo Alcançado!
+              </span>
+            </span>
+            <span class="text-white/90 font-bold">
+              <span *ngIf="perfil.nivel < 5">
+                {{ perfil.xpAtualNoNivel }} / {{ perfil.xpNecessarioParaProximoNivel }} XP
+              </span>
+              <span *ngIf="perfil.nivel >= 5">
+                {{ perfil.totalXp }} XP Acumulados
+              </span>
+            </span>
+          </div>
+
+          <div class="w-full h-3 rounded-full bg-black/30 backdrop-blur-sm p-0.5 border border-white/10">
+            <div 
+              class="h-full rounded-full bg-gradient-to-r from-[#EEC046] to-[#FDE047] transition-all duration-700 ease-out shadow-[0_0_12px_rgba(238,192,70,0.5)]"
+              [style.width.%]="perfil.progressoNivel">
+            </div>
+          </div>
+        </div>
+
+        <!-- Métricas Rápidas -->
+        <div class="grid grid-cols-3 gap-2 sm:gap-4 pt-3 border-t border-white/10">
+          <div class="p-3 rounded-xl bg-white/5 backdrop-blur-xs flex flex-col">
+            <span class="text-[11px] text-white/60 font-medium">Conquistas</span>
+            <span class="text-base sm:text-lg font-bold text-white">
+              {{ perfil.totalConquistasDesbloqueadas }} <span class="text-xs font-normal text-white/60">/ {{ perfil.totalConquistasExistentes }}</span>
+            </span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-white/5 backdrop-blur-xs flex flex-col">
+            <span class="text-[11px] text-white/60 font-medium">Metas Batidas</span>
+            <span class="text-base sm:text-lg font-bold text-white">
+              {{ perfil.totalMetasConcluidas }}
+            </span>
+          </div>
+
+          <div class="p-3 rounded-xl bg-white/5 backdrop-blur-xs flex flex-col">
+            <span class="text-[11px] text-white/60 font-medium">Status</span>
+            <span class="text-xs sm:text-sm font-bold text-[#EEC046] truncate">
+              {{ perfil.progressoNivel >= 100 ? 'Imparável' : 'Evoluindo' }}
+            </span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 2. BARRA DE FILTROS POR CATEGORIA -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div>
+        <h3 class="text-slate-900 font-bold text-base sm:text-lg tracking-tight m-0">
+          Galeria de Medalhas
+        </h3>
+        <p class="text-xs text-slate-400 font-normal m-0">
+          Desbloqueie conquistas gerenciando suas metas, mantendo aportes e alcançando a disciplina financeira.
+        </p>
+      </div>
+
+      <!-- Filtros em formato Pill -->
+      <div class="flex flex-wrap items-center gap-1.5 p-1 bg-slate-100 rounded-xl border border-slate-200/70 text-xs font-semibold">
+        <button 
+          type="button"
+          (click)="setCategoria('TODAS')"
+          [class]="categoriaFiltro === 'TODAS'
+            ? 'px-3 py-1.5 rounded-lg bg-white text-[#6214CC] shadow-xs cursor-pointer font-bold'
+            : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer'">
+          Todas ({{ perfil.conquistas.length }})
+        </button>
+
+        <button 
+          type="button"
+          (click)="setCategoria('METAS')"
+          [class]="categoriaFiltro === 'METAS'
+            ? 'px-3 py-1.5 rounded-lg bg-white text-[#6214CC] shadow-xs cursor-pointer font-bold'
+            : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer'">
+          Metas
+        </button>
+
+        <button 
+          type="button"
+          (click)="setCategoria('ECONOMIA')"
+          [class]="categoriaFiltro === 'ECONOMIA'
+            ? 'px-3 py-1.5 rounded-lg bg-white text-[#6214CC] shadow-xs cursor-pointer font-bold'
+            : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer'">
+          Economia
+        </button>
+
+        <button 
+          type="button"
+          (click)="setCategoria('DISCIPLINA')"
+          [class]="categoriaFiltro === 'DISCIPLINA'
+            ? 'px-3 py-1.5 rounded-lg bg-white text-[#6214CC] shadow-xs cursor-pointer font-bold'
+            : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer'">
+          Disciplina
+        </button>
+
+        <button 
+          type="button"
+          (click)="setCategoria('FAMILIA')"
+          [class]="categoriaFiltro === 'FAMILIA'
+            ? 'px-3 py-1.5 rounded-lg bg-white text-[#6214CC] shadow-xs cursor-pointer font-bold'
+            : 'px-3 py-1.5 rounded-lg text-slate-600 hover:text-slate-900 cursor-pointer'">
+          Família
+        </button>
+      </div>
+    </div>
+
+    <!-- 3. GRID DE CARDS DE CONQUISTAS -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      
+      <div 
+        *ngFor="let c of conquistasFiltradas"
+        [class]="c.desbloqueada 
+          ? 'p-5 rounded-2xl bg-white border-2 border-amber-300/70 shadow-xs hover:shadow-md transition-all flex flex-col justify-between gap-4 relative overflow-hidden group'
+          : 'p-5 rounded-2xl bg-slate-50/80 border border-slate-200/70 shadow-none transition-all flex flex-col justify-between gap-4 opacity-75 grayscale hover:grayscale-0 hover:opacity-100'">
+
+        <!-- Faixa de fundo decorativa para desbloqueada -->
+        <div *ngIf="c.desbloqueada" class="absolute -top-12 -right-12 w-28 h-28 rounded-full bg-amber-100/40 pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
+
+        <div class="flex items-start gap-3.5 relative z-10">
+          
+          <!-- Medalha Vetorial Exclusiva NPL -->
+          <app-medalha-conquista 
+            [id]="c.id" 
+            [desbloqueada]="c.desbloqueada" 
+            tamanho="md"
+            class="shrink-0">
+          </app-medalha-conquista>
+
+          <div class="flex flex-col min-w-0 flex-1">
+            <div class="flex items-center justify-between gap-2 mb-1">
+              <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full"
+                    [ngClass]="c.desbloqueada ? 'bg-amber-100 text-amber-900' : 'bg-slate-200 text-slate-500'">
+                {{ obterTextoCategoria(c.categoria) }}
+              </span>
+
+              <!-- Badge de XP -->
+              <span 
+                [class]="c.desbloqueada 
+                  ? 'text-xs font-bold text-[#6214CC] bg-[#6214CC]/10 px-2 py-0.5 rounded-full border border-[#6214CC]/20'
+                  : 'text-xs font-semibold text-slate-500 bg-slate-200/80 px-2 py-0.5 rounded-full'">
+                +{{ c.pontosXp }} XP
+              </span>
+            </div>
+
+            <h4 class="text-sm font-bold text-slate-900 tracking-tight m-0 mb-1">
+              {{ c.titulo }}
+            </h4>
+
+            <p class="text-xs text-slate-500 font-normal leading-relaxed m-0">
+              {{ c.descricao }}
+            </p>
+          </div>
+
+        </div>
+
+        <!-- Rodapé do Card: Data ou Dica de Desbloqueio -->
+        <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-[11px] relative z-10">
+          <span *ngIf="c.desbloqueada" class="text-emerald-700 font-semibold flex items-center gap-1.5">
+            <i class="pi pi-check-circle text-xs text-emerald-600"></i>
+            Desbloqueada em {{ formatarData(c.dataDesbloqueio) }}
+          </span>
+
+          <span *ngIf="!c.desbloqueada" class="text-slate-400 font-medium flex items-center gap-1.5">
+            <i class="pi pi-info-circle text-xs"></i>
+            Conquiste completando a ação
+          </span>
+
+          <span class="text-[10px] text-slate-400 font-mono">
+            #{{ c.id }}
+          </span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+

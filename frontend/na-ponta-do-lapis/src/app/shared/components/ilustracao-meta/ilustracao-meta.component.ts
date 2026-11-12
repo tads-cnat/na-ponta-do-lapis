@@ -1,0 +1,58 @@
+import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+export interface IlustracaoMetaItem {
+  id: string;
+  nome: string;
+  categoria: 'geral' | 'sonhos' | 'despesas' | 'dividas';
+}
+
+export const CATALOGO_ILUSTRACOES_METAS: IlustracaoMetaItem[] = [
+  { id: 'cofrinho', nome: 'Cofrinho', categoria: 'geral' },
+  { id: 'reserva', nome: 'Reserva', categoria: 'geral' },
+  { id: 'investimento', nome: 'Investimentos', categoria: 'geral' },
+  { id: 'viagem', nome: 'Viagem', categoria: 'sonhos' },
+  { id: 'carro', nome: 'Carro', categoria: 'sonhos' },
+  { id: 'casa', nome: 'Casa / Imóvel', categoria: 'sonhos' },
+  { id: 'educacao', nome: 'Educação', categoria: 'sonhos' },
+  { id: 'eletronicos', nome: 'Eletrônicos', categoria: 'sonhos' },
+  { id: 'compras_mercado', nome: 'Mercado', categoria: 'despesas' },
+  { id: 'lazer', nome: 'Lazer', categoria: 'despesas' },
+  { id: 'saude', nome: 'Saúde', categoria: 'despesas' },
+  { id: 'divida_quitacao', nome: 'Quitar Dívida', categoria: 'dividas' },
+];
+
+@Component({
+  selector: 'app-ilustracao-meta',
+  standalone: true,
+  imports: [CommonModule],
+  templateUrl: './ilustracao-meta.component.html',
+  styleUrl: './ilustracao-meta.component.css'
+})
+export class IlustracaoMetaComponent {
+  @Input() icone: string | null | undefined = 'cofrinho';
+  @Input() tamanho: 'sm' | 'md' | 'lg' = 'md';
+
+  get iconeAtivo(): string {
+    return this.icone && this.icone.trim() !== '' ? this.icone : 'cofrinho';
+  }
+
+  get dimensoesContainer(): string {
+    switch (this.tamanho) {
+      case 'sm': return 'w-11 h-11 rounded-xl';
+      case 'lg': return 'w-20 h-20 rounded-3xl';
+      case 'md':
+      default: return 'w-14 h-14 rounded-2xl';
+    }
+  }
+
+  get dimensoesSvg(): string {
+    switch (this.tamanho) {
+      case 'sm': return 'w-10 h-10';
+      case 'lg': return 'w-18 h-18';
+      case 'md':
+      default: return 'w-13 h-13';
+    }
+  }
+}
+
