@@ -39,19 +39,19 @@ export class IlustracaoMetaComponent {
 
   get dimensoesContainer(): string {
     switch (this.tamanho) {
-      case 'sm': return 'w-9 h-9 rounded-xl';
-      case 'lg': return 'w-14 h-14 rounded-2xl';
+      case 'sm': return 'w-11 h-11 rounded-xl';
+      case 'lg': return 'w-20 h-20 rounded-3xl';
       case 'md':
-      default: return 'w-12 h-12 rounded-2xl';
+      default: return 'w-14 h-14 rounded-2xl';
     }
   }
 
   get dimensoesSvg(): string {
     switch (this.tamanho) {
-      case 'sm': return 'w-5 h-5';
-      case 'lg': return 'w-8 h-8';
+      case 'sm': return 'w-10 h-10';
+      case 'lg': return 'w-18 h-18';
       case 'md':
-      default: return 'w-7 h-7';
+      default: return 'w-13 h-13';
     }
   }
 }
