@@ -109,73 +109,79 @@
   </div>
 
   <!-- CARD PRINCIPAL DE METAS -->
-  <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100">
-    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-      
-      <!-- Lado Esquerdo: Título e Status Tabs (Todas, Em Andamento, Concluídas) -->
-      <div class="flex flex-col sm:flex-row sm:items-center gap-4">
-        <div>
-          <div class="flex items-center gap-2.5">
-            <h2 class="section-title-npl m-0">Seus Objetivos</h2>
-            <span class="badge-npl-amarelo">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
-              {{ metasFiltradas().length }} {{ metasFiltradas().length === 1 ? 'meta' : 'metas' }}
-            </span>
-          </div>
-          <p class="text-xs text-slate-500 mt-0.5">Acompanhe seu progresso e mantenha suas metas em dia</p>
+  <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-sm border border-slate-100">
+    
+    <!-- CABEÇALHO DA SEÇÃO: TÍTULO, SUBTÍTULO E AÇÃO PRINCIPAL -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-slate-100/90">
+      <div>
+        <div class="flex items-center gap-2.5">
+          <h2 class="section-title-npl m-0 text-lg sm:text-xl font-bold text-slate-900">Seus Objetivos</h2>
+          <span class="badge-npl-amarelo">
+            <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
+            {{ metasFiltradas().length }} {{ metasFiltradas().length === 1 ? 'meta' : 'metas' }}
+          </span>
         </div>
-
-        <!-- Abas de Status: Todas, Em Andamento, Concluídas -->
-        <div class="flex items-center p-1 bg-slate-100 rounded-xl text-xs font-semibold self-start sm:self-auto">
-          <button type="button"
-                  (click)="filtroStatus.set('todas')"
-                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
-                  [ngClass]="filtroStatus() === 'todas' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
-            <span>Todas</span>
-            <span class="text-[10px] px-1.5 py-0.2 rounded-full"
-                  [ngClass]="filtroStatus() === 'todas' ? 'bg-slate-100 text-slate-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
-              {{ contagemTodas() }}
-            </span>
-          </button>
-          <button type="button"
-                  (click)="filtroStatus.set('em_andamento')"
-                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
-                  [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
-            <span>Em Andamento</span>
-            <span class="text-[10px] px-1.5 py-0.2 rounded-full"
-                  [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-purple-100 text-[#7843CD] font-bold' : 'bg-slate-200/70 text-slate-500'">
-              {{ contagemEmAndamento() }}
-            </span>
-          </button>
-          <button type="button"
-                  (click)="filtroStatus.set('concluidas')"
-                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
-                  [ngClass]="filtroStatus() === 'concluidas' ? 'bg-white text-emerald-800 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
-            <i class="pi pi-check-circle text-xs text-emerald-600"></i>
-            <span>Concluídas</span>
-            <span class="text-[10px] px-1.5 py-0.2 rounded-full"
-                  [ngClass]="filtroStatus() === 'concluidas' ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
-              {{ contagemConcluidas() }}
-            </span>
-          </button>
-
-          <button type="button"
-                  (click)="filtroStatus.set('expiradas')"
-                  class="px-3 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5"
-                  [ngClass]="filtroStatus() === 'expiradas' ? 'bg-white text-amber-900 shadow-2xs font-bold' : (contagemExpiradas() > 0 ? 'text-amber-700 hover:text-amber-900' : 'text-slate-500 hover:text-slate-800')">
-            <i class="pi pi-clock text-xs" [ngClass]="contagemExpiradas() > 0 || filtroStatus() === 'expiradas' ? 'text-amber-600' : 'text-slate-400'"></i>
-            <span>Expiradas</span>
-            <span class="text-[10px] px-1.5 py-0.2 rounded-full"
-                  [ngClass]="filtroStatus() === 'expiradas' ? 'bg-amber-100 text-amber-900 font-bold' : (contagemExpiradas() > 0 ? 'bg-amber-100/70 text-amber-800 font-bold' : 'bg-slate-200/70 text-slate-500')">
-              {{ contagemExpiradas() }}
-            </span>
-          </button>
-        </div>
+        <p class="text-xs text-slate-500 mt-1 mb-0">Acompanhe seu progresso e mantenha seus objetivos organizados</p>
       </div>
+
+      <!-- Botão Nova Meta em posição de destaque como CTA principal -->
+      <p-button size="small" (onClick)="abrirDialog()" styleClass="btn-npl-primary rounded-xl! px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-xs self-start sm:self-auto shrink-0 cursor-pointer">
+        <i class="pi pi-plus mr-1.5"></i>
+        <span>Nova Meta</span>
+      </p-button>
+    </div>
+
+    <!-- BARRA DE CONTROLE: ABAS DE STATUS E FILTROS COMPLEMENTARES -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3.5 pt-4 mb-6">
       
-      <!-- Lado Direito: Filtros adicionais (Tipo de Meta, Origem) + Botão Nova Meta -->
+      <!-- Abas de Status: Todas, Em Andamento, Concluídas, Expiradas -->
+      <div class="flex items-center p-1 bg-slate-100/80 rounded-xl text-xs font-semibold overflow-x-auto max-w-full">
+        <button type="button"
+                (click)="filtroStatus.set('todas')"
+                class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+                [ngClass]="filtroStatus() === 'todas' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+          <span>Todas</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full"
+                [ngClass]="filtroStatus() === 'todas' ? 'bg-slate-100 text-slate-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
+            {{ contagemTodas() }}
+          </span>
+        </button>
+        <button type="button"
+                (click)="filtroStatus.set('em_andamento')"
+                class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+                [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-white text-slate-900 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+          <span>Em Andamento</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full"
+                [ngClass]="filtroStatus() === 'em_andamento' ? 'bg-purple-100 text-[#7843CD] font-bold' : 'bg-slate-200/70 text-slate-500'">
+            {{ contagemEmAndamento() }}
+          </span>
+        </button>
+        <button type="button"
+                (click)="filtroStatus.set('concluidas')"
+                class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+                [ngClass]="filtroStatus() === 'concluidas' ? 'bg-white text-emerald-800 shadow-2xs font-bold' : 'text-slate-500 hover:text-slate-800'">
+          <i class="pi pi-check-circle text-xs text-emerald-600"></i>
+          <span>Concluídas</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full"
+                [ngClass]="filtroStatus() === 'concluidas' ? 'bg-emerald-100 text-emerald-800 font-bold' : 'bg-slate-200/70 text-slate-500'">
+            {{ contagemConcluidas() }}
+          </span>
+        </button>
+        <button type="button"
+                (click)="filtroStatus.set('expiradas')"
+                class="px-3.5 py-1.5 rounded-lg transition-all cursor-pointer flex items-center gap-1.5 shrink-0"
+                [ngClass]="filtroStatus() === 'expiradas' ? 'bg-white text-amber-900 shadow-2xs font-bold' : (contagemExpiradas() > 0 ? 'text-amber-700 hover:text-amber-900' : 'text-slate-500 hover:text-slate-800')">
+          <i class="pi pi-clock text-xs" [ngClass]="contagemExpiradas() > 0 || filtroStatus() === 'expiradas' ? 'text-amber-600' : 'text-slate-400'"></i>
+          <span>Expiradas</span>
+          <span class="text-[10px] px-1.5 py-0.2 rounded-full"
+                [ngClass]="filtroStatus() === 'expiradas' ? 'bg-amber-100 text-amber-900 font-bold' : (contagemExpiradas() > 0 ? 'bg-amber-100/70 text-amber-800 font-bold' : 'bg-slate-200/70 text-slate-500')">
+            {{ contagemExpiradas() }}
+          </span>
+        </button>
+      </div>
+
+      <!-- Filtros Complementares: Tipo e Origem -->
       <div class="flex items-center gap-2.5 flex-wrap">
-        
         <!-- Filtro por Tipo de Meta -->
         <p-select 
           [options]="opcoesFiltroTipo" 
@@ -201,12 +207,8 @@
             [appendTo]="'body'">
           </p-select>
         }
-
-        <p-button size="small" (onClick)="abrirDialog()" styleClass="btn-npl-primary rounded-xl! px-3.5 py-2 text-xs sm:text-sm font-semibold shadow-xs self-start sm:self-auto shrink-0">
-          <i class="pi pi-plus mr-1.5"></i>
-          <span>Nova Meta</span>
-        </p-button>
       </div>
+
     </div>
 
     <div class="overflow-y-auto max-h-140 pr-1">
