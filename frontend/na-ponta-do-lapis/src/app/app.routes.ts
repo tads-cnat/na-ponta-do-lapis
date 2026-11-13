@@ -1,7 +1,6 @@
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { Routes } from '@angular/router';
-import { LoginComponent } from './auth/components/login/login.component';
-import { SignupComponent } from './auth/components/signup/signup.component';
+import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
+import { AuthPageComponent } from './auth/components/auth-page/auth-page.component';
 import { TransacoesComponent } from './pages/transacoes/transacoes.component';
 import { ContasComponent } from './pages/contas/contas.component';
 import { MetasComponent } from './pages/metas/metas.component';
@@ -14,14 +13,20 @@ import { FamiliaComponent } from './pages/familia/familia.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 
+export function authRouteMatcher(segments: UrlSegment[]): UrlMatchResult | null {
+    if (segments.length === 1 && (segments[0].path === 'login' || segments[0].path === 'signup')) {
+        return { consumed: segments };
+    }
+    return null;
+}
+
 export const routes: Routes = [
     {
         path: '',
         component: LandingPageComponent,
         pathMatch: 'full'
     },
-    { path: 'login', component: LoginComponent },
-    { path: 'signup', component: SignupComponent },
+    { matcher: authRouteMatcher, component: AuthPageComponent },
 
     // Área interna protegida
     {

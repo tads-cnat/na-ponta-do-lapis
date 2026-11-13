@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -15,6 +15,7 @@ import { MessageService } from 'primeng/api';
   styleUrl: './login.component.css',
 })
 export class LoginComponent {
+  @Input() embedded = false;
 
   loginForm: FormGroup;
   loading = false;

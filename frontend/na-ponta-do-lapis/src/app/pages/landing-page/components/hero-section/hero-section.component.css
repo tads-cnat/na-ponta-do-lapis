@@ -1,0 +1,109 @@
+@keyframes heroFrameIn {
+  from {
+    opacity: 0;
+    transform: scale(0.65) rotate(-3deg);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes heroMainIn {
+  from {
+    opacity: 0;
+    transform: translateY(42px) scale(0.86);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes heroLineSweep {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes heroPopSpring {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.4);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes heroTextRise {
+  from {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-frame-in,
+.hero-main-in,
+.hero-line-sweep,
+.hero-pop-spring,
+.hero-text-rise {
+  opacity: 0;
+}
+
+.hero-active .hero-frame-in {
+  animation: heroFrameIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) var(--npl-delay, 220ms) both;
+}
+
+.hero-active .hero-main-in {
+  animation: heroMainIn 0.85s cubic-bezier(0.22, 1, 0.36, 1) var(--npl-delay, 80ms) both;
+}
+
+.hero-active .hero-line-sweep {
+  transform-origin: left center;
+  animation: heroLineSweep 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--npl-delay, 400ms) both;
+}
+
+.hero-active .hero-pop-spring {
+  animation: heroPopSpring 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) var(--npl-delay, 480ms) both;
+}
+
+.hero-active .hero-text-rise {
+  animation: heroTextRise 0.8s cubic-bezier(0.22, 1, 0.36, 1) var(--npl-delay, 180ms) both;
+}
+
+.hero-parallax-layer {
+  transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-frame-in,
+  .hero-main-in,
+  .hero-line-sweep,
+  .hero-pop-spring,
+  .hero-text-rise,
+  .hero-active .hero-frame-in,
+  .hero-active .hero-main-in,
+  .hero-active .hero-line-sweep,
+  .hero-active .hero-pop-spring,
+  .hero-active .hero-text-rise {
+    opacity: 1 !important;
+    animation: none !important;
+  }
+
+  .hero-parallax-layer {
+    transform: none !important;
+    transition: none !important;
+  }
+}

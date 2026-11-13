@@ -320,3 +320,152 @@
   padding: 1rem 1.5rem !important;
 }
 
+/* ==========================================================================
+   ANIMAÇÕES & MICRO-INTERAÇÕES SUAVES (MOTION 2 — BALANCED)
+   ========================================================================== */
+
+:root {
+  --npl-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+@keyframes nplFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes nplScaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes nplPageEnter {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes nplDrawLine {
+  from {
+    stroke-dashoffset: 260;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.npl-animate-fade-up {
+  animation: nplFadeUp 0.55s var(--npl-ease-out) var(--npl-delay, 0ms) both;
+}
+
+.npl-animate-scale-in {
+  animation: nplScaleIn 0.55s var(--npl-ease-out) var(--npl-delay, 0ms) both;
+}
+
+.npl-page-enter {
+  animation: nplPageEnter 0.28s var(--npl-ease-out) both;
+}
+
+/* Revelação ao rolar (ativada uma única vez via appReveal) */
+.npl-reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 0.6s var(--npl-ease-out) var(--npl-delay, 0ms),
+    transform 0.6s var(--npl-ease-out) var(--npl-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.npl-reveal-scale {
+  opacity: 0;
+  transform: scale(0.97);
+  transition:
+    opacity 0.6s var(--npl-ease-out) var(--npl-delay, 0ms),
+    transform 0.6s var(--npl-ease-out) var(--npl-delay, 0ms);
+  will-change: opacity, transform;
+}
+
+.npl-reveal.npl-revealed,
+.npl-reveal-scale.npl-revealed {
+  opacity: 1;
+  transform: none;
+  will-change: auto;
+}
+
+/* Traço SVG animado ao revelar a seção */
+.npl-draw-svg path {
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+}
+
+.npl-revealed .npl-draw-svg path,
+.npl-animate-draw path {
+  animation: nplDrawLine 0.8s var(--npl-ease-out) 0.2s forwards;
+}
+
+/* Sublinhado animado para links de navegação */
+.npl-nav-link {
+  position: relative;
+}
+
+.npl-nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background-color: #EEC046;
+  border-radius: 9999px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.25s var(--npl-ease-out);
+}
+
+.npl-nav-link:hover::after,
+.npl-nav-link:focus-visible::after,
+.npl-nav-link.npl-nav-active::after {
+  transform: scaleX(1);
+}
+
+/* Respeito obrigatório à preferência de movimento reduzido (R-39) */
+@media (prefers-reduced-motion: reduce) {
+  .npl-animate-fade-up,
+  .npl-animate-scale-in,
+  .npl-page-enter {
+    animation: none !important;
+  }
+
+  .npl-reveal,
+  .npl-reveal-scale {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+
+  .npl-draw-svg path,
+  .npl-animate-draw path {
+    stroke-dashoffset: 0 !important;
+    animation: none !important;
+  }
+
+  .npl-nav-link::after {
+    transition: none !important;
+  }
+}
+
+
