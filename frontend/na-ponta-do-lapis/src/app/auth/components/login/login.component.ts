@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
+=======
+import { Component, Input } from '@angular/core';
+>>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -16,9 +20,14 @@ import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-co
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
+<<<<<<< HEAD
 export class LoginComponent implements AfterViewInit {
   @Input() embedded = false;
   @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
+=======
+export class LoginComponent {
+  @Input() embedded = false;
+>>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
 
   loginForm: FormGroup;
   loading = false;

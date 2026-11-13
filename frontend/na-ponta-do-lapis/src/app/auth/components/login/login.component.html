@@ -5,7 +5,7 @@
     <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
 =======
 <p-toast></p-toast>
-<div class="flex h-screen w-full bg-white overflow-hidden">
+<div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
 
     <div class="flex flex-1 flex-col justify-between p-6 sm:p-10 overflow-y-auto">
 >>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
@@ -19,6 +19,7 @@
         </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
         <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
             <app-mascote-login
                 [estado]="mascoteEstado()"
@@ -30,6 +31,9 @@
 =======
         <form [formGroup]="loginForm" (ngSubmit)="login()" class="flex flex-col gap-4 w-full max-w-md mx-auto my-auto py-8">
 >>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
+=======
+        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-4 w-full max-w-md mx-auto my-auto py-8">
+>>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
             <div>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
                 <p class="text-sm sm:text-base text-slate-500 mt-1.5">
@@ -163,6 +167,7 @@
         <div class="hidden sm:block h-9"></div>
     </div>
 
+    @if (!embedded) {
     <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
         <div class="flex flex-col items-center gap-4 z-10 px-8 text-center max-w-sm">
             <img src="/logo.svg" alt="Na Ponta do Lápis" class="w-64 max-w-xs drop-shadow-xs">
@@ -173,6 +178,7 @@
         </div>
 >>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
     </div>
+<<<<<<< HEAD
 
     @if (!embedded) {
     <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
@@ -196,3 +202,7 @@
     (confirm)="confirmarTermosGoogle()"
     (cancel)="cancelarTermosGoogle()">
 </app-google-consent-dialog>
+=======
+    }
+</div>
+>>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
