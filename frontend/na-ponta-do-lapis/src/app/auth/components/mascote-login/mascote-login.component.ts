@@ -88,12 +88,19 @@ export class MascoteLoginComponent implements AfterViewInit {
   private easterEggTimer: ReturnType<typeof setTimeout> | null = null;
   private clickCount = 0;
   private clickStreak = 0;
+<<<<<<< HEAD
   private lastEasterEggIndex = -1;
+=======
+  private easterEggIndex = 0;
+>>>>>>> b911d24 (feat(frontend): cria mascote interativo do NPL com fisica de molas e easter eggs)
   private lastClickAt = 0;
 
   private readonly easterEggPhrases = [
     'E o Pix, nada ainda?',
+<<<<<<< HEAD
     'Stonks!',
+=======
+>>>>>>> b911d24 (feat(frontend): cria mascote interativo do NPL com fisica de molas e easter eggs)
     'Se não comprar, o desconto é maior!',
     'O boleto não perdoa!',
     'Só no cartão, meu nobre!',
@@ -256,12 +263,17 @@ export class MascoteLoginComponent implements AfterViewInit {
 
     if (this.clickStreak >= 5) {
       this.clickStreak = 0;
+<<<<<<< HEAD
       let nextIndex = Math.floor(Math.random() * this.easterEggPhrases.length);
       if (this.easterEggPhrases.length > 1 && nextIndex === this.lastEasterEggIndex) {
         nextIndex = (nextIndex + 1) % this.easterEggPhrases.length;
       }
       this.lastEasterEggIndex = nextIndex;
       this.easterEggPhrase.set(this.easterEggPhrases[nextIndex]);
+=======
+      this.easterEggPhrase.set(this.easterEggPhrases[this.easterEggIndex % this.easterEggPhrases.length]);
+      this.easterEggIndex++;
+>>>>>>> b911d24 (feat(frontend): cria mascote interativo do NPL com fisica de molas e easter eggs)
       this.easterEgg.set(true);
       this.gracinha.set('dance');
       this.bounceY.velocity = -75;
