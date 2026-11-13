@@ -9,6 +9,7 @@ import com.npl.na_ponta_do_lapis.repository.TransacaoRepository;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
+import com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.FamiliaResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFamiliaDTO;
@@ -32,13 +33,22 @@ public class FamiliaService {
     private final TransacaoRepository transacaoRepository;
     private final UsuarioService usuarioService;
     private final ContaFinanceiraRepository contaFinanceiraRepository;
+    private final UsuarioAuthCacheService usuarioAuthCacheService;
 
-    public FamiliaService(FamiliaRepository familiaRepository, UsuarioRepository usuarioRepository, ContaFinanceiraRepository contaFinanceiraRepository, TransacaoRepository transacaoRepository, UsuarioService usuarioService) {
+    public FamiliaService(
+            FamiliaRepository familiaRepository,
+            UsuarioRepository usuarioRepository,
+            ContaFinanceiraRepository contaFinanceiraRepository,
+            TransacaoRepository transacaoRepository,
+            UsuarioService usuarioService,
+            UsuarioAuthCacheService usuarioAuthCacheService
+    ) {
         this.familiaRepository = familiaRepository;
         this.usuarioRepository = usuarioRepository;
         this.contaFinanceiraRepository = contaFinanceiraRepository;
         this.transacaoRepository = transacaoRepository;
         this.usuarioService = usuarioService;
+        this.usuarioAuthCacheService = usuarioAuthCacheService;
     }
 
     @Transactional
@@ -50,6 +60,7 @@ public class FamiliaService {
         criador.setFamilia(familia);
         criador.setPapel(Papel.ADMIN_FAMILIA);
         usuarioRepository.save(criador);
+        usuarioAuthCacheService.evictPorUsuario(criador);
 
         return new FamiliaResponseDTO(familia);
     }
@@ -61,6 +72,7 @@ public class FamiliaService {
         for (Usuario membro : familia.getMembros()) {
             membro.setFamilia(null);
             usuarioRepository.save(membro);
+            usuarioAuthCacheService.evictPorUsuario(membro);
         }
         familiaRepository.deleteById(id);
     }
@@ -79,6 +91,9 @@ public class FamiliaService {
             familia.setFotoFamilia(familiaDTO.foto());
         }
         familiaRepository.save(familia);
+        if (familia.getMembros() != null) {
+            familia.getMembros().forEach(usuarioAuthCacheService::evictPorUsuario);
+        }
         return new FamiliaResponseDTO(familia);
     }
 
@@ -95,6 +110,7 @@ public class FamiliaService {
         }
         usuario.setFamilia(familia);
         usuarioRepository.save(usuario);
+        usuarioAuthCacheService.evictPorUsuario(usuario);
         return new FamiliaResponseDTO(familia);
     }
 
@@ -111,6 +127,7 @@ public class FamiliaService {
         }
         usuario.setFamilia(null);
         usuarioRepository.save(usuario);
+        usuarioAuthCacheService.evictPorUsuario(usuario);
         return new FamiliaResponseDTO(familia);
     }
 
@@ -132,6 +149,7 @@ public class FamiliaService {
 
         novoAdmin.setPapel(Papel.ADMIN_FAMILIA);
         usuarioRepository.save(novoAdmin);
+        usuarioAuthCacheService.evictPorUsuario(novoAdmin);
         return new UsuarioResponseDTO(novoAdmin);
     }
 
