@@ -1,32 +1,53 @@
-<nav class="w-full h-24 bg-white/95 backdrop-blur-xs px-6 md:px-20 flex justify-between items-center border-b border-slate-200/80 sticky top-0 z-50">
-  @if (!isMobile) {
-    <a routerLink="/" class="flex items-center justify-center">
-      <img src="logo.svg" alt="Na Ponta do Lápis" class="h-11 md:h-12 object-contain" />
+<nav class="w-full h-24 bg-white/95 backdrop-blur-xs border-b border-slate-200/80 fixed top-0 left-0 right-0 z-50">
+  <div class="w-full max-w-7xl mx-auto h-full px-6 md:px-12 lg:px-16 flex justify-between items-center">
+    <a routerLink="/" (click)="navegarPara($event, 'inicio')" class="flex items-center justify-center shrink-0">
+      <img src="logo.svg" alt="Na Ponta do Lápis" class="h-9 sm:h-11 md:h-12 object-contain" />
     </a>
-  }
-  <div class="hidden md:flex items-center gap-8">
-    <a href="#" (click)="$event.preventDefault(); $any($event.target).ownerDocument.defaultView.scrollTo({top: 0, behavior: 'smooth'})"
-       class="text-base font-semibold text-[#7843CD] hover:text-[#6214CC] transition-colors relative after:content-[''] after:absolute after:-bottom-1 after:left-0 after:w-full after:h-0.5 after:bg-[#EEC046] after:rounded-full">
-      Início
-    </a>
-    <a href="#o-que-fazemos"
-       class="text-base font-medium text-slate-600 hover:text-[#7843CD] transition-colors">
-      Produtos
-    </a>
-    <a href="#por-que-nos"
-       class="text-base font-medium text-slate-600 hover:text-[#7843CD] transition-colors">
-      Sobre nós
-    </a>
-  </div>
 
-  <div class="flex items-center justify-center gap-3">
-    <a routerLink="/login" class="h-11 px-6 border border-[#7843CD]/30 bg-white text-[#7843CD] font-semibold text-sm flex items-center justify-center rounded-xl hover:bg-[#F3E8FF] hover:border-[#7843CD] transition-all shadow-2xs">
-      Entrar
-    </a>
-    
-    <a routerLink="/signup" class="btn-npl-primary h-11 px-6 font-semibold text-sm flex items-center justify-center rounded-xl transition-all shadow-xs">
-      Cadastrar
-    </a>
-  </div>
+    <div class="hidden md:flex items-center gap-8">
+      <a href="#inicio"
+         (click)="navegarPara($event, 'inicio')"
+         class="npl-nav-link text-base transition-colors"
+         [class.npl-nav-active]="activeSection() === 'inicio'"
+         [class.font-semibold]="activeSection() === 'inicio'"
+         [class.text-[#7843CD]]="activeSection() === 'inicio'"
+         [class.font-medium]="activeSection() !== 'inicio'"
+         [class.text-slate-600]="activeSection() !== 'inicio'"
+         [class.hover:text-[#7843CD]]="activeSection() !== 'inicio'">
+        Início
+      </a>
+      <a href="#por-que-nos"
+         (click)="navegarPara($event, 'por-que-nos')"
+         class="npl-nav-link text-base transition-colors"
+         [class.npl-nav-active]="activeSection() === 'por-que-nos'"
+         [class.font-semibold]="activeSection() === 'por-que-nos'"
+         [class.text-[#7843CD]]="activeSection() === 'por-que-nos'"
+         [class.font-medium]="activeSection() !== 'por-que-nos'"
+         [class.text-slate-600]="activeSection() !== 'por-que-nos'"
+         [class.hover:text-[#7843CD]]="activeSection() !== 'por-que-nos'">
+        Por que nós?
+      </a>
+      <a href="#o-que-fazemos"
+         (click)="navegarPara($event, 'o-que-fazemos')"
+         class="npl-nav-link text-base transition-colors"
+         [class.npl-nav-active]="activeSection() === 'o-que-fazemos'"
+         [class.font-semibold]="activeSection() === 'o-que-fazemos'"
+         [class.text-[#7843CD]]="activeSection() === 'o-que-fazemos'"
+         [class.font-medium]="activeSection() !== 'o-que-fazemos'"
+         [class.text-slate-600]="activeSection() !== 'o-que-fazemos'"
+         [class.hover:text-[#7843CD]]="activeSection() !== 'o-que-fazemos'">
+        O que fazemos
+      </a>
+    </div>
 
+    <div class="flex items-center justify-center gap-3">
+      <a routerLink="/login" class="h-11 px-5 sm:px-6 border border-[#7843CD]/30 bg-white text-[#7843CD] font-semibold text-sm flex items-center justify-center rounded-xl hover:bg-[#F3E8FF] hover:border-[#7843CD] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-2xs">
+        Entrar
+      </a>
+
+      <a routerLink="/signup" class="btn-npl-primary h-11 px-5 sm:px-6 font-semibold text-sm flex items-center justify-center rounded-xl transition-all shadow-xs">
+        Cadastrar
+      </a>
+    </div>
+  </div>
 </nav>

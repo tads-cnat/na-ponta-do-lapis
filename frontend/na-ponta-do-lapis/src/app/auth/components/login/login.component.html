@@ -1,5 +1,5 @@
 <p-toast></p-toast>
-<div class="flex h-screen w-full bg-white overflow-hidden">
+<div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
 
     <div class="flex flex-1 flex-col justify-between p-6 sm:p-10 overflow-y-auto">
         <!-- Botão Voltar ao Início ancorado no canto superior esquerdo, distante do formulário -->
@@ -11,7 +11,7 @@
             </button>
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="login()" class="flex flex-col gap-4 w-full max-w-md mx-auto my-auto py-8">
+        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-4 w-full max-w-md mx-auto my-auto py-8">
             <div>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
                 <p class="text-sm sm:text-base text-slate-500 mt-1.5">
@@ -69,6 +69,7 @@
         <div class="hidden sm:block h-9"></div>
     </div>
 
+    @if (!embedded) {
     <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
         <div class="flex flex-col items-center gap-4 z-10 px-8 text-center max-w-sm">
             <img src="/logo.svg" alt="Na Ponta do Lápis" class="w-64 max-w-xs drop-shadow-xs">
@@ -78,4 +79,5 @@
             </p>
         </div>
     </div>
+    }
 </div>

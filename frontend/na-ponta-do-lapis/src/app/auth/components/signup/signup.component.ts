@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
@@ -14,6 +14,7 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './signup.component.css',
 })
 export class SignupComponent {
+  @Input() embedded = false;
   registerForm: FormGroup;
   termos: any = null;
   loading = false;
