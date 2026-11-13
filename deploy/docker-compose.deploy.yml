@@ -1,77 +1,78 @@
 # ==============================================================================
-# NA PONTA DO LÁPIS — DEPLOY OFICIAL NO COOLIFY (RÉPLICAS + BANCOS GERENCIADOS)
+# NA PONTA DO LÁPIS — DEPLOY OFICIAL NO COOLIFY (2 BACKENDS + BANCOS GERENCIADOS)
 # ==============================================================================
 # Pré-requisitos no painel do Coolify (por ambiente: Homologação e Produção):
 # 1. PostgreSQL 16 e Redis 7 criados como Databases nativos no Coolify
 #    (habilitando backups automáticos do banco pelo próprio painel do Coolify).
 # 2. Definir no Environment do stack no Coolify:
 #    - APP_VERSION (ex: homolog ou 1.0.2)
-#    - BACKEND_REPLICAS (ex: 1 em homolog, 2 em produção)
-#    - DB_URL (ex: jdbc:postgresql://<host-postgres-coolify>:5432/<db>)
+#    - DB_URL (ex: jdbc:postgresql://<host-postgres-coolify>:5432/<npl_homolog|npl_prod>)
 #    - DB_USER / DB_PASSWORD
 #    - CACHE_TYPE (redis) / REDIS_HOST / REDIS_PORT=6379 / REDIS_PASSWORD
 #    - JWT_SECRET / CORS_ALLOWED_ORIGINS / APP_WEB_URL / CLOUDINARY_*
 # 3. Rede externa 'coolify' habilitada ("Connect to Predefined Network") para o
-#    Traefik alcançar as réplicas do backend/frontend e o backend acessar Postgres/Redis.
+#    Traefik alcançar os containers e o backend acessar Postgres/Redis.
+#
+# Nota: O modo Service do Coolify injeta container_name automaticamente, o que
+# impede usar deploy.replicas. Por isso declaramos backend-1 e backend-2
+# compartilhando o alias 'backend' na rede interna 'default' para o Nginx.
+# (Em Homologação, se quiser apenas 1 instância, basta remover backend-2.)
 # ==============================================================================
 
+x-backend-base: &backend-base
+  image: npl2026/backend:${APP_VERSION}
+  pull_policy: always                      # garante pull da tag móvel :homolog
+  restart: unless-stopped
+  deploy:
+    resources:
+      limits:
+        memory: 1024M
+  mem_limit: 1024m                         # limita MaxRAMPercentage=75 da JVM (~768MB heap máx)
+  expose: ["8080"]                         # sem ports → só Traefik (api.) e Nginx (/api) alcançam
+  networks:
+    default:
+      aliases:
+        - backend
+    coolify: {}
+  environment:
+    SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
+    SPRING_JPA_HIBERNATE_DDLAUTO: ${SPRING_JPA_HIBERNATE_DDLAUTO:-update}
+    SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-${SPRING_JPA_HIBERNATE_DDLAUTO:-update}}
+    FLYWAY_ENABLED: ${FLYWAY_ENABLED:-false}
+    APP_SEED_ENABLED: ${APP_SEED_ENABLED:-false}
+    APP_WEB_URL: ${APP_WEB_URL:-https://napontadolapis.app}
+    DB_URL: ${DB_URL}
+    DB_USER: ${DB_USER}
+    DB_PASSWORD: ${DB_PASSWORD}
+    CACHE_TYPE: ${CACHE_TYPE:-redis}
+    REDIS_HOST: ${REDIS_HOST}
+    REDIS_PORT: ${REDIS_PORT:-6379}
+    REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+    REDIS_HEALTH_ENABLED: ${REDIS_HEALTH_ENABLED:-false}
+    JWT_SECRET: ${JWT_SECRET}
+    CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
+    SPRINGDOC_SWAGGER_UI_ENABLED: ${SWAGGER_ENABLED:-false}
+    SPRINGDOC_API_DOCS_ENABLED: ${SWAGGER_ENABLED:-false}
+    CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
+    CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
+    CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
+    FATURA_COOKIE_SECRET: ${FATURA_COOKIE_SECRET:-}
+    FATURA_OCR_ENABLED: ${FATURA_OCR_ENABLED:-true}
+    FATURA_IA_GEMINI_MODEL: ${FATURA_IA_GEMINI_MODEL:-gemini-2.5-flash}
+    FATURA_IA_CLAUDE_MODEL: ${FATURA_IA_CLAUDE_MODEL:-claude-sonnet-4-5}
+    FATURA_IA_OPENAI_MODEL: ${FATURA_IA_OPENAI_MODEL:-gpt-4.1-mini}
+    FATURA_IA_DEEPSEEK_MODEL: ${FATURA_IA_DEEPSEEK_MODEL:-deepseek-chat}
+    FATURA_IA_GROQ_MODEL: ${FATURA_IA_GROQ_MODEL:-llama-3.3-70b-versatile}
+  healthcheck:
+    test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/actuator/health | grep -q UP"]
+    interval: 15s
+    timeout: 5s
+    retries: 10
+    start_period: 60s
+
 services:
-  backend:
-    image: npl2026/backend:${APP_VERSION}
-    pull_policy: always                      # garante pull da tag móvel :homolog
-    restart: unless-stopped
-    deploy:
-      replicas: ${BACKEND_REPLICAS:-2}
-      resources:
-        limits:
-          memory: 1024M
-    mem_limit: 1024m                         # limita MaxRAMPercentage=75 da JVM (~768MB heap máx por réplica)
-    expose: ["8080"]                         # sem ports → só Traefik (api.) e Nginx (/api) alcançam
-    networks:
-      - default
-      - coolify
-    environment:
-      # Defaults seguros: se a variável não existir no Coolify, não cai no profile local
-      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
-      # Homolog e Produção (pré-lançamento): update por padrão para aplicar novos campos
-      SPRING_JPA_HIBERNATE_DDLAUTO: ${SPRING_JPA_HIBERNATE_DDLAUTO:-update}
-      SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-${SPRING_JPA_HIBERNATE_DDLAUTO:-update}}
-      FLYWAY_ENABLED: ${FLYWAY_ENABLED:-false}
-      # Homolog: true | Produção: false (evita criar usuários de teste em banco vazio)
-      APP_SEED_ENABLED: ${APP_SEED_ENABLED:-false}
-      # URL pública do frontend (usada em redirects e na página de erro da API)
-      APP_WEB_URL: ${APP_WEB_URL:-https://napontadolapis.app}
-      # Banco de Dados PostgreSQL gerenciado pelo Coolify
-      DB_URL: ${DB_URL}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      # Cache distribuído Redis gerenciado pelo Coolify
-      CACHE_TYPE: ${CACHE_TYPE:-redis}
-      REDIS_HOST: ${REDIS_HOST}
-      REDIS_PORT: ${REDIS_PORT:-6379}
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
-      REDIS_HEALTH_ENABLED: ${REDIS_HEALTH_ENABLED:-false}
-      JWT_SECRET: ${JWT_SECRET}
-      CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
-      SPRINGDOC_SWAGGER_UI_ENABLED: ${SWAGGER_ENABLED:-false}
-      SPRINGDOC_API_DOCS_ENABLED: ${SWAGGER_ENABLED:-false}
-      CLOUDINARY_CLOUD_NAME: ${CLOUDINARY_CLOUD_NAME}
-      CLOUDINARY_API_KEY: ${CLOUDINARY_API_KEY}
-      CLOUDINARY_API_SECRET: ${CLOUDINARY_API_SECRET}
-      # Análise de faturas com IA (opcionais com defaults seguros)
-      FATURA_COOKIE_SECRET: ${FATURA_COOKIE_SECRET:-}
-      FATURA_OCR_ENABLED: ${FATURA_OCR_ENABLED:-true}
-      FATURA_IA_GEMINI_MODEL: ${FATURA_IA_GEMINI_MODEL:-gemini-2.5-flash}
-      FATURA_IA_CLAUDE_MODEL: ${FATURA_IA_CLAUDE_MODEL:-claude-sonnet-4-5}
-      FATURA_IA_OPENAI_MODEL: ${FATURA_IA_OPENAI_MODEL:-gpt-4.1-mini}
-      FATURA_IA_DEEPSEEK_MODEL: ${FATURA_IA_DEEPSEEK_MODEL:-deepseek-chat}
-      FATURA_IA_GROQ_MODEL: ${FATURA_IA_GROQ_MODEL:-llama-3.3-70b-versatile}
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/actuator/health | grep -q UP"]
-      interval: 15s
-      timeout: 5s
-      retries: 10
-      start_period: 60s
+  backend-1: *backend-base
+  backend-2: *backend-base
 
   frontend:
     image: npl2026/frontend:${APP_VERSION}
@@ -83,7 +84,8 @@ services:
       - default
       - coolify
     depends_on:
-      backend: { condition: service_healthy }
+      backend-1: { condition: service_healthy }
+      backend-2: { condition: service_healthy }
 
 networks:
   coolify:
