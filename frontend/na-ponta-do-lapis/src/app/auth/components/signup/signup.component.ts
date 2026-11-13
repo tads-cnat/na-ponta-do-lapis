@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
+import { StorageService } from '../../service/storage.service';
 import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
@@ -14,6 +15,7 @@ import { Router, RouterLink } from '@angular/router';
   styleUrl: './signup.component.css',
 })
 export class SignupComponent {
+  @Input() embedded = false;
   registerForm: FormGroup;
   termos: any = null;
   loading = false;
@@ -58,6 +60,47 @@ export class SignupComponent {
         })
       }
     })
+  }
+
+  public cadastrarComGoogle() {
+    if (this.loading) return;
+    this.loading = true;
+
+    this.authService.iniciarFluxoGoogle(
+      (idToken) => {
+        this.authService.loginWithGoogle(idToken).subscribe({
+          next: (res) => {
+            this.loading = false;
+            StorageService.salvarToken(res.token);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Conta conectada com Google!',
+              life: 2000
+            });
+            setTimeout(() => {
+              this.router.navigateByUrl('app/dashboard');
+            }, 1000);
+          },
+          error: () => {
+            this.loading = false;
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro ao cadastrar com Google',
+              life: 2500
+            });
+          }
+        });
+      },
+      (reason) => {
+        this.loading = false;
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Google indisponível',
+          detail: reason,
+          life: 3500
+        });
+      }
+    );
   }
 
   public voltar() {

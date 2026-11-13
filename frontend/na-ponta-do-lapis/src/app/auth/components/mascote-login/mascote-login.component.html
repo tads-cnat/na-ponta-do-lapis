@@ -1,0 +1,274 @@
+<div
+  class="mascote-wrapper relative mx-auto select-none cursor-pointer"
+  [class.is-success]="estado() === 'success'"
+  [class.is-error]="estado() === 'error'"
+  (click)="onMascotClick()"
+  aria-hidden="true">
+
+  @if (easterEgg()) {
+    <div
+      class="mascote-sparkles absolute -top-2 left-1/2 translate-x-6 sm:translate-x-10 z-10 px-3 py-1 rounded-full bg-[#4A2585] text-[#F9DB70] border border-[#EEC046] text-xs font-bold shadow-md whitespace-nowrap pointer-events-none">
+      {{ easterEggPhrase() }}
+    </div>
+  }
+
+  <svg
+    #mascoteSvg
+    viewBox="0 0 200 200"
+    [class]="compact() ? 'w-20 h-20 sm:w-24 sm:h-24 overflow-visible' : 'w-28 h-28 sm:w-32 sm:h-32 overflow-visible'"
+    xmlns="http://www.w3.org/2000/svg">
+
+    <defs>
+      <linearGradient id="npl-wood-grad" x1="0%" y1="0%" x2="100%" y2="0%">
+        <stop offset="0%" stop-color="#FFFBEB" />
+        <stop offset="55%" stop-color="#FEF3C7" />
+        <stop offset="100%" stop-color="#FDE68A" />
+      </linearGradient>
+    </defs>
+
+    <!-- Fundo circular lavanda NPL -->
+    <circle cx="100" cy="102" r="82" fill="#F3E8FF" stroke="#D1C4FF" stroke-width="2.5" />
+    <circle cx="100" cy="102" r="74" fill="none" stroke="#E9D5FF" stroke-width="1.5" stroke-dasharray="6 5" />
+
+    <!-- Estrelinhas douradas sutis no fundo -->
+    <path d="M32 62 L34 67 L39 69 L34 71 L32 76 L30 71 L25 69 L30 67 Z" fill="#EEC046" opacity="0.65" />
+    <circle cx="168" cy="58" r="3" fill="#EEC046" opacity="0.55" />
+
+    <!-- Sombra projetada suave no chão -->
+    <ellipse #groundShadow cx="100" cy="185" rx="28" ry="5" fill="#4A2585" opacity="0.14" />
+
+    <!-- Mascote Lápis NPL -->
+    <g #characterGroup>
+
+      <!-- Borrachinha no topo -->
+      <g #eraserGroup style="transform-origin: 100px 36px;">
+        <path
+          d="M69 40 C69 18, 131 18, 131 40 Z"
+          fill="#D1C4FF"
+          stroke="#4A2585"
+          stroke-width="2.8"
+          stroke-linejoin="round" />
+        <path
+          d="M78 33 C82 25, 96 23, 108 24"
+          fill="none"
+          stroke="#FFFFFF"
+          stroke-width="3"
+          stroke-linecap="round"
+          opacity="0.7" />
+      </g>
+
+      <!-- Virola metálica dourada do lápis -->
+      <rect x="64" y="38" width="72" height="14" rx="4" fill="#EEC046" stroke="#4A2585" stroke-width="2.6" />
+      <rect x="68" y="40.5" width="64" height="3.5" rx="1.5" fill="#F9DB70" opacity="0.85" />
+      <line x1="66" y1="46" x2="134" y2="46" stroke="#B45309" stroke-width="1.4" opacity="0.55" />
+
+      <!-- Corpo hexagonal arredondado do Lápis NPL -->
+      <rect x="59" y="51" width="82" height="90" rx="17" fill="#7843CD" stroke="#4A2585" stroke-width="2.8" />
+      <path d="M62 64 C62 56, 68 53, 77 53 L77 139 L69 139 C64 139, 62 134, 62 128 Z" fill="#8B5CF6" opacity="0.45" />
+      <path d="M123 53 L131 53 C136 53, 139 58, 139 64 L139 128 C139 134, 136 139, 131 139 L123 139 Z" fill="#6214CC" opacity="0.55" />
+
+      <!-- Base de madeira apontada do lápis com textura suave -->
+      <path
+        d="M61 136 Q80 142 100 136 Q120 142 139 136 L122 174 L78 174 Z"
+        fill="url(#npl-wood-grad)"
+        stroke="#4A2585"
+        stroke-width="2.8"
+        stroke-linejoin="round" />
+      <path d="M74 142 L82 162" stroke="#F59E0B" stroke-width="1.2" stroke-linecap="round" opacity="0.28" />
+      <path d="M126 142 L118 162" stroke="#D97706" stroke-width="1.2" stroke-linecap="round" opacity="0.25" />
+      <path d="M89 164 L111 164 L100 183 Z" fill="#4A2585" />
+
+      <!-- Moedinha / Broche dourado NPL no peito -->
+      <circle cx="100" cy="152" r="9" fill="#EEC046" stroke="#4A2585" stroke-width="2.2" />
+      <circle cx="100" cy="152" r="6" fill="#F9DB70" />
+      <text x="100" y="155.2" text-anchor="middle" font-size="9" font-weight="800" fill="#4A2585">$</text>
+      @if (estado() === 'loading') {
+        <circle
+          class="mascote-coin-spin"
+          cx="100" cy="152" r="12.5"
+          fill="none"
+          stroke="#EEC046"
+          stroke-width="2.2"
+          stroke-linecap="round"
+          stroke-dasharray="18 24" />
+      }
+
+      <!-- Rosto 2.5D (estética limpa e moderna para público jovem) -->
+      <g #faceGroup>
+        <!-- Rubor sutil e moderno (sem aspecto infantil) -->
+        <ellipse cx="69" cy="102" rx="7.5" ry="3.8" fill="#A78BFA" opacity="0.45" />
+        <ellipse cx="131" cy="102" rx="7.5" ry="3.8" fill="#A78BFA" opacity="0.45" />
+
+        <!-- Olhos ovais mais expressivos com transição suave -->
+        <g class="mascote-fade" [style.opacity]="easterEgg() ? 1 : 0">
+          <!-- Olhos de cifrão estilo desenho animado no easter egg -->
+          <ellipse cx="81" cy="88" rx="9.8" ry="11.8" fill="#FEF9E7" stroke="#4A2585" stroke-width="2.2" />
+          <text x="81" y="92.5" text-anchor="middle" font-size="13" font-weight="900" fill="#16A34A">$</text>
+          <ellipse cx="119" cy="88" rx="9.8" ry="11.8" fill="#FEF9E7" stroke="#4A2585" stroke-width="2.2" />
+          <text x="119" y="92.5" text-anchor="middle" font-size="13" font-weight="900" fill="#16A34A">$</text>
+        </g>
+
+        <g class="mascote-fade" [style.opacity]="!easterEgg() && (estado() === 'success' || gracinha() === 'joy') ? 1 : 0">
+          <path d="M73 89 Q81 80 89 89" fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" />
+          <path d="M111 89 Q119 80 127 89" fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" />
+        </g>
+
+        <g class="mascote-fade" [style.opacity]="easterEgg() || estado() === 'success' || gracinha() === 'joy' ? 0 : 1">
+          <g #eyeLeft>
+            <ellipse
+              class="mascote-eye-shape"
+              cx="81" cy="88"
+              [attr.rx]="estado() === 'error' ? 9.8 : 9.4"
+              [attr.ry]="estado() === 'error' ? 12 : 11.4"
+              fill="#FFFFFF" stroke="#4A2585" stroke-width="2.2" />
+            <g #pupilLeft>
+              <circle class="mascote-eye-shape" cx="81" cy="88" [attr.r]="estado() === 'error' ? 3.5 : 5" fill="#1E1B4B" />
+              <circle cx="83" cy="85.8" r="1.8" fill="#FFFFFF" />
+              <circle cx="79.2" cy="90" r="0.9" fill="#FFFFFF" opacity="0.85" />
+            </g>
+            <ellipse class="mascote-fade" cx="77" cy="96" rx="2.6" ry="1.6" fill="#D1C4FF" [style.opacity]="estado() === 'error' ? 0.9 : 0" />
+          </g>
+
+          <g #eyeRight class="mascote-fade" [style.opacity]="gracinha() === 'wink' ? 0 : 1">
+            <ellipse
+              class="mascote-eye-shape"
+              cx="119" cy="88"
+              [attr.rx]="estado() === 'error' ? 9.8 : 9.4"
+              [attr.ry]="estado() === 'error' ? 12 : 11.4"
+              fill="#FFFFFF" stroke="#4A2585" stroke-width="2.2" />
+            <g #pupilRight>
+              <circle class="mascote-eye-shape" cx="119" cy="88" [attr.r]="estado() === 'error' ? 3.5 : 5" fill="#1E1B4B" />
+              <circle cx="121" cy="85.8" r="1.8" fill="#FFFFFF" />
+              <circle cx="117.2" cy="90" r="0.9" fill="#FFFFFF" opacity="0.85" />
+            </g>
+            <ellipse class="mascote-fade" cx="123" cy="96" rx="2.6" ry="1.6" fill="#D1C4FF" [style.opacity]="estado() === 'error' ? 0.9 : 0" />
+          </g>
+
+          <path class="mascote-fade" [style.opacity]="gracinha() === 'wink' ? 1 : 0" d="M111 89 Q119 81 127 89" fill="none" stroke="#FFFFFF" stroke-width="3.6" stroke-linecap="round" />
+        </g>
+
+        <!-- Sobrancelhas com morph contínuo via mola -->
+        <path #browLeft d="M71 72 Q80 69 88 72" fill="none" stroke="#FEF9E7" stroke-width="2.5" stroke-linecap="round" />
+        <path #browRight d="M129 72 Q120 69 112 72" fill="none" stroke="#FEF9E7" stroke-width="2.5" stroke-linecap="round" />
+        <path class="mascote-fade" [style.opacity]="estado() === 'error' ? 0.95 : 0" d="M134 77 C136 81, 137 84, 134 86 C131 84, 132 81, 134 77 Z" fill="#D1C4FF" stroke="#4A2585" stroke-width="1.3" />
+
+        <!-- Boca com morph contínuo via mola -->
+        <path #mouthPath d="M92 108 Q100 115 108 108" fill="none" stroke="#FEF9E7" stroke-width="2.7" stroke-linecap="round" />
+      </g>
+
+      <!-- Braço esquerdo articulado no ombro (60, 112) com punho flexível -->
+      <g #leftArm>
+        <path
+          d="M60 112 C48 116, 42 126, 44 136"
+          fill="none"
+          stroke="#4A2585"
+          stroke-width="13"
+          stroke-linecap="round" />
+        <path
+          d="M60 112 C48 116, 42 126, 44 136"
+          fill="none"
+          stroke="#7843CD"
+          stroke-width="7.5"
+          stroke-linecap="round" />
+        <g #leftHand>
+          <path
+            d="M36 135 C34 138, 35 144, 38 147 C39 152, 43 153, 45 149 C46 153, 50 153, 51 149 C53 152, 56 150, 56 145 C57 141, 55 136, 52 134 C50 132, 47 133, 46 135 C43 131, 38 132, 36 135 Z"
+            fill="#FEF9E7"
+            stroke="#4A2585"
+            stroke-width="2.3"
+            stroke-linejoin="round" />
+          <rect x="38" y="131" width="12" height="4.5" rx="2.2" transform="rotate(-18 44 133)" fill="#EEC046" stroke="#4A2585" stroke-width="1.4" />
+        </g>
+      </g>
+
+      <!-- Braço direito articulado no ombro (140, 112) com punho flexível -->
+      <g #rightArm>
+        <path
+          d="M140 112 C152 116, 158 126, 156 136"
+          fill="none"
+          stroke="#4A2585"
+          stroke-width="13"
+          stroke-linecap="round" />
+        <path
+          d="M140 112 C152 116, 158 126, 156 136"
+          fill="none"
+          stroke="#7843CD"
+          stroke-width="7.5"
+          stroke-linecap="round" />
+        <g #rightHand>
+          <path
+            d="M164 135 C166 138, 165 144, 162 147 C161 152, 157 153, 155 149 C154 153, 150 153, 149 149 C147 152, 144 150, 144 145 C143 141, 145 136, 148 134 C150 132, 153 133, 154 135 C157 131, 162 132, 164 135 Z"
+            fill="#FEF9E7"
+            stroke="#4A2585"
+            stroke-width="2.3"
+            stroke-linejoin="round" />
+          <rect x="150" y="131" width="12" height="4.5" rx="2.2" transform="rotate(18 156 133)" fill="#EEC046" stroke="#4A2585" stroke-width="1.4" />
+        </g>
+      </g>
+    </g>
+
+    <!-- Micro-balão "?" quando e-mail está inválido -->
+    <g
+      class="mascote-fade"
+      [style.opacity]="emailInvalid() && estado() !== 'hands-up' && estado() !== 'success' && estado() !== 'error' ? 1 : 0">
+      <circle cx="154" cy="40" r="12" fill="#FEF9E7" stroke="#EEC046" stroke-width="2" />
+      <path d="M144 48 L140 53 L147 51" fill="#FEF9E7" stroke="#EEC046" stroke-width="1.6" stroke-linejoin="round" />
+      <text x="154" y="44.5" text-anchor="middle" font-size="14" font-weight="800" fill="#7843CD">?</text>
+    </g>
+
+    <!-- Micro-balão "z" quando fica entediado em idle -->
+    <g class="mascote-fade" [style.opacity]="isBored() && estado() === 'idle' ? 0.9 : 0">
+      <text x="148" y="42" font-size="11" font-weight="800" fill="#7843CD">z</text>
+      <text x="157" y="33" font-size="14" font-weight="800" fill="#7843CD">z</text>
+    </g>
+
+    <!-- Easter egg de 5 cliques seguidos: chuva de moedas -->
+    @if (easterEgg()) {
+      <g class="mascote-sparkles">
+        <g class="mascote-coin-drop" style="animation-delay: 0ms;">
+          <circle cx="42" cy="46" r="6" fill="#EEC046" stroke="#4A2585" stroke-width="1.4" />
+          <text x="42" y="48.5" text-anchor="middle" font-size="7" font-weight="800" fill="#4A2585">$</text>
+        </g>
+        <g class="mascote-coin-drop" style="animation-delay: 90ms;">
+          <circle cx="64" cy="24" r="5.5" fill="#F9DB70" stroke="#4A2585" stroke-width="1.4" />
+          <text x="64" y="26.5" text-anchor="middle" font-size="6.5" font-weight="800" fill="#4A2585">$</text>
+        </g>
+        <g class="mascote-coin-drop" style="animation-delay: 150ms;">
+          <circle cx="136" cy="54" r="6" fill="#EEC046" stroke="#4A2585" stroke-width="1.4" />
+          <text x="136" y="56.5" text-anchor="middle" font-size="7" font-weight="800" fill="#4A2585">$</text>
+        </g>
+        <g class="mascote-coin-drop" style="animation-delay: 210ms;">
+          <circle cx="164" cy="70" r="5.5" fill="#F9DB70" stroke="#4A2585" stroke-width="1.4" />
+          <text x="164" y="72.5" text-anchor="middle" font-size="6.5" font-weight="800" fill="#4A2585">$</text>
+        </g>
+      </g>
+    }
+
+    <!-- Alterna entre coração e moedinha ao clicar nele -->
+    @if (gracinha() !== 'none') {
+      @if (clickBadge() === 'heart') {
+        <path
+          class="mascote-sparkles"
+          d="M154 36 C154 32, 148 32, 148 36 C148 40, 154 44, 154 44 C154 44, 160 40, 160 36 C160 32, 154 32, 154 36 Z"
+          fill="#FDA4AF"
+          stroke="#4A2585"
+          stroke-width="1.5" />
+      } @else {
+        <g class="mascote-sparkles">
+          <circle cx="154" cy="38" r="8.5" fill="#EEC046" stroke="#4A2585" stroke-width="1.6" />
+          <circle cx="154" cy="38" r="5.5" fill="#F9DB70" />
+          <text x="154" y="41" text-anchor="middle" font-size="8.5" font-weight="800" fill="#4A2585">$</text>
+        </g>
+      }
+    }
+
+    <!-- Brilhos dourados extras no sucesso ou ao clicar -->
+    @if (estado() === 'success' || gracinha() !== 'none') {
+      <g class="mascote-sparkles">
+        <path d="M30 44 L33 52 L41 55 L33 58 L30 66 L27 58 L19 55 L27 52 Z" fill="#EEC046" />
+        <path d="M170 40 L172 46 L178 48 L172 50 L170 56 L168 50 L162 48 L168 46 Z" fill="#EEC046" />
+        <circle cx="100" cy="12" r="4" fill="#F9DB70" stroke="#B45309" stroke-width="1.5" />
+      </g>
+    }
+  </svg>
+</div>

@@ -76,7 +76,7 @@ class AuthServiceImplTest {
                 "senha123"
         );
 
-        when(usuarioRepository.findByEmail("joao@email.com")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmailIgnoreCase("joao@email.com")).thenReturn(Optional.empty());
         when(passwordEncoder.encode("senha123")).thenReturn("hash123");
 
         Usuario usuarioSalvo = new Usuario();
@@ -116,7 +116,7 @@ class AuthServiceImplTest {
                 "senha123"
         );
 
-        when(usuarioRepository.findByEmail("maria@email.com")).thenReturn(Optional.of(new Usuario()));
+        when(usuarioRepository.findByEmailIgnoreCase("maria@email.com")).thenReturn(Optional.of(new Usuario()));
 
         assertThatThrownBy(() -> authService.signup(dto, null))
                 .isInstanceOf(EmailJaCadastradoException.class)
@@ -138,7 +138,7 @@ class AuthServiceImplTest {
                 "outraSenha"
         );
 
-        when(usuarioRepository.findByEmail("maria@email.com")).thenReturn(Optional.empty());
+        when(usuarioRepository.findByEmailIgnoreCase("maria@email.com")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> authService.signup(dto, null))
                 .isInstanceOf(RuntimeException.class)

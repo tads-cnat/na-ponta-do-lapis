@@ -1,6 +1,6 @@
-<p-toast></p-toast>
-<div class="flex h-screen w-full bg-white overflow-hidden">
-  <div class="flex flex-1 flex-col justify-between p-6 sm:p-10 overflow-y-auto">
+<p-toast position="top-right" [baseZIndex]="10000"></p-toast>
+<div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
+  <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
 
     <!-- Botão Voltar ao Início ancorado no canto superior esquerdo, distante do formulário -->
     <div class="w-full flex items-center justify-start">
@@ -11,7 +11,7 @@
       </button>
     </div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="register()" class="flex flex-col gap-3.5 w-full max-w-md mx-auto my-auto py-8">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
       <div>
         <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Criar Conta</h1>
         <p class="text-sm sm:text-base text-slate-500 mt-1.5">
@@ -26,9 +26,11 @@
         <input id="nome" pInputText placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full text-sm rounded-xl!"
                [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
                [class.ng-dirty]="registerForm.get('nomeCompleto')?.touched">
-        @if (registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched) {
-          <small class="text-[#C24E4E] text-xs font-semibold">O nome deve ter no mínimo 3 caracteres.</small>
-        }
+        <div class="min-h-4 flex items-center">
+          @if (registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold leading-4">O nome deve ter no mínimo 3 caracteres.</small>
+          }
+        </div>
       </div>
 
       <div class="flex flex-col gap-1.5">
@@ -36,9 +38,11 @@
         <input id="username" pInputText placeholder="Ex: lucaasshq" formControlName="username" class="w-full text-sm rounded-xl!"
                [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
                [class.ng-dirty]="registerForm.get('username')?.touched">
-        @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
-          <small class="text-[#C24E4E] text-xs font-semibold">Nome de usuário obrigatório (mín. 3 letras).</small>
-        }
+        <div class="min-h-4 flex items-center">
+          @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Nome de usuário obrigatório (mín. 3 letras).</small>
+          }
+        </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
@@ -47,9 +51,11 @@
           <input id="email" pInputText placeholder="nome@gmail.com" formControlName="email" class="w-full text-sm rounded-xl!"
                  [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
                  [class.ng-dirty]="registerForm.get('email')?.touched">
-          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-            <small class="text-[#C24E4E] text-xs font-semibold">E-mail inválido.</small>
-          }
+          <div class="min-h-4 flex items-center">
+            @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+              <small class="text-[#C24E4E] text-xs font-semibold leading-4">E-mail inválido.</small>
+            }
+          </div>
         </div>
         <div class="flex flex-col gap-1.5">
           <label for="celular" class="text-xs font-semibold text-slate-700">
@@ -67,9 +73,11 @@
             inputStyleClass="w-full text-sm rounded-xl!" formControlName="password" [feedback]="true" promptLabel="Força da senha"
             weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte"
             [styleClass]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
-          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-            <small class="text-[#C24E4E] text-xs font-semibold">Mínimo de 8 caracteres.</small>
-          }
+          <div class="min-h-4 flex items-center">
+            @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+              <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 8 caracteres.</small>
+            }
+          </div>
         </div>
 
         <div class="flex flex-col gap-1.5">
@@ -77,9 +85,11 @@
           <p-password id="confirmPassword" [toggleMask]="true" [feedback]="false" placeholder="Repita a senha"
             inputStyleClass="w-full text-sm rounded-xl!" formControlName="passwordConfirmation"
             [styleClass]="registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
-          @if (registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched) {
-            <small class="text-[#C24E4E] text-xs font-semibold">Confirme sua senha.</small>
-          }
+          <div class="min-h-4 flex items-center">
+            @if (registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched) {
+              <small class="text-[#C24E4E] text-xs font-semibold leading-4">Confirme sua senha.</small>
+            }
+          </div>
         </div>
       </div>
 
@@ -95,13 +105,21 @@
                   styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
                   [disabled]="registerForm.invalid || !termos || loading"
                   [loading]="loading"></p-button>
+
+        <p-button type="button"
+                  styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
+                  (onClick)="cadastrarComGoogle()"
+                  [disabled]="loading">
+          <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
+          <span>Cadastrar com Google</span>
+        </p-button>
       </div>
     </form>
 
-    <!-- Espaçador inferior para equilibrar o centro vertical na tela -->
-    <div class="hidden sm:block h-9"></div>
+    <div class="hidden sm:block h-2"></div>
   </div>
 
+  @if (!embedded) {
   <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
     <div class="flex flex-col items-center gap-4 z-10 px-8 text-center max-w-sm">
       <img src="/logo.svg" alt="Na Ponta do Lápis" class="w-64 max-w-xs drop-shadow-xs">
@@ -111,4 +129,5 @@
       </p>
     </div>
   </div>
+  }
 </div>
