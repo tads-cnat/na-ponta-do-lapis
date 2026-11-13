@@ -88,11 +88,12 @@ export class MascoteLoginComponent implements AfterViewInit {
   private easterEggTimer: ReturnType<typeof setTimeout> | null = null;
   private clickCount = 0;
   private clickStreak = 0;
-  private easterEggIndex = 0;
+  private lastEasterEggIndex = -1;
   private lastClickAt = 0;
 
   private readonly easterEggPhrases = [
     'E o Pix, nada ainda?',
+    'Stonks!',
     'Se não comprar, o desconto é maior!',
     'O boleto não perdoa!',
     'Só no cartão, meu nobre!',
@@ -255,8 +256,12 @@ export class MascoteLoginComponent implements AfterViewInit {
 
     if (this.clickStreak >= 5) {
       this.clickStreak = 0;
-      this.easterEggPhrase.set(this.easterEggPhrases[this.easterEggIndex % this.easterEggPhrases.length]);
-      this.easterEggIndex++;
+      let nextIndex = Math.floor(Math.random() * this.easterEggPhrases.length);
+      if (this.easterEggPhrases.length > 1 && nextIndex === this.lastEasterEggIndex) {
+        nextIndex = (nextIndex + 1) % this.easterEggPhrases.length;
+      }
+      this.lastEasterEggIndex = nextIndex;
+      this.easterEggPhrase.set(this.easterEggPhrases[nextIndex]);
       this.easterEgg.set(true);
       this.gracinha.set('dance');
       this.bounceY.velocity = -75;
