@@ -201,7 +201,7 @@ export class AjustesPerfilComponent implements OnInit {
       { 
         key: 'senhaAtual', 
         label: 'Senha atual', 
-        placeholder: 'Digite sua senha atual...', 
+        placeholder: 'Digite sua senha atual ou temporária...', 
         type: 'password',
         icon: 'pi pi-lock',
         colSpan: 2
