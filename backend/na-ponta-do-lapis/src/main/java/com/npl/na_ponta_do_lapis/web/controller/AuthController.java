@@ -2,7 +2,10 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.service.auth.AuthService;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthRequestDTO;
+<<<<<<< HEAD
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
+=======
+>>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
@@ -49,10 +52,15 @@ public class AuthController {
     }
 
     @PostMapping("/google")
+<<<<<<< HEAD
     public ResponseEntity<GoogleAuthResponseDTO> googleAuth(@RequestBody @Valid GoogleAuthRequestDTO request) {
         return ResponseEntity.ok(
                 authService.loginWithGoogle(request.idToken(), Boolean.TRUE.equals(request.termosAceitos()))
         );
+=======
+    public ResponseEntity<TokenResponseDTO> googleAuth(@RequestBody @Valid GoogleAuthRequestDTO request) {
+        return ResponseEntity.ok(authService.loginWithGoogle(request.idToken()));
+>>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
     }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO, HttpServletResponse response) {

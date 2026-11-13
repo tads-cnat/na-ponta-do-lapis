@@ -13,7 +13,11 @@ public interface AuthService {
     boolean hasUserWithEmail(String email);
 
     public TokenResponseDTO login(LoginRequestDTO loginRequestDTO, HttpServletResponse response);
+<<<<<<< HEAD
     GoogleAuthResponseDTO loginWithGoogle(String idToken, boolean termosAceitos);
+=======
+    TokenResponseDTO loginWithGoogle(String idToken);
+>>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
     void signup(RegisterRequestDTO registerRequestDTO, HttpServletResponse response);
 
     public void logout();
