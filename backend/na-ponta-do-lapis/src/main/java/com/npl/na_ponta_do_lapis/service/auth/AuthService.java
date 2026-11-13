@@ -12,6 +12,7 @@ public interface AuthService {
     boolean hasUserWithEmail(String email);
 
     public TokenResponseDTO login(LoginRequestDTO loginRequestDTO, HttpServletResponse response);
+    TokenResponseDTO loginWithGoogle(String idToken);
     void signup(RegisterRequestDTO registerRequestDTO, HttpServletResponse response);
 
     public void logout();

@@ -17,10 +17,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Usuario usuario = usuarioRepository.findByEmail(email).orElseThrow(
-                () -> new UsernameNotFoundException(email)
-        );
-        return usuario;
+    public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
+        String normalized = identifier == null ? "" : identifier.strip();
+        return usuarioRepository.findByEmailIgnoreCase(normalized)
+                .or(() -> usuarioRepository.findByUsernameIgnoreCase(normalized))
+                .orElseThrow(() -> new UsernameNotFoundException(normalized));
     }
 }
