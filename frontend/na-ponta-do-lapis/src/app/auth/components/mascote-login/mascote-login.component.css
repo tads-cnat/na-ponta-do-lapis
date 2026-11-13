@@ -1,0 +1,79 @@
+.mascote-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.mascote-fade {
+  transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.mascote-eye-shape {
+  transition: rx 0.22s ease, ry 0.22s ease, r 0.22s ease;
+}
+
+@keyframes mascoteSparklePop {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.12);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.mascote-sparkles {
+  transform-origin: 100px 48px;
+  animation: mascoteSparklePop 0.45s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes mascoteCoinSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.mascote-coin-spin {
+  transform-origin: 100px 152px;
+  animation: mascoteCoinSpin 1s linear infinite;
+}
+
+@keyframes mascoteCoinDrop {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.7);
+  }
+  25% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(22px) scale(0.85);
+  }
+}
+
+.mascote-coin-drop {
+  animation: mascoteCoinDrop 1.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascote-fade,
+  .mascote-eye-shape {
+    transition: none !important;
+  }
+
+  .mascote-sparkles,
+  .mascote-coin-spin,
+  .mascote-coin-drop {
+    animation: none !important;
+  }
+}
