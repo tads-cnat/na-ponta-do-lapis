@@ -1,9 +1,12 @@
 package com.npl.na_ponta_do_lapis.service;
 
+import com.npl.na_ponta_do_lapis.config.CacheConfig;
 import com.npl.na_ponta_do_lapis.entity.TipoCategoria;
 import com.npl.na_ponta_do_lapis.repository.TipoCategoriaRepository;
 import com.npl.na_ponta_do_lapis.web.dto.CategoriaDTO;
 import com.npl.na_ponta_do_lapis.web.exception.TipoCategoriaIdNaoExisteException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.transaction.annotation.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,7 @@ public class TipoCategoraService {
         this.usuarioService = usuarioService;
     }
 
+    @Cacheable(cacheNames = CacheConfig.CACHE_CATEGORIAS, key = "'all'")
     @Transactional(readOnly = true)
     public List<CategoriaDTO> listarCategorias() {
         log.debug("Listando categorias");
@@ -81,12 +85,14 @@ public class TipoCategoraService {
         return semAcento.toLowerCase(java.util.Locale.ROOT).trim().replaceAll("\\s+", " ");
     }
 
+    @CacheEvict(cacheNames = CacheConfig.CACHE_CATEGORIAS, allEntries = true)
     @Transactional
     public TipoCategoria criarCategoria(TipoCategoria categoria){
         log.debug("Criando categoria: {}", categoria.getNome());
         return tipoCategoriaRepository.save(categoria);
     }
 
+    @CacheEvict(cacheNames = CacheConfig.CACHE_CATEGORIAS, allEntries = true)
     @Transactional
     public void deletarCategoria(Long id){
         log.debug("Deletando categoria de ID: {}", id);

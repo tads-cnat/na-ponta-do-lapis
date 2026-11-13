@@ -13,16 +13,30 @@ services:
       interval: 10s
       retries: 5
 
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--maxmemory", "128mb", "--maxmemory-policy", "allkeys-lru"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 5
+
   backend:
     build: ./backend/na-ponta-do-lapis
     env_file: .env
+    mem_limit: 1024m
     environment:
       DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB:-npl_db}
       DB_USER: ${POSTGRES_USER:-npl}
       DB_PASSWORD: ${POSTGRES_PASSWORD:-troque_esta_senha}
+      CACHE_TYPE: ${CACHE_TYPE:-redis}
+      REDIS_HOST: ${REDIS_HOST:-redis}
+      REDIS_PORT: ${REDIS_PORT:-6379}
       APP_SEED_ENABLED: ${APP_SEED_ENABLED:-true}
     depends_on:
       db: { condition: service_healthy }
+      redis: { condition: service_healthy }
 
   frontend:
     build: ./frontend/na-ponta-do-lapis

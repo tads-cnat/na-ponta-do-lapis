@@ -6,30 +6,33 @@ Documentação prática de como a nossa infraestrutura e a esteira de CI/CD fora
 
 ## 1. Como a nossa infraestrutura tá montada
 
-A aplicação roda em uma **VPS na Oracle Cloud** utilizando o **Coolify** como orquestrador, com o **Cloudflare** na borda (CDN, WAF, proxy reverso e proteção de IP) e o **Traefik** gerenciando o roteamento interno com certificados SSL/HTTPS automáticos. Cada serviço roda isolado via **Docker Compose**.
+A aplicação roda em uma **VPS na Oracle Cloud** (12 GB RAM / 2 vCPUs) utilizando o **Coolify** como orquestrador, com o **Cloudflare** na borda (CDN, WAF, proxy reverso e proteção de IP) e o **Traefik** atuando como proxy reverso, Load Balancer e gerenciador de certificados SSL/HTTPS automáticos.
+
+O modelo oficial de deploy utiliza **[docker-compose.deploy.yml](docker-compose.deploy.yml)** com os bancos desacoplados: **PostgreSQL 16** e **Redis 7** rodam como serviços gerenciados nativamente pelo Coolify (garantindo backups automáticos agendados pelo painel), enquanto cada ambiente (Homologação e Produção) sobe seu stack com **múltiplas réplicas do Backend** (`deploy.replicas`) e **Frontend (Nginx)**.
 
 ```mermaid
 flowchart LR
     U["Navegador Web"] --> CF["Cloudflare (CDN / WAF / Proxy)"]
     M["App Mobile"] --> CF
 
-    CF -->|"HTTPS (Proxy Protegido)"| T["Traefik do Coolify :443"]
+    CF -->|"HTTPS (Proxy Protegido)"| T["Traefik do Coolify :443 (Load Balancer)"]
 
-    subgraph VPS["VPS Oracle Cloud"]
-      T -->|"napontadolapis.app"| FP["frontend (Nginx) :80 - PROD"]
-      T -->|"api.napontadolapis.app"| BP
-      T -->|"homolog.napontadolapis.app"| FH["frontend (Nginx) :80 - HOMOLOG"]
-      T -->|"api-homolog.napontadolapis.app"| BH
+    subgraph VPS["VPS Oracle Cloud (12GB RAM / 2 vCPUs)"]
+      T -->|"napontadolapis.app"| FP["frontend (Nginx) :80"]
+      T -->|"api.napontadolapis.app (Round-Robin)"| B1["backend réplica 1 :8080 (mem 1024m)"]
+      T -->|"api.napontadolapis.app (Round-Robin)"| B2["backend réplica 2 :8080 (mem 1024m)"]
+      FP -->|"/api (DNS round-robin na rede interna)"| B1
+      FP -->|"/api (DNS round-robin na rede interna)"| B2
 
-      subgraph NP["Rede Interna: PRODUÇÃO"]
-        FP -->|"/api"| BP["backend (Spring Boot) :8080"]
-        BP --> DP[("PostgreSQL :5432 - volume pgdata")]
+      subgraph DBs["Serviços Gerenciados Coolify (Backups Automáticos)"]
+        DP[("PostgreSQL 16 :5432 + ShedLock")]
+        RD[("Redis 7 :6379 (Cache Distribuído)")]
       end
 
-      subgraph NH["Rede Interna: HOMOLOGAÇÃO"]
-        FH -->|"/api"| BH["backend (Spring Boot) :8080"]
-        BH --> DH[("PostgreSQL :5432 - volume pgdata")]
-      end
+      B1 --> DP
+      B2 --> DP
+      B1 -.->|"Fallback resiliente ao BD"| RD
+      B2 -.->|"Fallback resiliente ao BD"| RD
     end
 
     GH["GitHub Actions"] -->|"Push das imagens"| DH2["Docker Hub (npl2026/*)"]
@@ -37,12 +40,18 @@ flowchart LR
     DH2 -->|"docker pull"| VPS
 ```
 
+### Recursos preparados no backend para múltiplas réplicas:
+- **Graceful Shutdown + Virtual Threads (Java 21):** `server.shutdown=graceful` (até 30s para concluir requisições em andamento durante deploys/rolling updates) e `spring.threads.virtual.enabled=true` para lidar com alto I/O sem inflar memória.
+- **Limite explícito de memória (`mem_limit: 1024m`):** Como o `Dockerfile` usa `-XX:MaxRAMPercentage=75`, cada réplica é limitada a 1024 MB (~768 MB de heap máximo), evitando consumo excessivo dos 12 GB da VPS.
+- **ShedLock (Lock distribuído em PostgreSQL):** Os agendamentos `@Scheduled` (sincronização automática do Open Finance) usam `@SchedulerLock` na tabela `shedlock` para garantir que apenas **uma réplica** execute o job por janela.
+- **Cache Distribuído com Redis + Fallback Seguro:** Cache compartilhado entre réplicas para autenticação (`usuario_auth`, TTL 5 min via DTO serializável sem proxies JPA) e categorias (`categorias`, TTL 60 min). Se o Redis ficar temporariamente indisponível, o `CacheErrorHandler` registra aviso e recorre automaticamente ao PostgreSQL, e `REDIS_HEALTH_ENABLED=false` impede que uma oscilação do cache tire as réplicas de rotação no healthcheck.
+
 ### Cuidados de segurança que tomamos:
 - **Proteção de Borda com Cloudflare:** O IP público real da VPS Oracle fica 100% oculto atrás da rede Anycast da Cloudflare, com proteção contra DDoS, WAF e aceleração de cache CDN para o frontend.
 - **Rastreabilidade e IP Real:** O Traefik do Coolify está configurado com `trustedIPs` oficiais da Cloudflare, garantindo que o cabeçalho `CF-Connecting-IP` repasse o IP verdadeiro de cada visitante para os logs e para o Spring Boot.
 - **Portas fechadas no host:** A gente não usa `ports:` aberta no servidor. Apenas o Traefik escuta as portas públicas `80` e `443`.
-- **Banco de dados blindado:** O container do PostgreSQL só usa `expose: ["5432"]` na rede interna dos containers. Ele **nunca** tem domínio público nem fica exposto pra internet. Só o nosso próprio backend consegue falar com ele.
-- **Homologação e Produção separados:** Cada ambiente tem sua própria rede interna e seu próprio volume de dados (`pgdata`). O que a gente testa ou quebra em homologação não afeta em nada a produção.
+- **Banco e Redis blindados:** PostgreSQL e Redis operam apenas na rede interna Docker/Coolify (`expose`), nunca expostos para a internet.
+- **Homologação e Produção separados:** Cada ambiente tem sua própria rede/bancos dedicados. O que testamos ou quebramos em homologação não afeta a produção.
 
 ---
 
@@ -134,28 +143,33 @@ Como todas as versões no Docker Hub são salvas com tags fixas (`1.0.0`, `1.0.1
 
 ---
 
-## 5. Como o Compose de Produção tá estruturado
+## 5. Como o Compose de Deploy está estruturado
 
-O arquivo [docker-compose.deploy.yml](file:///home/diasz/Projects/na-ponta-do-lapis/deploy/docker-compose.deploy.yml) é o modelo que colamos no Coolify:
+O arquivo oficial **[docker-compose.deploy.yml](docker-compose.deploy.yml)** é usado tanto em Homologação quanto em Produção no Coolify:
 
-- **`db` (Postgres 16):** Configurado com volume nomeado `pgdata` pra nunca perder dados quando o container reiniciar.
-- **`backend` (Spring Boot):** Puxa a imagem `npl2026/backend:${APP_VERSION}` e tem um healthcheck configurado no endpoint do Spring Actuator (`/api/actuator/health`). O Coolify só direciona o tráfego quando o healthcheck retornar status `UP`.
-- **`frontend` (Angular + Nginx):** Puxa `npl2026/frontend:${APP_VERSION}` e cuida de entregar os arquivos estáticos compilados do Angular e redirecionar as chamadas de `/api` pro backend.
+- **PostgreSQL 16 e Redis 7 (gerenciados no Coolify):** Criados separadamente como bancos nativos do Coolify para permitir backups automáticos, retenção configurável e métricas independentes do ciclo de deploy da aplicação.
+- **`backend` (Spring Boot):** Sobe com `deploy.replicas: ${BACKEND_REPLICAS:-2}` e `mem_limit: 1024m`, conectado à rede interna `default` (junto do frontend) e à rede externa `coolify` (para Traefik, PostgreSQL e Redis). O Traefik só envia tráfego quando `/api/actuator/health` retornar `UP`.
+- **`frontend` (Angular + Nginx):** Puxa `npl2026/frontend:${APP_VERSION}` (`mem_limit: 128m`) e encaminha chamadas `/api` para `http://backend:8080` na rede interna isolada de cada ambiente, com balanceamento automático via DNS Docker entre as réplicas daquele ambiente.
 
 ### Variáveis de ambiente no Coolify (homologação x produção)
 
-O **mesmo** `docker-compose.deploy.yml` é usado nos dois ambientes. O Coolify só entrega ao container as variáveis que aparecem no bloco `environment:` do compose, então configure esta matriz no painel de cada recurso:
+O Coolify só entrega ao container as variáveis que aparecem no bloco `environment:` do compose, então configure esta matriz no painel de cada recurso:
 
 | Variável | Homologação | Produção | Para que serve |
 |---|---|---|---|
 | `APP_VERSION` | `homolog` | `1.0.1`, `1.0.2`... | Tag da imagem no Docker Hub |
+| `BACKEND_REPLICAS` | `1` (ou `2`) | `2` | Número de réplicas do backend no stack |
 | `SPRING_PROFILES_ACTIVE` | `prod` | `prod` | Profile do backend deployado (o nome `prod` vale para os dois ambientes) |
-| `SPRING_JPA_HIBERNATE_DDLAUTO` | `update` | `validate` | Homolog cria/atualiza o schema; produção só valida |
+| `SPRING_JPA_HIBERNATE_DDLAUTO` | `update` | `update` (ou `validate` com Flyway) | Homolog atualiza schema; em prod alterne para `validate` quando ativar Flyway |
+| `FLYWAY_ENABLED` | `false` | `false` (`true` após transição) | Habilita migrations versionadas (`db/migration`) com `baseline-on-migrate=true` |
 | `APP_SEED_ENABLED` | `true` | `false` | Popula dados de demonstração no primeiro start (banco vazio) |
 | `APP_WEB_URL` | `https://homolog.napontadolapis.app` | `https://napontadolapis.app` | URL usada nos redirects e na página de erro da API |
 | `SWAGGER_ENABLED` | `true` | `false` | Expõe (ou não) o Swagger UI |
 | `CORS_ALLOWED_ORIGINS` | `https://homolog.napontadolapis.app` | `https://napontadolapis.app,https://www.napontadolapis.app` | Origens liberadas no navegador |
-| `POSTGRES_DB` / `POSTGRES_USER` / `POSTGRES_PASSWORD` | valores do stack | valores do stack | Credenciais do Postgres interno |
+| `DB_URL` / `DB_USER` / `DB_PASSWORD` | credenciais Postgres | credenciais Postgres | Conexão JDBC com o PostgreSQL gerenciado no Coolify |
+| `CACHE_TYPE` | `redis` | `redis` | `redis` (cache compartilhado entre réplicas) ou `simple` (memória local) |
+| `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` | dados do Redis | dados do Redis | Conexão com o Redis 7 gerenciado no Coolify |
+| `REDIS_HEALTH_ENABLED` | `false` | `false` | Mantém `/api/actuator/health` independente de oscilações no Redis |
 | `JWT_SECRET` | segredo próprio | segredo próprio | Assinatura dos tokens |
 | `FATURA_COOKIE_SECRET` | segredo próprio | segredo próprio | Criptografia (AES-GCM) da chave de IA no cookie de sessão (se ausente, usa o `JWT_SECRET`) |
 | `FATURA_OCR_ENABLED` | `true` | `true` | Ativa/desativa OCR local de PDFs escaneados via Tesseract |
@@ -166,8 +180,8 @@ O **mesmo** `docker-compose.deploy.yml` é usado nos dois ambientes. O Coolify s
 | `FATURA_IA_GROQ_MODEL` | `llama-3.3-70b-versatile` | `llama-3.3-70b-versatile` | Modelo padrão da Groq |
 | `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | credenciais | credenciais | Upload de imagens/comprovantes |
 
-> **Importante:** o `docker-compose.deploy.yml` já define defaults seguros (`SPRING_PROFILES_ACTIVE:-prod`, `SPRING_JPA_HIBERNATE_DDLAUTO:-validate` e `APP_SEED_ENABLED:-false`). Se alguma variável ficar vazia no Coolify, o backend **não** cai no profile local e **não** popula dados de teste.
+> **Importante:** o [docker-compose.deploy.yml](docker-compose.deploy.yml) já define defaults seguros (`SPRING_PROFILES_ACTIVE:-prod`, `APP_SEED_ENABLED:-false`, `FLYWAY_ENABLED:-false`, `CACHE_TYPE:-redis`, `REDIS_HEALTH_ENABLED:-false`).
 >
-> **Primeiro deploy com banco vazio:** como o projeto ainda não usa Flyway/Liquibase, o schema é criado pelo Hibernate. Use `SPRING_JPA_HIBERNATE_DDLAUTO=update` no primeiro start (homologação e, se necessário, produção) e depois volte para `validate` em produção.
+> **Migrations com Flyway e ShedLock:** O projeto já inclui `org.flywaydb:flyway-core` e a migration inicial `V1__create_shedlock.sql`, mantendo `FLYWAY_ENABLED=false` por padrão para não quebrar bancos já criados com `ddl-auto=update`. Quando for adotar migrations em produção, habilite `FLYWAY_ENABLED=true` (`baseline-on-migrate=true` já está ativo) e mude `SPRING_JPA_HIBERNATE_DDLAUTO=validate`. A tabela `shedlock` também é garantida na inicialização do backend via `SchedulingLockConfig`.
 
 > O OCR local usa o binário `tesseract` (idioma `por`), que já é instalado na imagem do backend. Não há variável de ambiente obrigatória; para desligar o OCR use `FATURA_OCR_ENABLED=false`.
