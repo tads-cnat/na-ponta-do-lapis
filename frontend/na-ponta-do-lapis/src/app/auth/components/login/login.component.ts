@@ -1,8 +1,12 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
 =======
 import { Component, Input } from '@angular/core';
 >>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
+=======
+import { Component, Input, signal } from '@angular/core';
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -11,11 +15,18 @@ import { StorageService } from '../../service/storage.service';
 import { Token } from '../../../model/IToken.models';
 import { MessageService } from 'primeng/api';
 import { MascoteEstado, MascoteLoginComponent } from '../mascote-login/mascote-login.component';
+<<<<<<< HEAD
 import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-consent-dialog.component';
 
 @Component({
   selector: 'app-login',
   imports: [PrimeNGModuleModule, ReactiveFormsModule, RouterLink, MascoteLoginComponent, GoogleConsentDialogComponent],
+=======
+
+@Component({
+  selector: 'app-login',
+  imports: [PrimeNGModuleModule, ReactiveFormsModule, RouterLink, MascoteLoginComponent],
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
   providers: [MessageService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
@@ -31,9 +42,12 @@ export class LoginComponent {
 
   loginForm: FormGroup;
   loading = false;
+<<<<<<< HEAD
   readonly googleButtonReady = signal(false);
   readonly googleConsentVisible = signal(false);
   readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
+=======
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
   readonly mascoteEstado = signal<MascoteEstado>('idle');
   readonly lookProgress = signal(0.5);
   readonly isHoveringSubmit = signal(false);
@@ -93,7 +107,25 @@ export class LoginComponent {
     this.mascoteEstado.set('loading');
 
     this.authService.iniciarFluxoGoogle(
+<<<<<<< HEAD
       (idToken) => this.autenticarComGoogleToken(idToken),
+=======
+      (idToken) => {
+        this.authService.loginWithGoogle(idToken).subscribe({
+          next: (res) => this.finalizarLoginComSucesso(res),
+          error: () => {
+            this.loading = false;
+            this.mascoteEstado.set('error');
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro no Google',
+              detail: 'Não foi possível autenticar com sua conta Google.',
+              life: 3000
+            });
+          }
+        });
+      },
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
       (reason) => {
         this.loading = false;
         this.mascoteEstado.set('idle');
@@ -107,6 +139,7 @@ export class LoginComponent {
     );
   }
 
+<<<<<<< HEAD
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
     this.loading = true;
     this.mascoteEstado.set('loading');
@@ -156,6 +189,8 @@ export class LoginComponent {
     this.mascoteEstado.set('idle');
   }
 
+=======
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
   private finalizarLoginComSucesso(res: Token) {
     this.loading = false;
     this.mascoteEstado.set('success');

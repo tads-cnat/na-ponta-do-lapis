@@ -13,6 +13,7 @@ export interface GoogleConfigResponse {
   clientId: string;
 }
 
+<<<<<<< HEAD
 export interface GoogleAuthResponse {
   token: string | null;
   requerTermos: boolean;
@@ -21,6 +22,8 @@ export interface GoogleAuthResponse {
   fotoUrl?: string | null;
 }
 
+=======
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
 declare global {
   interface Window {
     google?: {
@@ -46,7 +49,10 @@ export class AuthService {
 
   private BASE_URL:string = environment.apiBaseUrl;
   private googleScriptPromise: Promise<void> | null = null;
+<<<<<<< HEAD
   private activeGoogleCredentialHandler: ((idToken: string) => void) | null = null;
+=======
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
 
   constructor(private http:HttpClient, private ngZone: NgZone){}
 
@@ -58,8 +64,13 @@ export class AuthService {
     return this.http.get<GoogleConfigResponse>(`${this.BASE_URL}/auth/google/config`);
   }
 
+<<<<<<< HEAD
   public loginWithGoogle(idToken: string, termosAceitos = false): Observable<GoogleAuthResponse> {
     return this.http.post<GoogleAuthResponse>(`${this.BASE_URL}/auth/google`, { idToken, termosAceitos });
+=======
+  public loginWithGoogle(idToken: string): Observable<Token> {
+    return this.http.post<Token>(`${this.BASE_URL}/auth/google`, { idToken });
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
   }
 
   public register(signupRequest:SignupRequest): Observable<SignupRequest> {
@@ -70,6 +81,7 @@ export class AuthService {
     return this.http.get<Usuario>(`${this.BASE_URL}/usuario/me`)
   }
 
+<<<<<<< HEAD
   public renderizarBotaoGoogle(
     container: HTMLElement,
     textMode: 'continue_with' | 'signup_with',
@@ -124,6 +136,8 @@ export class AuthService {
     });
   }
 
+=======
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
   public iniciarFluxoGoogle(
     onCredential: (idToken: string) => void,
     onUnavailable: (reason: string) => void

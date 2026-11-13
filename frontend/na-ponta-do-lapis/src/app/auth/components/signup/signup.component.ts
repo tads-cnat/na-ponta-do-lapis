@@ -88,12 +88,42 @@ export class SignupComponent {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
   public cadastrarComGoogle() {
     if (this.loading) return;
     this.loading = true;
 
     this.authService.iniciarFluxoGoogle(
+<<<<<<< HEAD
       (idToken) => this.autenticarComGoogleToken(idToken),
+=======
+      (idToken) => {
+        this.authService.loginWithGoogle(idToken).subscribe({
+          next: (res) => {
+            this.loading = false;
+            StorageService.salvarToken(res.token);
+            this.messageService.add({
+              severity: 'success',
+              summary: 'Conta conectada com Google!',
+              life: 2000
+            });
+            setTimeout(() => {
+              this.router.navigateByUrl('app/dashboard');
+            }, 1000);
+          },
+          error: () => {
+            this.loading = false;
+            this.messageService.add({
+              severity: 'error',
+              summary: 'Erro ao cadastrar com Google',
+              life: 2500
+            });
+          }
+        });
+      },
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
       (reason) => {
         this.loading = false;
         this.messageService.add({
@@ -106,6 +136,7 @@ export class SignupComponent {
     );
   }
 
+<<<<<<< HEAD
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
     this.loading = true;
     this.authService.loginWithGoogle(idToken, termosAceitos).subscribe({
@@ -161,6 +192,8 @@ export class SignupComponent {
 
 =======
 >>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
+=======
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
   public voltar() {
     this.router.navigateByUrl('');
   }

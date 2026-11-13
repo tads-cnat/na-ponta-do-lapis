@@ -11,9 +11,12 @@
 .auth-slot {
   opacity: 1;
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
   transform: translateX(0);
 >>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
+=======
+>>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
   transition:
     opacity 0.45s cubic-bezier(0.22, 1, 0.36, 1),
     transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
