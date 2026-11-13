@@ -6,6 +6,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.entity.enums.StatusConvite;
 import com.npl.na_ponta_do_lapis.repository.ConviteRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
+import com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService;
 import com.npl.na_ponta_do_lapis.web.dto.ConviteDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ConviteResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
@@ -21,10 +22,16 @@ public class ConviteService {
 
     private final ConviteRepository conviteRepository;
     private final UsuarioRepository usuarioRepository;
+    private final UsuarioAuthCacheService usuarioAuthCacheService;
 
-    public ConviteService(ConviteRepository conviteRepository, UsuarioRepository usuarioRepository) {
+    public ConviteService(
+            ConviteRepository conviteRepository,
+            UsuarioRepository usuarioRepository,
+            UsuarioAuthCacheService usuarioAuthCacheService
+    ) {
         this.conviteRepository = conviteRepository;
         this.usuarioRepository = usuarioRepository;
+        this.usuarioAuthCacheService = usuarioAuthCacheService;
     }
 
     @Transactional
@@ -86,6 +93,7 @@ public class ConviteService {
 
         usuarioRepository.save(usuario);
         conviteRepository.save(convite);
+        usuarioAuthCacheService.evictPorUsuario(usuario);
         return new ConviteResponseDTO(convite);
     }
 
