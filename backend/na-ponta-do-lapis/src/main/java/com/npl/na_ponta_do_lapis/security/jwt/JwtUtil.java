@@ -1,5 +1,6 @@
 package com.npl.na_ponta_do_lapis.security.jwt;
 
+import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
@@ -55,6 +56,7 @@ public class JwtUtil {
                 .subject(userDetails.getUsername())
                 .claim("email", email)
                 .claim("papeis", papeis)
+                .claim("mustChangePassword", userDetails instanceof Usuario usuario && usuario.isSenhaTemporaria())
                 .expiration(limit)
                 .signWith(KEY)
                 .compact();

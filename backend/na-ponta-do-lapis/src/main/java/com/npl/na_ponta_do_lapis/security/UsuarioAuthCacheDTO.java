@@ -17,6 +17,7 @@ public record UsuarioAuthCacheDTO(
         String email,
         String username,
         String senha,
+        boolean senhaTemporaria,
         String telefone,
         String fotoPerfil,
         Papel papel,
@@ -34,6 +35,7 @@ public record UsuarioAuthCacheDTO(
                 usuario.getEmail(),
                 usuario.getUsername(),
                 usuario.getPassword(),
+                usuario.isSenhaTemporaria(),
                 usuario.getTelefone(),
                 usuario.getFotoPerfil(),
                 usuario.getPapel(),
@@ -51,6 +53,7 @@ public record UsuarioAuthCacheDTO(
         usuario.setEmail(email);
         usuario.setUsername(username);
         usuario.setSenha(senha);
+        usuario.setSenhaTemporaria(senhaTemporaria);
         usuario.setTelefone(telefone);
         usuario.setFotoPerfil(fotoPerfil);
         usuario.setPapel(papel);

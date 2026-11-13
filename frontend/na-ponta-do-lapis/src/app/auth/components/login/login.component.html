@@ -1,8 +1,6 @@
 <p-toast position="top-right" [baseZIndex]="10000"></p-toast>
 <div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
-
     <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
-        <!-- Botão Voltar ao Início ancorado no canto superior esquerdo, distante do formulário -->
         <div class="w-full flex items-center justify-start">
             <button type="button" (click)="voltar()"
                 class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl transition-all cursor-pointer">
@@ -36,7 +34,6 @@
                     (blur)="onEmailBlur()"
                     [class.ng-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
                     [class.ng-dirty]="loginForm.get('email')?.touched">
-
                 <div class="min-h-4 flex items-center">
                     @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
                         @if (loginForm.get('email')?.errors?.['required']) {
@@ -51,7 +48,8 @@
             <div class="flex flex-col gap-1.5">
                 <div class="flex items-center justify-between">
                     <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
-                    <span class="text-[#7843CD] cursor-pointer font-semibold hover:text-[#6214CC] hover:underline text-xs">Esqueceu a sua senha?</span>
+                    <button type="button" class="text-[#7843CD] cursor-pointer font-semibold hover:text-[#6214CC] hover:underline text-xs"
+                        (click)="toggleRecoveryForm()">Esqueceu a sua senha?</button>
                 </div>
                 <div #passwordWrapper
                     (focusin)="onPasswordFocus(passwordWrapper)"
@@ -61,12 +59,28 @@
                         inputStyleClass="w-full text-sm rounded-xl!" formControlName="password"
                         [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
                 </div>
-
                 <div class="min-h-4 flex items-center">
                     @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
                         <small class="text-[#C24E4E] text-xs font-semibold leading-4">A senha é obrigatória.</small>
                     }
                 </div>
+
+                @if (showRecoveryForm) {
+                    <div class="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-3" [formGroup]="recoveryForm">
+                        <label for="recover-email" class="mb-2 block text-xs font-semibold text-slate-700">Informe seu e-mail cadastrado</label>
+                        <input id="recover-email" pInputText type="email" formControlName="email" placeholder="nome@gmail.com"
+                            class="w-full text-sm rounded-xl!"
+                            [class.ng-invalid]="recoveryForm.get('email')?.invalid && recoveryForm.get('email')?.touched"
+                            [class.ng-dirty]="recoveryForm.get('email')?.touched" />
+                        @if (recoveryForm.get('email')?.invalid && recoveryForm.get('email')?.touched) {
+                            <small class="mt-1 block text-[#C24E4E] text-xs font-semibold">Informe um e-mail válido.</small>
+                        }
+                        <p-button type="button" label="Gerar senha temporária"
+                            styleClass="w-full mt-3 btn-npl-primary rounded-xl!"
+                            [disabled]="recoveryForm.invalid || recoveryLoading" [loading]="recoveryLoading"
+                            (onClick)="recoverPassword()" />
+                    </div>
+                }
             </div>
 
             <div class="flex flex-col gap-2.5 mt-2">
@@ -75,29 +89,26 @@
                         styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
                         [disabled]="loginForm.invalid || loading" [loading]="loading" />
                 </div>
-
                 <p-button type="button"
                     styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
-                    (onClick)="entrarComGoogle()"
-                    [disabled]="loading">
+                    (onClick)="entrarComGoogle()" [disabled]="loading">
                     <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
                     <span>Continuar com Google</span>
                 </p-button>
             </div>
         </form>
-
         <div class="hidden sm:block h-2"></div>
     </div>
 
     @if (!embedded) {
-    <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
-        <div class="flex flex-col items-center gap-4 z-10 px-8 text-center max-w-sm">
-            <img src="/logo.svg" alt="Na Ponta do Lápis" class="w-64 max-w-xs drop-shadow-xs">
-            <div class="w-12 h-1 rounded-full bg-[#EEC046]"></div>
-            <p class="text-sm font-medium text-[#4A2585]/85 tracking-wide leading-relaxed">
-                Seu controle financeiro pessoal e familiar, simples e na ponta do lápis.
-            </p>
+        <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
+            <div class="flex flex-col items-center gap-4 z-10 px-8 text-center max-w-sm">
+                <img src="/logo.svg" alt="Na Ponta do Lápis" class="w-64 max-w-xs drop-shadow-xs">
+                <div class="w-12 h-1 rounded-full bg-[#EEC046]"></div>
+                <p class="text-sm font-medium text-[#4A2585]/85 tracking-wide leading-relaxed">
+                    Seu controle financeiro pessoal e familiar, simples e na ponta do lápis.
+                </p>
+            </div>
         </div>
-    </div>
     }
 </div>

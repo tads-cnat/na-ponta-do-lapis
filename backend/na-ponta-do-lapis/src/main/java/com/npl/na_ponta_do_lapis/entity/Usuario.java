@@ -51,6 +51,9 @@ public class Usuario implements UserDetails {
     @Column(name = "senha", nullable = false, length = 254)
     private String senha;
 
+    @Column(name = "senha_temporaria", nullable = false, columnDefinition = "boolean default false")
+    private boolean senhaTemporaria;
+
     @Column(name = "telefone", nullable = true, length = 20)
     private String telefone;
 
@@ -162,6 +165,14 @@ public class Usuario implements UserDetails {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public boolean isSenhaTemporaria() {
+        return senhaTemporaria;
+    }
+
+    public void setSenhaTemporaria(boolean senhaTemporaria) {
+        this.senhaTemporaria = senhaTemporaria;
     }
 
     public String getFotoPerfil() {

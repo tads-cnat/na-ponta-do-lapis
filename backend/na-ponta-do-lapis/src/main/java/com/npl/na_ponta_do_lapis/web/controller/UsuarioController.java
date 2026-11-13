@@ -85,7 +85,9 @@ public class UsuarioController {
     public ResponseEntity<?> atualizarUsuarioLogado(@RequestBody @Valid UsuarioUpdateDTO usuarioDTO) {
         Usuario usuarioAtualizado = usuarioService.atualizarUsuarioLogado(usuarioDTO);
 
-        if (usuarioDTO.email() != null && !usuarioDTO.email().trim().isEmpty()) {
+        boolean emailAlterado = usuarioDTO.email() != null && !usuarioDTO.email().trim().isEmpty();
+        boolean senhaAlterada = usuarioDTO.senha() != null && !usuarioDTO.senha().trim().isEmpty();
+        if (emailAlterado || senhaAlterada) {
             String novoToken = jwtUtil.generateToken(
                 usuarioAtualizado,
                 new Date(),

@@ -80,6 +80,7 @@ public class UsuarioService {
 
             String senhaCriptografada = passwordEncoder.encode(dto.senha());
             usuario.setSenha(senhaCriptografada);
+            usuario.setSenhaTemporaria(false);
         }
 
         if (dto.moedaPadrao() != null) {

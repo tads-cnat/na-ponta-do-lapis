@@ -57,6 +57,13 @@ export class AuthService {
     return this.http.post<SignupRequest>(`${this.BASE_URL}/auth/register`, signupRequest)
   }
 
+  public recoverPassword(email: string): Observable<{ message: string; temporaryPassword?: string | null }> {
+    return this.http.post<{ message: string; temporaryPassword?: string | null }>(
+      `${this.BASE_URL}/auth/recover-password`,
+      { email }
+    );
+  }
+
   public meusDados(): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.BASE_URL}/usuario/me`)
   }

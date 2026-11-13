@@ -147,5 +147,35 @@ class AuthServiceImplTest {
         verify(usuarioRepository, never()).save(any());
         verify(contaFinanceiraRepository, never()).save(any());
     }
+
+        @Test
+        @DisplayName("Deve gerar senha temporária e marcar o usuário para redefinição")
+        void deveGerarSenhaTemporaria() {
+                Usuario usuario = new Usuario();
+                usuario.setEmail("ana@email.com");
+                when(usuarioRepository.findByEmailIgnoreCase("ana@email.com")).thenReturn(Optional.of(usuario));
+                when(passwordEncoder.encode(anyString())).thenReturn("senha-criptografada");
+                when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+                var response = authService.recoverPassword(" ana@email.com ");
+
+                assertThat(response.temporaryPassword()).startsWith("NPL-");
+                assertThat(usuario.getPassword()).isEqualTo("senha-criptografada");
+                assertThat(usuario.isSenhaTemporaria()).isTrue();
+                verify(usuarioRepository).save(usuario);
+        }
+
+        @Test
+        @DisplayName("Não deve revelar se um e-mail não cadastrado existe")
+        void deveResponderGenericamenteParaEmailNaoCadastrado() {
+                when(usuarioRepository.findByEmailIgnoreCase("naoexiste@email.com")).thenReturn(Optional.empty());
+
+                var response = authService.recoverPassword("naoexiste@email.com");
+
+                assertThat(response.temporaryPassword()).isNull();
+                assertThat(response.message()).contains("Se o e-mail estiver cadastrado");
+                verify(usuarioRepository, never()).save(any());
+                verify(passwordEncoder, never()).encode(anyString());
+        }
 }
 

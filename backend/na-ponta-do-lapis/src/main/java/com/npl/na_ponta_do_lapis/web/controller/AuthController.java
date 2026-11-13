@@ -3,6 +3,8 @@ package com.npl.na_ponta_do_lapis.web.controller;
 import com.npl.na_ponta_do_lapis.service.auth.AuthService;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
+import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryRequestDTO;
+import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
 import jakarta.servlet.http.HttpServletResponse;
@@ -55,5 +57,12 @@ public class AuthController {
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO, HttpServletResponse response) {
         authService.signup(registerRequestDTO, response);
         return ResponseEntity.ok(Collections.singletonMap("message", "Usuário cadastrado com sucesso."));
+    }
+
+    @PostMapping("/recover-password")
+    public ResponseEntity<PasswordRecoveryResponseDTO> recoverPassword(
+            @RequestBody @Valid PasswordRecoveryRequestDTO request
+    ) {
+        return ResponseEntity.ok(authService.recoverPassword(request.email()));
     }
 }

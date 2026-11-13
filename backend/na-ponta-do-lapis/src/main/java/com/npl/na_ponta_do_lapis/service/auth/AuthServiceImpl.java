@@ -8,8 +8,10 @@ import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
+import com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
+import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
 import com.npl.na_ponta_do_lapis.web.exception.EmailJaCadastradoException;
@@ -37,6 +39,8 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -50,6 +54,7 @@ public class AuthServiceImpl implements AuthService{
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    private final UsuarioAuthCacheService usuarioAuthCacheService;
 
     @Value("${google.client-id:}")
     private String googleClientId;
@@ -59,7 +64,16 @@ public class AuthServiceImpl implements AuthService{
                            UsuarioRepository usuarioRepository,
                            ContaFinanceiraRepository contaFinanceiraRepository,
                            PasswordEncoder passwordEncoder) {
-        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, new ObjectMapper());
+        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, new ObjectMapper(), null);
+    }
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager,
+                           JwtUtil jwtUtil,
+                           UsuarioRepository usuarioRepository,
+                           ContaFinanceiraRepository contaFinanceiraRepository,
+                           PasswordEncoder passwordEncoder,
+                           ObjectMapper objectMapper) {
+        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, objectMapper, null);
     }
 
     @Autowired
@@ -68,13 +82,15 @@ public class AuthServiceImpl implements AuthService{
                            UsuarioRepository usuarioRepository,
                            ContaFinanceiraRepository contaFinanceiraRepository,
                            PasswordEncoder passwordEncoder,
-                           ObjectMapper objectMapper) {
+                           ObjectMapper objectMapper,
+                           UsuarioAuthCacheService usuarioAuthCacheService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.usuarioRepository = usuarioRepository;
         this.contaFinanceiraRepository = contaFinanceiraRepository;
         this.passwordEncoder = passwordEncoder;
         this.objectMapper = objectMapper;
+        this.usuarioAuthCacheService = usuarioAuthCacheService;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(8))
                 .build();
@@ -224,6 +240,34 @@ public class AuthServiceImpl implements AuthService{
         contaPadrao.setMoeda(Moeda.BRL);
         contaPadrao.setUsuario(usuarioSalvo);
         contaFinanceiraRepository.save(contaPadrao);
+    }
+
+    @Override
+    @Transactional
+    public PasswordRecoveryResponseDTO recoverPassword(String email) {
+        String normalizedEmail = email == null ? "" : email.strip();
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailIgnoreCase(normalizedEmail);
+        if (usuarioOptional.isEmpty()) {
+            return new PasswordRecoveryResponseDTO(
+                    "Se o e-mail estiver cadastrado, uma senha temporária foi gerada.",
+                    null
+            );
+        }
+
+        Usuario usuario = usuarioOptional.get();
+        String temporaryPassword = "NPL-" + UUID.randomUUID().toString().replace("-", "")
+                .substring(0, 16).toUpperCase(Locale.ROOT);
+        usuario.setSenha(passwordEncoder.encode(temporaryPassword));
+        usuario.setSenhaTemporaria(true);
+        usuarioRepository.save(usuario);
+        if (usuarioAuthCacheService != null) {
+            usuarioAuthCacheService.evictPorUsuario(usuario);
+        }
+
+        return new PasswordRecoveryResponseDTO(
+                "Se o e-mail estiver cadastrado, uma senha temporária foi gerada. Use-a para entrar e redefina sua senha no perfil.",
+                temporaryPassword
+        );
     }
 
     @Override

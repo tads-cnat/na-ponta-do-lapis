@@ -19,7 +19,10 @@ export class LoginComponent {
   @Input() embedded = false;
 
   loginForm: FormGroup;
+  recoveryForm: FormGroup;
   loading = false;
+  recoveryLoading = false;
+  showRecoveryForm = false;
   readonly mascoteEstado = signal<MascoteEstado>('idle');
   readonly lookProgress = signal(0.5);
   readonly isHoveringSubmit = signal(false);
@@ -28,7 +31,52 @@ export class LoginComponent {
     this.loginForm = this.fb.group({
       email: [null, [Validators.required, Validators.minLength(3)]],
       password: [null, [Validators.required]]
-    })
+    });
+    this.recoveryForm = this.fb.group({
+      email: [null, [Validators.required, Validators.email]]
+    });
+  }
+
+  public toggleRecoveryForm(): void {
+    this.showRecoveryForm = !this.showRecoveryForm;
+    if (this.showRecoveryForm) {
+      const email = (this.loginForm.get('email')?.value as string) ?? '';
+      this.recoveryForm.reset({ email: email.includes('@') ? email.trim() : '' });
+    } else {
+      this.recoveryForm.reset();
+    }
+  }
+
+  public recoverPassword(): void {
+    if (this.recoveryForm.invalid || this.recoveryLoading) return;
+
+    this.recoveryLoading = true;
+    const email = (this.recoveryForm.get('email')?.value as string).trim();
+    this.authService.recoverPassword(email).subscribe({
+      next: (response) => {
+        this.recoveryLoading = false;
+        const detail = response.temporaryPassword
+          ? `${response.message} Senha temporária: ${response.temporaryPassword}`
+          : response.message;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Recuperação de senha',
+          detail,
+          life: 7000
+        });
+        this.showRecoveryForm = false;
+        this.recoveryForm.reset();
+      },
+      error: () => {
+        this.recoveryLoading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Não foi possível recuperar a senha',
+          detail: 'Verifique o e-mail informado e tente novamente.',
+          life: 4000
+        });
+      }
+    });
   }
 
   public login() {
@@ -99,16 +147,19 @@ export class LoginComponent {
   private finalizarLoginComSucesso(res: Token) {
     this.loading = false;
     this.mascoteEstado.set('success');
+    StorageService.salvarToken(res.token);
+    const mustChangePassword = StorageService.getUsuarioDecodificado()?.mustChangePassword === true;
     this.messageService.add({
       severity: 'success',
-      summary: 'Login Realizado!',
-      detail: 'Bem-vindo ao Na Ponta do Lápis',
-      life: 2000
+      summary: mustChangePassword ? 'Senha temporária ativada' : 'Login Realizado!',
+      detail: mustChangePassword
+        ? 'Troque sua senha no perfil para continuar.'
+        : 'Bem-vindo ao Na Ponta do Lápis',
+      life: mustChangePassword ? 5000 : 2000
     });
 
-    StorageService.salvarToken(res.token);
     setTimeout(() => {
-      this.router.navigateByUrl('app/dashboard');
+      this.router.navigateByUrl(mustChangePassword ? 'app/perfil' : 'app/dashboard');
     }, 1200);
   }
 
