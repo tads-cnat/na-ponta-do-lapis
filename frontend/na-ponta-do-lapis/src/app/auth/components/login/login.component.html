@@ -1,7 +1,7 @@
-<p-toast></p-toast>
+<p-toast position="top-right" [baseZIndex]="10000"></p-toast>
 <div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
 
-    <div class="flex flex-1 flex-col justify-between p-6 sm:p-10 overflow-y-auto">
+    <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
         <!-- Botão Voltar ao Início ancorado no canto superior esquerdo, distante do formulário -->
         <div class="w-full flex items-center justify-start">
             <button type="button" (click)="voltar()"
@@ -11,7 +11,14 @@
             </button>
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-4 w-full max-w-md mx-auto my-auto py-8">
+        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
+            <app-mascote-login
+                [estado]="mascoteEstado()"
+                [lookProgress]="lookProgress()"
+                [eager]="isHoveringSubmit()"
+                [emailInvalid]="!!(loginForm.get('email')?.invalid && loginForm.get('email')?.touched)">
+            </app-mascote-login>
+
             <div>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
                 <p class="text-sm sm:text-base text-slate-500 mt-1.5">
@@ -22,19 +29,23 @@
             </div>
 
             <div class="flex flex-col gap-1.5 mt-2">
-                <label for="email" class="text-xs font-semibold text-slate-700">E-mail</label>
-                <input id="email" pInputText placeholder="nome@gmail.com" class="w-full text-sm rounded-xl!" formControlName="email"
+                <label for="email" class="text-xs font-semibold text-slate-700">E-mail ou Nickname</label>
+                <input id="email" pInputText placeholder="nome@gmail.com ou seu nickname" class="w-full text-sm rounded-xl!" formControlName="email"
+                    (focus)="onEmailFocus()"
+                    (input)="onEmailInput($any($event.target).value)"
+                    (blur)="onEmailBlur()"
                     [class.ng-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
                     [class.ng-dirty]="loginForm.get('email')?.touched">
 
-                @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-                    @if (loginForm.get('email')?.errors?.['required']) {
-                        <small class="text-[#C24E4E] text-xs font-semibold">O e-mail é obrigatório.</small>
+                <div class="min-h-4 flex items-center">
+                    @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                        @if (loginForm.get('email')?.errors?.['required']) {
+                            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe seu e-mail ou nickname.</small>
+                        } @else if (loginForm.get('email')?.errors?.['minlength']) {
+                            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 3 caracteres.</small>
+                        }
                     }
-                    @if (loginForm.get('email')?.errors?.['email']) {
-                        <small class="text-[#C24E4E] text-xs font-semibold">Informe um formato de e-mail válido.</small>
-                    }
-                }
+                </div>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -42,31 +53,40 @@
                     <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
                     <span class="text-[#7843CD] cursor-pointer font-semibold hover:text-[#6214CC] hover:underline text-xs">Esqueceu a sua senha?</span>
                 </div>
-                <p-password id="password" [toggleMask]="true" [feedback]="false" placeholder="Digite sua senha aqui"
-                    inputStyleClass="w-full text-sm rounded-xl!" formControlName="password"
-                    [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
+                <div #passwordWrapper
+                    (focusin)="onPasswordFocus(passwordWrapper)"
+                    (focusout)="onPasswordBlur($event, passwordWrapper)"
+                    (click)="onPasswordAreaClick(passwordWrapper)">
+                    <p-password id="password" [toggleMask]="true" [feedback]="false" placeholder="Digite sua senha aqui"
+                        inputStyleClass="w-full text-sm rounded-xl!" formControlName="password"
+                        [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
+                </div>
 
-                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-                    <small class="text-[#C24E4E] text-xs font-semibold">A senha é obrigatória.</small>
-                }
+                <div class="min-h-4 flex items-center">
+                    @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                        <small class="text-[#C24E4E] text-xs font-semibold leading-4">A senha é obrigatória.</small>
+                    }
+                </div>
             </div>
 
             <div class="flex flex-col gap-2.5 mt-2">
-                <p-button type="submit" label="Entrar" icon="pi pi-sign-in"
-                    styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
-                    [disabled]="loginForm.invalid || loading" [loading]="loading" />
+                <div (mouseenter)="isHoveringSubmit.set(true)" (mouseleave)="isHoveringSubmit.set(false)">
+                    <p-button type="submit" label="Entrar" icon="pi pi-sign-in"
+                        styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                        [disabled]="loginForm.invalid || loading" [loading]="loading" />
+                </div>
 
                 <p-button type="button"
-                    styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5"
-                    [disabled]="true">
+                    styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
+                    (onClick)="entrarComGoogle()"
+                    [disabled]="loading">
                     <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
                     <span>Continuar com Google</span>
                 </p-button>
             </div>
         </form>
 
-        <!-- Espaçador inferior para equilibrar o centro vertical na tela -->
-        <div class="hidden sm:block h-9"></div>
+        <div class="hidden sm:block h-2"></div>
     </div>
 
     @if (!embedded) {
