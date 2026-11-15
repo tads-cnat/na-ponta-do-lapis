@@ -42,7 +42,7 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
           @for (transacao of transacoesPaginadas; track transacao.id) {
 
             <div
-              class="flex items-center justify-between gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all duration-200 border border-slate-100">
+              class="transacao-item flex items-center justify-between gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all duration-200 border border-slate-100">
 
               <div class="flex items-center gap-4 min-w-0">
 

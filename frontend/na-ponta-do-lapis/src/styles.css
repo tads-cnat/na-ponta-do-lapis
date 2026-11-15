@@ -88,9 +88,32 @@ html.app-dark app-main-layout :is(
   [class~="bg-slate-100/80"],
   [class~="bg-gray-50"],
   [class~="bg-gray-100"],
-  [class*="bg-[#F8F8FC]"]
+  [class*="bg-[#F8F8FC]"],
+  [class*="bg-[#F8FAFC]"]
 ) {
   background-color: var(--npl-dark-surface) !important;
+}
+
+html.app-dark app-transacoes .p-card,
+html.app-dark app-transacoes p-card {
+  background-color: var(--npl-dark-surface) !important;
+  color: var(--npl-dark-text);
+}
+
+html.app-dark app-transacoes .p-datatable-thead > tr > th {
+  background-color: var(--npl-dark-surface) !important;
+  border-color: var(--npl-dark-border) !important;
+  color: var(--npl-dark-text) !important;
+}
+
+html.app-dark app-transacoes-conta .transacao-item:hover {
+  background-color: #393641 !important;
+  border-color: #514b5a !important;
+}
+
+html.app-dark app-familia #forms-familia {
+  background-color: var(--npl-dark-surface) !important;
+  border-color: var(--npl-dark-border) !important;
 }
 
 html.app-dark app-main-layout :is(

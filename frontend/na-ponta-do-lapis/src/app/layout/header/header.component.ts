@@ -12,10 +12,11 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { Notificacao } from '../../model/INotificacao.model';
 import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
+import { TemaComponentComponentSimples } from '../../pages/perfil/components/tema-component/tema-component-simples.component';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent],
+  imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent, TemaComponentComponentSimples],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })

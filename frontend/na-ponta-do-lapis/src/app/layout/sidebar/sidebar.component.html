@@ -1,8 +1,12 @@
 <aside class="sidebar flex flex-col h-full bg-white" [class.aberta]="sidebarService.aberto()">
         <div class="flex menu-header">
             <img src="logo.svg" alt="logomarca" class="logo">
-            <button (click)="sidebarService.toggleSidebar()" class="menu-btn">
-                <app-icon [name]="sidebarService.aberto() ? 'close' : 'menu'" class="text-black"/>
+            <button
+                (click)="sidebarService.toggleSidebar()"
+                class="menu-btn"
+                [class.text-white]="themeService.escuro()"
+                [class.text-black]="!themeService.escuro()">
+                <app-icon [name]="sidebarService.aberto() ? 'close' : 'menu'"/>
             </button>
         </div>
     @if(isMobile) {
