@@ -28,10 +28,15 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
         <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
+=======
+        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-2.5 w-full max-w-[400px] mx-auto my-auto py-3">
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
             <app-mascote-login
+                [compact]="true"
                 [estado]="mascoteEstado()"
                 [lookProgress]="lookProgress()"
                 [eager]="isHoveringSubmit()"
@@ -48,8 +53,8 @@
 =======
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
             <div>
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
-                <p class="text-sm sm:text-base text-slate-500 mt-1.5">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
+                <p class="text-sm text-slate-500 mt-1">
                     Ainda não tem uma conta?
                     <a routerLink="/signup"
                         class="text-[#7843CD] font-bold transition duration-200 hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 ml-1">Cadastre-se</a>
@@ -58,27 +63,28 @@
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 68d960e (style(auth): mover botao do Google para o topo dos formularios)
+=======
+            @if (googleButtonState() !== 'unavailable') {
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
             <div class="flex flex-col gap-2.5 mt-1">
-                <div #googleBtnContainer class="w-full flex justify-center"></div>
+                <div class="w-full min-h-[40px] flex items-center justify-center relative">
+                    <div #googleBtnContainer class="w-full flex justify-center" [class.hidden]="googleButtonState() !== 'ready'"></div>
 
-                @if (!googleButtonReady()) {
-                <p-button type="button"
-                    styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
-                    (onClick)="entrarComGoogle()"
-                    [disabled]="loading">
-                    <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
-                    <span>Continuar com Google</span>
-                </p-button>
-                }
+                    @if (googleButtonState() === 'loading') {
+                        <div class="w-full h-[40px] rounded bg-slate-100 border border-slate-200 animate-pulse"></div>
+                    }
+                </div>
 
-                <div class="flex items-center gap-3 my-0.5">
+                <div class="flex items-center gap-3">
                     <div class="h-px flex-1 bg-slate-200"></div>
                     <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">ou</span>
                     <div class="h-px flex-1 bg-slate-200"></div>
                 </div>
             </div>
+            }
 
             <div class="flex flex-col gap-1.5">
                 <label for="email" class="text-xs font-semibold text-slate-700">E-mail ou Nickname</label>

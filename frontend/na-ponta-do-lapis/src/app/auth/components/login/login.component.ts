@@ -68,7 +68,7 @@ export class LoginComponent implements AfterViewInit {
 
   loginForm: FormGroup;
   loading = false;
-  readonly googleButtonReady = signal(false);
+  readonly googleButtonState = signal<'loading' | 'ready' | 'unavailable'>('loading');
   readonly googleConsentVisible = signal(false);
   readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
 >>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
@@ -90,7 +90,8 @@ export class LoginComponent implements AfterViewInit {
       container,
       'continue_with',
       (idToken) => this.autenticarComGoogleToken(idToken),
-      () => this.googleButtonReady.set(true)
+      () => this.googleButtonState.set('ready'),
+      () => this.googleButtonState.set('unavailable')
     );
   }
 
@@ -125,6 +126,7 @@ export class LoginComponent implements AfterViewInit {
     })
   }
 
+<<<<<<< HEAD
   public entrarComGoogle() {
     if (this.loading) return;
     this.loading = true;
@@ -171,6 +173,8 @@ export class LoginComponent implements AfterViewInit {
 <<<<<<< HEAD
 =======
 >>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
+=======
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
     this.loading = true;
     this.mascoteEstado.set('loading');

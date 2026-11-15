@@ -26,6 +26,7 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     <form [formGroup]="registerForm" (ngSubmit)="register()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
 =======
     <form [formGroup]="registerForm" (ngSubmit)="register()" class="flex flex-col gap-3.5 w-full max-w-md mx-auto my-auto py-8">
@@ -36,9 +37,12 @@
 =======
     <form [formGroup]="registerForm" (ngSubmit)="register()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
+=======
+    <form [formGroup]="registerForm" (ngSubmit)="register()" class="npl-page-enter flex flex-col gap-2.5 w-full max-w-[400px] mx-auto my-auto py-3">
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
       <div>
-        <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Criar Conta</h1>
-        <p class="text-sm sm:text-base text-slate-500 mt-1.5">
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Criar Conta</h1>
+        <p class="text-sm text-slate-500 mt-1">
           Já possui uma conta?
           <a routerLink="/login"
             class="text-[#7843CD] font-bold transition duration-200 hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 ml-1">Entrar</a>
@@ -48,43 +52,40 @@
 <<<<<<< HEAD
       </div>
 
+      @if (googleButtonState() !== 'unavailable') {
       <div class="flex flex-col gap-2.5 mt-1">
-        <div #googleBtnContainer class="w-full flex justify-center"></div>
+        <div class="w-full min-h-[40px] flex items-center justify-center relative">
+          <div #googleBtnContainer class="w-full flex justify-center" [class.hidden]="googleButtonState() !== 'ready'"></div>
 
-        @if (!googleButtonReady()) {
-        <p-button type="button"
-                  styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
-                  (onClick)="cadastrarComGoogle()"
-                  [disabled]="loading">
-          <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
-          <span>Cadastrar com Google</span>
-        </p-button>
-        }
+          @if (googleButtonState() === 'loading') {
+            <div class="w-full h-[40px] rounded bg-slate-100 border border-slate-200 animate-pulse"></div>
+          }
+        </div>
 
-        <div class="flex items-center gap-3 my-0.5">
+        <div class="flex items-center gap-3">
           <div class="h-px flex-1 bg-slate-200"></div>
           <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">ou preencha seus dados</span>
           <div class="h-px flex-1 bg-slate-200"></div>
         </div>
       </div>
+      }
 
-      <div class="flex flex-col gap-1.5">
+      <div class="flex flex-col gap-1">
         <label for="nome" class="text-xs font-semibold text-slate-700">Nome Completo</label>
         <input id="nome" pInputText placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full text-sm rounded-xl!"
                [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
                [class.ng-dirty]="registerForm.get('nomeCompleto')?.touched">
-        <div class="min-h-4 flex items-center">
-          @if (registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched) {
-            <small class="text-[#C24E4E] text-xs font-semibold leading-4">O nome deve ter no mínimo 3 caracteres.</small>
-          }
-        </div>
+        @if (registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched) {
+          <small class="text-[#C24E4E] text-xs font-semibold leading-4">O nome deve ter no mínimo 3 caracteres.</small>
+        }
       </div>
 
-      <div class="flex flex-col gap-1.5">
+      <div class="flex flex-col gap-1">
         <label for="username" class="text-xs font-semibold text-slate-700">Nome de Usuário (Nickname)</label>
         <input id="username" pInputText placeholder="Ex: lucaasshq" formControlName="username" class="w-full text-sm rounded-xl!"
                [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
                [class.ng-dirty]="registerForm.get('username')?.touched">
+<<<<<<< HEAD
         <div class="min-h-4 flex items-center">
           @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
             <small class="text-[#C24E4E] text-xs font-semibold leading-4">Nome de usuário obrigatório (mín. 3 letras).</small>
@@ -136,18 +137,33 @@
         <div class="flex flex-col gap-1.5">
 <<<<<<< HEAD
 <<<<<<< HEAD
+=======
+        @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+          <small class="text-[#C24E4E] text-xs font-semibold leading-4">Nome de usuário obrigatório (mín. 3 letras).</small>
+        }
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+        <div class="flex flex-col gap-1">
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
           <label for="email" class="text-xs font-semibold text-slate-700">E-mail</label>
           <input id="email" pInputText placeholder="nome@gmail.com" formControlName="email" class="w-full text-sm rounded-xl!"
                  [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
                  [class.ng-dirty]="registerForm.get('email')?.touched">
+<<<<<<< HEAD
           <div class="min-h-4 flex items-center">
             @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
               <small class="text-[#C24E4E] text-xs font-semibold leading-4">E-mail inválido.</small>
             }
           </div>
 <<<<<<< HEAD
+=======
+          @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold leading-4">E-mail inválido.</small>
+          }
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
         </div>
-        <div class="flex flex-col gap-1.5">
+        <div class="flex flex-col gap-1">
           <label for="celular" class="text-xs font-semibold text-slate-700">
             Celular <span class="text-slate-400 font-normal text-[11px]">(opcional)</span>
           </label>
@@ -179,10 +195,15 @@
         </div>
       </div>
 
+<<<<<<< HEAD
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
         <div class="flex flex-col gap-1.5">
 <<<<<<< HEAD
 <<<<<<< HEAD
+=======
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+        <div class="flex flex-col gap-1">
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
           <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
 =======
           <label for="password" class="text-xs font-semibold text-slate-700">Senha <span class="text-[#C24E4E]">*</span></label>
@@ -196,6 +217,7 @@
             [styleClass]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
           <div class="min-h-4 flex items-center">
@@ -204,13 +226,19 @@
             }
           </div>
 <<<<<<< HEAD
+=======
+          @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 8 caracteres.</small>
+          }
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
         </div>
 
-        <div class="flex flex-col gap-1.5">
+        <div class="flex flex-col gap-1">
           <label for="confirmPassword" class="text-xs font-semibold text-slate-700">Confirmar Senha</label>
           <p-password id="confirmPassword" [toggleMask]="true" [feedback]="false" placeholder="Repita a senha"
             inputStyleClass="w-full text-sm rounded-xl!" formControlName="passwordConfirmation"
             [styleClass]="registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
+<<<<<<< HEAD
           <div class="min-h-4 flex items-center">
             @if (registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched) {
               <small class="text-[#C24E4E] text-xs font-semibold leading-4">Confirme sua senha.</small>
@@ -241,6 +269,11 @@
             }
           </div>
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
+=======
+          @if (registerForm.get('passwordConfirmation')?.invalid && registerForm.get('passwordConfirmation')?.touched) {
+            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Confirme sua senha.</small>
+          }
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
         </div>
       </div>
 

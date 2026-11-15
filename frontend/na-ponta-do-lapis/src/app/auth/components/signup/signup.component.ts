@@ -40,7 +40,7 @@ export class SignupComponent implements AfterViewInit {
   registerForm: FormGroup;
   termos: any = null;
   loading = false;
-  readonly googleButtonReady = signal(false);
+  readonly googleButtonState = signal<'loading' | 'ready' | 'unavailable'>('loading');
   readonly googleConsentVisible = signal(false);
   readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
 
@@ -64,9 +64,10 @@ export class SignupComponent implements AfterViewInit {
     if (!container) return;
     this.authService.renderizarBotaoGoogle(
       container,
-      'signup_with',
+      'continue_with',
       (idToken) => this.autenticarComGoogleToken(idToken),
-      () => this.googleButtonReady.set(true)
+      () => this.googleButtonState.set('ready'),
+      () => this.googleButtonState.set('unavailable')
     );
   }
 
@@ -97,6 +98,7 @@ export class SignupComponent implements AfterViewInit {
     })
   }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
 =======
@@ -154,6 +156,8 @@ export class SignupComponent implements AfterViewInit {
 <<<<<<< HEAD
 =======
 >>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
+=======
+>>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
     this.loading = true;
     this.authService.loginWithGoogle(idToken, termosAceitos).subscribe({
