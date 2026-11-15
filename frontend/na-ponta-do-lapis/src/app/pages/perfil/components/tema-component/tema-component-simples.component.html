@@ -1,0 +1,41 @@
+<div class="flex items-center gap-1 font-sans">
+  <button
+    type="button"
+    aria-label="Ativar tema claro"
+    [attr.aria-pressed]="temaAtual() === 'claro'"
+    (click)="selecionarTema('claro')"
+    [ngClass]="temaAtual() === 'escuro' ? 'hover:bg-[#393641]' : 'hover:bg-slate-100'"
+    class="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7843CD]">
+    <span
+      [ngClass]="temaAtual() === 'claro'
+        ? 'border-amber-300 bg-amber-100 text-amber-600'
+        : 'border-transparent bg-transparent text-slate-400'"
+      class="flex h-7 w-7 items-center justify-center rounded-full border transition-colors">
+      <i class="pi pi-sun text-sm"></i>
+    </span>
+    <span *ngIf="temaAtual() === 'claro'"
+      class="absolute right-0.5 top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#EEC046] text-[8px] font-extrabold text-black">
+      <i class="pi pi-check"></i>
+    </span>
+  </button>
+
+  <button
+    type="button"
+    aria-label="Ativar tema escuro"
+    [attr.aria-pressed]="temaAtual() === 'escuro'"
+    (click)="selecionarTema('escuro')"
+    [ngClass]="temaAtual() === 'escuro' ? 'hover:bg-[#393641]' : 'hover:bg-[#393641]'"
+    class="relative flex h-9 w-9 items-center justify-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7843CD]">
+    <span
+      [ngClass]="temaAtual() === 'escuro'
+        ? 'border-[#7843CD] bg-[#393044] text-[#e9d5ff]'
+        : 'border-transparent bg-transparent text-slate-400'"
+      class="flex h-7 w-7 items-center justify-center rounded-full border transition-colors">
+      <i class="pi pi-moon text-sm"></i>
+    </span>
+    <span *ngIf="temaAtual() === 'escuro'"
+      class="absolute right-0.5 top-0.5 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-[#EEC046] text-[8px] font-extrabold text-black">
+      <i class="pi pi-check"></i>
+    </span>
+  </button>
+</div>
