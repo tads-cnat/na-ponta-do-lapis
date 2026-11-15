@@ -21,7 +21,27 @@
         </p>
       </div>
 
-      <div class="flex flex-col gap-1.5 mt-1">
+      <div class="flex flex-col gap-2.5 mt-1">
+        <div #googleBtnContainer class="w-full flex justify-center"></div>
+
+        @if (!googleButtonReady()) {
+        <p-button type="button"
+                  styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
+                  (onClick)="cadastrarComGoogle()"
+                  [disabled]="loading">
+          <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
+          <span>Cadastrar com Google</span>
+        </p-button>
+        }
+
+        <div class="flex items-center gap-3 my-0.5">
+          <div class="h-px flex-1 bg-slate-200"></div>
+          <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">ou preencha seus dados</span>
+          <div class="h-px flex-1 bg-slate-200"></div>
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-1.5">
         <label for="nome" class="text-xs font-semibold text-slate-700">Nome Completo</label>
         <input id="nome" pInputText placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full text-sm rounded-xl!"
                [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
@@ -105,18 +125,6 @@
                   styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
                   [disabled]="registerForm.invalid || !termos || loading"
                   [loading]="loading"></p-button>
-
-        <div #googleBtnContainer class="w-full flex justify-center"></div>
-
-        @if (!googleButtonReady()) {
-        <p-button type="button"
-                  styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
-                  (onClick)="cadastrarComGoogle()"
-                  [disabled]="loading">
-          <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
-          <span>Cadastrar com Google</span>
-        </p-button>
-        }
       </div>
     </form>
 
