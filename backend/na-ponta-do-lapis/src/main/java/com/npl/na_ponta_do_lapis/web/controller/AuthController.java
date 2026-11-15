@@ -2,7 +2,7 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.service.auth.AuthService;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthRequestDTO;
-import com.npl.na_ponta-do-lapis.web.dto.auth.GoogleAuthResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
