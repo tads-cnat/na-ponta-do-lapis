@@ -14,10 +14,14 @@ public interface AuthService {
 
     public TokenResponseDTO login(LoginRequestDTO loginRequestDTO, HttpServletResponse response);
 <<<<<<< HEAD
+<<<<<<< HEAD
     GoogleAuthResponseDTO loginWithGoogle(String idToken, boolean termosAceitos);
 =======
     TokenResponseDTO loginWithGoogle(String idToken);
 >>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
+=======
+    GoogleAuthResponseDTO loginWithGoogle(String idToken, boolean termosAceitos);
+>>>>>>> 8aa2880 (feat(auth): exigir aceite de termos LGPD no primeiro cadastro via Google)
     void signup(RegisterRequestDTO registerRequestDTO, HttpServletResponse response);
 
     public void logout();

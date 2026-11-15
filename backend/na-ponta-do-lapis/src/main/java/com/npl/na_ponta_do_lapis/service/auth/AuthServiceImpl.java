@@ -10,9 +10,13 @@ import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
 <<<<<<< HEAD
+<<<<<<< HEAD
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
 =======
 >>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
+=======
+import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
+>>>>>>> 8aa2880 (feat(auth): exigir aceite de termos LGPD no primeiro cadastro via Google)
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
@@ -115,7 +119,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     @Transactional
-    public TokenResponseDTO loginWithGoogle(String idToken) {
+    public GoogleAuthResponseDTO loginWithGoogle(String idToken, boolean termosAceitos) {
         JsonNode tokenInfo = verifyGoogleIdToken(idToken);
         String email = tokenInfo.path("email").asText("").strip().toLowerCase();
         String nome = tokenInfo.path("name").asText("").strip();
@@ -125,12 +129,22 @@ public class AuthServiceImpl implements AuthService{
             throw new AuthenticationCredentialsNotFoundException("Token do Google sem e-mail válido.");
         }
 
-        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
-                .orElseGet(() -> registrarUsuarioGoogle(email, nome, picture));
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email).orElse(null);
+        if (usuario == null) {
+            if (!termosAceitos) {
+                String nomeExibicao = nome.isBlank() ? email.substring(0, email.indexOf('@')) : nome;
+                return GoogleAuthResponseDTO.pendenteTermos(nomeExibicao, email, picture);
+            }
+            usuario = registrarUsuarioGoogle(email, nome, picture);
+        }
 
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
+<<<<<<< HEAD
         return new TokenResponseDTO(token);
 >>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
+=======
+        return GoogleAuthResponseDTO.comToken(token);
+>>>>>>> 8aa2880 (feat(auth): exigir aceite de termos LGPD no primeiro cadastro via Google)
     }
 
     @Override
