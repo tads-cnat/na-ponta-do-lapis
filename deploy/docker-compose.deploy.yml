@@ -1,37 +1,56 @@
-services:
-  db:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - pgdata:/var/lib/postgresql/data      # volume nomeado = persistência
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+# ==============================================================================
+# NA PONTA DO LÁPIS — DEPLOY OFICIAL NO COOLIFY (RÉPLICAS + BANCOS GERENCIADOS)
+# ==============================================================================
+# Pré-requisitos no painel do Coolify (por ambiente: Homologação e Produção):
+# 1. PostgreSQL 16 e Redis 7 criados como Databases nativos no Coolify
+#    (habilitando backups automáticos do banco pelo próprio painel do Coolify).
+# 2. Definir no Environment do stack no Coolify:
+#    - APP_VERSION (ex: homolog ou 1.0.2)
+#    - BACKEND_REPLICAS (ex: 1 em homolog, 2 em produção)
+#    - DB_URL (ex: jdbc:postgresql://<host-postgres-coolify>:5432/<db>)
+#    - DB_USER / DB_PASSWORD
+#    - CACHE_TYPE (redis) / REDIS_HOST / REDIS_PORT=6379 / REDIS_PASSWORD
+#    - JWT_SECRET / CORS_ALLOWED_ORIGINS / APP_WEB_URL / CLOUDINARY_*
+# 3. Rede externa 'coolify' habilitada ("Connect to Predefined Network") para o
+#    Traefik alcançar as réplicas do backend/frontend e o backend acessar Postgres/Redis.
+# ==============================================================================
 
+services:
   backend:
     image: npl2026/backend:${APP_VERSION}
     pull_policy: always                      # garante pull da tag móvel :homolog
     restart: unless-stopped
+    deploy:
+      replicas: ${BACKEND_REPLICAS:-2}
+      resources:
+        limits:
+          memory: 1024M
+    mem_limit: 1024m                         # limita MaxRAMPercentage=75 da JVM (~768MB heap máx por réplica)
     expose: ["8080"]                         # sem ports → só Traefik (api.) e Nginx (/api) alcançam
+    networks:
+      - default
+      - coolify
     environment:
       # Defaults seguros: se a variável não existir no Coolify, não cai no profile local
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
-      # Homolog e Produção (pré-lançamento): update por padrão para aplicar novos campos de conta/cartão/IA
+      # Homolog e Produção (pré-lançamento): update por padrão para aplicar novos campos
       SPRING_JPA_HIBERNATE_DDLAUTO: ${SPRING_JPA_HIBERNATE_DDLAUTO:-update}
       SPRING_JPA_HIBERNATE_DDL_AUTO: ${SPRING_JPA_HIBERNATE_DDL_AUTO:-${SPRING_JPA_HIBERNATE_DDLAUTO:-update}}
+      FLYWAY_ENABLED: ${FLYWAY_ENABLED:-false}
       # Homolog: true | Produção: false (evita criar usuários de teste em banco vazio)
       APP_SEED_ENABLED: ${APP_SEED_ENABLED:-false}
       # URL pública do frontend (usada em redirects e na página de erro da API)
       APP_WEB_URL: ${APP_WEB_URL:-https://napontadolapis.app}
-      DB_URL: jdbc:postgresql://db:5432/${POSTGRES_DB}
-      DB_USER: ${POSTGRES_USER}
-      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      # Banco de Dados PostgreSQL gerenciado pelo Coolify
+      DB_URL: ${DB_URL}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      # Cache distribuído Redis gerenciado pelo Coolify
+      CACHE_TYPE: ${CACHE_TYPE:-redis}
+      REDIS_HOST: ${REDIS_HOST}
+      REDIS_PORT: ${REDIS_PORT:-6379}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_HEALTH_ENABLED: ${REDIS_HEALTH_ENABLED:-false}
       JWT_SECRET: ${JWT_SECRET}
       CORS_ALLOWED_ORIGINS: ${CORS_ALLOWED_ORIGINS}
       SPRINGDOC_SWAGGER_UI_ENABLED: ${SWAGGER_ENABLED:-false}
@@ -47,8 +66,6 @@ services:
       FATURA_IA_OPENAI_MODEL: ${FATURA_IA_OPENAI_MODEL:-gpt-4.1-mini}
       FATURA_IA_DEEPSEEK_MODEL: ${FATURA_IA_DEEPSEEK_MODEL:-deepseek-chat}
       FATURA_IA_GROQ_MODEL: ${FATURA_IA_GROQ_MODEL:-llama-3.3-70b-versatile}
-    depends_on:
-      db: { condition: service_healthy }
     healthcheck:
       test: ["CMD-SHELL", "wget -qO- http://localhost:8080/api/actuator/health | grep -q UP"]
       interval: 15s
@@ -60,9 +77,14 @@ services:
     image: npl2026/frontend:${APP_VERSION}
     pull_policy: always
     restart: unless-stopped
+    mem_limit: 128m
     expose: ["80"]                           # domínio atribuído pelo Coolify (Traefik)
+    networks:
+      - default
+      - coolify
     depends_on:
       backend: { condition: service_healthy }
 
-volumes:
-  pgdata:
+networks:
+  coolify:
+    external: true

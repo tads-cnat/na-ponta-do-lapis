@@ -69,7 +69,7 @@ Ideal para rodar toda a aplicação localmente de maneira idêntica à produçã
    cp .env.example .env
    ```
 
-2. Suba todos os containers (PostgreSQL, Backend e Frontend):
+2. Suba todos os containers (PostgreSQL, Redis, Backend e Frontend):
    ```bash
    docker compose -f docker-compose.local.yml up --build
    ```
