@@ -4,12 +4,16 @@ import com.npl.na_ponta_do_lapis.service.auth.AuthService;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthRequestDTO;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
 =======
 >>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
 =======
 import com.npl.na_ponta-do-lapis.web.dto.auth.GoogleAuthResponseDTO;
 >>>>>>> 8aa2880 (feat(auth): exigir aceite de termos LGPD no primeiro cadastro via Google)
+=======
+import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
+>>>>>>> cfbe88d (fix(auth): corrigir import do GoogleAuthResponseDTO em AuthController)
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
