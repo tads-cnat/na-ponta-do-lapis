@@ -41,7 +41,7 @@ export const appConfig: ApplicationConfig = {
       theme : {
         preset: naPontaDoLapisTema,
         options: {
-          darkModeSelector: false || 'none',
+          darkModeSelector: '.app-dark',
           CssLayer: {
             name: 'primeng',
             order: 'theme, base, primeng' 

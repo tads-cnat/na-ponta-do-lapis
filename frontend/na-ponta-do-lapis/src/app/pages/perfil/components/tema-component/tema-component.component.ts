@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { TemaApp, ThemeService } from '../../../../service/theme.service';
 
 @Component({
   selector: 'app-tema-component',
@@ -9,9 +10,10 @@ import { CommonModule } from '@angular/common';
   styleUrl: './tema-component.component.css',
 })
 export class TemaComponentComponent {
-  public temaAtual: 'claro' | 'escuro' = 'claro';
+  private readonly themeService = inject(ThemeService);
+  public readonly temaAtual = this.themeService.tema;
 
-  public selecionarTema(tema: 'claro' | 'escuro'): void {
-    this.temaAtual = tema;
+  public selecionarTema(tema: TemaApp): void {
+    this.themeService.definir(tema);
   }
 }
