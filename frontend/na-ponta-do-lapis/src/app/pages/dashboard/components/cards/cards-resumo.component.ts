@@ -13,7 +13,7 @@ import { ICotacao } from "../../../../model/ICotacao.models";
       <!-- Card: Saldo atual -->
       <div class="bg-white rounded-2xl px-5 py-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-500 font-medium">Saldo atual</span>
+          <span class="text-lg text-gray-500 font-medium">Saldo atual</span>
           <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center">
             <span class="text-purple-400 text-lg">
               <svg width="32" height="24" viewBox="0 0 32 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -29,7 +29,7 @@ import { ICotacao } from "../../../../model/ICotacao.models";
       <!-- Card: Moeda -->
       <div class="bg-white rounded-2xl px-5 py-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-500 font-medium">Moeda</span>
+          <span class="text-lg text-gray-500 font-medium">Moeda</span>
           <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
             <span class="text-yellow-500 text-lg">
               <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -79,7 +79,7 @@ import { ICotacao } from "../../../../model/ICotacao.models";
       <!-- Card: Receita -->
       <div class="bg-white rounded-2xl px-5 py-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-500 font-medium">Receita</span>
+          <span class="text-lg text-gray-500 font-medium">Receita</span>
           <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
             <span class="text-green-500 text-lg">
               <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -95,7 +95,7 @@ import { ICotacao } from "../../../../model/ICotacao.models";
       <!-- Card: Despesa -->
       <div class="bg-white rounded-2xl px-5 py-4 shadow-sm flex flex-col justify-between">
         <div class="flex items-center justify-between">
-          <span class="text-sm text-gray-500 font-medium">Despesa</span>
+          <span class="text-lg text-gray-500 font-medium">Despesa</span>
           <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
             <span class="text-red-400 text-lg">
               <svg width="28" height="30" viewBox="0 0 28 30" fill="none" xmlns="http://www.w3.org/2000/svg">

@@ -10,8 +10,8 @@ import { MetaItemDashboardComponent } from './meta-item-dashboard.component';
     <div class="bg-white rounded-2xl p-6 shadow-sm">
 
         <!-- Cabeçalho -->
-        <div class="flex items-center justify-between mb-6">
-          <h2 class="text-lg font-bold text-gray-800">Metas</h2>
+        <div class="flex items-center mb-6 justify-between">
+          <h2 class="text-lg font-bold text-gray-800 ml-[45%]">Metas</h2>
           <p-button
           label="Mostrar todas"
           severity="secondary"

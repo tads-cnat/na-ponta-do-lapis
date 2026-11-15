@@ -96,7 +96,7 @@ main > *:not(p-toast):not(router-outlet) {
   color-scheme: dark;
 
   --app-ground: #1A191E;
-  --app-surface: #121620;
+  --app-surface: #2A2830;
   --app-surface-2: #1f1f23;
   --app-panel: #2A2830;
   --app-input: #27272a;
