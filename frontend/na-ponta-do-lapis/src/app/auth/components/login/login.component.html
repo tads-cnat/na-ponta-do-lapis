@@ -57,6 +57,9 @@
             </div>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> 68d960e (style(auth): mover botao do Google para o topo dos formularios)
             <div class="flex flex-col gap-2.5 mt-1">
                 <div #googleBtnContainer class="w-full flex justify-center"></div>
 
@@ -184,18 +187,6 @@
                         styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
                         [disabled]="loginForm.invalid || loading" [loading]="loading" />
                 </div>
-
-                <div #googleBtnContainer class="w-full flex justify-center"></div>
-
-                @if (!googleButtonReady()) {
-                <p-button type="button"
-                    styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
-                    (onClick)="entrarComGoogle()"
-                    [disabled]="loading">
-                    <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
-                    <span>Continuar com Google</span>
-                </p-button>
-                }
             </div>
         </form>
 
