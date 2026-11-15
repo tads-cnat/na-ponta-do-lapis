@@ -2,13 +2,6 @@ package com.npl.na_ponta_do_lapis.config;
 
 import javax.sql.DataSource;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
->>>>>>> 043f4c6 (feat(backend,deploy): adicionar suporte a multiplas replicas, ShedLock, Flyway e cache Redis)
-=======
->>>>>>> 86c3182 (fix(shedlock): remover ConditionalOnBean(DataSource) para garantir criacao da tabela shedlock)
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -26,13 +19,6 @@ import net.javacrumbs.shedlock.spring.annotation.EnableSchedulerLock;
 public class SchedulingLockConfig {
 
     @Bean
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    @ConditionalOnBean(DataSource.class)
->>>>>>> 043f4c6 (feat(backend,deploy): adicionar suporte a multiplas replicas, ShedLock, Flyway e cache Redis)
-=======
->>>>>>> 86c3182 (fix(shedlock): remover ConditionalOnBean(DataSource) para garantir criacao da tabela shedlock)
     public LockProvider lockProvider(DataSource dataSource) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.execute("""

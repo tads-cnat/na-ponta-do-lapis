@@ -86,19 +86,9 @@ public class UsuarioService {
             usuario.setMoedaPadrao(dto.moedaPadrao());
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         Usuario salvo = usuarioRepository.save(usuario);
         usuarioAuthCacheService.evict(emailAnterior, usernameAnterior, salvo.getEmail(), salvo.getUsername());
         return salvo;
-=======
-        return usuarioRepository.save(usuario);
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-        Usuario salvo = usuarioRepository.save(usuario);
-        usuarioAuthCacheService.evict(emailAnterior, usernameAnterior, salvo.getEmail(), salvo.getUsername());
-        return salvo;
->>>>>>> 043f4c6 (feat(backend,deploy): adicionar suporte a multiplas replicas, ShedLock, Flyway e cache Redis)
     }
 
     @Transactional

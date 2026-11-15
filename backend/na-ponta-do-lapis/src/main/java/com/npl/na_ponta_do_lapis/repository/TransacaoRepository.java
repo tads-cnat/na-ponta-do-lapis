@@ -1,12 +1,11 @@
 package com.npl.na_ponta_do_lapis.repository;
 
-import java.util.List;
-
+import com.npl.na_ponta_do_lapis.entity.Transacao;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-import com.npl.na_ponta_do_lapis.entity.Transacao;
+import java.util.List;
 
 public interface TransacaoRepository extends JpaRepository<Transacao, Long> {
 

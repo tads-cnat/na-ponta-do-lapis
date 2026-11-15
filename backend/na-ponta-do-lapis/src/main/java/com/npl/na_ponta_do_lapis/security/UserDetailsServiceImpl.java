@@ -17,16 +17,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String identifier) throws UsernameNotFoundException {
         String normalized = identifier == null ? "" : identifier.strip();
-<<<<<<< HEAD
-<<<<<<< HEAD
         return usuarioAuthCacheService.buscarPorIdentificador(normalized)
-=======
-        return usuarioRepository.findByEmailIgnoreCase(normalized)
-                .or(() -> usuarioRepository.findByUsernameIgnoreCase(normalized))
->>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
-=======
-        return usuarioAuthCacheService.buscarPorIdentificador(normalized)
->>>>>>> 043f4c6 (feat(backend,deploy): adicionar suporte a multiplas replicas, ShedLock, Flyway e cache Redis)
                 .orElseThrow(() -> new UsernameNotFoundException(normalized));
     }
 }

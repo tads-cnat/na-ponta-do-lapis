@@ -132,19 +132,6 @@ public class OpenFinanceSyncService {
             return executarSincronizacao(integracao, false);
         } catch (Exception e) {
             log.warn("[OpenFinanceSyncService] Conexão Pluggy salva com sucesso, mas a primeira sincronização falhou ou ainda não há contas vinculadas: {}", e.getMessage());
-<<<<<<< HEAD
-<<<<<<< HEAD
-            String maskedClient = obterClientIdMascarado(integracao);
-            int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
-            int totalItens = integracao.getItemIds().size();
-            return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
-=======
-            int restantes = calcularRestantesHoje(integracao);
-            String maskedClient = obterClientIdMascarado(integracao);
-            int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
-            return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), restantes, LIMITE_MANUAL_DIARIO, maskedClient, totalContas);
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
             String maskedClient = obterClientIdMascarado(integracao);
             int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
             int totalItens = integracao.getItemIds().size();
@@ -155,11 +142,11 @@ public class OpenFinanceSyncService {
     @Transactional
     public void desconectar(Usuario usuario) {
         integracaoRepository.findByUsuarioId(usuario.getId()).ifPresent(integracaoRepository::delete);
->>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
     }
 
     @Transactional
     public OpenFinanceStatusResponseDTO adicionarItem(Usuario usuario, String itemId) {
+        if (itemId == null || itemId.isBlank()) {
             throw new org.springframework.web.server.ResponseStatusException(
                     org.springframework.http.HttpStatus.BAD_REQUEST, "O Item ID é obrigatório");
         }
@@ -251,10 +238,6 @@ public class OpenFinanceSyncService {
 
         resetarContadorSeNecessario(integracao);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
         // Proteção contra múltiplos cliques rápidos em sequência (cooldown de 15s)
         if (integracao.getUltimaSincronizacao() != null) {
             long segundosDesdeUltima = java.time.Duration.between(integracao.getUltimaSincronizacao(), LocalDateTime.now()).getSeconds();
@@ -264,21 +247,24 @@ public class OpenFinanceSyncService {
                         org.springframework.http.HttpStatus.TOO_MANY_REQUESTS,
                         "Por favor, aguarde " + espera + " segundo(s) antes de sincronizar novamente.");
             }
-<<<<<<< HEAD
-=======
-        if (integracao.getSincronizacoesManuaisHoje() >= LIMITE_MANUAL_DIARIO) {
-            throw new org.springframework.web.server.ResponseStatusException(
-                    org.springframework.http.HttpStatus.TOO_MANY_REQUESTS,
-                    "Você atingiu o limite de " + LIMITE_MANUAL_DIARIO + " sincronizações manuais por hoje. Suas contas serão sincronizadas automaticamente de madrugada.");
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
->>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
         }
 
+        integracao.setSincronizacoesManuaisHoje(integracao.getSincronizacoesManuaisHoje() + 1);
+        return executarSincronizacao(integracao, true);
+    }
+
+    @Transactional
+    public void sincronizarTodosUsuariosAutomatico() {
+        List<UsuarioPluggyIntegracao> integracoes = integracaoRepository.findAllByClientIdCriptografadoIsNotNull();
+        log.info("[OpenFinanceSyncService] Iniciando sincronização noturna automática para {} usuário(s)", integracoes.size());
+
+        for (UsuarioPluggyIntegracao integracao : integracoes) {
+            try {
                 executarSincronizacao(integracao, false);
             } catch (Exception e) {
                 log.error("[OpenFinanceSyncService] Erro ao sincronizar automaticamente para usuário id={}", integracao.getUsuario().getId(), e);
             }
+        }
     }
 
     private OpenFinanceStatusResponseDTO executarSincronizacao(UsuarioPluggyIntegracao integracao, boolean manual) {
@@ -383,16 +369,7 @@ public class OpenFinanceSyncService {
                         // Define o tipo de conta (Cartão de Crédito vs Conta Corrente)
                         String rawType = accNode.path("type").asText("").trim().toUpperCase();
                         String rawSubtype = accNode.path("subtype").asText("").trim().toUpperCase();
-<<<<<<< HEAD
-<<<<<<< HEAD
                         boolean ehCartao = "CREDIT".equals(rawType) || "CREDIT_CARD".equals(rawSubtype);
-=======
-                        boolean ehCartao = "CREDIT".equals(rawType) || "CREDIT_CARD".equals(rawSubtype)
-                                || (rawName != null && (rawName.toLowerCase().contains("cartão") || rawName.toLowerCase().contains("cartao") || rawName.toLowerCase().contains("credit")));
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
-                        boolean ehCartao = "CREDIT".equals(rawType) || "CREDIT_CARD".equals(rawSubtype);
->>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
                         conta.setTipoConta(ehCartao ? TipoConta.CARTAO_CREDITO : TipoConta.CONTA_CORRENTE);
 
                         // Extrai limites de cartão se presentes em creditData
@@ -417,8 +394,12 @@ public class OpenFinanceSyncService {
 
                                 if (billsNode != null && billsNode.isArray() && !billsNode.isEmpty()) {
                                     for (JsonNode bill : billsNode) {
+                                        double bTotal = Math.abs(bill.path("totalAmount").asDouble(0.0));
+                                        if (bTotal <= 0.001) {
+                                            continue;
                                         }
 
+                                        // Calcula total já pago nesta fatura
                                         double totalPago = 0.0;
                                         JsonNode paymentsNode = bill.path("payments");
                                         if (paymentsNode.isArray()) {
@@ -548,24 +529,10 @@ public class OpenFinanceSyncService {
         integracao.setUltimaSincronizacao(LocalDateTime.now());
         integracaoRepository.save(integracao);
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         String maskedClient = obterClientIdMascarado(integracao);
         int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
         int totalItens = integracao.getItemIds().size();
         return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
-=======
-        int restantes = calcularRestantesHoje(integracao);
-        String maskedClient = obterClientIdMascarado(integracao);
-        int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
-        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), restantes, LIMITE_MANUAL_DIARIO, maskedClient, totalContas);
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
-        String maskedClient = obterClientIdMascarado(integracao);
-        int totalContas = contaRepository.countByUsuarioIdAndSincronizadaTrue(usuario.getId());
-        int totalItens = integracao.getItemIds().size();
-        return new OpenFinanceStatusResponseDTO(true, integracao.getUltimaSincronizacao(), 99, 99, maskedClient, totalContas, totalItens, COTA_GRATUITA_BANCOS);
->>>>>>> 2b2d120 (fix(open-finance): remove trava artificial de 5 syncs diarios e reflete cota de 5 bancos da pluggy)
     }
 
     private void processarTransacaoPluggy(JsonNode txNode, ContaFinanceira conta) {
@@ -589,10 +556,17 @@ public class OpenFinanceSyncService {
         TipoTransacao tipo = determinarTipoTransacao(txNode, conta, amount);
         BigDecimal valor = BigDecimal.valueOf(Math.abs(amount));
         DadosParcelamento parcelamento = extrairDadosParcelamento(txNode, conta, description, valor);
+
+        // Se já existe, atualiza estado, tipo e dados de parcelamento (se ainda não vinculados)
+        Optional<Transacao> txExistente = transacaoRepository.findByPluggyTransactionId(pluggyTxId);
+        if (txExistente.isPresent()) {
+            Transacao t = txExistente.get();
+            boolean mudou = false;
             if (t.getTipo() != tipo) {
                 t.setTipo(tipo);
                 mudou = true;
             }
+            if (statusStr.equalsIgnoreCase("POSTED") && t.getEstado() == EstadoTransacao.PENDENTE) {
                 t.setEstado(EstadoTransacao.REALIZADA);
                 mudou = true;
             }
@@ -722,15 +696,7 @@ public class OpenFinanceSyncService {
             return TipoTransacao.RECEITA;
         }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
         boolean ehCartao = conta.getTipoConta() == TipoConta.CARTAO_CREDITO
-=======
-        boolean ehCartao = (conta.getNome() != null && (conta.getNome().toLowerCase().contains("cartão") || conta.getNome().toLowerCase().contains("cartao")))
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
-        boolean ehCartao = conta.getTipoConta() == TipoConta.CARTAO_CREDITO
->>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
                 || txNode.hasNonNull("billId")
                 || txNode.hasNonNull("creditCardMetadata");
 
@@ -909,17 +875,6 @@ public class OpenFinanceSyncService {
         }
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-    private int calcularRestantesHoje(UsuarioPluggyIntegracao integracao) {
-        resetarContadorSeNecessario(integracao);
-        return Math.max(0, LIMITE_MANUAL_DIARIO - integracao.getSincronizacoesManuaisHoje());
-    }
-
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
->>>>>>> b5d8fff (fix(open-finance): remove metodo obsoleto calcularRestantesHoje)
     private String obterClientIdMascarado(UsuarioPluggyIntegracao integracao) {
         try {
             if (integracao.getClientIdCriptografado() == null) {

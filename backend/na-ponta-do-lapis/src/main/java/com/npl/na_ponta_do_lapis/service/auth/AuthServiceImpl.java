@@ -9,14 +9,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
-<<<<<<< HEAD
-<<<<<<< HEAD
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
-=======
->>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
-=======
-import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
->>>>>>> 8aa2880 (feat(auth): exigir aceite de termos LGPD no primeiro cadastro via Google)
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
@@ -113,8 +106,6 @@ public class AuthServiceImpl implements AuthService{
 
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
         return new TokenResponseDTO(token);
-<<<<<<< HEAD
-=======
     }
 
     @Override
@@ -139,12 +130,7 @@ public class AuthServiceImpl implements AuthService{
         }
 
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
-<<<<<<< HEAD
-        return new TokenResponseDTO(token);
->>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
-=======
         return GoogleAuthResponseDTO.comToken(token);
->>>>>>> 8aa2880 (feat(auth): exigir aceite de termos LGPD no primeiro cadastro via Google)
     }
 
     @Override
@@ -170,8 +156,6 @@ public class AuthServiceImpl implements AuthService{
         novoUsuario.setSenha(passwordEncoder.encode(registerRequestDTO.password()));
 
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
-<<<<<<< HEAD
-=======
         criarContaPadrao(usuarioSalvo);
     }
 
@@ -240,7 +224,6 @@ public class AuthServiceImpl implements AuthService{
     }
 
     private void criarContaPadrao(Usuario usuarioSalvo) {
->>>>>>> ad97d07 (feat(backend): permite login por email ou username e adiciona autenticacao com Google)
         ContaFinanceira contaPadrao = new ContaFinanceira();
         contaPadrao.setNome("Conta Principal");
         contaPadrao.setSaldo(BigDecimal.ZERO);
