@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
@@ -6,19 +6,24 @@ import { StorageService } from '../../service/storage.service';
 import { MessageService } from 'primeng/api';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
+import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-consent-dialog.component';
 
 @Component({
   selector: 'app-signup',
-  imports: [PrimeNGModuleModule, ReactiveFormsModule, CommonModule, FormsModule, RouterLink],
+  imports: [PrimeNGModuleModule, ReactiveFormsModule, CommonModule, FormsModule, RouterLink, GoogleConsentDialogComponent],
   providers: [MessageService],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css',
 })
-export class SignupComponent {
+export class SignupComponent implements AfterViewInit {
   @Input() embedded = false;
+  @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
   registerForm: FormGroup;
   termos: any = null;
   loading = false;
+  readonly googleButtonReady = signal(false);
+  readonly googleConsentVisible = signal(false);
+  readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
 
   constructor(
     private fb: FormBuilder,
@@ -33,6 +38,17 @@ export class SignupComponent {
       password: ['', [Validators.required, Validators.minLength(8)]],
       passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]]
     })
+  }
+
+  ngAfterViewInit(): void {
+    const container = this.googleBtnContainer?.nativeElement;
+    if (!container) return;
+    this.authService.renderizarBotaoGoogle(
+      container,
+      'signup_with',
+      (idToken) => this.autenticarComGoogleToken(idToken),
+      () => this.googleButtonReady.set(true)
+    );
   }
 
   public register() {
@@ -67,30 +83,7 @@ export class SignupComponent {
     this.loading = true;
 
     this.authService.iniciarFluxoGoogle(
-      (idToken) => {
-        this.authService.loginWithGoogle(idToken).subscribe({
-          next: (res) => {
-            this.loading = false;
-            StorageService.salvarToken(res.token);
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Conta conectada com Google!',
-              life: 2000
-            });
-            setTimeout(() => {
-              this.router.navigateByUrl('app/dashboard');
-            }, 1000);
-          },
-          error: () => {
-            this.loading = false;
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro ao cadastrar com Google',
-              life: 2500
-            });
-          }
-        });
-      },
+      (idToken) => this.autenticarComGoogleToken(idToken),
       (reason) => {
         this.loading = false;
         this.messageService.add({
@@ -101,6 +94,59 @@ export class SignupComponent {
         });
       }
     );
+  }
+
+  private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
+    this.loading = true;
+    this.authService.loginWithGoogle(idToken, termosAceitos).subscribe({
+      next: (res) => {
+        if (res.requerTermos) {
+          this.loading = false;
+          this.googleConsentDados.set({
+            idToken,
+            nome: res.nome ?? '',
+            email: res.email ?? '',
+            fotoUrl: res.fotoUrl ?? null,
+          });
+          this.googleConsentVisible.set(true);
+          return;
+        }
+        this.googleConsentVisible.set(false);
+        this.googleConsentDados.set(null);
+        this.loading = false;
+        if (res.token) {
+          StorageService.salvarToken(res.token);
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Conta conectada com Google!',
+            life: 2000
+          });
+          setTimeout(() => {
+            this.router.navigateByUrl('app/dashboard');
+          }, 1000);
+        }
+      },
+      error: () => {
+        this.loading = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao cadastrar com Google',
+          life: 2500
+        });
+      }
+    });
+  }
+
+  public confirmarTermosGoogle() {
+    const dados = this.googleConsentDados();
+    if (!dados || this.loading) return;
+    this.autenticarComGoogleToken(dados.idToken, true);
+  }
+
+  public cancelarTermosGoogle() {
+    this.googleConsentVisible.set(false);
+    this.googleConsentDados.set(null);
+    this.loading = false;
   }
 
   public voltar() {
