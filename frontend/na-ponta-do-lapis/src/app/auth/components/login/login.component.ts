@@ -1,5 +1,6 @@
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
 =======
 import { Component, Input } from '@angular/core';
@@ -7,6 +8,9 @@ import { Component, Input } from '@angular/core';
 =======
 import { Component, Input, signal } from '@angular/core';
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
+=======
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
+>>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -15,6 +19,7 @@ import { StorageService } from '../../service/storage.service';
 import { Token } from '../../../model/IToken.models';
 import { MessageService } from 'primeng/api';
 import { MascoteEstado, MascoteLoginComponent } from '../mascote-login/mascote-login.component';
+<<<<<<< HEAD
 <<<<<<< HEAD
 import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-consent-dialog.component';
 
@@ -27,10 +32,18 @@ import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-co
   selector: 'app-login',
   imports: [PrimeNGModuleModule, ReactiveFormsModule, RouterLink, MascoteLoginComponent],
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
+=======
+import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-consent-dialog.component';
+
+@Component({
+  selector: 'app-login',
+  imports: [PrimeNGModuleModule, ReactiveFormsModule, RouterLink, MascoteLoginComponent, GoogleConsentDialogComponent],
+>>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   providers: [MessageService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
+<<<<<<< HEAD
 <<<<<<< HEAD
 export class LoginComponent implements AfterViewInit {
   @Input() embedded = false;
@@ -48,6 +61,17 @@ export class LoginComponent {
   readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
 =======
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
+=======
+export class LoginComponent implements AfterViewInit {
+  @Input() embedded = false;
+  @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
+
+  loginForm: FormGroup;
+  loading = false;
+  readonly googleButtonReady = signal(false);
+  readonly googleConsentVisible = signal(false);
+  readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
+>>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   readonly mascoteEstado = signal<MascoteEstado>('idle');
   readonly lookProgress = signal(0.5);
   readonly isHoveringSubmit = signal(false);
@@ -108,6 +132,7 @@ export class LoginComponent {
 
     this.authService.iniciarFluxoGoogle(
 <<<<<<< HEAD
+<<<<<<< HEAD
       (idToken) => this.autenticarComGoogleToken(idToken),
 =======
       (idToken) => {
@@ -126,6 +151,9 @@ export class LoginComponent {
         });
       },
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
+=======
+      (idToken) => this.autenticarComGoogleToken(idToken),
+>>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
       (reason) => {
         this.loading = false;
         this.mascoteEstado.set('idle');
@@ -140,6 +168,9 @@ export class LoginComponent {
   }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
     this.loading = true;
     this.mascoteEstado.set('loading');
@@ -189,8 +220,11 @@ export class LoginComponent {
     this.mascoteEstado.set('idle');
   }
 
+<<<<<<< HEAD
 =======
 >>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
+=======
+>>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   private finalizarLoginComSucesso(res: Token) {
     this.loading = false;
     this.mascoteEstado.set('success');
