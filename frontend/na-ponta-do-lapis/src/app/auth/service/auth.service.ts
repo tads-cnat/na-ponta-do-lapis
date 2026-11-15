@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Observable } from 'rxjs';
 import { LoginRequest, SignupRequest } from '../../model/ILoginRequest';
 import { Token } from '../../model/IToken.models';
@@ -11,6 +11,14 @@ import { environment } from '@env';
 export interface GoogleConfigResponse {
   enabled: boolean;
   clientId: string;
+}
+
+export interface GoogleAuthResponse {
+  token: string | null;
+  requerTermos: boolean;
+  nome?: string | null;
+  email?: string | null;
+  fotoUrl?: string | null;
 }
 
 declare global {
@@ -38,8 +46,9 @@ export class AuthService {
 
   private BASE_URL:string = environment.apiBaseUrl;
   private googleScriptPromise: Promise<void> | null = null;
+  private activeGoogleCredentialHandler: ((idToken: string) => void) | null = null;
 
-  constructor(private http:HttpClient){}
+  constructor(private http:HttpClient, private ngZone: NgZone){}
 
   public login(loginRequest:LoginRequest): Observable<Token>{
     return this.http.post<Token>(`${this.BASE_URL}/auth/login`, loginRequest)
@@ -49,8 +58,8 @@ export class AuthService {
     return this.http.get<GoogleConfigResponse>(`${this.BASE_URL}/auth/google/config`);
   }
 
-  public loginWithGoogle(idToken: string): Observable<Token> {
-    return this.http.post<Token>(`${this.BASE_URL}/auth/google`, { idToken });
+  public loginWithGoogle(idToken: string, termosAceitos = false): Observable<GoogleAuthResponse> {
+    return this.http.post<GoogleAuthResponse>(`${this.BASE_URL}/auth/google`, { idToken, termosAceitos });
   }
 
   public register(signupRequest:SignupRequest): Observable<SignupRequest> {
@@ -59,6 +68,60 @@ export class AuthService {
 
   public meusDados(): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.BASE_URL}/usuario/me`)
+  }
+
+  public renderizarBotaoGoogle(
+    container: HTMLElement,
+    textMode: 'continue_with' | 'signup_with',
+    onCredential: (idToken: string) => void,
+    onRendered?: () => void,
+    onUnavailable?: (reason: string) => void
+  ): void {
+    this.getGoogleConfig().subscribe({
+      next: async (config) => {
+        if (!config.enabled || !config.clientId) {
+          onUnavailable?.('Login com Google ainda não configurado no servidor (GOOGLE_CLIENT_ID).');
+          return;
+        }
+        try {
+          await this.carregarScriptGoogle();
+          const gis = window.google?.accounts?.id;
+          if (!gis) {
+            onUnavailable?.('Serviço do Google indisponível no momento.');
+            return;
+          }
+          this.activeGoogleCredentialHandler = onCredential;
+          gis.initialize({
+            client_id: config.clientId,
+            callback: (res) => {
+              this.ngZone.run(() => {
+                if (res?.credential) {
+                  this.activeGoogleCredentialHandler?.(res.credential);
+                } else {
+                  onUnavailable?.('Não foi possível obter a credencial do Google.');
+                }
+              });
+            },
+          });
+          container.innerHTML = '';
+          const width = Math.max(240, Math.min(400, container.clientWidth || container.parentElement?.clientWidth || 360));
+          gis.renderButton(container, {
+            type: 'standard',
+            theme: 'outline',
+            size: 'large',
+            text: textMode,
+            shape: 'rectangular',
+            logo_alignment: 'left',
+            locale: 'pt-BR',
+            width,
+          });
+          onRendered?.();
+        } catch {
+          onUnavailable?.('Não foi possível carregar o script de login do Google.');
+        }
+      },
+      error: () => onUnavailable?.('Erro ao consultar configuração do Google no servidor.'),
+    });
   }
 
   public iniciarFluxoGoogle(
