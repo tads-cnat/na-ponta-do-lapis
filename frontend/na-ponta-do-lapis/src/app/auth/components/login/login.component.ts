@@ -22,7 +22,7 @@ export class LoginComponent implements AfterViewInit {
 
   loginForm: FormGroup;
   loading = false;
-  readonly googleButtonReady = signal(false);
+  readonly googleButtonState = signal<'loading' | 'ready' | 'unavailable'>('loading');
   readonly googleConsentVisible = signal(false);
   readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
   readonly mascoteEstado = signal<MascoteEstado>('idle');
@@ -43,7 +43,8 @@ export class LoginComponent implements AfterViewInit {
       container,
       'continue_with',
       (idToken) => this.autenticarComGoogleToken(idToken),
-      () => this.googleButtonReady.set(true)
+      () => this.googleButtonState.set('ready'),
+      () => this.googleButtonState.set('unavailable')
     );
   }
 
@@ -76,26 +77,6 @@ export class LoginComponent implements AfterViewInit {
         })
       }
     })
-  }
-
-  public entrarComGoogle() {
-    if (this.loading) return;
-    this.loading = true;
-    this.mascoteEstado.set('loading');
-
-    this.authService.iniciarFluxoGoogle(
-      (idToken) => this.autenticarComGoogleToken(idToken),
-      (reason) => {
-        this.loading = false;
-        this.mascoteEstado.set('idle');
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Google indisponível',
-          detail: reason,
-          life: 3500
-        });
-      }
-    );
   }
 
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {

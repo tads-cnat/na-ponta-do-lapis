@@ -104,7 +104,7 @@ export class AuthService {
             },
           });
           container.innerHTML = '';
-          const width = Math.max(240, Math.min(400, container.clientWidth || container.parentElement?.clientWidth || 360));
+          const width = Math.max(240, Math.min(400, container.clientWidth || container.parentElement?.clientWidth || 400));
           gis.renderButton(container, {
             type: 'standard',
             theme: 'outline',

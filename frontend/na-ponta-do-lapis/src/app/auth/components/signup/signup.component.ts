@@ -21,7 +21,7 @@ export class SignupComponent implements AfterViewInit {
   registerForm: FormGroup;
   termos: any = null;
   loading = false;
-  readonly googleButtonReady = signal(false);
+  readonly googleButtonState = signal<'loading' | 'ready' | 'unavailable'>('loading');
   readonly googleConsentVisible = signal(false);
   readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
 
@@ -45,9 +45,10 @@ export class SignupComponent implements AfterViewInit {
     if (!container) return;
     this.authService.renderizarBotaoGoogle(
       container,
-      'signup_with',
+      'continue_with',
       (idToken) => this.autenticarComGoogleToken(idToken),
-      () => this.googleButtonReady.set(true)
+      () => this.googleButtonState.set('ready'),
+      () => this.googleButtonState.set('unavailable')
     );
   }
 
@@ -76,24 +77,6 @@ export class SignupComponent implements AfterViewInit {
         })
       }
     })
-  }
-
-  public cadastrarComGoogle() {
-    if (this.loading) return;
-    this.loading = true;
-
-    this.authService.iniciarFluxoGoogle(
-      (idToken) => this.autenticarComGoogleToken(idToken),
-      (reason) => {
-        this.loading = false;
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Google indisponível',
-          detail: reason,
-          life: 3500
-        });
-      }
-    );
   }
 
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
