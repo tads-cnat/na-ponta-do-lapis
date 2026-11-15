@@ -1,9 +1,9 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { RouterLink, RouterLinkActive } from '@angular/router'
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { SidebarService } from '../../service/sidebar-service.service';
-import { ThemeService } from '../../service/theme.service';
+
 
 @Component({
   selector: 'app-sidebar',
@@ -13,9 +13,8 @@ import { ThemeService } from '../../service/theme.service';
 })
 export class SidebarComponent implements OnInit {
   aberto: boolean = true;
-  items: MenuItem[] | undefined;
+  items: MenuItem[] | undefined ;
   sidebarService: SidebarService = inject(SidebarService);
-  themeService: ThemeService = inject(ThemeService);
   isMobile: boolean = false;
 
   ngOnInit(): void {
@@ -32,7 +31,8 @@ export class SidebarComponent implements OnInit {
     }
   }
 
-  toggleSidebar() {
+  toggleSidebar(){
     this.aberto = !this.aberto;
   }
+
 }

@@ -13,10 +13,6 @@ export interface GoogleConfigResponse {
   clientId: string;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
 export interface GoogleAuthResponse {
   token: string | null;
   requerTermos: boolean;
@@ -25,11 +21,6 @@ export interface GoogleAuthResponse {
   fotoUrl?: string | null;
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
-=======
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
 declare global {
   interface Window {
     google?: {
@@ -55,14 +46,7 @@ export class AuthService {
 
   private BASE_URL:string = environment.apiBaseUrl;
   private googleScriptPromise: Promise<void> | null = null;
-<<<<<<< HEAD
-<<<<<<< HEAD
   private activeGoogleCredentialHandler: ((idToken: string) => void) | null = null;
-=======
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
-=======
-  private activeGoogleCredentialHandler: ((idToken: string) => void) | null = null;
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
 
   constructor(private http:HttpClient, private ngZone: NgZone){}
 
@@ -74,18 +58,8 @@ export class AuthService {
     return this.http.get<GoogleConfigResponse>(`${this.BASE_URL}/auth/google/config`);
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   public loginWithGoogle(idToken: string, termosAceitos = false): Observable<GoogleAuthResponse> {
     return this.http.post<GoogleAuthResponse>(`${this.BASE_URL}/auth/google`, { idToken, termosAceitos });
-=======
-  public loginWithGoogle(idToken: string): Observable<Token> {
-    return this.http.post<Token>(`${this.BASE_URL}/auth/google`, { idToken });
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
-=======
-  public loginWithGoogle(idToken: string, termosAceitos = false): Observable<GoogleAuthResponse> {
-    return this.http.post<GoogleAuthResponse>(`${this.BASE_URL}/auth/google`, { idToken, termosAceitos });
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   }
 
   public register(signupRequest:SignupRequest): Observable<SignupRequest> {
@@ -96,10 +70,6 @@ export class AuthService {
     return this.http.get<Usuario>(`${this.BASE_URL}/usuario/me`)
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   public renderizarBotaoGoogle(
     container: HTMLElement,
     textMode: 'continue_with' | 'signup_with',
@@ -154,11 +124,6 @@ export class AuthService {
     });
   }
 
-<<<<<<< HEAD
-=======
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
-=======
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   public iniciarFluxoGoogle(
     onCredential: (idToken: string) => void,
     onUnavailable: (reason: string) => void

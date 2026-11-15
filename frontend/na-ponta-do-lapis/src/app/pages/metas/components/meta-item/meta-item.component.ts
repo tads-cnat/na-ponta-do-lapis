@@ -3,40 +3,13 @@ import { CommonModule } from '@angular/common';
 import { MetaResponse } from '@models/IMetas.models';
 import { Button } from 'primeng/button';
 import { ProgressBarModule } from 'primeng/progressbar';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { TooltipModule } from 'primeng/tooltip';
 import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 import { IlustracaoMetaComponent } from '../../../../shared/components/ilustracao-meta/ilustracao-meta.component';
-<<<<<<< HEAD
 
 @Component({
   selector: 'app-meta-item',
   imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe, IlustracaoMetaComponent],
-=======
-=======
-import { TooltipModule } from 'primeng/tooltip';
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
-
-@Component({
-  selector: 'app-meta-item',
-<<<<<<< HEAD
-<<<<<<< HEAD
-  imports: [Button, ProgressBarModule, AppMoedaPipe],
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
-=======
-  imports: [Button, ProgressBarModule, TooltipModule, AppMoedaPipe],
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-=======
-  imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe],
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-
-@Component({
-  selector: 'app-meta-item',
-  imports: [CommonModule, Button, ProgressBarModule, TooltipModule, AppMoedaPipe, IlustracaoMetaComponent],
->>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
   templateUrl: './meta-item.component.html',
   styleUrl: './meta-item.component.css',
 })
@@ -45,14 +18,7 @@ export class MetaItemComponent {
   @Output() deletarMeta: EventEmitter<number> = new EventEmitter<number>();
   @Output() editarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
   @Output() aportarMeta: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
-<<<<<<< HEAD
-<<<<<<< HEAD
   @Output() verHistorico: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-  @Output() verHistorico: EventEmitter<MetaResponse> = new EventEmitter<MetaResponse>();
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
 
   onDeletar(): void {
     this.deletarMeta.emit(this.meta.id);
@@ -66,28 +32,14 @@ export class MetaItemComponent {
     this.aportarMeta.emit(this.meta);
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   onVerHistorico(): void {
     this.verHistorico.emit(this.meta);
   }
 
-<<<<<<< HEAD
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   get valorFalta(): number {
     return Math.max(0, this.meta.valorTotal - (this.meta.valorAtual || 0));
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
   get diasRestantes(): number | null {
     if (!this.meta.dataLimite) return null;
     const limite = new Date(this.meta.dataLimite);
@@ -98,7 +50,6 @@ export class MetaItemComponent {
     return Math.round(diffMs / (1000 * 60 * 60 * 24));
   }
 
-<<<<<<< HEAD
   get ehConcluida(): boolean {
     if (this.meta.tipoMeta === 'GASTO') {
       return this.meta.status === 'CONCLUIDA';
@@ -125,67 +76,18 @@ export class MetaItemComponent {
     return Math.ceil(this.valorFalta / meses);
   }
 
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-=======
->>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
-  get ehConcluida(): boolean {
-    if (this.meta.tipoMeta === 'GASTO') {
-      return this.meta.status === 'CONCLUIDA';
-    }
-    return this.meta.status === 'CONCLUIDA' || (this.meta.progresso || 0) >= 100 || (this.meta.valorAtual || 0) >= (this.meta.valorTotal || 0);
-  }
-
-  get ehEstourada(): boolean {
-    return this.meta.status === 'ESTOURADA' || (this.meta.tipoMeta === 'GASTO' && this.meta.progresso >= 100);
-  }
-
-  get ehExpirada(): boolean {
-    if (this.ehConcluida) return false;
-    if (this.meta.status === 'EXPIRADA') return true;
-    const dias = this.diasRestantes;
-    return dias !== null && dias < 0;
-  }
-
-  get ritmoMensal(): number | null {
-    if (this.ehConcluida || this.ehExpirada || this.meta.tipoMeta === 'GASTO') return null;
-    const dias = this.diasRestantes;
-    if (dias === null || dias <= 0) return null;
-    const meses = Math.max(1, Math.round(dias / 30.4));
-    return Math.ceil(this.valorFalta / meses);
-  }
-
->>>>>>> 92f13b0 (feat(metas): padroniza modal de exclusao, adiciona filtros por status/tipo e reordena ajustes de perfil)
   get progressoLimitado(): number {
     return Math.min(100, Math.round(this.meta.progresso || 0));
   }
 
   get corBarraProgresso(): string {
     if (this.meta.tipoMeta === 'GASTO') {
-<<<<<<< HEAD
-<<<<<<< HEAD
       if (this.ehEstourada) return 'linear-gradient(119deg, #C24E4E, #AB3E3E)';
       if (this.meta.progresso >= 80) return 'linear-gradient(119deg, #F59E0B, #D97706)';
       return 'linear-gradient(119deg, #10B981, #059669)';
     }
     if (this.ehConcluida) return 'linear-gradient(119deg, #10B981, #059669)';
     if (this.ehExpirada) return 'linear-gradient(119deg, #F59E0B, #D97706)';
-=======
-      if (this.meta.progresso >= 100) return 'linear-gradient(119deg, #C24E4E, #AB3E3E)';
-      if (this.meta.progresso >= 80) return 'linear-gradient(119deg, #F59E0B, #D97706)';
-      return 'linear-gradient(119deg, #10B981, #059669)';
-    }
-    if (this.meta.progresso >= 100) return 'linear-gradient(119deg, #10B981, #059669)';
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-      if (this.ehEstourada) return 'linear-gradient(119deg, #C24E4E, #AB3E3E)';
-      if (this.meta.progresso >= 80) return 'linear-gradient(119deg, #F59E0B, #D97706)';
-      return 'linear-gradient(119deg, #10B981, #059669)';
-    }
-    if (this.ehConcluida) return 'linear-gradient(119deg, #10B981, #059669)';
-    if (this.ehExpirada) return 'linear-gradient(119deg, #F59E0B, #D97706)';
->>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
     return 'linear-gradient(119deg, #7843CD, #EEC046)';
   }
 }

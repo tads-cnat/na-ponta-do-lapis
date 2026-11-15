@@ -4,10 +4,6 @@ import { IContas, Moeda, ehCartaoCredito } from '../../../../model/IContas.model
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-moeda.service';
-<<<<<<< HEAD
-
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
 
 @Component({
   selector: 'app-informacoes-conta',
@@ -20,26 +16,6 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-3">
             <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'" [fallbackIcon]="ehCartao ? 'pi pi-credit-card' : 'pi pi-wallet'"></app-icone-banco>
-<<<<<<< HEAD
-            <div>
-              <h2 class="section-title-npl">
-                Informações da Conta
-              </h2>
-              <p class="text-slate-500 text-xs mt-0.5">
-                {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
-              </p>
-            </div>
-          <div>
-            <h2 class="text-2xl font-bold text-slate-900">
-              Informações da Conta
-            </h2>
-            <p class="text-slate-500 text-sm">
-              {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
-            </p>
-          <div class="flex items-center gap-3">
-            <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'"></app-icone-banco>
-=======
->>>>>>> af0ef81 (fix(contas): exibe icone translucido e contraste elegante para cartoes sem banco detectado)
             <div>
               <h2 class="section-title-npl">
                 Informações da Conta
@@ -64,7 +40,7 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
           @if (ehCartao) {
             <!-- DISCRIMINAÇÃO: FATURA FECHADA vs FATURA EM ABERTO -->
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-
+              
               <!-- Card: Fatura Fechada (A Pagar Agora) -->
               <div class="bg-[#FDF4F4] border border-[#F5D5D5] rounded-2xl p-4 flex flex-col justify-between">
                 <div>

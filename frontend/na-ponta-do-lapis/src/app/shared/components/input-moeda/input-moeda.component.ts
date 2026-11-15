@@ -30,22 +30,11 @@ import { PreferenciaMoedaService } from '../../service/preferencia-moeda.service
     <div
       (click)="focar()"
       [class]="obterClassesContainer()"
-<<<<<<< HEAD
-<<<<<<< HEAD
       [style.borderRadius]="'var(--p-form-field-border-radius, 6px)'"
-=======
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-      [style.borderRadius]="'var(--p-form-field-border-radius, 6px)'"
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
       [class.opacity-60]="disabled"
       [class.cursor-not-allowed]="disabled"
       [class.cursor-text]="!disabled">
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
       <!-- PREFIXO DA MOEDA DISCRETO E INTEGRADO -->
       <span class="font-medium text-slate-400 select-none shrink-0"
             [class.text-xs]="tamanho === 'sm'"
@@ -53,23 +42,6 @@ import { PreferenciaMoedaService } from '../../service/preferencia-moeda.service
             [class.text-lg]="tamanho === 'lg'">
         {{ simbolo }}
       </span>
-<<<<<<< HEAD
-=======
-      <!-- BADGE / PREFIXO DA MOEDA -->
-      @if (tamanho === 'lg') {
-        <div class="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 font-bold text-sm flex items-center justify-center shrink-0 select-none shadow-2xs">
-          {{ simbolo }}
-        </div>
-      } @else {
-        <span class="font-bold text-slate-400 select-none shrink-0"
-              [class.text-xs]="tamanho === 'sm'"
-              [class.text-sm]="tamanho === 'md'">
-          {{ simbolo }}
-        </span>
-      }
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
 
       <!-- INPUT NATIVO CONTROLADO -->
       <input
@@ -82,15 +54,7 @@ import { PreferenciaMoedaService } from '../../service/preferencia-moeda.service
         (input)="aoDigitar($event)"
         (focus)="aoFoco($event)"
         (blur)="aoDesfoco($event)"
-<<<<<<< HEAD
-<<<<<<< HEAD
         [placeholder]="placeholderAtivo"
-=======
-        [placeholder]="placeholder"
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-        [placeholder]="placeholderAtivo"
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
         [class]="obterClassesInput()" />
     </div>
   `
@@ -124,10 +88,6 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
   ) {}
 
   ngOnInit(): void {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
     this.subMoeda = this.preferenciaMoedaService.moeda$.subscribe(() => {
       if (this.valorNumericoAtual !== null && this.valorNumericoAtual !== undefined) {
         this.valorFormatado = this.formatarNumero(this.valorNumericoAtual);
@@ -136,16 +96,6 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
       }
       this.cdr.markForCheck();
     });
-<<<<<<< HEAD
-=======
-    if (!this.moeda) {
-      this.subMoeda = this.preferenciaMoedaService.moeda$.subscribe(() => {
-        this.cdr.markForCheck();
-      });
-    }
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   }
 
   ngOnDestroy(): void {
@@ -156,10 +106,6 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
     return this.preferenciaMoedaService.obterSimboloMoeda(this.moeda);
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   get localeAtivo(): string {
     return this.preferenciaMoedaService.obterLocaleMoeda(this.moeda);
   }
@@ -182,11 +128,6 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
     });
   }
 
-<<<<<<< HEAD
-=======
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   public focar(): void {
     if (!this.disabled && this.inputRef?.nativeElement) {
       this.inputRef.nativeElement.focus();
@@ -200,40 +141,15 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
   writeValue(valor: any): void {
     if (valor === null || valor === undefined || valor === '') {
       this.valorNumericoAtual = this.permitirVazio ? null : 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
       this.valorFormatado = this.permitirVazio ? '' : (this.separadorDecimal === '.' ? '0.00' : '0,00');
-=======
-      this.valorFormatado = this.permitirVazio ? '' : '0,00';
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-      this.valorFormatado = this.permitirVazio ? '' : (this.separadorDecimal === '.' ? '0.00' : '0,00');
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
     } else {
       const num = Number(valor);
       if (isNaN(num)) {
         this.valorNumericoAtual = this.permitirVazio ? null : 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
         this.valorFormatado = this.permitirVazio ? '' : (this.separadorDecimal === '.' ? '0.00' : '0,00');
       } else {
         this.valorNumericoAtual = num;
         this.valorFormatado = this.formatarNumero(num);
-=======
-        this.valorFormatado = this.permitirVazio ? '' : '0,00';
-      } else {
-        this.valorNumericoAtual = num;
-        this.valorFormatado = num.toLocaleString('pt-BR', {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2
-        });
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-        this.valorFormatado = this.permitirVazio ? '' : (this.separadorDecimal === '.' ? '0.00' : '0,00');
-      } else {
-        this.valorNumericoAtual = num;
-        this.valorFormatado = this.formatarNumero(num);
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
       }
     }
     this.cdr.markForCheck();
@@ -267,18 +183,8 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
         input.value = '';
       } else {
         this.valorNumericoAtual = 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
         this.valorFormatado = this.separadorDecimal === '.' ? '0.00' : '0,00';
         input.value = this.valorFormatado;
-=======
-        this.valorFormatado = '0,00';
-        input.value = '0,00';
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-        this.valorFormatado = this.separadorDecimal === '.' ? '0.00' : '0,00';
-        input.value = this.valorFormatado;
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
       }
       this.onChange(this.valorNumericoAtual);
       this.aoMudar.emit(this.valorNumericoAtual);
@@ -287,18 +193,7 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
 
     const valor = Number(digitos) / 100;
     this.valorNumericoAtual = valor;
-<<<<<<< HEAD
-<<<<<<< HEAD
     const formatado = this.formatarNumero(valor);
-=======
-    const formatado = valor.toLocaleString('pt-BR', {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2
-    });
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-    const formatado = this.formatarNumero(valor);
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
 
     this.valorFormatado = formatado;
     input.value = formatado;
@@ -317,15 +212,7 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
   }
 
   // =========================================
-<<<<<<< HEAD
-<<<<<<< HEAD
   // ESTILOS PADRONIZADOS COM OS INPUTS PRIMENG
-=======
-  // ESTILOS DINÂMICOS
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-  // ESTILOS PADRONIZADOS COM OS INPUTS PRIMENG
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   // =========================================
 
   public obterClassesContainer(): string {
@@ -333,8 +220,6 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
       return this.classesContainer;
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     const base = 'flex items-center gap-1.5 w-full bg-white border border-slate-300 transition-colors focus-within:border-[#7843cd] focus-within:ring-1 focus-within:ring-[#7843cd]';
 
     switch (this.tamanho) {
@@ -345,25 +230,6 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
       case 'md':
       default:
         return `${base} h-[42px] min-h-[42px] px-3`;
-=======
-    const base = 'flex items-center gap-2 border-2 transition-all w-full';
-=======
-    const base = 'flex items-center gap-1.5 w-full bg-white border border-slate-300 transition-colors focus-within:border-[#7843cd] focus-within:ring-1 focus-within:ring-[#7843cd]';
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
-
-    switch (this.tamanho) {
-      case 'sm':
-        return `${base} h-[36px] min-h-[36px] px-2.5`;
-      case 'lg':
-        return `${base} h-[48px] min-h-[48px] px-3.5`;
-      case 'md':
-      default:
-<<<<<<< HEAD
-        return `${base} px-3.5 py-2.5 bg-slate-50 border-slate-200 rounded-xl focus-within:border-indigo-600 focus-within:bg-white focus-within:ring-4 focus-within:ring-indigo-100 shadow-2xs`;
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-        return `${base} h-[42px] min-h-[42px] px-3`;
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
     }
   }
 
@@ -372,8 +238,6 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
       return this.classesInput;
     }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
     const base = 'w-full bg-transparent border-0 p-0 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed leading-normal';
 
     switch (this.tamanho) {
@@ -384,25 +248,6 @@ export class InputMoedaComponent implements ControlValueAccessor, OnInit, OnDest
       case 'md':
       default:
         return `${base} text-base font-normal`;
-=======
-    const base = 'w-full bg-transparent border-0 p-0 placeholder-slate-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed';
-=======
-    const base = 'w-full bg-transparent border-0 p-0 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-0 disabled:cursor-not-allowed leading-normal';
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
-
-    switch (this.tamanho) {
-      case 'sm':
-        return `${base} text-xs font-normal`;
-      case 'lg':
-        return `${base} text-lg font-normal`;
-      case 'md':
-      default:
-<<<<<<< HEAD
-        return `${base} text-base font-bold text-slate-800`;
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-        return `${base} text-base font-normal`;
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
     }
   }
 }

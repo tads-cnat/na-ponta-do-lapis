@@ -23,15 +23,7 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         icon="pi pi-pencil"
         pTooltip="Editar conta selecionada"
         tooltipPosition="bottom"
-<<<<<<< HEAD
-<<<<<<< HEAD
         styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap btn-soft-edit-npl shadow-2xs"
-=======
-        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-[#f3e8ff]! text-[#7843cd]! border-[#7843cd]! hover:bg-[#e9d5ff]! shadow-xs"
->>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
-=======
-        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap btn-soft-edit-npl shadow-2xs"
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
         (click)="onEditar.emit()">
       </p-button>
 
@@ -40,15 +32,7 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
         icon="pi pi-trash"
         pTooltip="Excluir conta selecionada"
         tooltipPosition="bottom"
-<<<<<<< HEAD
-<<<<<<< HEAD
         styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap btn-soft-delete-npl shadow-2xs"
-=======
-        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap bg-[#fee2e2]! text-[#ef4444]! border-[#ef4444]! hover:bg-[#fecaca]! shadow-xs"
->>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
-=======
-        styleClass="h-9 px-3 py-1.5 text-xs sm:text-sm font-semibold rounded-xl! whitespace-nowrap btn-soft-delete-npl shadow-2xs"
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
         (click)="onExcluir.emit()">
       </p-button>
 
@@ -74,7 +58,7 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
       </p-button>
 
     </div>
-  `,
+  `
 })
 export class AcoesCartoesComponent {
 

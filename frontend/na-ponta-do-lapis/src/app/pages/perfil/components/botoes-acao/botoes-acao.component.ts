@@ -11,14 +11,7 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 export class BotoesAcaoComponent {
   public confirmacaoVisivel = false;
   @Input() podeAbrirConfirmacao = true;
-<<<<<<< HEAD
-<<<<<<< HEAD
   @Input() temAlteracoes = false;
-=======
->>>>>>> 580c981 (feat: add confirmation dialog before perfil changes.)
-=======
-  @Input() temAlteracoes = false;
->>>>>>> b763965 (feat: reformular tela de ajustes com boas praticas de ui e ux e identidade visual)
 
   @Output() cliqueSalvar = new EventEmitter<void>();
   @Output() cliqueDescartar = new EventEmitter<void>();

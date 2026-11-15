@@ -40,7 +40,7 @@ import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-
             [data]="chartData"
             [options]="chartOptions"
             [style]="{
-              height: '260px',
+                height:'260px'
             }"
             class="w-full">
         </p-chart>
@@ -50,32 +50,23 @@ import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-
   `,
 })
 export class RelatorioComponent implements OnChanges {
-  @Input() transacoes: any[] = [];
 
     private preferenciaMoedaService = inject(PreferenciaMoedaService);
 
-  private tema = inject(ThemeService);
+    @Input() transacoes:any[] = [];
 
-  chartData: any;
+    @Input() saldoAtual:number = 0;
 
-  chartOptions: any;
+    chartData: any;
 
-  constructor() {
-    // Regenera o gráfico quando o tema muda (cores de eixo/grade).
-    effect(() => {
-      this.tema.paletaGrafico();
-      untracked(() => {
-        if (this.chartData) this.gerarGrafico();
-      });
-    });
-  }
+    chartOptions: any;
 
-  ngOnChanges() {
-    this.gerarGrafico();
-  }
+    ngOnChanges(){
+        this.gerarGrafico();
+    }
 
-  gerarGrafico() {
-    const valores = this.calcularSaldoMensal();
+    gerarGrafico(){
+        const valores = this.calcularSaldoMensal();
 
         this.chartData = {
             labels: [
@@ -123,28 +114,29 @@ export class RelatorioComponent implements OnChanges {
     private calcularSaldoMensal(): number[] {
       const movimentacoes = new Array(12).fill(0);
 
-    for (const t of this.transacoes) {
-      const data = new Date(t.dataHora);
-      const mes = data.getMonth();
+      for(const t of this.transacoes){
+        const data = new Date(t.dataHora);
+        const mes = data.getMonth();
 
-      if (t.tipo === 'RECEITA') {
-        movimentacoes[mes] += t.valor;
+        if(t.tipo === 'RECEITA'){
+          movimentacoes[mes] += t.valor;
+        }
+
+        if(t.tipo === 'DESPESA'){
+          movimentacoes[mes] -= t.valor;
+        }
+
       }
 
-      if (t.tipo === 'DESPESA') {
-        movimentacoes[mes] -= t.valor;
+      const resultado = new Array(12);
+
+      let saldo = 0;
+
+      for(let i = 0; i < 12; i++){
+        saldo += movimentacoes[i];
+        resultado[i] = saldo;
       }
+
+      return resultado;
     }
-
-    const resultado = new Array(12);
-
-    let saldo = 0;
-
-    for (let i = 0; i < 12; i++) {
-      saldo += movimentacoes[i];
-      resultado[i] = saldo;
-    }
-
-    return resultado;
-  }
 }

@@ -1,12 +1,4 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
-=======
-import { Component, Input } from '@angular/core';
->>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
-=======
-import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
@@ -23,20 +15,9 @@ import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-co
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css',
 })
-<<<<<<< HEAD
-<<<<<<< HEAD
 export class SignupComponent implements AfterViewInit {
   @Input() embedded = false;
   @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
-=======
-export class SignupComponent {
-  @Input() embedded = false;
->>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
-=======
-export class SignupComponent implements AfterViewInit {
-  @Input() embedded = false;
-  @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   registerForm: FormGroup;
   termos: any = null;
   loading = false;
@@ -98,66 +79,6 @@ export class SignupComponent implements AfterViewInit {
     })
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
-  public cadastrarComGoogle() {
-    if (this.loading) return;
-    this.loading = true;
-
-    this.authService.iniciarFluxoGoogle(
-<<<<<<< HEAD
-<<<<<<< HEAD
-      (idToken) => this.autenticarComGoogleToken(idToken),
-=======
-      (idToken) => {
-        this.authService.loginWithGoogle(idToken).subscribe({
-          next: (res) => {
-            this.loading = false;
-            StorageService.salvarToken(res.token);
-            this.messageService.add({
-              severity: 'success',
-              summary: 'Conta conectada com Google!',
-              life: 2000
-            });
-            setTimeout(() => {
-              this.router.navigateByUrl('app/dashboard');
-            }, 1000);
-          },
-          error: () => {
-            this.loading = false;
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro ao cadastrar com Google',
-              life: 2500
-            });
-          }
-        });
-      },
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
-=======
-      (idToken) => this.autenticarComGoogleToken(idToken),
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
-      (reason) => {
-        this.loading = false;
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Google indisponível',
-          detail: reason,
-          life: 3500
-        });
-      }
-    );
-  }
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
-=======
->>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
     this.loading = true;
     this.authService.loginWithGoogle(idToken, termosAceitos).subscribe({
@@ -211,13 +132,6 @@ export class SignupComponent implements AfterViewInit {
     this.loading = false;
   }
 
-<<<<<<< HEAD
-=======
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-=======
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
-=======
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)
   public voltar() {
     this.router.navigateByUrl('');
   }

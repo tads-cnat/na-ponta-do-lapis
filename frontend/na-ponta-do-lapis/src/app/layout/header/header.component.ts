@@ -11,26 +11,11 @@ import { SidebarService } from '../../service/sidebar-service.service';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { Notificacao } from '../../model/INotificacao.model';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
 
 @Component({
   selector: 'app-header',
   imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent],
-=======
-
-@Component({
-  selector: 'app-header',
-  imports: [CommonModule, PrimeNGModuleModule, IconComponent],
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
-
-@Component({
-  selector: 'app-header',
-  imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent],
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -93,8 +78,6 @@ export class HeaderComponent implements OnInit {
     this.notificacaoService.excluirNotificacao(id).subscribe();
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   public obterIcone(tipo: string): string {
     switch (tipo) {
       case 'META_ATINGIDA':
@@ -130,59 +113,6 @@ export class HeaderComponent implements OnInit {
         return 'bg-slate-100 border border-slate-200/80';
     }
   }
-
-  public extrairIdConquista(mensagem: string): string {
-    const m = (mensagem || '').toLowerCase();
-    if (m.includes('primeiro passo') || m.includes('primeira meta')) return 'PRIMEIRA_META';
-    if (m.includes('cofrinho') || m.includes('primeiro aporte')) return 'PRIMEIRO_APORTE';
-    if (m.includes('bronze')) return 'POUPADOR_BRONZE';
-    if (m.includes('alvo') || m.includes('primeira meta')) return 'META_BATIDA_1';
-    if (m.includes('mestre')) return 'MESTRE_DAS_METAS';
-    if (m.includes('blindado')) return 'ORCAMENTO_BLINDADO';
-    if (m.includes('dívida') || m.includes('divida')) return 'LIVRE_DE_DIVIDAS';
-    if (m.includes('família') || m.includes('familia')) return 'FAMILIA_UNIDA';
-    return 'PRIMEIRA_META';
-  }
-=======
-  public obterIconeTipo(tipo: string): string {
-=======
-  public obterIcone(tipo: string): string {
->>>>>>> 92c4c90 (fix(ui): alinhar icones de notificacao, remover badge de moeda redundante, estilizar select de moedas e adicionar opcoes explicitas de escopo nos forms de meta)
-    switch (tipo) {
-      case 'META_ATINGIDA':
-        return 'pi-check-circle text-emerald-600';
-      case 'META_ESTOURADA':
-        return 'pi-exclamation-triangle text-rose-600';
-      case 'META_ALERTA_50':
-      case 'META_ALERTA_80':
-        return 'pi-flag text-amber-600';
-      case 'CONQUISTA_DESBLOQUEADA':
-        return 'pi-trophy text-[#7843CD]';
-      case 'FAMILIA_CONVITE':
-        return 'pi-users text-blue-600';
-      default:
-        return 'pi-bell text-slate-600';
-    }
-  }
-
-  public obterBgIcone(tipo: string): string {
-    switch (tipo) {
-      case 'META_ATINGIDA':
-        return 'bg-emerald-50 border border-emerald-100/80';
-      case 'META_ESTOURADA':
-        return 'bg-rose-50 border border-rose-100/80';
-      case 'META_ALERTA_50':
-      case 'META_ALERTA_80':
-        return 'bg-amber-50 border border-amber-100/80';
-      case 'CONQUISTA_DESBLOQUEADA':
-        return 'bg-[#7843CD]/10 border border-[#7843CD]/20';
-      case 'FAMILIA_CONVITE':
-        return 'bg-blue-50 border border-blue-100/80';
-      default:
-        return 'bg-slate-100 border border-slate-200/80';
-    }
-  }
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
 
   public extrairIdConquista(mensagem: string): string {
     const m = (mensagem || '').toLowerCase();

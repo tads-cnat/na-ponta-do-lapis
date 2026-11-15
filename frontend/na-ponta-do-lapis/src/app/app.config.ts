@@ -38,19 +38,22 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     MessageService,
     providePrimeNG({
-      theme: {
+      theme : {
         preset: naPontaDoLapisTema,
         options: {
-          darkModeSelector: '.app-dark',
+          darkModeSelector: false || 'none',
           CssLayer: {
             name: 'primeng',
-            order: 'theme, base, primeng',
-          },
-        },
-      },
+            order: 'theme, base, primeng' 
+          }
+        }
+      }
     }),
-    provideHttpClient(withFetch(), withInterceptors([authInterceptor])),
+    provideHttpClient(
+      withFetch(),
+      withInterceptors([authInterceptor])
+    ),
     { provide: LOCALE_ID, useValue: 'pt-BR' },
-    { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' },
-  ],
+    { provide: DEFAULT_CURRENCY_CODE, useValue: 'BRL' }
+  ]
 };

@@ -6,15 +6,7 @@ import { MetasService } from './services/metas.service';
 import { ContaFinanceiraService } from '../contas/service/contas.service';
 import { TransacoesService } from '../transacoes/service/transacoes.service';
 import { AuthService } from '../../auth/service/auth.service';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest, AporteMetaResponse } from '@models/IMetas.models';
-=======
-import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest } from '@models/IMetas.models';
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-import { MetaRequest, MetaResponse, TipoMetaResponse, AporteMetaRequest, AporteMetaResponse } from '@models/IMetas.models';
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
 
 import { MessageService } from 'primeng/api';
 import { Button } from 'primeng/button';
@@ -25,17 +17,11 @@ import { DatePicker } from 'primeng/datepicker';
 import { Select } from 'primeng/select';
 import { ToastModule } from 'primeng/toast';
 import { Textarea } from 'primeng/textarea';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { CheckboxModule } from 'primeng/checkbox';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { CelebracaoService } from '../../shared/service/celebracao.service';
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
 import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem } from '../../shared/components/ilustracao-meta/ilustracao-meta.component';
 
 @Component({
@@ -48,7 +34,6 @@ import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem
     InputTextModule,
     ReactiveFormsModule,
     FormsModule,
-<<<<<<< HEAD
     DatePicker,
     Select,
     Textarea,
@@ -58,45 +43,6 @@ import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem
     AppMoedaPipe,
     IlustracaoMetaComponent,
   ],
-=======
-=======
-import { CheckboxModule } from 'primeng/checkbox';
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
-import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
-import { NotificacaoService } from '../../shared/service/notificacao.service';
-=======
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
-
-@Component({
-  selector: 'app-metas',
-<<<<<<< HEAD
-<<<<<<< HEAD
-  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, InputNumber, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent],
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-  imports: [MetaItemComponent, Button, DialogModule, InputTextModule, ReactiveFormsModule, DatePicker, Select, Textarea, ToastModule, InputMoedaComponent, AppMoedaPipe],
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
-=======
-  imports: [
-    CommonModule,
-    MetaItemComponent,
-    Button,
-    DialogModule,
-    InputTextModule,
-    ReactiveFormsModule,
-=======
->>>>>>> 92f13b0 (feat(metas): padroniza modal de exclusao, adiciona filtros por status/tipo e reordena ajustes de perfil)
-    DatePicker,
-    Select,
-    Textarea,
-    CheckboxModule,
-    ToastModule,
-    InputMoedaComponent,
-    AppMoedaPipe,
-    IlustracaoMetaComponent,
-  ],
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   templateUrl: './metas.component.html',
   styleUrl: './metas.component.css',
 })
@@ -108,11 +54,8 @@ export class MetasComponent implements OnInit {
   categorias = signal<any[]>([]);
   exibirDialog: boolean = false;
   exibirDialogAporte: boolean = false;
-<<<<<<< HEAD
-<<<<<<< HEAD
   exibirDialogExclusao: boolean = false;
   exibirDialogHistorico: boolean = false;
-<<<<<<< HEAD
   metaParaAporte: MetaResponse | null = null;
   metaParaExcluir: MetaResponse | null = null;
   metaParaHistorico: MetaResponse | null = null;
@@ -251,162 +194,11 @@ export class MetasComponent implements OnInit {
 
   totalAcumulado = computed(() => {
     return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
-=======
-=======
-  exibirDialogExclusao: boolean = false;
->>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
-=======
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
-  metaParaAporte: MetaResponse | null = null;
-  metaParaExcluir: MetaResponse | null = null;
-  metaParaHistorico: MetaResponse | null = null;
-  historicoAportes = signal<AporteMetaResponse[]>([]);
-  carregandoHistorico = signal<boolean>(false);
-  
-  // Novos Filtros Ricos: Status, Tipo e Origem
-  filtroStatus = signal<'todas' | 'em_andamento' | 'concluidas' | 'expiradas'>('todas');
-  filtroTipo = signal<'todos' | 'POUPANCA' | 'GASTO' | 'DIVIDA'>('todos');
-  filtroOrigem = signal<'todas' | 'individuais' | 'familia'>('todas');
-  
-  opcoesFiltroTipo = [
-    { label: 'Todos os tipos', value: 'todos' },
-    { label: 'Juntar Dinheiro', value: 'POUPANCA' },
-    { label: 'Teto de Gastos', value: 'GASTO' },
-    { label: 'Quitar Dívida', value: 'DIVIDA' },
-  ];
-
-  opcoesFiltroOrigem = [
-    { label: 'Todas as origens', value: 'todas' },
-    { label: 'Minhas Metas', value: 'individuais' },
-    { label: 'Metas da Família', value: 'familia' },
-  ];
-
-  ehMetaConcluida(m: MetaResponse): boolean {
-    if (m.tipoMeta === 'GASTO') {
-      return m.status === 'CONCLUIDA';
-    }
-    return m.status === 'CONCLUIDA' || (m.progresso || 0) >= 100 || (m.valorAtual || 0) >= (m.valorTotal || 0);
-  }
-
-  ehMetaExpirada(m: MetaResponse): boolean {
-    if (this.ehMetaConcluida(m)) return false;
-    if (m.status === 'EXPIRADA') return true;
-    if (!m.dataLimite) return false;
-    const limite = new Date(m.dataLimite);
-    const hoje = new Date();
-    hoje.setHours(0, 0, 0, 0);
-    limite.setHours(0, 0, 0, 0);
-    return limite.getTime() < hoje.getTime();
-  }
-
-  ehMetaEmAndamento(m: MetaResponse): boolean {
-    return !this.ehMetaConcluida(m) && !this.ehMetaExpirada(m);
-  }
-
-  contagemTodas = computed(() => this.metas().length);
-  contagemEmAndamento = computed(() => this.metas().filter(m => this.ehMetaEmAndamento(m)).length);
-  contagemConcluidas = computed(() => this.metas().filter(m => this.ehMetaConcluida(m)).length);
-  contagemExpiradas = computed(() => this.metas().filter(m => this.ehMetaExpirada(m)).length);
-
-  temFamilia: boolean = false;
-  tipoMetaSelecionado = signal<string>('POUPANCA');
-  catalogoIlustracoes: IlustracaoMetaItem[] = CATALOGO_ILUSTRACOES_METAS;
-
-  today = new Date();
-
-  opcoesContaForm = computed(() => {
-    const tipo = this.tipoMetaSelecionado();
-    const contasOriginais = this.contas() || [];
-    if (tipo === 'GASTO') {
-      return [
-        { id: null, nome: 'Todas as contas (Orçamento Global)' },
-        ...contasOriginais
-      ];
-    }
-    return [
-      { id: null, nome: 'Nenhuma (cofrinho geral)' },
-      ...contasOriginais
-    ];
-  });
-
-  opcoesCategoriaForm = computed(() => {
-    const tipo = this.tipoMetaSelecionado();
-    const categoriasOriginais = this.categorias() || [];
-    if (tipo === 'GASTO') {
-      return [
-        { id: null, nome: 'Todas as categorias (Orçamento Geral do Mês)' },
-        ...categoriasOriginais
-      ];
-    }
-    return [
-      { id: null, nome: 'Nenhuma categoria específica' },
-      ...categoriasOriginais
-    ];
-  });
-
-  metasFiltradas = computed(() => {
-    let lista = this.metas();
-
-    // 1. Filtro por status
-    const status = this.filtroStatus();
-    if (status === 'concluidas') {
-      lista = lista.filter(m => this.ehMetaConcluida(m));
-    } else if (status === 'em_andamento') {
-      lista = lista.filter(m => this.ehMetaEmAndamento(m));
-    } else if (status === 'expiradas') {
-      lista = lista.filter(m => this.ehMetaExpirada(m));
-    }
-
-    // 2. Filtro por tipo de meta
-    const tipo = this.filtroTipo();
-    if (tipo !== 'todos') {
-      lista = lista.filter(m => m.tipoMeta === tipo);
-    }
-
-    // 3. Filtro por origem (Individual vs Família)
-    const origem = this.filtroOrigem();
-    if (origem === 'familia') {
-      lista = lista.filter(m => m.familiar);
-    } else if (origem === 'individuais') {
-      lista = lista.filter(m => !m.familiar);
-    }
-
-    return lista;
-  });
-
-  // Separação Contábil: Quando não está filtrando especificamente por GASTO,
-  // os cards de resumo refletem apenas objetivos de acúmulo/amortização (POUPANCA / DIVIDA),
-  // evitando que despesas de Tetos de Gastos inflamem o "Total Arrecadado".
-  metasBaseResumo = computed(() => {
-    const lista = this.metasFiltradas();
-    if (this.filtroTipo() === 'GASTO') {
-      return lista.filter(m => m.tipoMeta === 'GASTO');
-    }
-    return lista.filter(m => m.tipoMeta !== 'GASTO');
-  });
-
-  contagemTetosGasto = computed(() => {
-    return this.metasFiltradas().filter(m => m.tipoMeta === 'GASTO').length;
-  });
-
-  totalMetas = computed(() => {
-    return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorTotal || 0), 0);
-  });
-
-  totalAcumulado = computed(() => {
-<<<<<<< HEAD
-    return this.metasFiltradas().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-    return this.metasBaseResumo().reduce((sum, m) => sum + (m.valorAtual || 0), 0);
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   });
 
   totalRestante = computed(() => {
     return Math.max(0, this.totalMetas() - this.totalAcumulado());
   });
-<<<<<<< HEAD
-=======
 
   progressoGeral = computed(() => {
     const total = this.totalMetas();
@@ -414,20 +206,6 @@ export class MetasComponent implements OnInit {
     return Math.min(100, Math.round((this.totalAcumulado() / total) * 100));
   });
 
-<<<<<<< HEAD
-  totalMetasFormatado = computed(() =>
-    this.totalMetas().toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })
-  );
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-
-  progressoGeral = computed(() => {
-    const total = this.totalMetas();
-    if (!total || total <= 0) return 0;
-    return Math.min(100, Math.round((this.totalAcumulado() / total) * 100));
-  });
-
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   metaForm: FormGroup;
   aporteForm: FormGroup;
   metaSelecionada: MetaResponse | null = null;
@@ -439,14 +217,7 @@ export class MetasComponent implements OnInit {
   private router = inject(Router);
   private messageService = inject(MessageService);
   private notificacaoService = inject(NotificacaoService);
-<<<<<<< HEAD
-<<<<<<< HEAD
   private celebracaoService = inject(CelebracaoService);
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-  private celebracaoService = inject(CelebracaoService);
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
   private fb = inject(FormBuilder);
 
   constructor() {
@@ -454,18 +225,8 @@ export class MetasComponent implements OnInit {
       nome: ['', [Validators.required, Validators.minLength(3)]],
       descricao: [''],
       valor: [null, [Validators.required, Validators.min(0.01)]],
-<<<<<<< HEAD
-<<<<<<< HEAD
       valorInicial: [null],
       fotoUrl: ['cofrinho'],
-<<<<<<< HEAD
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-      valorInicial: [null],
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
-=======
->>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
       contaId: [null],
       categoriaId: [null],
       familiar: [false],
@@ -529,7 +290,6 @@ export class MetasComponent implements OnInit {
     this.metasService.listarMetas().subscribe({
       next: (response) => this.metas.set(response),
       error: (error) => console.error('Erro ao listar metas:', error),
-<<<<<<< HEAD
     });
   }
 
@@ -561,75 +321,7 @@ export class MetasComponent implements OnInit {
           life: 5000,
         });
       },
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
     });
-  }
-
-<<<<<<< HEAD
-  deletarMeta(id: number): void {
-<<<<<<< HEAD
-    const meta = this.metas().find(m => m.id === id);
-    if (meta) {
-      this.solicitarExclusao(meta);
-    }
-  }
-
-  selecionarTipoMeta(tipo: string): void {
-    const fotoAtual = this.metaForm.get('fotoUrl')?.value;
-    if (tipo === 'GASTO' && (fotoAtual === 'cofrinho' || !fotoAtual)) {
-      this.metaForm.get('fotoUrl')?.setValue('compras_mercado');
-    } else if (tipo === 'DIVIDA' && (fotoAtual === 'cofrinho' || !fotoAtual)) {
-      this.metaForm.get('fotoUrl')?.setValue('divida_quitacao');
-    } else if (tipo === 'POUPANCA' && (fotoAtual === 'compras_mercado' || fotoAtual === 'divida_quitacao')) {
-      this.metaForm.get('fotoUrl')?.setValue('cofrinho');
-    }
-    this.metaForm.get('tipoMeta')?.setValue(tipo);
-    this.tipoMetaSelecionado.set(tipo);
-    if (this.metaForm.get('contaId')?.value === undefined) {
-      this.metaForm.get('contaId')?.setValue(null);
-    }
-    if (this.metaForm.get('categoriaId')?.value === undefined) {
-      this.metaForm.get('categoriaId')?.setValue(null);
-    }
-  }
-
-  selecionarIlustracao(id: string): void {
-    this.metaForm.get('fotoUrl')?.setValue(id);
-=======
-    this.metasService.deletarMeta(id).subscribe({
-=======
-  solicitarExclusao(meta: MetaResponse): void {
-    this.metaParaExcluir = meta;
-    this.exibirDialogExclusao = true;
-  }
-
-  cancelarExclusao(): void {
-    this.exibirDialogExclusao = false;
-    this.metaParaExcluir = null;
-  }
-
-  confirmarExclusao(): void {
-    if (!this.metaParaExcluir) return;
-    const metaAlvo = this.metaParaExcluir;
-    this.metasService.deletarMeta(metaAlvo.id).subscribe({
->>>>>>> a8531bd (feat(metas): refatora modal de metas, adiciona confirmação de exclusão e bandeiras SVG)
-      next: () => {
-        this.metas.update((metas) => metas.filter((m) => m.id !== metaAlvo.id));
-        this.messageService.add({ severity: 'success', summary: 'Meta excluída com sucesso!', life: 3000 });
-        this.cancelarExclusao();
-        this.notificacaoService.recarregarImediatamente();
-      },
-      error: (error) => {
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Erro ao excluir meta',
-          detail: error.error?.message || error.message,
-          life: 5000,
-        });
-      },
-    });
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
   }
 
   deletarMeta(id: number): void {
@@ -670,30 +362,15 @@ export class MetasComponent implements OnInit {
         nome: meta.nome,
         descricao: meta.descricao,
         valor: meta.valorTotal,
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
         fotoUrl: meta.fotoUrl || 'cofrinho',
         contaId: meta.contaId ?? null,
         categoriaId: meta.categoriaId ?? null,
-=======
-        contaId: meta.contaId,
-        categoriaId: meta.categoriaId,
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-        contaId: meta.contaId ?? null,
-        categoriaId: meta.categoriaId ?? null,
->>>>>>> 92c4c90 (fix(ui): alinhar icones de notificacao, remover badge de moeda redundante, estilizar select de moedas e adicionar opcoes explicitas de escopo nos forms de meta)
         familiar: meta.familiar,
         dataLimite: meta.dataLimite ? new Date(meta.dataLimite) : null,
         tipoMeta: meta.tipoMeta,
       });
     } else {
       this.metaSelecionada = null;
-<<<<<<< HEAD
-<<<<<<< HEAD
       this.tipoMetaSelecionado.set('POUPANCA');
       this.metaForm.reset({
         tipoMeta: 'POUPANCA',
@@ -702,21 +379,6 @@ export class MetasComponent implements OnInit {
         valorInicial: null,
         contaId: null,
         categoriaId: null,
-=======
-      this.metaForm.reset({
-        tipoMeta: 'POUPANCA',
-        familiar: false,
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-      this.tipoMetaSelecionado.set('POUPANCA');
-      this.metaForm.reset({
-        tipoMeta: 'POUPANCA',
-        fotoUrl: 'cofrinho',
-        familiar: false,
-        valorInicial: null,
-        contaId: null,
-        categoriaId: null,
->>>>>>> 92c4c90 (fix(ui): alinhar icones de notificacao, remover badge de moeda redundante, estilizar select de moedas e adicionar opcoes explicitas de escopo nos forms de meta)
       });
     }
     this.exibirDialog = true;
@@ -729,10 +391,6 @@ export class MetasComponent implements OnInit {
   }
 
   abrirDialogAporte(meta: MetaResponse): void {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 92f13b0 (feat(metas): padroniza modal de exclusao, adiciona filtros por status/tipo e reordena ajustes de perfil)
     if ((meta.progresso || 0) >= 100 || (meta.valorAtual || 0) >= (meta.valorTotal || 0)) {
       this.messageService.add({
         severity: 'info',
@@ -742,11 +400,6 @@ export class MetasComponent implements OnInit {
       });
       return;
     }
-<<<<<<< HEAD
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
->>>>>>> 92f13b0 (feat(metas): padroniza modal de exclusao, adiciona filtros por status/tipo e reordena ajustes de perfil)
     this.metaParaAporte = meta;
     this.aporteForm.reset();
     this.exibirDialogAporte = true;
@@ -758,10 +411,6 @@ export class MetasComponent implements OnInit {
     this.aporteForm.reset();
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
   abrirHistorico(meta: MetaResponse): void {
     this.metaParaHistorico = meta;
     this.historicoAportes.set([]);
@@ -819,40 +468,6 @@ export class MetasComponent implements OnInit {
         this.fecharDialogAporte();
         this.carregarMetas();
         this.notificacaoService.recarregarImediatamente();
-=======
-  salvarAporte(): void {
-    if (this.aporteForm.invalid || !this.metaParaAporte) return;
-
-    const metaAlvo = this.metaParaAporte;
-    const payload: AporteMetaRequest = this.aporteForm.value;
-    const valorAporte = Number(payload.valor) || 0;
-    const valorAtual = Number(metaAlvo.valorAtual) || 0;
-    const valorTotal = Number(metaAlvo.valorTotal) || 0;
-
-    // Só comemora se a meta NÃO estava concluída e atingiu 100% EXATAMENTE com este aporte
-    const jaEstavaConcluida = valorAtual >= valorTotal;
-    const concluiuAgora = !jaEstavaConcluida && (valorAtual + valorAporte) >= valorTotal;
-
-    this.metasService.registrarAporte(metaAlvo.id, payload).subscribe({
-      next: () => {
-        if (concluiuAgora) {
-          this.celebracaoService.celebrarMetaAtingida(metaAlvo.nome, valorTotal);
-        } else {
-          this.messageService.add({
-            severity: 'success',
-            summary: 'Aporte realizado com sucesso!',
-            detail: `Valor adicionado à meta "${metaAlvo.nome}"`,
-            life: 4000,
-          });
-        }
-        this.fecharDialogAporte();
-        this.carregarMetas();
-<<<<<<< HEAD
-        this.notificacaoService.carregarNotificacoes();
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-        this.notificacaoService.recarregarImediatamente();
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
       },
       error: (err) => {
         this.messageService.add({
@@ -875,14 +490,7 @@ export class MetasComponent implements OnInit {
       descricao: formValue.descricao,
       valor: formValue.valor,
       valorInicial: (!this.metaSelecionada && formValue.tipoMeta !== 'GASTO' && valorInicialNum > 0) ? valorInicialNum : undefined,
-<<<<<<< HEAD
-<<<<<<< HEAD
       fotoUrl: formValue.fotoUrl || 'cofrinho',
-=======
->>>>>>> 3f84d58 (feat(metas): consistencia contabil, alertas de teto de gastos, saldo inicial e extrato de aportes)
-=======
-      fotoUrl: formValue.fotoUrl || 'cofrinho',
->>>>>>> 772cd36 (feat(metas): refatora UI/UX do modal, catalogo de ilustracoes e filtro fixo de expiradas)
       contaId: formValue.contaId,
       categoriaId: formValue.categoriaId,
       familiar: formValue.familiar,
@@ -913,14 +521,7 @@ export class MetasComponent implements OnInit {
           this.metas.update((metas) => [...metas, newMeta]);
           this.fecharDialog();
           this.messageService.add({ severity: 'success', summary: 'Nova meta criada com sucesso!', life: 3000 });
-<<<<<<< HEAD
-<<<<<<< HEAD
           this.notificacaoService.recarregarImediatamente();
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-          this.notificacaoService.recarregarImediatamente();
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
         },
         error: (error) => {
           this.messageService.add({

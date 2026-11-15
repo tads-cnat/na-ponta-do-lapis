@@ -22,16 +22,8 @@ import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
-=======
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
-import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
 import { MarcadorDlgComponent } from '../marcador-dlg/marcador-dlg.component';
@@ -48,19 +40,7 @@ interface GrupoParcelamentoResumo {
 
 @Component({
   selector: 'app-transacoes',
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
   imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
-=======
-  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule],
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
-  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent],
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
-  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',

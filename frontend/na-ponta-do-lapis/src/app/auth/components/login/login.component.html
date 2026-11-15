@@ -1,21 +1,7 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 <p-toast position="top-right" [baseZIndex]="10000"></p-toast>
 <div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
 
     <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
-=======
-<p-toast></p-toast>
-<div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
-
-    <div class="flex flex-1 flex-col justify-between p-6 sm:p-10 overflow-y-auto">
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-=======
-<p-toast position="top-right" [baseZIndex]="10000"></p-toast>
-<div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
-
-    <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
         <!-- Botão Voltar ao Início ancorado no canto superior esquerdo, distante do formulário -->
         <div class="w-full flex items-center justify-start">
             <button type="button" (click)="voltar()"
@@ -25,16 +11,7 @@
             </button>
         </div>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
-        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
-=======
         <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-2.5 w-full max-w-[400px] mx-auto my-auto py-3">
->>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
             <app-mascote-login
                 [compact]="true"
                 [estado]="mascoteEstado()"
@@ -43,15 +20,6 @@
                 [emailInvalid]="!!(loginForm.get('email')?.invalid && loginForm.get('email')?.touched)">
             </app-mascote-login>
 
-<<<<<<< HEAD
-=======
-        <form [formGroup]="loginForm" (ngSubmit)="login()" class="flex flex-col gap-4 w-full max-w-md mx-auto my-auto py-8">
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-=======
-        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-4 w-full max-w-md mx-auto my-auto py-8">
->>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
-=======
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
             <div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
                 <p class="text-sm text-slate-500 mt-1">
@@ -61,14 +29,7 @@
                 </p>
             </div>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 68d960e (style(auth): mover botao do Google para o topo dos formularios)
-=======
             @if (googleButtonState() !== 'unavailable') {
->>>>>>> 82aba8e (refactor: improve Google sign-in UX and optimize auth form layouts)
             <div class="flex flex-col gap-2.5 mt-1">
                 <div class="w-full min-h-[40px] flex items-center justify-center relative">
                     <div #googleBtnContainer class="w-full flex justify-center" [class.hidden]="googleButtonState() !== 'ready'"></div>
@@ -104,39 +65,10 @@
                         }
                     }
                 </div>
-=======
-            <div class="flex flex-col gap-1.5 mt-2">
-                <label for="email" class="text-xs font-semibold text-slate-700">E-mail ou Nickname</label>
-                <input id="email" pInputText placeholder="nome@gmail.com ou seu nickname" class="w-full text-sm rounded-xl!" formControlName="email"
-                    (focus)="onEmailFocus()"
-                    (input)="onEmailInput($any($event.target).value)"
-                    (blur)="onEmailBlur()"
-                    [class.ng-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
-                    [class.ng-dirty]="loginForm.get('email')?.touched">
-
-                <div class="min-h-4 flex items-center">
-                    @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-                        @if (loginForm.get('email')?.errors?.['required']) {
-                            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe seu e-mail ou nickname.</small>
-                        } @else if (loginForm.get('email')?.errors?.['minlength']) {
-                            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 3 caracteres.</small>
-                        }
-                    }
-<<<<<<< HEAD
-                    @if (loginForm.get('email')?.errors?.['email']) {
-                        <small class="text-[#C24E4E] text-xs font-semibold">Informe um formato de e-mail válido.</small>
-                    }
-                }
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-=======
-                </div>
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
             </div>
 
             <div class="flex flex-col gap-1.5">
                 <div class="flex items-center justify-between">
-<<<<<<< HEAD
-<<<<<<< HEAD
                     <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
                     <span class="text-[#7843CD] cursor-pointer font-semibold hover:text-[#6214CC] hover:underline text-xs">Esqueceu a sua senha?</span>
                 </div>
@@ -148,37 +80,6 @@
                         inputStyleClass="w-full text-sm rounded-xl!" formControlName="password"
                         [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
                 </div>
-<<<<<<< HEAD
-
-                <div class="min-h-4 flex items-center">
-                    @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-                        <small class="text-[#C24E4E] text-xs font-semibold leading-4">A senha é obrigatória.</small>
-                    }
-                </div>
-            </div>
-
-            <div class="flex flex-col gap-2.5 mt-2">
-                <div (mouseenter)="isHoveringSubmit.set(true)" (mouseleave)="isHoveringSubmit.set(false)">
-                    <p-button type="submit" label="Entrar" icon="pi pi-sign-in"
-                        styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
-                        [disabled]="loginForm.invalid || loading" [loading]="loading" />
-                </div>
-            </div>
-        </form>
-
-        <div class="hidden sm:block h-2"></div>
-=======
-                    <label for="password" class="text-xs font-semibold text-slate-700">Senha <span class="text-[#C24E4E]">*</span></label>
-=======
-                    <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
->>>>>>> a56995c (feat(ui): padronizacao de modais, despoluicao de metas e campos de formulario)
-                    <span class="text-[#7843CD] cursor-pointer font-semibold hover:text-[#6214CC] hover:underline text-xs">Esqueceu a sua senha?</span>
-                </div>
-                <p-password id="password" [toggleMask]="true" [feedback]="false" placeholder="Digite sua senha aqui"
-                    inputStyleClass="w-full text-sm rounded-xl!" formControlName="password"
-                    [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
-=======
->>>>>>> f5b5148 (feat(frontend): integra login por nickname, Google Auth, mascote e ajustes de layout no auth)
 
                 <div class="min-h-4 flex items-center">
                     @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
@@ -198,19 +99,6 @@
 
         <div class="hidden sm:block h-2"></div>
     </div>
-
-    @if (!embedded) {
-    <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
-        <div class="flex flex-col items-center gap-4 z-10 px-8 text-center max-w-sm">
-            <img src="/logo.svg" alt="Na Ponta do Lápis" class="w-64 max-w-xs drop-shadow-xs">
-            <div class="w-12 h-1 rounded-full bg-[#EEC046]"></div>
-            <p class="text-sm font-medium text-[#4A2585]/85 tracking-wide leading-relaxed">
-                Seu controle financeiro pessoal e familiar, simples e na ponta do lápis.
-            </p>
-        </div>
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-    </div>
-<<<<<<< HEAD
 
     @if (!embedded) {
     <div class="hidden md:flex flex-1 bg-[#D1C4FF] items-center justify-center relative overflow-hidden">
@@ -233,12 +121,4 @@
     [loading]="loading"
     (confirm)="confirmarTermosGoogle()"
     (cancel)="cancelarTermosGoogle()">
-<<<<<<< HEAD
 </app-google-consent-dialog>
-=======
-    }
-</div>
->>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
-=======
-</app-google-consent-dialog>
->>>>>>> c35ae55 (feat(auth): usar botao oficial do Google e modal de consentimento LGPD)

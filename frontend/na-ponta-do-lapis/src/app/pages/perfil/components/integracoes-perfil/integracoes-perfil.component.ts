@@ -32,7 +32,6 @@ export class IntegracoesPerfilComponent implements OnInit {
   public openFinanceMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
   public mostrarTutorialConectado = false;
 
-
   // Itens Bancários Conectados
   public itensConectados: IOpenFinanceItem[] = [];
   public carregandoItens = false;
@@ -47,10 +46,6 @@ export class IntegracoesPerfilComponent implements OnInit {
   public salvandoChaveIa = false;
   public chaveIaMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
 
-<<<<<<< HEAD
-
-=======
->>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
   // Sub-aba ativa (Open Finance vs IA)
   public subabaAtiva: 'bancos' | 'ia' = 'bancos';
 
@@ -69,10 +64,7 @@ export class IntegracoesPerfilComponent implements OnInit {
     private route: ActivatedRoute
   ) {}
 
-
   ngOnInit(): void {
-<<<<<<< HEAD
-=======
     this.route.queryParams.subscribe((params) => {
       if (params['secao'] === 'ia' || params['aba'] === 'ia' || params['subaba'] === 'ia') {
         this.subabaAtiva = 'ia';
@@ -82,7 +74,6 @@ export class IntegracoesPerfilComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
->>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
 
     this.inicializarFormularios();
     this.carregarOpenFinance();
@@ -140,11 +131,9 @@ export class IntegracoesPerfilComponent implements OnInit {
     });
   }
 
-
   public getNomeBancoFormatado(nome?: string): string {
     return mapearNomeBanco(nome).nomeExibicao;
   }
-
 
   public salvarNovoItemPorId(): void {
     if (!this.novoItemId.trim()) {

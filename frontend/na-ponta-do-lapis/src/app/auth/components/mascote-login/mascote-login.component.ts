@@ -88,27 +88,12 @@ export class MascoteLoginComponent implements AfterViewInit {
   private easterEggTimer: ReturnType<typeof setTimeout> | null = null;
   private clickCount = 0;
   private clickStreak = 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
   private lastEasterEggIndex = -1;
-=======
-  private easterEggIndex = 0;
->>>>>>> b911d24 (feat(frontend): cria mascote interativo do NPL com fisica de molas e easter eggs)
-=======
-  private lastEasterEggIndex = -1;
->>>>>>> e4115ed (feat: add Stonks easter egg and randomize phrase selection without repetition)
   private lastClickAt = 0;
 
   private readonly easterEggPhrases = [
     'E o Pix, nada ainda?',
-<<<<<<< HEAD
-<<<<<<< HEAD
     'Stonks!',
-=======
->>>>>>> b911d24 (feat(frontend): cria mascote interativo do NPL com fisica de molas e easter eggs)
-=======
-    'Stonks!',
->>>>>>> e4115ed (feat: add Stonks easter egg and randomize phrase selection without repetition)
     'Se não comprar, o desconto é maior!',
     'O boleto não perdoa!',
     'Só no cartão, meu nobre!',
@@ -271,23 +256,12 @@ export class MascoteLoginComponent implements AfterViewInit {
 
     if (this.clickStreak >= 5) {
       this.clickStreak = 0;
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> e4115ed (feat: add Stonks easter egg and randomize phrase selection without repetition)
       let nextIndex = Math.floor(Math.random() * this.easterEggPhrases.length);
       if (this.easterEggPhrases.length > 1 && nextIndex === this.lastEasterEggIndex) {
         nextIndex = (nextIndex + 1) % this.easterEggPhrases.length;
       }
       this.lastEasterEggIndex = nextIndex;
       this.easterEggPhrase.set(this.easterEggPhrases[nextIndex]);
-<<<<<<< HEAD
-=======
-      this.easterEggPhrase.set(this.easterEggPhrases[this.easterEggIndex % this.easterEggPhrases.length]);
-      this.easterEggIndex++;
->>>>>>> b911d24 (feat(frontend): cria mascote interativo do NPL com fisica de molas e easter eggs)
-=======
->>>>>>> e4115ed (feat: add Stonks easter egg and randomize phrase selection without repetition)
       this.easterEgg.set(true);
       this.gracinha.set('dance');
       this.bounceY.velocity = -75;

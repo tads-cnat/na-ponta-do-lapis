@@ -1,38 +1,14 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, Subscription, timer, tap } from 'rxjs';
 import { environment } from '@env';
 import { Notificacao, ContadorNaoLidasResponse } from '../../model/INotificacao.model';
 import { CelebracaoService } from './celebracao.service';
-=======
-import { Injectable } from '@angular/core';
-=======
-import { Injectable, OnDestroy } from '@angular/core';
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subscription, timer, tap } from 'rxjs';
-import { environment } from '@env';
-import { Notificacao, ContadorNaoLidasResponse } from '../../model/INotificacao.model';
-<<<<<<< HEAD
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-import { CelebracaoService } from './celebracao.service';
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
 
 @Injectable({
   providedIn: 'root'
 })
-<<<<<<< HEAD
-<<<<<<< HEAD
 export class NotificacaoService implements OnDestroy {
-=======
-export class NotificacaoService {
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-export class NotificacaoService implements OnDestroy {
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
   private readonly baseUrl = `${environment.apiBaseUrl}/notificacoes`;
 
   private notificacoesSubject = new BehaviorSubject<Notificacao[]>([]);
@@ -41,8 +17,6 @@ export class NotificacaoService implements OnDestroy {
   private totalNaoLidasSubject = new BehaviorSubject<number>(0);
   public totalNaoLidas$ = this.totalNaoLidasSubject.asObservable();
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   private idsConhecidos = new Set<number>();
   private primeiraCarga = true;
   private pollingSub?: Subscription;
@@ -66,59 +40,16 @@ export class NotificacaoService implements OnDestroy {
     this.http.get<Notificacao[]>(this.baseUrl).subscribe({
       next: (notificacoes) => {
         this.processarNovasNotificacoes(notificacoes, forcarCelebracao);
-=======
-  constructor(private http: HttpClient) {}
-=======
-  private idsConhecidos = new Set<number>();
-  private primeiraCarga = true;
-  private pollingSub?: Subscription;
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
-
-  constructor(
-    private http: HttpClient,
-    private celebracaoService: CelebracaoService
-  ) {
-    this.iniciarPolling();
-  }
-
-  public iniciarPolling(): void {
-    if (this.pollingSub) return;
-    // Polling periódico a cada 8 segundos
-    this.pollingSub = timer(0, 8000).subscribe(() => {
-      this.carregarNotificacoes();
-    });
-  }
-
-  public carregarNotificacoes(forcarCelebracao = false): void {
-    this.http.get<Notificacao[]>(this.baseUrl).subscribe({
-      next: (notificacoes) => {
-<<<<<<< HEAD
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-        this.processarNovasNotificacoes(notificacoes, forcarCelebracao);
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
         this.notificacoesSubject.next(notificacoes);
         const naoLidas = notificacoes.filter((n) => !n.lida).length;
         this.totalNaoLidasSubject.next(naoLidas);
       },
       error: () => {
-<<<<<<< HEAD
-<<<<<<< HEAD
         // Falha silenciosa para não poluir console em caso de token expirado
-=======
-        // Falha silenciosa para não quebrar a navegação principal
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-        // Falha silenciosa para não poluir console em caso de token expirado
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
       }
     });
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
   public recarregarImediatamente(): void {
     this.carregarNotificacoes(true);
   }
@@ -162,11 +93,6 @@ export class NotificacaoService implements OnDestroy {
     return 'PRIMEIRA_META';
   }
 
-<<<<<<< HEAD
-=======
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)
   public atualizarContadorNaoLidas(): void {
     this.http.get<ContadorNaoLidasResponse>(`${this.baseUrl}/nao-lidas/count`).subscribe({
       next: (res) => this.totalNaoLidasSubject.next(res.totalNaoLidas),
@@ -209,8 +135,6 @@ export class NotificacaoService implements OnDestroy {
       })
     );
   }
-<<<<<<< HEAD
-<<<<<<< HEAD
 
   ngOnDestroy(): void {
     if (this.pollingSub) {
@@ -218,16 +142,3 @@ export class NotificacaoService implements OnDestroy {
     }
   }
 }
-=======
-}
-
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-
-  ngOnDestroy(): void {
-    if (this.pollingSub) {
-      this.pollingSub.unsubscribe();
-    }
-  }
-}
->>>>>>> cc2840e (feat(celebracao): adicionar confetes, modal comemorativo hero, medalhas vetoriais exclusivas e polling reativo de notificacoes)

@@ -1,13 +1,5 @@
 export type TipoMeta = 'POUPANCA' | 'GASTO' | 'DIVIDA';
-<<<<<<< HEAD
-<<<<<<< HEAD
 export type StatusMeta = 'EM_ANDAMENTO' | 'CONCLUIDA' | 'ESTOURADA' | 'EXPIRADA' | 'CANCELADA';
-=======
-export type StatusMeta = 'EM_ANDAMENTO' | 'CONCLUIDA' | 'ESTOURADA' | 'CANCELADA';
->>>>>>> 5fa35d6 (feat(metas): consolida 3 tipos essenciais, limpa tipo legado e implementa notificacoes e aportes)
-=======
-export type StatusMeta = 'EM_ANDAMENTO' | 'CONCLUIDA' | 'ESTOURADA' | 'EXPIRADA' | 'CANCELADA';
->>>>>>> f1d5028 (feat(metas): implementa tratamento de metas expiradas, fechamento de prazo e ritmo sugerido)
 
 export interface TipoMetaResponse {
     id: string;

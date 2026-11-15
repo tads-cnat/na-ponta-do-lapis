@@ -50,10 +50,6 @@ export class PreferenciaMoedaService {
     }
   }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   public obterLocaleMoeda(moeda?: string | null): string {
     const cod = (moeda || this.obterMoedaAtiva()).toUpperCase();
     switch (cod) {
@@ -74,11 +70,6 @@ export class PreferenciaMoedaService {
     return cod === 'USD' ? ',' : '.';
   }
 
-<<<<<<< HEAD
-=======
->>>>>>> 25b46ec (feat: implement user entity, service, DTOs, and currency preference features)
-=======
->>>>>>> 4718fa4 (feat: formatação dinâmica de moedas, refatoração de inputs monetários e suavização visual de despesas)
   public definirMoedaPadrao(moeda: string): void {
     const limpa = (moeda || 'BRL').toUpperCase();
     this.moedaSubject.next(limpa);

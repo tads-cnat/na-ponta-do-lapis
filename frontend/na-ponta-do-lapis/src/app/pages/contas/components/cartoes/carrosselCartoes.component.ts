@@ -39,15 +39,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             (click)="contas.length > 1 && onAnterior.emit()"
             [ngClass]="contas.length <= 1
               ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
-<<<<<<< HEAD
-<<<<<<< HEAD
               : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
-=======
-              : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
->>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
-=======
-              : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
             class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
             [attr.aria-disabled]="contas.length <= 1"
             [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Conta anterior'">
@@ -60,15 +52,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
             (click)="contas.length > 1 && onProxima.emit()"
             [ngClass]="contas.length <= 1
               ? 'bg-slate-100 text-slate-400 opacity-40 cursor-not-allowed shadow-none'
-<<<<<<< HEAD
-<<<<<<< HEAD
               : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
-=======
-              : 'bg-[#e56809] text-white hover:bg-[#d05d06] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
->>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
-=======
-              : 'bg-[#7843CD] text-white hover:bg-[#6214CC] cursor-pointer shadow-sm hover:scale-105 active:scale-95'"
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
             class="w-11 h-11 rounded-full transition-all flex items-center justify-center"
             [attr.aria-disabled]="contas.length <= 1"
             [title]="contas.length <= 1 ? 'Navegação desabilitada (apenas 1 conta cadastrada)' : 'Próxima conta'">
@@ -111,16 +95,6 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                       @if (conta.sincronizada) {
                         <span class="inline-flex items-center gap-1.5 text-[11px] bg-[#EEC046] text-slate-900 px-2.5 py-0.5 rounded-full font-bold tracking-wide shadow-xs">
                           <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
-<<<<<<< HEAD
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
-                          </svg>
-                          <span>Open Finance</span>
-                        <span class="inline-flex items-center gap-1 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
-                          ⚡ Open Finance
-                        <span class="inline-flex items-center gap-1.5 text-[11px] bg-white/20 backdrop-blur-sm px-2.5 py-0.5 rounded-full font-semibold tracking-wide">
-                          <svg class="w-3.5 h-3.5 inline-block shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-=======
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z"/>
                           </svg>
                           <span>Open Finance</span>
@@ -132,10 +106,6 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                       </h3>
                     </div>
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-
                     <div class="shrink-0 flex items-center justify-center transition-transform hover:scale-105 select-none filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]">
                       @if (temBanco(conta.nome)) {
                         <app-icone-banco
@@ -148,51 +118,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                           <i [class]="(ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet') + ' text-3xl text-white'"></i>
                         </div>
                       }
-=======
-                    <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shrink-0">
-                      <i [class]="ehCartao(conta) ? 'pi pi-credit-card text-xl' : 'pi pi-wallet text-xl'"></i>
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
-                    <div class="shrink-0 flex items-center justify-center">
-=======
-                    <div class="shrink-0 p-[2px] rounded-xl bg-white shadow-md ring-1 ring-white/40 flex items-center justify-center transition-transform hover:scale-105">
->>>>>>> f17e760 (feat(contas): melhora layout, diferenciacao de cartao/conta e cores de bancos)
-                      <app-icone-banco
-                        [nome]="conta.nome"
-                        [tamanho]="48"
-                        [formato]="'quadrado'"
-                        [fallbackIcon]="ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet'">
-                      </app-icone-banco>
->>>>>>> adae5de (feat(frontend): exibir logotipos oficiais dos bancos e ajustar proporcoes dos icones)
                     </div>
-=======
-                    @if (temBanco(conta.nome)) {
-                      <div class="shrink-0 p-[2px] rounded-xl bg-white shadow-md ring-1 ring-white/40 flex items-center justify-center transition-transform hover:scale-105">
-=======
-                    <div class="shrink-0 flex items-center justify-center transition-transform hover:scale-105 select-none filter drop-shadow-[0_4px_8px_rgba(0,0,0,0.35)] drop-shadow-[0_1px_2px_rgba(0,0,0,0.25)]">
-                      @if (temBanco(conta.nome)) {
->>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
-                        <app-icone-banco
-                          [nome]="conta.nome"
-                          [tamanho]="46"
-                          [formato]="'quadrado'">
-                        </app-icone-banco>
-<<<<<<< HEAD
-                      </div>
-                    } @else {
-                      <div class="shrink-0 w-12 h-12 rounded-xl bg-white/20 backdrop-blur-md border border-white/30 shadow-md flex items-center justify-center text-white transition-transform hover:scale-105">
-                        <i [class]="(ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet') + ' text-2xl text-white drop-shadow-sm'"></i>
-                      </div>
-                    }
->>>>>>> af0ef81 (fix(contas): exibe icone translucido e contraste elegante para cartoes sem banco detectado)
-=======
-                      } @else {
-                        <div class="w-11 h-11 flex items-center justify-center text-white">
-                          <i [class]="(ehCartao(conta) ? 'pi pi-credit-card' : 'pi pi-wallet') + ' text-3xl text-white'"></i>
-                        </div>
-                      }
-                    </div>
->>>>>>> 0287cc2 (feat: add card carousel component and initial accounts page structure)
 
                   </div>
 

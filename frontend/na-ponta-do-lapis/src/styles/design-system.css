@@ -225,10 +225,6 @@
   letter-spacing: 0.025em;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 12284f1 (fix(metas): estabiliza layout de criacao sem saltos, exibe motivacao no card e calcula teto de gastos flexivel por conta/categoria)
 /* Badge Vermelho / Alerta */
 .badge-npl-vermelho {
   display: inline-flex;
@@ -259,11 +255,6 @@
   letter-spacing: 0.025em;
 }
 
-<<<<<<< HEAD
-=======
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-=======
->>>>>>> 12284f1 (fix(metas): estabiliza layout de criacao sem saltos, exibe motivacao no card e calcula teto de gastos flexivel por conta/categoria)
 /* Detalhe de Borda e Acento Amarelo NPL */
 .accent-npl-border {
   border-color: #F9DB70 !important;
@@ -329,10 +320,6 @@
   padding: 1rem 1.5rem !important;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)
 /* ==========================================================================
    ANIMAÇÕES & MICRO-INTERAÇÕES SUAVES (MOTION 2 — BALANCED)
    ========================================================================== */
@@ -482,8 +469,3 @@
 }
 
 
-<<<<<<< HEAD
-=======
->>>>>>> e610144 (style(frontend): implementa Design System NPL e padroniza UI/UX em todas as telas)
-=======
->>>>>>> 6f509eb (feat(frontend): adiciona animacoes na landing page e transicao entre login e cadastro)

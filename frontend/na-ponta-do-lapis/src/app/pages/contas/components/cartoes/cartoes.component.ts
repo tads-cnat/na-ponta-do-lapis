@@ -35,14 +35,7 @@ export class CartaoContaComponent {
   @Input() contaProxima: number = 0;
   @Input() carregando: boolean = true;
   @Input() sincronizandoOpenFinance: boolean = false;
-<<<<<<< HEAD
-<<<<<<< HEAD
   @Input() openFinanceConectado: boolean = false;
-=======
->>>>>>> 9653540 (feat(open-finance): integracao pluggy, gestao de chaves IA, discriminacao de faturas e filtro de parcelamento)
-=======
-  @Input() openFinanceConectado: boolean = false;
->>>>>>> c2d9529 (feat(openfinance): suporte a receitas/despesas pendentes e atalho inteligente para conexao bancaria)
 
   // =========================================
   // OUTPUTS
