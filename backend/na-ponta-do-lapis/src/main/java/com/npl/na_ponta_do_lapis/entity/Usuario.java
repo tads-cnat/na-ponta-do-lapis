@@ -4,9 +4,11 @@ import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.time.Instant;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
@@ -53,6 +55,24 @@ public class Usuario implements UserDetails {
 
     @Column(name = "senha", nullable = false, length = 254)
     private String senha;
+
+    @Column(name = "senha_temporaria", nullable = false, columnDefinition = "boolean default false")
+    private boolean senhaTemporaria;
+
+    @Column(name = "senha_temporaria_expira_em")
+    private Instant senhaTemporariaExpiraEm;
+
+    @Column(name = "pergunta_seguranca", length = 200)
+    private String perguntaSeguranca;
+
+    @Column(name = "resposta_seguranca_hash", length = 254)
+    private String respostaSegurancaHash;
+
+    @Column(name = "tentativas_recuperacao", nullable = false, columnDefinition = "integer default 0")
+    private int tentativasRecuperacao;
+
+    @Column(name = "recuperacao_bloqueada_ate")
+    private Instant recuperacaoBloqueadaAte;
 
     @Column(name = "telefone", nullable = true, length = 20)
     private String telefone;
@@ -173,7 +193,8 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
+        return !senhaTemporaria || senhaTemporariaExpiraEm != null
+            && senhaTemporariaExpiraEm.isAfter(Instant.now());
     }
 
     @Override
@@ -187,6 +208,55 @@ public class Usuario implements UserDetails {
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    public boolean isSenhaTemporaria() {
+        return senhaTemporaria;
+    }
+
+    public void setSenhaTemporaria(boolean senhaTemporaria) {
+        this.senhaTemporaria = senhaTemporaria;
+    }
+
+    public Instant getSenhaTemporariaExpiraEm() {
+        return senhaTemporariaExpiraEm;
+    }
+
+    public void setSenhaTemporariaExpiraEm(Instant senhaTemporariaExpiraEm) {
+        this.senhaTemporariaExpiraEm = senhaTemporariaExpiraEm;
+    }
+
+    public String getPerguntaSeguranca() {
+        return perguntaSeguranca;
+    }
+
+    public void setPerguntaSeguranca(String perguntaSeguranca) {
+        this.perguntaSeguranca = perguntaSeguranca;
+    }
+
+    @JsonIgnore
+    public String getRespostaSegurancaHash() {
+        return respostaSegurancaHash;
+    }
+
+    public void setRespostaSegurancaHash(String respostaSegurancaHash) {
+        this.respostaSegurancaHash = respostaSegurancaHash;
+    }
+
+    public int getTentativasRecuperacao() {
+        return tentativasRecuperacao;
+    }
+
+    public void setTentativasRecuperacao(int tentativasRecuperacao) {
+        this.tentativasRecuperacao = tentativasRecuperacao;
+    }
+
+    public Instant getRecuperacaoBloqueadaAte() {
+        return recuperacaoBloqueadaAte;
+    }
+
+    public void setRecuperacaoBloqueadaAte(Instant recuperacaoBloqueadaAte) {
+        this.recuperacaoBloqueadaAte = recuperacaoBloqueadaAte;
     }
 
     public String getFotoPerfil() {

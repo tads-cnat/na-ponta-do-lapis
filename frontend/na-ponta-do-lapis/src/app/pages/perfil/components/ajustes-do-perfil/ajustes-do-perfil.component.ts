@@ -26,6 +26,7 @@ export class AjustesPerfilComponent implements OnInit {
   public abaAtiva: 'dados' | 'conquistas' | 'integracoes' = 'dados';
   public moedaOriginalUsuario: string = 'BRL';
   public usuarioLogado: Usuario | null = null;
+  public perguntaSegurancaSalva = '';
 
   // Controle de modo de edição (dados e senha iniciam recolhidos/em modo de leitura)
   public editandoDados: boolean = false;
@@ -33,6 +34,7 @@ export class AjustesPerfilComponent implements OnInit {
 
   public camposDetalhes: CampoFormulario[] = [];
   public camposSenha: CampoFormulario[] = [];
+  public camposRecuperacao: CampoFormulario[] = [];
 
   get opcoesMoeda(): OpcaoMoeda[] {
     return this.preferenciaMoedaService.opcoesMoeda;
@@ -55,8 +57,12 @@ export class AjustesPerfilComponent implements OnInit {
     const alterouMoeda = valores.moedaPadrao && valores.moedaPadrao !== this.moedaOriginalUsuario;
     const alterouNome = this.editandoDados && valores.nome?.trim() && valores.nome?.trim() !== this.usuarioLogado?.nome;
     const alterouEmail = this.editandoDados && valores.email?.trim() && valores.email?.trim() !== this.usuarioLogado?.email;
+    const alterouPerguntaSeguranca = this.perguntaSegurancaAlterada(valores);
+    if (alterouPerguntaSeguranca && (!this.temTexto(valores.perguntaSeguranca) || !this.temTexto(valores.respostaSeguranca))) {
+      return false;
+    }
 
-    return !!alterouNome || !!alterouEmail || !!alterouMoeda || this.editandoSenha;
+    return !!alterouNome || !!alterouEmail || !!alterouMoeda || this.editandoSenha || alterouPerguntaSeguranca;
   }
 
   get temAlteracoesPendentes(): boolean {
@@ -70,12 +76,21 @@ export class AjustesPerfilComponent implements OnInit {
       this.temTexto(valores.novaSenha) || 
       this.temTexto(valores.confirmarNovaSenha)
     );
+    const alterouPerguntaSeguranca = this.perguntaSegurancaAlterada(valores);
 
-    return !!alterouNome || !!alterouEmail || !!alterouMoeda || !!alterouSenha;
+    return !!alterouNome || !!alterouEmail || !!alterouMoeda || !!alterouSenha || alterouPerguntaSeguranca;
   }
 
   private readonly temTexto = (valor: unknown): boolean =>
     typeof valor === 'string' && valor.trim() !== '';
+
+  private perguntaSegurancaAlterada(valores: Record<string, unknown>): boolean {
+    const perguntaAtual = typeof valores['perguntaSeguranca'] === 'string'
+      ? valores['perguntaSeguranca'].trim()
+      : '';
+    const perguntaSalva = this.perguntaSegurancaSalva.trim();
+    return perguntaAtual !== perguntaSalva || this.temTexto(valores['respostaSeguranca']);
+  }
 
   constructor(
     private fb: FormBuilder,
@@ -111,6 +126,8 @@ export class AjustesPerfilComponent implements OnInit {
       senhaAtual: [''],
       novaSenha: [''],
       confirmarNovaSenha: [''],
+      perguntaSeguranca: [''],
+      respostaSeguranca: [''],
       moedaPadrao: [moedaInicial]
     });
 
@@ -167,6 +184,8 @@ export class AjustesPerfilComponent implements OnInit {
       senhaAtual: '',
       novaSenha: '',
       confirmarNovaSenha: '',
+      perguntaSeguranca: this.perguntaSegurancaSalva,
+      respostaSeguranca: '',
       moedaPadrao: this.moedaOriginalUsuario
     });
     this.configurarCamposEstaticos(this.usuarioLogado?.nome, this.usuarioLogado?.email);
@@ -203,7 +222,7 @@ export class AjustesPerfilComponent implements OnInit {
       { 
         key: 'senhaAtual', 
         label: 'Senha atual', 
-        placeholder: 'Digite sua senha atual...', 
+        placeholder: 'Digite sua senha atual ou temporária...', 
         type: 'password',
         icon: 'pi pi-lock',
         colSpan: 2
@@ -225,6 +244,24 @@ export class AjustesPerfilComponent implements OnInit {
         colSpan: 1
       }
     ];
+
+    this.camposRecuperacao = [
+      {
+        key: 'perguntaSeguranca',
+        label: 'Pergunta de segurança',
+        placeholder: 'Escreva uma pergunta que você vai lembrar',
+        icon: 'pi pi-question-circle',
+        colSpan: 2
+      },
+      {
+        key: 'respostaSeguranca',
+        label: 'Resposta de segurança',
+        placeholder: 'Digite a resposta',
+        type: 'password',
+        icon: 'pi pi-shield',
+        colSpan: 2
+      }
+    ];
   }
 
   private carregarDadosIniciais(): void {
@@ -242,6 +279,13 @@ export class AjustesPerfilComponent implements OnInit {
         });
         this.configurarCamposEstaticos(usuario.nome, usuario.email);
         this.cdr.detectChanges();
+        this.usuarioService.obterPerguntaSeguranca().subscribe({
+          next: (resposta) => {
+            this.perguntaSegurancaSalva = resposta.perguntaSeguranca || '';
+            this.perfilForm.get('perguntaSeguranca')?.setValue(this.perguntaSegurancaSalva);
+            this.cdr.detectChanges();
+          }
+        });
       },
       error: (err) => {
         console.error('Erro ao alimentar tela de ajustes:', err);
@@ -270,6 +314,24 @@ export class AjustesPerfilComponent implements OnInit {
     // 3. Verifica se a moeda padrão foi alterada
     if (valoresFormulario.moedaPadrao && valoresFormulario.moedaPadrao !== this.moedaOriginalUsuario) {
       dadosParciaisPatch.moedaPadrao = valoresFormulario.moedaPadrao;
+    }
+
+    const perguntaSeguranca = (valoresFormulario.perguntaSeguranca as string ?? '').trim();
+    const respostaSeguranca = (valoresFormulario.respostaSeguranca as string ?? '').trim();
+    const perguntaSalva = this.perguntaSegurancaSalva.trim();
+    const alterouPerguntaSeguranca = perguntaSeguranca !== perguntaSalva;
+    if (alterouPerguntaSeguranca || respostaSeguranca) {
+      if (!perguntaSeguranca || !respostaSeguranca) {
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Dados incompletos',
+          detail: 'Preencha a pergunta e a resposta de segurança.',
+          life: 3000
+        });
+        return;
+      }
+      dadosParciaisPatch.perguntaSeguranca = perguntaSeguranca;
+      dadosParciaisPatch.respostaSeguranca = respostaSeguranca;
     }
 
     // 4. Validação e inclusão da senha se a seção de senha estiver aberta e preenchida
@@ -337,6 +399,9 @@ export class AjustesPerfilComponent implements OnInit {
 
         const usuario = res.usuario ?? res;
         this.usuarioLogado = usuario;
+        if (dadosParciaisPatch.perguntaSeguranca) {
+          this.perguntaSegurancaSalva = dadosParciaisPatch.perguntaSeguranca;
+        }
 
         if (dadosParciaisPatch.moedaPadrao) {
           this.moedaOriginalUsuario = dadosParciaisPatch.moedaPadrao;
@@ -348,7 +413,9 @@ export class AjustesPerfilComponent implements OnInit {
         this.perfilForm.patchValue({
           senhaAtual: '',
           novaSenha: '',
-          confirmarNovaSenha: ''
+          confirmarNovaSenha: '',
+          perguntaSeguranca: this.perguntaSegurancaSalva,
+          respostaSeguranca: ''
         });
         this.configurarCamposEstaticos(usuario.nome, usuario.email);
         this.cdr.detectChanges();

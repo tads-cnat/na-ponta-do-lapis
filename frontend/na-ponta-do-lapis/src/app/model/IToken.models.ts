@@ -7,4 +7,5 @@ export interface TokenPayload {
   email: string;
   papeis: string[];
   exp: number;
+  mustChangePassword?: boolean;
 }

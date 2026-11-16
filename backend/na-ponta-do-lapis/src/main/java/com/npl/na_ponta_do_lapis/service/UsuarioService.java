@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class UsuarioService {
@@ -85,6 +86,20 @@ public class UsuarioService {
 
             String senhaCriptografada = passwordEncoder.encode(dto.senha());
             usuario.setSenha(senhaCriptografada);
+            usuario.setSenhaTemporaria(false);
+            usuario.setSenhaTemporariaExpiraEm(null);
+        }
+
+        boolean perguntaInformada = dto.perguntaSeguranca() != null && !dto.perguntaSeguranca().isBlank();
+        boolean respostaInformada = dto.respostaSeguranca() != null && !dto.respostaSeguranca().isBlank();
+        if (perguntaInformada || respostaInformada) {
+            if (!perguntaInformada || !respostaInformada) {
+                throw new BusinessException("Informe a pergunta e a resposta de segurança.");
+            }
+            usuario.setPerguntaSeguranca(dto.perguntaSeguranca().trim());
+            usuario.setRespostaSegurancaHash(passwordEncoder.encode(normalizarRespostaSeguranca(dto.respostaSeguranca())));
+            usuario.setTentativasRecuperacao(0);
+            usuario.setRecuperacaoBloqueadaAte(null);
         }
 
         if (dto.moedaPadrao() != null) {
@@ -183,6 +198,10 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email).orElseThrow(
                 () -> new RuntimeException("Usuário de email " + email + " não encontrado!")
         );
+    }
+
+    private String normalizarRespostaSeguranca(String resposta) {
+        return resposta.trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
     }
 
 

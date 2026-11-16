@@ -27,6 +27,7 @@ export class SignupComponent implements AfterViewInit {
   @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
   registerForm: FormGroup;
   loading = false;
+  showSecurityFields = false;
   readonly googleButtonState = signal<'loading' | 'ready' | 'unavailable'>('loading');
   readonly googleConsentVisible = signal(false);
   readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
@@ -43,6 +44,8 @@ export class SignupComponent implements AfterViewInit {
       telefone: ['', [Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]],
+      perguntaSeguranca: ['', [Validators.maxLength(200)]],
+      respostaSeguranca: ['', [Validators.maxLength(200)]],
       termos: [false, [Validators.requiredTrue]]
     }, { validators: senhasIguaisValidator });
   }
@@ -59,8 +62,46 @@ export class SignupComponent implements AfterViewInit {
     );
   }
 
+  public get botaoPrincipalLabel(): string {
+    return this.showSecurityFields ? 'Finalizar cadastro' : 'Criar Conta';
+  }
+
   public register() {
-    if (this.loading || this.registerForm.invalid) return;
+    if (this.loading) return;
+
+    if (!this.showSecurityFields) {
+      const formValido = this.registerForm.get('nomeCompleto')?.valid
+        && this.registerForm.get('email')?.valid
+        && this.registerForm.get('username')?.valid
+        && this.registerForm.get('password')?.valid
+        && this.registerForm.get('passwordConfirmation')?.valid
+        && this.registerForm.get('termos')?.valid
+        && !this.registerForm.hasError('senhasDiferentes');
+
+      if (!formValido) {
+        this.registerForm.markAllAsTouched();
+        return;
+      }
+
+      this.showSecurityFields = true;
+      return;
+    }
+
+    const pergunta = (this.registerForm.get('perguntaSeguranca')?.value ?? '').trim();
+    const resposta = (this.registerForm.get('respostaSeguranca')?.value ?? '').trim();
+
+    if (!pergunta || !resposta) {
+      this.registerForm.get('perguntaSeguranca')?.markAsTouched();
+      this.registerForm.get('respostaSeguranca')?.markAsTouched();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Pergunta e resposta obrigatórias',
+        detail: 'Defina uma pergunta e a resposta para recuperar sua conta.',
+        life: 3000
+      });
+      return;
+    }
+
     this.loading = true;
 
     const { termos, ...dados } = this.registerForm.value;

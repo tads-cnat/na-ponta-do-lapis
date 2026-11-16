@@ -16,7 +16,8 @@ export class AuthPageComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
-  readonly isSignup = signal(this.resolverModo());
+  readonly isSignup = signal(this.resolverModo() === 'signup');
+  readonly isRecovery = signal(this.resolverModo() === 'recovery');
 
   constructor() {
     this.router.events
@@ -25,12 +26,16 @@ export class AuthPageComponent {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(() => {
-        this.isSignup.set(this.resolverModo());
+        this.isSignup.set(this.resolverModo() === 'signup');
+        this.isRecovery.set(this.resolverModo() === 'recovery');
       });
   }
 
-  private resolverModo(): boolean {
-    return this.router.url.split('?')[0].startsWith('/signup');
+  private resolverModo(): 'login' | 'signup' | 'recovery' {
+    const url = this.router.url.split('?')[0];
+    if (url.startsWith('/signup')) return 'signup';
+    if (url.startsWith('/recuperar-senha') || url.startsWith('/redefinir-senha')) return 'recovery';
+    return 'login';
   }
 }
 
