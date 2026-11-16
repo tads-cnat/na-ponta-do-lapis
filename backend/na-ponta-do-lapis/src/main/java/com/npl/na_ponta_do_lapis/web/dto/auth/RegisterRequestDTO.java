@@ -25,8 +25,20 @@ public record RegisterRequestDTO(
 
         String password,
 
-        String passwordConfirmation
+        String passwordConfirmation,
+
+        Boolean termosAceitos
 ) {
+    public RegisterRequestDTO(
+            String nomeCompleto,
+            String email,
+            String username,
+            String telefone,
+            String password,
+            String passwordConfirmation
+    ) {
+        this(nomeCompleto, email, username, telefone, password, passwordConfirmation, Boolean.TRUE);
+    }
     public Usuario toEntity(){
         Usuario usuario = new Usuario();
         usuario.setNome(nomeCompleto);

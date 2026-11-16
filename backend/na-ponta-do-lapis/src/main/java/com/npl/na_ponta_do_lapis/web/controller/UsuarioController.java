@@ -100,6 +100,14 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(new UsuarioResponseDTO(usuarioAtualizado));
     }
 
+    @Operation(summary = "Excluir definitivamente a conta do usuário autenticado (LGPD)")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> excluirMinhaConta() {
+        usuarioService.excluirContaLogada();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
     @PreAuthorize("hasRole('ADMIN_SITE')")
     @Operation(summary = "Deletar Usuário")
     @DeleteMapping("/{id}")

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 import { BotoesAcaoComponent } from '../botoes-acao/botoes-acao.component';
 import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/formulario-secao.component';
 import { IntegracoesPerfilComponent } from '../integracoes-perfil/integracoes-perfil.component';
@@ -17,7 +18,7 @@ import { Usuario } from '../../../../model/IUsuario.models';
 @Component({
   selector: 'app-ajustes-do-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, PrimeNGModuleModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
   templateUrl: './ajustes-do-perfil.component.html'
 })
 export class AjustesPerfilComponent implements OnInit {
@@ -80,6 +81,7 @@ export class AjustesPerfilComponent implements OnInit {
     private fb: FormBuilder,
     private usuarioService: UsuarioService,
     private route: ActivatedRoute,
+    private router: Router,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
     private preferenciaMoedaService: PreferenciaMoedaService
@@ -366,6 +368,47 @@ export class AjustesPerfilComponent implements OnInit {
           detail: typeof err.error === 'string'
             ? err.error
             : err.error?.message || 'Não foi possível atualizar o perfil.',
+          life: 4000
+        });
+      }
+    });
+  }
+
+  public exibirModalExclusaoConta: boolean = false;
+  public confirmacaoExclusaoTexto: string = '';
+  public excluindoConta: boolean = false;
+
+  public abrirModalExclusaoConta(): void {
+    this.confirmacaoExclusaoTexto = '';
+    this.exibirModalExclusaoConta = true;
+  }
+
+  public confirmarExclusaoConta(): void {
+    if (this.excluindoConta || this.confirmacaoExclusaoTexto.trim().toUpperCase() !== 'EXCLUIR') {
+      return;
+    }
+    this.excluindoConta = true;
+    this.usuarioService.excluirMinhaConta().subscribe({
+      next: () => {
+        this.excluindoConta = false;
+        this.exibirModalExclusaoConta = false;
+        StorageService.logout();
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Conta excluída',
+          detail: 'Seus dados pessoais e financeiros foram removidos.',
+          life: 2500
+        });
+        setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 800);
+      },
+      error: (err) => {
+        this.excluindoConta = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao excluir conta',
+          detail: err?.error?.message || 'Não foi possível concluir a exclusão da sua conta.',
           life: 4000
         });
       }

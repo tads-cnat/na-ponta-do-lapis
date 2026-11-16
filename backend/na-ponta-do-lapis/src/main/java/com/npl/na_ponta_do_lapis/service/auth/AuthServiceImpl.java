@@ -38,6 +38,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Service
@@ -146,6 +147,10 @@ public class AuthServiceImpl implements AuthService{
             throw new IllegalArgumentException("Nome de usuário já está em uso.");
         }
 
+        if (Boolean.FALSE.equals(registerRequestDTO.termosAceitos())) {
+            throw new IllegalArgumentException("É necessário aceitar os Termos de Uso e a Política de Privacidade.");
+        }
+
         if (!registerRequestDTO.password().equals(registerRequestDTO.passwordConfirmation())){
             throw new RuntimeException("As senhas não são iguais");
         }
@@ -154,6 +159,8 @@ public class AuthServiceImpl implements AuthService{
         novoUsuario.setEmail(email);
         novoUsuario.setUsername(username);
         novoUsuario.setSenha(passwordEncoder.encode(registerRequestDTO.password()));
+        novoUsuario.setVersaoTermos(Usuario.VERSAO_TERMOS_ATUAL);
+        novoUsuario.setTermosAceitosEm(LocalDateTime.now());
 
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
         criarContaPadrao(usuarioSalvo);
@@ -217,6 +224,8 @@ public class AuthServiceImpl implements AuthService{
         usuario.setFotoPerfil(picture);
         usuario.setPapel(Papel.USUARIO);
         usuario.setSenha(passwordEncoder.encode(UUID.randomUUID().toString()));
+        usuario.setVersaoTermos(Usuario.VERSAO_TERMOS_ATUAL);
+        usuario.setTermosAceitosEm(LocalDateTime.now());
 
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
         criarContaPadrao(usuarioSalvo);

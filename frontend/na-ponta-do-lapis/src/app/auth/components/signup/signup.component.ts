@@ -63,7 +63,8 @@ export class SignupComponent implements AfterViewInit {
     if (this.loading || this.registerForm.invalid) return;
     this.loading = true;
 
-    const { termos: _termos, ...payload } = this.registerForm.value;
+    const { termos, ...dados } = this.registerForm.value;
+    const payload = { ...dados, termosAceitos: !!termos };
 
     this.authService.register(payload).subscribe({
       next: () => {

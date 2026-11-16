@@ -1,5 +1,6 @@
 package com.npl.na_ponta_do_lapis.entity;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
@@ -28,6 +29,8 @@ import jakarta.validation.constraints.Size;
 @Entity
 @Table(name = "usuario")
 public class Usuario implements UserDetails {
+
+    public static final String VERSAO_TERMOS_ATUAL = "2.0";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -68,6 +71,28 @@ public class Usuario implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(name = "moeda_padrao", length = 3, nullable = false, columnDefinition = "varchar(3) default 'BRL'")
     private Moeda moedaPadrao = Moeda.BRL;
+
+    @Column(name = "versao_termos", length = 20)
+    private String versaoTermos;
+
+    @Column(name = "termos_aceitos_em")
+    private LocalDateTime termosAceitosEm;
+
+    public String getVersaoTermos() {
+        return versaoTermos;
+    }
+
+    public void setVersaoTermos(String versaoTermos) {
+        this.versaoTermos = versaoTermos;
+    }
+
+    public LocalDateTime getTermosAceitosEm() {
+        return termosAceitosEm;
+    }
+
+    public void setTermosAceitosEm(LocalDateTime termosAceitosEm) {
+        this.termosAceitosEm = termosAceitosEm;
+    }
 
     public Moeda getMoedaPadrao() {
         return moedaPadrao != null ? moedaPadrao : Moeda.BRL;
