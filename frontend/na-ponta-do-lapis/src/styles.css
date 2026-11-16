@@ -61,158 +61,436 @@ p-toggleswitch.p-toggleswitch .p-toggleswitch-handle {
 
 html.app-dark {
   color-scheme: dark;
-  --npl-dark-background: #1A191E;
-  --npl-dark-surface: #2A2830;
+  --npl-dark-background: #141318;
+  --npl-dark-surface: #1f1d26;
+  --npl-dark-surface-elevated: #2a2733;
   --npl-dark-text: #f4f4f5;
   --npl-dark-muted: #a1a1aa;
-  --npl-dark-border: #48454f;
+  --npl-dark-border: #383444;
+  --npl-dark-accent-soft: #34264d;
+  --npl-dark-accent-border: #6d44b8;
+  --npl-dark-accent-text: #e9d5ff;
+
+  /* Tokens PrimeNG no tema escuro */
+  --p-content-background: #1f1d26;
+  --p-content-border-color: #383444;
+  --p-text-color: #f4f4f5;
+  --p-text-muted-color: #a1a1aa;
+  --p-card-background: #1f1d26;
+  --p-card-color: #f4f4f5;
+  --p-datatable-header-background: #1f1d26;
+  --p-datatable-header-cell-background: #2a2733;
+  --p-datatable-header-cell-color: #f4f4f5;
+  --p-datatable-header-cell-border-color: #383444;
+  --p-datatable-row-background: #1f1d26;
+  --p-datatable-row-color: #f4f4f5;
+  --p-datatable-row-hover-background: #2a2733;
+  --p-datatable-body-cell-border-color: #383444;
+  --p-datatable-footer-background: #1f1d26;
+  --p-datatable-footer-cell-background: #1f1d26;
+  --p-datatable-paginator-top-border-color: #383444;
+  --p-datatable-paginator-bottom-border-color: #383444;
+  --p-paginator-background: #1f1d26;
+  --p-paginator-color: #f4f4f5;
+  --p-checkbox-background: #2a2733;
+  --p-checkbox-border-color: #4b465a;
 }
 
-html.app-dark body,
-html.app-dark app-main-layout,
-html.app-dark app-main-layout .layout-body,
-html.app-dark app-main-layout main,
-html.app-dark app-main-layout nav {
-  background-color: var(--npl-dark-background);
-  color: var(--npl-dark-text);
-}
+@layer utilities {
+  html.app-dark body,
+  html.app-dark app-main-layout,
+  html.app-dark app-main-layout .layout-body,
+  html.app-dark app-main-layout main,
+  html.app-dark app-main-layout nav {
+    background-color: var(--npl-dark-background);
+    color: var(--npl-dark-text);
+  }
 
-html.app-dark app-main-layout .sidebar,
-html.app-dark app-main-layout :is(
-  [class~="bg-white"],
-  [class~="bg-slate-50"],
-  [class~="bg-slate-50/60"],
-  [class~="bg-slate-50/70"],
-  [class~="bg-slate-50/80"],
-  [class~="bg-slate-100"],
-  [class~="bg-slate-100/80"],
-  [class~="bg-gray-50"],
-  [class~="bg-gray-100"],
-  [class*="bg-[#F8F8FC]"],
-  [class*="bg-[#F8FAFC]"]
-) {
-  background-color: var(--npl-dark-surface) !important;
-}
+  /* Superfícies principais (cards, sidebar, fundo branco com ou sem !) */
+  html.app-dark app-main-layout .sidebar,
+  html.app-dark app-main-layout :is(
+    [class*="bg-white"],
+    [class*="bg-[#F8FAFC]"]
+  ) {
+    background-color: var(--npl-dark-surface) !important;
+  }
 
-html.app-dark app-transacoes .p-card,
-html.app-dark app-transacoes p-card {
-  background-color: var(--npl-dark-surface) !important;
-  color: var(--npl-dark-text);
-}
+  /* Superfícies secundárias/elevadas (caixas internas, cabeçalho da tabela, badges neutros) */
+  html.app-dark app-main-layout :is(
+    [class*="bg-slate-50"],
+    [class*="bg-slate-100"],
+    [class*="bg-gray-50"],
+    [class*="bg-gray-100"],
+    [class*="bg-[#F8F8FC]"]
+  ) {
+    background-color: var(--npl-dark-surface-elevated) !important;
+  }
 
-html.app-dark app-transacoes .p-datatable-thead > tr > th {
-  background-color: var(--npl-dark-surface) !important;
-  border-color: var(--npl-dark-border) !important;
-  color: var(--npl-dark-text) !important;
-}
+  /* Badges e fundos suaves coloridos mantendo identidade e contraste */
+  html.app-dark app-main-layout :is(
+    [class*="bg-purple-50"],
+    [class*="bg-purple-100"],
+    [class*="bg-[#F3E8FF]"],
+    [class*="bg-[#6214CC]/10"]
+  ) {
+    background-color: var(--npl-dark-accent-soft) !important;
+    border-color: var(--npl-dark-accent-border) !important;
+    color: var(--npl-dark-accent-text) !important;
+  }
 
-html.app-dark app-transacoes-conta .transacao-item:hover {
-  background-color: #393641 !important;
-  border-color: #514b5a !important;
-}
+  html.app-dark app-main-layout :is(
+    [class^="bg-emerald-50"], [class*=" bg-emerald-50"],
+    [class^="bg-emerald-100"], [class*=" bg-emerald-100"]
+  ) {
+    background-color: #163329 !important;
+    border-color: #255c47 !important;
+    color: #6ee7b7 !important;
+  }
 
-html.app-dark app-familia #forms-familia {
-  background-color: var(--npl-dark-surface) !important;
-  border-color: var(--npl-dark-border) !important;
-}
+  html.app-dark app-main-layout :is(
+    [class^="bg-amber-50"], [class*=" bg-amber-50"],
+    [class^="bg-amber-100"], [class*=" bg-amber-100"]
+  ) {
+    background-color: #3a2d15 !important;
+    border-color: #6b501f !important;
+    color: #fcd34d !important;
+  }
 
-html.app-dark app-main-layout :is(
-  [class*="text-slate-900"],
-  [class*="text-slate-800"],
-  [class*="text-slate-700"],
-  [class*="text-slate-600"],
-  [class*="text-gray-900"],
-  [class*="text-gray-800"],
-  [class*="text-gray-700"],
-  [class*="text-gray-600"]
-) {
-  color: var(--npl-dark-text) !important;
-}
+  html.app-dark app-main-layout :is(
+    [class^="bg-rose-50"], [class*=" bg-rose-50"],
+    [class^="bg-rose-100"], [class*=" bg-rose-100"],
+    [class^="bg-[#FDF4F4]"], [class*=" bg-[#FDF4F4]"],
+    .bg-despesa-soft
+  ) {
+    background-color: #3c1e26 !important;
+    border-color: #743444 !important;
+    color: #fda4af !important;
+  }
 
-html.app-dark app-main-layout :is(
-  [class*="text-slate-500"],
-  [class*="text-slate-400"],
-  [class*="text-slate-300"],
-  [class*="text-gray-500"],
-  [class*="text-gray-400"],
-  [class*="text-gray-300"]
-) {
-  color: var(--npl-dark-muted) !important;
-}
+  html.app-dark app-main-layout [class*="hover:bg-emerald-50"]:hover {
+    background-color: #163329 !important;
+    border-color: #255c47 !important;
+    color: #6ee7b7 !important;
+  }
 
-html.app-dark app-main-layout :is(.page-title-npl, .section-title-npl) {
-  color: var(--npl-dark-text);
-}
+  html.app-dark app-main-layout :is(
+    [class*="bg-blue-50"],
+    [class*="bg-blue-100"]
+  ) {
+    background-color: #172554 !important;
+    border-color: #1e40af !important;
+    color: #93c5fd !important;
+  }
 
-html.app-dark app-main-layout .page-subtitle-npl {
-  color: var(--npl-dark-muted);
-}
+  html.app-dark app-main-layout :is(
+    [class*="bg-indigo-50"],
+    [class*="bg-indigo-100"]
+  ) {
+    background-color: #1e1b4b !important;
+    border-color: #3730a3 !important;
+    color: #a5b4fc !important;
+  }
 
-html.app-dark app-main-layout :is(
-  [class*="border-slate-100"],
-  [class*="border-slate-200"],
-  [class*="border-slate-300"],
-  [class*="border-gray-100"],
-  [class*="border-gray-200"],
-  [class*="border-gray-300"]
-) {
-  border-color: var(--npl-dark-border) !important;
-}
+  html.app-dark app-main-layout :is(
+    [class*="bg-orange-50"],
+    [class*="bg-orange-100"]
+  ) {
+    background-color: #431407 !important;
+    border-color: #9a3412 !important;
+    color: #fdba74 !important;
+  }
 
-html.app-dark app-main-layout :is(input, select, textarea) {
-  background-color: var(--npl-dark-surface);
-  border-color: var(--npl-dark-border);
-  color: var(--npl-dark-text);
-}
+  /* Badge amarelo suave (.badge-npl-amarelo) e bullet dourado (#EEC046) */
+  html.app-dark :is(.badge-npl-amarelo, [class*="bg-[#FEF9E7]"]) {
+    background-color: #3a2d15 !important;
+    border-color: #6b501f !important;
+    color: #fcd34d !important;
+  }
 
-html.app-dark app-main-layout :is(input, select, textarea)::placeholder {
-  color: var(--npl-dark-muted);
-}
+  /* Badge amarelo sólido (#EEC046) exige texto escuro para contraste */
+  html.app-dark [class*="bg-[#EEC046]"] {
+    background-color: #EEC046 !important;
+    color: #1e1b2e !important;
+  }
 
-html.app-dark app-main-layout button[class*="border-slate-"],
-html.app-dark app-main-layout button[class*="border-gray-"] {
-  background-color: var(--npl-dark-surface) !important;
-  border-color: var(--npl-dark-border) !important;
-  color: var(--npl-dark-text);
-}
+  html.app-dark app-transacoes .p-card,
+  html.app-dark app-transacoes .p-card-body,
+  html.app-dark app-transacoes p-card,
+  html.app-dark app-transacoes .p-datatable,
+  html.app-dark app-transacoes .p-datatable-table-container,
+  html.app-dark app-transacoes .p-datatable-paginator-bottom {
+    background-color: var(--npl-dark-surface) !important;
+    color: var(--npl-dark-text) !important;
+    border-color: var(--npl-dark-border) !important;
+  }
 
-html.app-dark .btn-npl-secondary {
-  background-color: #36333d !important;
-  border-color: #625e6b !important;
-  color: #f4f4f5 !important;
-}
+  html.app-dark app-transacoes .p-datatable-thead > tr > th {
+    background-color: var(--npl-dark-surface-elevated) !important;
+    border-color: var(--npl-dark-border) !important;
+    color: var(--npl-dark-text) !important;
+  }
 
-html.app-dark .btn-npl-secondary:hover:not(:disabled) {
-  background-color: #484450 !important;
-  border-color: #77717f !important;
-  color: #ffffff !important;
-}
+  html.app-dark .p-datatable .p-datatable-tbody > tr {
+    background-color: var(--npl-dark-surface) !important;
+    color: var(--npl-dark-text) !important;
+  }
 
-html.app-dark :is(.btn-icon-edit-npl, .btn-soft-edit-npl) {
-  background-color: #393044 !important;
-  border-color: #57436f !important;
-  color: #d8bfff !important;
-}
+  html.app-dark .p-datatable .p-datatable-tbody > tr > td {
+    background-color: transparent !important;
+    border-color: var(--npl-dark-border) !important;
+  }
 
-html.app-dark :is(.btn-icon-delete-npl, .btn-soft-delete-npl, .btn-npl-danger) {
-  background-color: #482d35 !important;
-  border-color: #74434d !important;
-  color: #ffb4bc !important;
-}
+  html.app-dark .p-paginator {
+    background-color: var(--npl-dark-surface) !important;
+    border-color: var(--npl-dark-border) !important;
+    color: var(--npl-dark-text) !important;
+  }
 
-html.app-dark .menuitem:hover {
-  background-color: #393641;
-  color: #d8bfff !important;
-}
+  html.app-dark app-transacoes-conta .transacao-item:hover {
+    background-color: var(--npl-dark-surface-elevated) !important;
+    border-color: #514b5a !important;
+  }
 
-html.app-dark .menuitem.ativo {
-  background-color: #393044;
-  color: #d8bfff !important;
-}
+  html.app-dark app-familia #forms-familia {
+    background-color: var(--npl-dark-surface) !important;
+    border-color: var(--npl-dark-border) !important;
+  }
 
-html.app-dark .p-dialog .p-dialog-header,
-html.app-dark .p-dialog .p-dialog-footer {
-  border-color: var(--npl-dark-border);
+  /* Hierarquia de textos no tema escuro */
+  html.app-dark app-main-layout :is(
+    [class*="text-slate-900"],
+    [class*="text-slate-800"],
+    [class*="text-slate-700"],
+    [class*="text-slate-600"],
+    [class*="text-gray-900"],
+    [class*="text-gray-800"],
+    [class*="text-gray-700"],
+    [class*="text-gray-600"]
+  ) {
+    color: var(--npl-dark-text) !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class*="text-slate-500"],
+    [class*="text-slate-400"],
+    [class*="text-slate-300"],
+    [class*="text-gray-500"],
+    [class*="text-gray-400"],
+    [class*="text-gray-300"]
+  ) {
+    color: var(--npl-dark-muted) !important;
+  }
+
+  /* Mantém roxo da marca e textos semânticos legíveis sobre fundo escuro */
+  html.app-dark app-main-layout :is(
+    [class*="text-[#7843cd]"],
+    [class*="text-[#7843CD]"],
+    [class*="text-[#6214CC]"],
+    [class*="text-purple-600"],
+    [class*="text-purple-700"]
+  ) {
+    color: #c4b5fd !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class*="text-purple-950"],
+    [class*="text-purple-900"],
+    [class*="text-purple-800"]
+  ) {
+    color: #e9d5ff !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class*="text-amber-950"],
+    [class*="text-amber-900"],
+    [class*="text-amber-800"],
+    [class*="text-amber-700"],
+    [class*="text-[#B45309]"]
+  ) {
+    color: #fcd34d !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class^="text-emerald-950"], [class*=" text-emerald-950"],
+    [class^="text-emerald-900"], [class*=" text-emerald-900"],
+    [class^="text-emerald-800"], [class*=" text-emerald-800"],
+    [class^="text-emerald-700"], [class*=" text-emerald-700"]
+  ) {
+    color: #6ee7b7 !important;
+  }
+
+  html.app-dark app-main-layout [class*="hover:text-emerald-700"]:hover {
+    color: #6ee7b7 !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class*="text-rose-950"],
+    [class*="text-rose-900"],
+    [class*="text-rose-800"],
+    [class*="text-rose-700"],
+    [class*="text-[#9E3636]"],
+    [class*="text-[#C24E4E]"],
+    .text-despesa
+  ) {
+    color: #fda4af !important;
+  }
+
+  /* Garante texto escuro legível em qualquer elemento com fundo amarelo sólido #EEC046 */
+  html.app-dark app-main-layout [class*="bg-[#EEC046]"] {
+    background-color: #EEC046 !important;
+    color: #1e1b2e !important;
+  }
+
+  /* Contadores/badges neutros (ex: abas não selecionadas em Metas) */
+  html.app-dark app-main-layout :is(
+    [class*="bg-slate-200"],
+    [class*="bg-gray-200"]
+  ) {
+    background-color: #383444 !important;
+    color: #e4e4e7 !important;
+  }
+
+  html.app-dark app-main-layout :is(.page-title-npl, .section-title-npl) {
+    color: var(--npl-dark-text) !important;
+  }
+
+  html.app-dark app-main-layout .page-subtitle-npl {
+    color: var(--npl-dark-muted) !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class*="border-slate-100"],
+    [class*="border-slate-200"],
+    [class*="border-slate-300"],
+    [class*="border-gray-100"],
+    [class*="border-gray-200"],
+    [class*="border-gray-300"]
+  ) {
+    border-color: var(--npl-dark-border) !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class*="border-purple-100"],
+    [class*="border-purple-200"],
+    [class*="border-purple-300"]
+  ) {
+    border-color: #4c3575 !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class*="border-amber-100"],
+    [class*="border-amber-200"],
+    [class*="border-amber-300"],
+    [class*="border-[#F9DB70]"]
+  ) {
+    border-color: #6b501f !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class^="border-emerald-100"], [class*=" border-emerald-100"],
+    [class^="border-emerald-200"], [class*=" border-emerald-200"],
+    [class^="border-emerald-300"], [class*=" border-emerald-300"]
+  ) {
+    border-color: #255c47 !important;
+  }
+
+  html.app-dark app-main-layout [class*="hover:border-emerald-300"]:hover {
+    border-color: #255c47 !important;
+  }
+
+  html.app-dark app-main-layout :is(
+    [class*="border-rose-100"],
+    [class*="border-rose-200"],
+    [class*="border-rose-300"],
+    [class*="border-[#F5D5D5]"],
+    .border-despesa-soft
+  ) {
+    border-color: #743444 !important;
+  }
+
+  /* Inputs e selects (incluindo modais e overlays no body) */
+  html.app-dark :is(input, select, textarea, .p-inputtext, .p-select) {
+    background-color: var(--npl-dark-surface-elevated) !important;
+    border-color: var(--npl-dark-border) !important;
+    color: var(--npl-dark-text) !important;
+  }
+
+  html.app-dark :is(input, select, textarea, .p-inputtext)::placeholder {
+    color: var(--npl-dark-muted) !important;
+  }
+
+  html.app-dark app-main-layout button[class*="border-slate-"],
+  html.app-dark app-main-layout button[class*="border-gray-"] {
+    background-color: var(--npl-dark-surface-elevated) !important;
+    border-color: var(--npl-dark-border) !important;
+    color: var(--npl-dark-text) !important;
+  }
+
+  html.app-dark .btn-npl-secondary {
+    background-color: #2f2b3a !important;
+    border-color: #544d66 !important;
+    color: #f4f4f5 !important;
+  }
+
+  html.app-dark .btn-npl-secondary:hover:not(:disabled) {
+    background-color: #3d374c !important;
+    border-color: #7843CD !important;
+    color: #ffffff !important;
+  }
+
+  html.app-dark :is(.btn-icon-edit-npl, .btn-soft-edit-npl) {
+    background-color: #3b2758 !important;
+    border-color: #7843CD !important;
+    color: #e9d5ff !important;
+  }
+
+  html.app-dark :is(.btn-icon-edit-npl, .btn-soft-edit-npl):hover:not(:disabled) {
+    background-color: #7843CD !important;
+    border-color: #9361e8 !important;
+    color: #ffffff !important;
+  }
+
+  html.app-dark :is(.btn-icon-delete-npl, .btn-soft-delete-npl, .btn-npl-danger) {
+    background-color: #4c202a !important;
+    border-color: #b9384a !important;
+    color: #fecdd3 !important;
+  }
+
+  html.app-dark :is(.btn-icon-delete-npl, .btn-soft-delete-npl, .btn-npl-danger):hover:not(:disabled) {
+    background-color: #EF4444 !important;
+    border-color: #EF4444 !important;
+    color: #ffffff !important;
+  }
+
+  html.app-dark .menuitem:hover {
+    background-color: var(--npl-dark-surface-elevated) !important;
+    color: #d8bfff !important;
+  }
+
+  html.app-dark .menuitem.ativo {
+    background-color: var(--npl-dark-accent-soft) !important;
+    color: #e9d5ff !important;
+  }
+
+  /* Overlays PrimeNG renderizados no body (Dialog, Select, Popover, DatePicker) */
+  html.app-dark :is(.p-dialog, .p-select-overlay, .p-popover, .p-datepicker-panel) {
+    background-color: var(--npl-dark-surface) !important;
+    border-color: var(--npl-dark-border) !important;
+    color: var(--npl-dark-text) !important;
+  }
+
+  html.app-dark .p-dialog .p-dialog-header,
+  html.app-dark .p-dialog .p-dialog-content,
+  html.app-dark .p-dialog .p-dialog-footer {
+    background-color: var(--npl-dark-surface) !important;
+    border-color: var(--npl-dark-border) !important;
+    color: var(--npl-dark-text) !important;
+  }
+
+  html.app-dark .p-select-option:not(.p-select-option-selected):hover {
+    background-color: var(--npl-dark-surface-elevated) !important;
+    color: var(--npl-dark-text) !important;
+  }
 }
 
 main > *:not(p-toast):not(router-outlet) {
