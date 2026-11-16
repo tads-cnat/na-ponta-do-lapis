@@ -111,14 +111,14 @@ import { Categoria } from '../../model/ITransacoes.model';
 
       </section>
 
-      <app-exportar-relatorio-modal
-        [(visible)]="modalRelatorioVisivel"
-        [transacoes]="transacoes"
-        [metas]="metas"
-        [saldoAtual]="saldoAtual">
-      </app-exportar-relatorio-modal>
-
     </div>
+
+    <app-exportar-relatorio-modal
+      [(visible)]="modalRelatorioVisivel"
+      [transacoes]="transacoes"
+      [metas]="metas"
+      [saldoAtual]="saldoAtual">
+    </app-exportar-relatorio-modal>
   `,
 })
 export class DashboardComponent implements OnInit {
