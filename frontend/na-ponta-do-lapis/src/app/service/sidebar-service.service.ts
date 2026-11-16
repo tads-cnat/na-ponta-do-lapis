@@ -3,8 +3,9 @@ import { Injectable, signal } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
+
 export class SidebarService {
-  aberto = signal(false);
+  aberto = signal(true);
 
   toggleSidebar() {
     this.aberto.update(valor => !valor);

@@ -18,3 +18,22 @@
 :host ::ng-deep .p-datatable-tbody > tr > td {
   transition: none !important;
 }
+
+/* Estados das linhas no tema escuro: mantém contraste sem o destaque claro do tema padrão. */
+:host-context(.app-dark) ::ng-deep .p-datatable-tbody > tr:not(.p-datatable-row-selected):not(.p-highlight):hover > td {
+  background-color: #302d37 !important;
+  color: #f4f4f5 !important;
+}
+ 
+:host-context(.app-dark) ::ng-deep .p-datatable-tbody > tr.p-datatable-row-selected > td,
+:host-context(.app-dark) ::ng-deep .p-datatable-tbody > tr.p-highlight > td {
+  background-color: #393044 !important;
+  color: #f4f4f5 !important;
+  border-color: #51465f !important;
+}
+
+:host-context(.app-dark) ::ng-deep .p-datatable-tbody > tr.p-datatable-row-selected:hover > td,
+:host-context(.app-dark) ::ng-deep .p-datatable-tbody > tr.p-highlight:hover > td {
+  background-color: #484052 !important;
+  color: #ffffff !important;
+}

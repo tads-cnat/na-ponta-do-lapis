@@ -1,9 +1,9 @@
 <div class="w-full">
-    
+
     <!-- VISÃO GERAL (TODAS AS CONTAS) — TRÍADE FINANCEIRA -->
     @if (contaId === null) {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-            
+
             <!-- Card 1: Dinheiro em Contas -->
             <div class="bg-white rounded-2xl p-5 shadow-sm border border-emerald-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
                 <div class="flex items-center justify-between mb-3">
@@ -101,11 +101,11 @@
 
     <!-- VISÃO CONTEXTUAL DE UMA CONTA ESPECÍFICA -->
     @if (contaId !== null) {
-        
+
         <!-- SE A CONTA SELECIONADA FOR UM CARTÃO DE CRÉDITO -->
         @if (contaSelecionadaEhCartao) {
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-                
+
                 <!-- Card 1: Fatura Fechada (A Pagar Agora) -->
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-[#F5D5D5] flex flex-col justify-between min-h-[136px] relative overflow-hidden">
                     <div class="flex items-center justify-between mb-3">
@@ -182,7 +182,7 @@
         } @else {
             <!-- SE A CONTA SELECIONADA FOR CONTA BANCÁRIA / CORRENTE (TAMBÉM EM 3 CARDS PADRONIZADOS) -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-6">
-                
+
                 <!-- Card 1: Saldo Inicial -->
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-purple-100 flex flex-col justify-between min-h-[136px] relative overflow-hidden">
                     <div class="flex items-center justify-between mb-3">

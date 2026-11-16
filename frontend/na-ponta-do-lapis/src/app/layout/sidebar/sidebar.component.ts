@@ -3,6 +3,7 @@ import { MenuItem } from 'primeng/api';
 import { RouterLink, RouterLinkActive } from '@angular/router'
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { SidebarService } from '../../service/sidebar-service.service';
+import { ThemeService } from '../../service/theme.service';
 
 
 @Component({
@@ -15,6 +16,7 @@ export class SidebarComponent implements OnInit {
   aberto: boolean = true;
   items: MenuItem[] | undefined ;
   sidebarService: SidebarService = inject(SidebarService);
+  themeService: ThemeService = inject(ThemeService);
   isMobile: boolean = false;
 
   ngOnInit(): void {
