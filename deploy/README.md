@@ -179,6 +179,7 @@ O Coolify só entrega ao container as variáveis que aparecem no bloco `environm
 | `FATURA_IA_DEEPSEEK_MODEL` | `deepseek-chat` | `deepseek-chat` | Modelo padrão da DeepSeek |
 | `FATURA_IA_GROQ_MODEL` | `llama-3.3-70b-versatile` | `llama-3.3-70b-versatile` | Modelo padrão da Groq |
 | `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | credenciais | credenciais | Upload de imagens/comprovantes |
+| `GOOGLE_CLIENT_ID` | Client ID OAuth (opcional) | Client ID OAuth (opcional) | Client ID do Google Identity Services para login/cadastro com Google (vazio desativa o botão) |
 
 > **Importante:** o [docker-compose.deploy.yml](docker-compose.deploy.yml) já define defaults seguros (`SPRING_PROFILES_ACTIVE:-prod`, `APP_SEED_ENABLED:-false`, `FLYWAY_ENABLED:-false`, `CACHE_TYPE:-redis`, `REDIS_HEALTH_ENABLED:-false`).
 >
