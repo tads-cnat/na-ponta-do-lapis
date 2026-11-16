@@ -16,7 +16,7 @@ import { TemaComponentComponentSimples } from '../../pages/perfil/components/tem
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent, TemaComponentComponentSimples],
+  imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent, TemaComponentComponentSimples], 
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
