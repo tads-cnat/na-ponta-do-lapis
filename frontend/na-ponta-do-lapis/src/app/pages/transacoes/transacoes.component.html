@@ -19,7 +19,7 @@
 
         <div class="w-full">
 
-            <p-card class="w-full block overflow-x-auto">
+            <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
 
                 <div class="flex flex-col gap-4 mb-4">
                     <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4">
@@ -45,22 +45,22 @@
 
                             <p-button
                                 [styleClass]="painelFiltrosAberto || qtdFiltrosAtivos > 0
-                                    ? 'font-semibold rounded-xl! text-sm px-3 py-2'
-                                    : 'font-semibold border-slate-300! rounded-xl! text-sm px-3 py-2'"
+                                    ? 'font-semibold text-[#7843cd]! bg-purple-50! border-[#7843cd]! rounded-xl! text-sm px-3 py-2'
+                                    : 'font-semibold text-slate-700! bg-white! border-slate-300! rounded-xl! text-sm px-3 py-2'"
                                 (onClick)="alternarPainelFiltros()">
                                 <i class="pi pi-filter mr-1.5"></i>
                                 <span>Filtrar</span>
                                 @if (qtdFiltrosAtivos > 0) {
-                                    <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full text-slate-900 shadow-2xs">
+                                    <span class="ml-1.5 px-2 py-0.5 text-xs font-bold rounded-full bg-[#EEC046] text-slate-900 shadow-2xs">
                                         {{ qtdFiltrosAtivos }}
                                     </span>
                                 }
                             </p-button>
 
                             <p-button
-                                styleClass="font-semibold border-slate-300! hover:bg-slate-50! rounded-xl! text-sm px-3 py-2"
+                                styleClass="font-semibold text-slate-700! bg-white! border-slate-300! hover:bg-slate-50! rounded-xl! text-sm px-3 py-2"
                                 (onClick)="abrirDialogMarcador()">
-                                <i class="pi pi-bookmark-fill mr-1" pButtonIcon></i> Marcadores
+                                <i class="pi pi-bookmark-fill mr-1 text-[#7843cd]" pButtonIcon></i> Marcadores
                             </p-button>
 
                             <div class="relative w-full sm:w-64">
@@ -275,31 +275,31 @@
 
                     <ng-template pTemplate="header">
                         <tr>
-                            <th class="text-slate-700! w-[48px]">
+                            <th class="bg-[#F8F8FC]! text-slate-700! w-[48px]">
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
-                            <th pSortableColumn="dataHora" class="text-slate-700! w-[110px] cursor-pointer">
+                            <th pSortableColumn="dataHora" class="bg-[#F8F8FC]! text-slate-700! w-[110px] cursor-pointer">
                                 Data <p-sortIcon field="dataHora"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="descricao" class="text-slate-700! min-w-[200px] max-w-[320px] cursor-pointer">
+                            <th pSortableColumn="descricao" class="bg-[#F8F8FC]! text-slate-700! min-w-[200px] max-w-[320px] cursor-pointer">
                                 Descrição <p-sortIcon field="descricao"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="categoria.nome" class="text-slate-700! w-[140px] cursor-pointer">
+                            <th pSortableColumn="categoria.nome" class="bg-[#F8F8FC]! text-slate-700! w-[140px] cursor-pointer">
                                 Categoria <p-sortIcon field="categoria.nome"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="conta.nome" class="text-slate-700! w-[130px] cursor-pointer">
+                            <th pSortableColumn="conta.nome" class="bg-[#F8F8FC]! text-slate-700! w-[130px] cursor-pointer">
                                 Conta <p-sortIcon field="conta.nome"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="estado" class="text-slate-700! w-[120px] cursor-pointer">
+                            <th pSortableColumn="estado" class="bg-[#F8F8FC]! text-slate-700! w-[120px] cursor-pointer">
                                 Situação <p-sortIcon field="estado"></p-sortIcon>
                             </th>
-                            <th pSortableColumn="valorComSinal" class="text-slate-700! w-[150px] cursor-pointer text-right! pr-8!">
+                            <th pSortableColumn="valorComSinal" class="bg-[#F8F8FC]! text-slate-700! w-[150px] cursor-pointer text-right! pr-8!">
                                 <div class="flex items-center justify-end gap-1.5 w-full">
                                     <span>Valor</span>
                                     <p-sortIcon field="valorComSinal"></p-sortIcon>
                                 </div>
                             </th>
-                            <th class="text-slate-700! w-[110px] text-center! pl-4!">Ações</th>
+                            <th class="bg-[#F8F8FC]! text-slate-700! w-[110px] text-center! pl-4!">Ações</th>
                         </tr>
                     </ng-template>
 
