@@ -24,7 +24,7 @@
   background-color: #302d37 !important;
   color: #f4f4f5 !important;
 }
-
+ 
 :host-context(.app-dark) ::ng-deep .p-datatable-tbody > tr.p-datatable-row-selected > td,
 :host-context(.app-dark) ::ng-deep .p-datatable-tbody > tr.p-highlight > td {
   background-color: #393044 !important;
