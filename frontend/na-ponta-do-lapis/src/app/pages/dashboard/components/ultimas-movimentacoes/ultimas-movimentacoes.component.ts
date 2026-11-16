@@ -1,6 +1,7 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { ITransacoes } from '../../../../model/ITransacoes.model';
+import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-moeda.service';
 
 @Component({
   selector: 'app-ultimas-movimentacoes',
@@ -49,7 +50,7 @@ import { ITransacoes } from '../../../../model/ITransacoes.model';
                 class="text-sm font-bold whitespace-nowrap shrink-0"
                 [class]="item.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-rose-600'">
                 {{ item.tipo === 'RECEITA' ? '+' : '-' }}
-                {{ (item.valor || 0) | currency:'BRL':'symbol':'1.2-2' }}
+                {{ (item.valor || 0) | currency:moedaService.obterMoedaAtiva():'symbol':'1.2-2' }}
               </span>
             </li>
           }
@@ -59,6 +60,7 @@ import { ITransacoes } from '../../../../model/ITransacoes.model';
   `,
 })
 export class UltimasMovimentacoesComponent {
+  readonly moedaService = inject(PreferenciaMoedaService);
   @Input() transacoes: ITransacoes[] = [];
   @Output() onIrParaTransacoes = new EventEmitter<void>();
 
