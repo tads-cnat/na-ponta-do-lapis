@@ -25,7 +25,6 @@ export class MainLayoutComponent implements OnInit, OnDestroy {
         this.preferenciaMoedaService.carregarMoedaDoUsuario(usuario);
       },
       error: () => {
-        // Silencioso se token expirado ou interceptor tratar
       }
     });
   }
