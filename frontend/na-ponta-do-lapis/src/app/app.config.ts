@@ -35,7 +35,6 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideAnimations(),
     MessageService,
     providePrimeNG({
       theme : {
@@ -44,7 +43,7 @@ export const appConfig: ApplicationConfig = {
           darkModeSelector: '.app-dark',
           CssLayer: {
             name: 'primeng',
-            order: 'theme, base, primeng' 
+            order: 'theme, base, primeng'
           }
         }
       }
