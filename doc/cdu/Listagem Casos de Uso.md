@@ -9,6 +9,8 @@
 1. [Convidar Membro à Família - CDU 22](./cdu-22/detalhamento-22.md)
 1. [Aceitar Convite - CDU 27](./cdu-27/detalhamento-27.md)
 1. [Visualizar relatório da família - CDU 24](./cdu-24/detalhamento-24.md)
+1. [Autenticar/Cadastrar com Google (LGPD) - CDU 34](./cdu-34/detalhamento-34.md)
+1. [Conectar e Sincronizar Open Finance (Pluggy) - CDU 35](./cdu-35/detalhamento-35.md)
 
 ## Média
 
@@ -18,6 +20,10 @@
 1. [Login - CDU 01](./cdu-01/detalhamento-01.md)
 1. [Logout - CDU 02](./cdu-02/detalhamento-02.md)
 1. [Cadastro Usuario - CDU 03](./cdu-03/detalhamento-03.md)
+1. [Recuperar senha - CDU 04](./cdu-04/detalhamento-04.md)
+1. [Gerenciar Chaves de IA Pessoais (BYOK) - CDU 36](./cdu-36/detalhamento-36.md)
+1. [Visualizar Conquistas e Gamificação - CDU 37](./cdu-37/detalhamento-37.md)
+1. [Gerenciar Notificações do Usuário - CDU 38](./cdu-38/detalhamento-38.md)
 
 ## Baixa
 
@@ -31,7 +37,6 @@
 1. [Alterar Foto da Família - CDU 31](./cdu-31/detalhamento-31.md)
 1. [Atualizar Perfil - CDU 20](./cdu-20/detalhamento-20.md)
 1. [Alterar Senha - CDU 28](./cdu-28/detalhamento-28.md)
-1. [Recuperar senha - CDU 04](./cdu-04/detalhamento-04.md)
 1. [Auto Exclusão de Conta - CDU 33](./cdu-33/detalhamento-33.md)
 1. [Alterar Tema - CDU 12](./cdu-12/detalhamento-12.md)
 1. [Consultar Cotação - CDU 05](./cdu-05/detalhamento-05.md)

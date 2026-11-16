@@ -1,49 +1,53 @@
-# CDU 18. Manter Transação 
+# CDU 18. Manter Transação
 
 - **Ator principal**: Cliente.
 - **Atores secundários**: Sistema de Banco de Dados.
-- **Resumo**: O sistema exibe um formulário com os campos necessários (*descrição, *valor, categoria, *status de pagamento/recebimento, *data, marcador, *conta) para criar e editar, ja para excluir, uma janela de confirmação é exibida transação. O Cliente preenche todos os campos obrigatórios e confirma a operação.
-- **Pré-condição**: O Cliente deve estar autenticado no sistema para registrar uma transação.
-- **Pós-condição**: O sistema persiste os dados da transação no banco de dados e exibe uma mensagem de confirmação.
+- **Resumo**: Na página de **Transações** (`/app/transacoes`), o cliente gerencia suas movimentações de **Receita** e **Despesa** (à vista ou **parceladas**). O formulário permite informar tipo, descrição, valor, conta financeira, categoria, data, situação (`REALIZADA` ou `PENDENTE`), marcador opcional e configuração de **compra parcelada** (parcela atual, total de parcelas e geração opcional de parcelas anteriores). O módulo também permite **confirmar pagamento** de transações pendentes, gerenciar grupos de parcelamento e **excluir movimentações individualmente ou em lote**.
+- **Pré-condição**: O Cliente deve estar autenticado no sistema.
+- **Pós-condição**: O sistema persiste as alterações no banco de dados e atualiza automaticamente o saldo da conta financeira correspondente.
 
-## Fluxo Principal
+## Fluxo Principal (Criar Transação Manual)
 
 | Ações do ator | Ações do sistema |
 | :-: | :-: |
-| 1 - Cliente clica no botão ["Adicionar transação"](https://www.figma.com/proto/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=1545-21663&m=dev&scaling=min-zoom&content-scaling=fixed&page-id=625%3A100&starting-point-node-id=1545%3A21654&t=4Hx8oZOgHUnVNuYC-1) | |  
-| | 2 - Sistema exibe um [formulário](https://www.figma.com/proto/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=1545-21657&m=dev&scaling=min-zoom&content-scaling=fixed&page-id=625%3A100&starting-point-node-id=1545%3A21654) com os campos (*descrição, *valor, *categoria, *status de pagamento/recebimento, *data, marcador, *conta) necessários para completar o cadastro de transação |
-| 3 - Cliente preenche os campos obrigatórios e clica em "Salvar" | |
-| | 4 - Sistema valida os dados informados |
-| | 5 - Sistema persiste a transação no banco de dados e exibe mensagem de confirmação: "Transação salva com sucesso" |
-
+| 1 - Cliente clica em **"Nova Transação"** e escolhe **"Lançamento Manual"**. | |
+| | 2 - Sistema exibe o modal com seletor de tipo (**Despesa** / **Receita**) e campos obrigatórios (*descrição*, *valor*, *conta*, *categoria*, *data*, *situação*) mais marcador e opção **Compra parcelada**. |
+| 3 - Cliente preenche os campos e clica em **"Criar Transação"**. | |
+| | 4 - Sistema valida os dados (`POST /api/v1/transacoes`), cria a transação (e as parcelas vinculadas ao `grupoParcelamento`, quando parcelada), atualiza o saldo da conta (se `REALIZADA`) e exibe confirmação. |
 
 ## Fluxo Alternativo I - Editar Transação
 
 | Ações do ator | Ações do sistema |
 | :-: | :-: |
-| 1.2 - Cliente seleciona uma transação existente e clica no ícone de edição | |
-| | 2.2 - Sistema exibe o [formulário](https://www.figma.com/proto/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=1545-21658&m=dev&scaling=min-zoom&content-scaling=fixed&page-id=625%3A100&starting-point-node-id=1545%3A21654) pré-preenchido com os dados da transação |
-| 3.2 - Cliente altera os dados desejados e clica em "Salvar" | |
-| | 4.2 - Sistema valida os dados e persiste as alterações |
-| | 5.2 - Sistema exibe mensagem de confirmação: "Transação atualizada com sucesso" |
+| 1.1 - Cliente clica no ícone de edição de uma transação na tabela. | |
+| | 2.1 - Sistema exibe o formulário pré-preenchido com os dados atuais. |
+| 3.1 - Cliente altera os dados desejados e clica em **"Salvar Alterações"** (`PUT /api/v1/transacoes/{id}`). | |
+| | 4.1 - Sistema valida, recalcula o impacto no saldo da conta e persiste as alterações. |
 
-## Fluxo Alternativo II - Excluir Transação
-
-| Ações do ator | Ações do sistema |
-| :-: | :-: |
-| 1.3 - Cliente seleciona uma transação existente e clica no ícone de lixeira para excluir | |
-| | 2.3 - Sistema exibe um [janela de confirmação](https://www.figma.com/proto/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=1545-21659&m=dev&scaling=min-zoom&content-scaling=fixed&page-id=625%3A100&starting-point-node-id=1545%3A21654) com a mensagem: "Tem certeza que deseja remover esta transação?" |
-| 3.3 - Cliente confirma a exclusão | |
-| | 4.3 - Sistema remove a transação do banco de dados |
-| | 5.3 - Sistema atualiza automaticamente o gráfico e a tabela de transações, refletindo a exclusão |
-| | 6.3 - Sistema exibe mensagem de confirmação: "Transação excluída com sucesso" |
-
-## Fluxo Exceção - Validação de Dados com Erro
+## Fluxo Alternativo II - Confirmar Pagamento de Transação Pendente
 
 | Ações do ator | Ações do sistema |
 | :-: | :-: |
-| | 4.1 - Sistema identifica que um ou mais campos foram preenchidos de forma incorreta e exibe mensagem de erro (ex: "Campo obrigatório", "Valor deve ser positivo") |
-| | 4.2 - Sistema retorna ao passo 3 do fluxo principal para corrigir os dados |
+| 1.2 - Cliente clica no botão de confirmar pagamento em uma transação com estado `PENDENTE`. | |
+| | 2.2 - Sistema exibe modal de confirmação com resumo da movimentação. |
+| 3.2 - Cliente confirma a operação (`PATCH /api/v1/transacoes/{id}/confirmar-pagamento`). | |
+| | 4.2 - Sistema altera o estado para `REALIZADA` e aplica o valor no saldo da conta financeira. |
+
+## Fluxo Alternativo III - Gerenciar Grupo de Parcelamento
+
+| Ações do ator | Ações do sistema |
+| :-: | :-: |
+| 1.3 - Cliente clica no badge de parcela (`ex: 2/10`) de uma compra parcelada. | |
+| | 2.3 - Sistema consulta `GET /api/v1/transacoes/parcelamento/{grupoId}` e exibe todas as parcelas do grupo, permitindo gerar parcelas futuras (`/futuras`), anteriores (`/anteriores`) ou excluir o parcelamento (todas ou apenas futuras). |
+
+## Fluxo Alternativo IV - Excluir Transação (Individual ou em Lote)
+
+| Ações do ator | Ações do sistema |
+| :-: | :-: |
+| 1.4 - Cliente clica no ícone de lixeira de uma transação ou seleciona múltiplas transações na tabela e clica em excluir selecionadas. | |
+| | 2.4 - Sistema exibe janela de confirmação informando o estorno no saldo da conta. |
+| 3.4 - Cliente confirma a exclusão (`DELETE /api/v1/transacoes/{id}` ou `POST /api/v1/transacoes/excluir-lote`). | |
+| | 4.4 - Sistema remove os registros, estorna o saldo das contas afetadas e atualiza a listagem. |
 
 ## Diagrama de Interação (Sequência ou Comunicação)
 
