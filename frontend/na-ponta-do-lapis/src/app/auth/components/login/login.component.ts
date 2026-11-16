@@ -72,7 +72,7 @@ export class LoginComponent implements AfterViewInit {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'E-mail, nickname ou senha inválido.',
+          detail: 'E-mail, nome de usuário ou senha inválido.',
           life: 3000
         })
       }

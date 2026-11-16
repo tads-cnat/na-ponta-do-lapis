@@ -115,6 +115,7 @@ export class AuthService {
             locale: 'pt-BR',
             width,
           });
+          gis.prompt();
           onRendered?.();
         } catch {
           onUnavailable?.('Não foi possível carregar o script de login do Google.');

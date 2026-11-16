@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators, FormsModule } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
 import { StorageService } from '../../service/storage.service';
 import { MessageService } from 'primeng/api';
@@ -8,9 +8,16 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-consent-dialog.component';
 
+function senhasIguaisValidator(group: AbstractControl): ValidationErrors | null {
+  const password = group.get('password')?.value;
+  const confirmation = group.get('passwordConfirmation')?.value;
+  if (!password || !confirmation) return null;
+  return password === confirmation ? null : { senhasDiferentes: true };
+}
+
 @Component({
   selector: 'app-signup',
-  imports: [PrimeNGModuleModule, ReactiveFormsModule, CommonModule, FormsModule, RouterLink, GoogleConsentDialogComponent],
+  imports: [PrimeNGModuleModule, ReactiveFormsModule, CommonModule, RouterLink, GoogleConsentDialogComponent],
   providers: [MessageService],
   templateUrl: './signup.component.html',
   styleUrl: './signup.component.css',
@@ -19,7 +26,6 @@ export class SignupComponent implements AfterViewInit {
   @Input() embedded = false;
   @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
   registerForm: FormGroup;
-  termos: any = null;
   loading = false;
   readonly googleButtonState = signal<'loading' | 'ready' | 'unavailable'>('loading');
   readonly googleConsentVisible = signal(false);
@@ -36,8 +42,9 @@ export class SignupComponent implements AfterViewInit {
       username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
       telefone: ['', [Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]]
-    })
+      passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]],
+      termos: [false, [Validators.requiredTrue]]
+    }, { validators: senhasIguaisValidator });
   }
 
   ngAfterViewInit(): void {
@@ -53,30 +60,34 @@ export class SignupComponent implements AfterViewInit {
   }
 
   public register() {
-    if (this.loading) return;
+    if (this.loading || this.registerForm.invalid) return;
     this.loading = true;
 
-    this.authService.register(this.registerForm.value).subscribe({
-      next: (res: any) => {
+    const { termos: _termos, ...payload } = this.registerForm.value;
+
+    this.authService.register(payload).subscribe({
+      next: () => {
         this.loading = false;
         this.messageService.add({
           severity: 'success',
-          summary: 'Registro Realizado com sucesso!',
+          summary: 'Registro realizado com sucesso!',
           life: 2000
-        })
+        });
         setTimeout(() => {
           this.router.navigate(["/login"]);
         }, 2000);
       },
-      error: (error: Error) => {
+      error: (error: { error?: { message?: string; detail?: string }; message?: string }) => {
         this.loading = false;
+        const detail = error?.error?.message || error?.error?.detail || error?.message || 'Não foi possível concluir o cadastro.';
         this.messageService.add({
           severity: 'warn',
           summary: 'Erro ao registrar usuário',
-          life: 2000
-        })
+          detail,
+          life: 3500
+        });
       }
-    })
+    });
   }
 
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
