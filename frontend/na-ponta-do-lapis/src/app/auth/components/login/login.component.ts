@@ -1,4 +1,4 @@
-import { Component, Input, signal } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -7,17 +7,19 @@ import { StorageService } from '../../service/storage.service';
 import { Token } from '../../../model/IToken.models';
 import { MessageService } from 'primeng/api';
 import { MascoteEstado, MascoteLoginComponent } from '../mascote-login/mascote-login.component';
+import { GoogleConsentDialogComponent } from '../google-consent-dialog/google-consent-dialog.component';
 
 @Component({
   selector: 'app-login',
-  imports: [PrimeNGModuleModule, ReactiveFormsModule, RouterLink, MascoteLoginComponent],
+  imports: [PrimeNGModuleModule, ReactiveFormsModule, RouterLink, MascoteLoginComponent, GoogleConsentDialogComponent],
   providers: [MessageService],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements AfterViewInit {
   @Input() embedded = false;
   @Input() initialRecovery = false;
+  @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
 
   loginForm: FormGroup;
   recoveryForm: FormGroup;
@@ -27,6 +29,9 @@ export class LoginComponent {
   readonly showRecoveryForm = signal(false);
   readonly recoveryQuestion = signal<string | null>(null);
   readonly recoveryStep = signal<'answer' | 'new-password' | 'complete'>('answer');
+  readonly googleButtonState = signal<'loading' | 'ready' | 'unavailable'>('loading');
+  readonly googleConsentVisible = signal(false);
+  readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
   readonly mascoteEstado = signal<MascoteEstado>('idle');
   readonly lookProgress = signal(0.5);
   readonly isHoveringSubmit = signal(false);
@@ -178,6 +183,18 @@ export class LoginComponent {
     if (email) this.loginForm.patchValue({ email, password: '' });
   }
 
+  ngAfterViewInit(): void {
+    const container = this.googleBtnContainer?.nativeElement;
+    if (!container) return;
+    this.authService.renderizarBotaoGoogle(
+      container,
+      'continue_with',
+      (idToken) => this.autenticarComGoogleToken(idToken),
+      () => this.googleButtonState.set('ready'),
+      () => this.googleButtonState.set('unavailable')
+    );
+  }
+
   public login() {
     if (this.loading) return;
     this.loading = true;
@@ -202,45 +219,60 @@ export class LoginComponent {
         this.messageService.add({
           severity: 'error',
           summary: 'Erro',
-          detail: 'E-mail, nickname ou senha inválido.',
+          detail: 'E-mail, nome de usuário ou senha inválido.',
           life: 3000
         })
       }
     })
   }
 
-  public entrarComGoogle() {
-    if (this.loading) return;
+  private autenticarComGoogleToken(idToken: string, termosAceitos = false) {
     this.loading = true;
     this.mascoteEstado.set('loading');
-
-    this.authService.iniciarFluxoGoogle(
-      (idToken) => {
-        this.authService.loginWithGoogle(idToken).subscribe({
-          next: (res) => this.finalizarLoginComSucesso(res),
-          error: () => {
-            this.loading = false;
-            this.mascoteEstado.set('error');
-            this.messageService.add({
-              severity: 'error',
-              summary: 'Erro no Google',
-              detail: 'Não foi possível autenticar com sua conta Google.',
-              life: 3000
-            });
-          }
-        });
+    this.authService.loginWithGoogle(idToken, termosAceitos).subscribe({
+      next: (res) => {
+        if (res.requerTermos) {
+          this.loading = false;
+          this.mascoteEstado.set('idle');
+          this.googleConsentDados.set({
+            idToken,
+            nome: res.nome ?? '',
+            email: res.email ?? '',
+            fotoUrl: res.fotoUrl ?? null,
+          });
+          this.googleConsentVisible.set(true);
+          return;
+        }
+        this.googleConsentVisible.set(false);
+        this.googleConsentDados.set(null);
+        if (res.token) {
+          this.finalizarLoginComSucesso({ token: res.token });
+        }
       },
-      (reason) => {
+      error: () => {
         this.loading = false;
-        this.mascoteEstado.set('idle');
+        this.mascoteEstado.set('error');
         this.messageService.add({
-          severity: 'warn',
-          summary: 'Google indisponível',
-          detail: reason,
-          life: 3500
+          severity: 'error',
+          summary: 'Erro no Google',
+          detail: 'Não foi possível autenticar com sua conta Google.',
+          life: 3000
         });
       }
-    );
+    });
+  }
+
+  public confirmarTermosGoogle() {
+    const dados = this.googleConsentDados();
+    if (!dados || this.loading) return;
+    this.autenticarComGoogleToken(dados.idToken, true);
+  }
+
+  public cancelarTermosGoogle() {
+    this.googleConsentVisible.set(false);
+    this.googleConsentDados.set(null);
+    this.loading = false;
+    this.mascoteEstado.set('idle');
   }
 
   private finalizarLoginComSucesso(res: Token) {

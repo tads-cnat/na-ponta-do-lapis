@@ -10,6 +10,7 @@ import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
+import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryQuestionResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryResponseDTO;
@@ -40,6 +41,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -129,7 +131,7 @@ public class AuthServiceImpl implements AuthService{
 
     @Override
     @Transactional
-    public TokenResponseDTO loginWithGoogle(String idToken) {
+    public GoogleAuthResponseDTO loginWithGoogle(String idToken, boolean termosAceitos) {
         JsonNode tokenInfo = verifyGoogleIdToken(idToken);
         String email = tokenInfo.path("email").asText("").strip().toLowerCase();
         String nome = tokenInfo.path("name").asText("").strip();
@@ -139,11 +141,17 @@ public class AuthServiceImpl implements AuthService{
             throw new AuthenticationCredentialsNotFoundException("Token do Google sem e-mail válido.");
         }
 
-        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
-                .orElseGet(() -> registrarUsuarioGoogle(email, nome, picture));
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email).orElse(null);
+        if (usuario == null) {
+            if (!termosAceitos) {
+                String nomeExibicao = nome.isBlank() ? email.substring(0, email.indexOf('@')) : nome;
+                return GoogleAuthResponseDTO.pendenteTermos(nomeExibicao, email, picture);
+            }
+            usuario = registrarUsuarioGoogle(email, nome, picture);
+        }
 
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
-        return new TokenResponseDTO(token);
+        return GoogleAuthResponseDTO.comToken(token);
     }
 
     @Override
@@ -159,6 +167,10 @@ public class AuthServiceImpl implements AuthService{
             throw new IllegalArgumentException("Nome de usuário já está em uso.");
         }
 
+        if (Boolean.FALSE.equals(registerRequestDTO.termosAceitos())) {
+            throw new IllegalArgumentException("É necessário aceitar os Termos de Uso e a Política de Privacidade.");
+        }
+
         if (!registerRequestDTO.password().equals(registerRequestDTO.passwordConfirmation())){
             throw new RuntimeException("As senhas não são iguais");
         }
@@ -167,6 +179,8 @@ public class AuthServiceImpl implements AuthService{
         novoUsuario.setEmail(email);
         novoUsuario.setUsername(username);
         novoUsuario.setSenha(passwordEncoder.encode(registerRequestDTO.password()));
+        novoUsuario.setVersaoTermos(Usuario.VERSAO_TERMOS_ATUAL);
+        novoUsuario.setTermosAceitosEm(LocalDateTime.now());
 
         String pergunta = registerRequestDTO.perguntaSeguranca() == null ? "" : registerRequestDTO.perguntaSeguranca().trim();
         String resposta = registerRequestDTO.respostaSeguranca() == null ? "" : registerRequestDTO.respostaSeguranca().trim();
@@ -242,6 +256,8 @@ public class AuthServiceImpl implements AuthService{
         usuario.setFotoPerfil(picture);
         usuario.setPapel(Papel.USUARIO);
         usuario.setSenha(passwordEncoder.encode(UUID.randomUUID().toString()));
+        usuario.setVersaoTermos(Usuario.VERSAO_TERMOS_ATUAL);
+        usuario.setTermosAceitosEm(LocalDateTime.now());
 
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
         criarContaPadrao(usuarioSalvo);

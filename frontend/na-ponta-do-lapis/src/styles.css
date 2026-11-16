@@ -59,6 +59,162 @@ p-toggleswitch.p-toggleswitch .p-toggleswitch-handle {
   margin-block-start: -0.5rem;
 }
 
+html.app-dark {
+  color-scheme: dark;
+  --npl-dark-background: #1A191E;
+  --npl-dark-surface: #2A2830;
+  --npl-dark-text: #f4f4f5;
+  --npl-dark-muted: #a1a1aa;
+  --npl-dark-border: #48454f;
+}
+
+html.app-dark body,
+html.app-dark app-main-layout,
+html.app-dark app-main-layout .layout-body,
+html.app-dark app-main-layout main,
+html.app-dark app-main-layout nav {
+  background-color: var(--npl-dark-background);
+  color: var(--npl-dark-text);
+}
+
+html.app-dark app-main-layout .sidebar,
+html.app-dark app-main-layout :is(
+  [class~="bg-white"],
+  [class~="bg-slate-50"],
+  [class~="bg-slate-50/60"],
+  [class~="bg-slate-50/70"],
+  [class~="bg-slate-50/80"],
+  [class~="bg-slate-100"],
+  [class~="bg-slate-100/80"],
+  [class~="bg-gray-50"],
+  [class~="bg-gray-100"],
+  [class*="bg-[#F8F8FC]"],
+  [class*="bg-[#F8FAFC]"]
+) {
+  background-color: var(--npl-dark-surface) !important;
+}
+
+html.app-dark app-transacoes .p-card,
+html.app-dark app-transacoes p-card {
+  background-color: var(--npl-dark-surface) !important;
+  color: var(--npl-dark-text);
+}
+
+html.app-dark app-transacoes .p-datatable-thead > tr > th {
+  background-color: var(--npl-dark-surface) !important;
+  border-color: var(--npl-dark-border) !important;
+  color: var(--npl-dark-text) !important;
+}
+
+html.app-dark app-transacoes-conta .transacao-item:hover {
+  background-color: #393641 !important;
+  border-color: #514b5a !important;
+}
+
+html.app-dark app-familia #forms-familia {
+  background-color: var(--npl-dark-surface) !important;
+  border-color: var(--npl-dark-border) !important;
+}
+
+html.app-dark app-main-layout :is(
+  [class*="text-slate-900"],
+  [class*="text-slate-800"],
+  [class*="text-slate-700"],
+  [class*="text-slate-600"],
+  [class*="text-gray-900"],
+  [class*="text-gray-800"],
+  [class*="text-gray-700"],
+  [class*="text-gray-600"]
+) {
+  color: var(--npl-dark-text) !important;
+}
+
+html.app-dark app-main-layout :is(
+  [class*="text-slate-500"],
+  [class*="text-slate-400"],
+  [class*="text-slate-300"],
+  [class*="text-gray-500"],
+  [class*="text-gray-400"],
+  [class*="text-gray-300"]
+) {
+  color: var(--npl-dark-muted) !important;
+}
+
+html.app-dark app-main-layout :is(.page-title-npl, .section-title-npl) {
+  color: var(--npl-dark-text);
+}
+
+html.app-dark app-main-layout .page-subtitle-npl {
+  color: var(--npl-dark-muted);
+}
+
+html.app-dark app-main-layout :is(
+  [class*="border-slate-100"],
+  [class*="border-slate-200"],
+  [class*="border-slate-300"],
+  [class*="border-gray-100"],
+  [class*="border-gray-200"],
+  [class*="border-gray-300"]
+) {
+  border-color: var(--npl-dark-border) !important;
+}
+
+html.app-dark app-main-layout :is(input, select, textarea) {
+  background-color: var(--npl-dark-surface);
+  border-color: var(--npl-dark-border);
+  color: var(--npl-dark-text);
+}
+
+html.app-dark app-main-layout :is(input, select, textarea)::placeholder {
+  color: var(--npl-dark-muted);
+}
+
+html.app-dark app-main-layout button[class*="border-slate-"],
+html.app-dark app-main-layout button[class*="border-gray-"] {
+  background-color: var(--npl-dark-surface) !important;
+  border-color: var(--npl-dark-border) !important;
+  color: var(--npl-dark-text);
+}
+
+html.app-dark .btn-npl-secondary {
+  background-color: #36333d !important;
+  border-color: #625e6b !important;
+  color: #f4f4f5 !important;
+}
+
+html.app-dark .btn-npl-secondary:hover:not(:disabled) {
+  background-color: #484450 !important;
+  border-color: #77717f !important;
+  color: #ffffff !important;
+}
+
+html.app-dark :is(.btn-icon-edit-npl, .btn-soft-edit-npl) {
+  background-color: #393044 !important;
+  border-color: #57436f !important;
+  color: #d8bfff !important;
+}
+
+html.app-dark :is(.btn-icon-delete-npl, .btn-soft-delete-npl, .btn-npl-danger) {
+  background-color: #482d35 !important;
+  border-color: #74434d !important;
+  color: #ffb4bc !important;
+}
+
+html.app-dark .menuitem:hover {
+  background-color: #393641;
+  color: #d8bfff !important;
+}
+
+html.app-dark .menuitem.ativo {
+  background-color: #393044;
+  color: #d8bfff !important;
+}
+
+html.app-dark .p-dialog .p-dialog-header,
+html.app-dark .p-dialog .p-dialog-footer {
+  border-color: var(--npl-dark-border);
+}
+
 main > *:not(p-toast):not(router-outlet) {
   flex: 1 1 0%;
   width: 100%;

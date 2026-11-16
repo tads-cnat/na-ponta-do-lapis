@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.service.auth.AuthService;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthRequestDTO;
+import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryEmailRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryChangeRequestDTO;
@@ -58,8 +59,10 @@ public class AuthController {
     }
 
     @PostMapping("/google")
-    public ResponseEntity<TokenResponseDTO> googleAuth(@RequestBody @Valid GoogleAuthRequestDTO request) {
-        return ResponseEntity.ok(authService.loginWithGoogle(request.idToken()));
+    public ResponseEntity<GoogleAuthResponseDTO> googleAuth(@RequestBody @Valid GoogleAuthRequestDTO request) {
+        return ResponseEntity.ok(
+                authService.loginWithGoogle(request.idToken(), Boolean.TRUE.equals(request.termosAceitos()))
+        );
     }
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO, HttpServletResponse response) {

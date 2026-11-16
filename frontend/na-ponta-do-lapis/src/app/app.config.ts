@@ -35,16 +35,15 @@ export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
-    provideAnimations(),
     MessageService,
     providePrimeNG({
       theme : {
         preset: naPontaDoLapisTema,
         options: {
-          darkModeSelector: false || 'none',
+          darkModeSelector: '.app-dark',
           CssLayer: {
             name: 'primeng',
-            order: 'theme, base, primeng' 
+            order: 'theme, base, primeng'
           }
         }
       }

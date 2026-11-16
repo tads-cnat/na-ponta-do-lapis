@@ -6,6 +6,8 @@ import { CardsResumoComponent } from './components/cards/cards-resumo.component'
 import { RelatorioComponent } from './components/relatorio/relatorio.component';
 import { GastosCategoriaComponent } from './components/gastos-categoria/gastos.component';
 import { MetasDashboardComponent } from './components/metas/metas.component';
+import { UltimasMovimentacoesComponent } from './components/ultimas-movimentacoes/ultimas-movimentacoes.component';
+import { ExportarRelatorioModalComponent } from './components/exportar-relatorio/exportar-relatorio-modal.component';
 import { IContas, ehCartaoCredito } from '../../model/IContas.models';
 import { ITransacoes } from '../../model/ITransacoes.model';
 import { MetaRequest, MetaResponse } from '../../model/IMetas.models';
@@ -23,7 +25,9 @@ import { Categoria } from '../../model/ITransacoes.model';
     CardsResumoComponent,
     RelatorioComponent,
     GastosCategoriaComponent,
-    MetasDashboardComponent
+    MetasDashboardComponent,
+    UltimasMovimentacoesComponent,
+    ExportarRelatorioModalComponent
   ],
   /*
    * FIX 1: <main> substituído por <div class="flex flex-col gap-6">.
@@ -46,11 +50,19 @@ import { Categoria } from '../../model/ITransacoes.model';
     <div class="w-full flex flex-col gap-6 pb-8">
 
       <!-- Cabeçalho Padronizado do Design System -->
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
           <h1 class="page-title-npl m-0">Dashboard</h1>
           <p class="page-subtitle-npl">Acompanhe o resumo das suas contas, movimentações e metas financeiras</p>
         </div>
+        <p-button
+          type="button"
+          label="Exportar Relatório"
+          icon="pi pi-file-export"
+          size="small"
+          styleClass="btn-npl-secondary text-xs sm:text-sm px-4 py-2.5 rounded-xl! self-start sm:self-auto"
+          (onClick)="modalRelatorioVisivel = true">
+        </p-button>
       </div>
 
       <!-- Seção 1: Cards de resumo (4 colunas) -->
@@ -77,15 +89,22 @@ import { Categoria } from '../../model/ITransacoes.model';
            com gap-5 (~440px necessários vs 320px disponíveis). Conteúdo auto-dimensiona. -->
       <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
 
-        <app-gastos-categoria
-        class="block"
-        [transacoes]="transacoes"
-        [categorias_disponiveis]="categorias"
-        >
-        </app-gastos-categoria>
+        <div class="flex flex-col gap-4 h-full">
+          <app-gastos-categoria
+            class="block"
+            [transacoes]="transacoes"
+            [categorias_disponiveis]="categorias">
+          </app-gastos-categoria>
+
+          <app-ultimas-movimentacoes
+            class="block flex-1"
+            [transacoes]="transacoes"
+            (onIrParaTransacoes)="irParaTransacoes()">
+          </app-ultimas-movimentacoes>
+        </div>
 
         <app-metas-dashboard
-          class="block"
+          class="block h-full"
           [metas]="metas"
           (onIrParaMetas)="irParaMetas()">
         </app-metas-dashboard>
@@ -93,6 +112,13 @@ import { Categoria } from '../../model/ITransacoes.model';
       </section>
 
     </div>
+
+    <app-exportar-relatorio-modal
+      [(visible)]="modalRelatorioVisivel"
+      [transacoes]="transacoes"
+      [metas]="metas"
+      [saldoAtual]="saldoAtual">
+    </app-exportar-relatorio-modal>
   `,
 })
 export class DashboardComponent implements OnInit {
@@ -196,6 +222,12 @@ export class DashboardComponent implements OnInit {
   irParaMetas(): void {
     this.router.navigate(['/app/metas']);
   }
+
+  irParaTransacoes(): void {
+    this.router.navigate(['/app/transacoes']);
+  }
+
+  modalRelatorioVisivel = false;
   buscarMetas(): void {
 
     this.metaService.listarMetas().subscribe({

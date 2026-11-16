@@ -9,8 +9,9 @@
             </button>
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-3 w-full max-w-md mx-auto my-auto py-2">
+        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-3 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
             <app-mascote-login
+                [compact]="false"
                 [estado]="mascoteEstado()"
                 [lookProgress]="lookProgress()"
                 [eager]="isHoveringSubmit()"
@@ -18,17 +19,17 @@
             </app-mascote-login>
 
             <div>
-                <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
-                <p class="text-sm sm:text-base text-slate-500 mt-1.5">
+                <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
+                <p class="text-sm text-slate-500 mt-1">
                     Ainda não tem uma conta?
                     <a routerLink="/signup"
                         class="text-[#7843CD] font-bold transition duration-200 hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 ml-1">Cadastre-se</a>
                 </p>
             </div>
 
-            <div class="flex flex-col gap-1.5 mt-2">
-                <label for="email" class="text-xs font-semibold text-slate-700">E-mail ou Nickname</label>
-                <input id="email" pInputText placeholder="nome@gmail.com ou seu nickname" class="w-full text-sm rounded-xl!" formControlName="email"
+            <div class="flex flex-col gap-1.5">
+                <label for="email" class="text-xs font-semibold text-slate-700">E-mail ou Nome de usuário</label>
+                <input id="email" pInputText autocomplete="username" placeholder="nome@gmail.com ou seu nome de usuário" class="w-full text-sm rounded-xl!" formControlName="email"
                     (focus)="onEmailFocus()"
                     (input)="onEmailInput($any($event.target).value)"
                     (blur)="onEmailBlur()"
@@ -37,12 +38,12 @@
                 <div class="min-h-4 flex items-center">
                     @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
                         @if (loginForm.get('email')?.errors?.['required']) {
-                            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe seu e-mail ou nickname.</small>
+                            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe seu e-mail ou nome de usuário.</small>
                         } @else if (loginForm.get('email')?.errors?.['minlength']) {
                             <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 3 caracteres.</small>
                         }
                     }
-                </div>
+            </div>
             </div>
 
             <div class="flex flex-col gap-1.5">
@@ -55,7 +56,7 @@
                     (focusin)="onPasswordFocus(passwordWrapper)"
                     (focusout)="onPasswordBlur($event, passwordWrapper)"
                     (click)="onPasswordAreaClick(passwordWrapper)">
-                    <p-password id="password" [toggleMask]="true" [feedback]="false" placeholder="Digite sua senha aqui"
+                    <p-password id="password" autocomplete="current-password" [toggleMask]="true" [feedback]="false" placeholder="Digite sua senha aqui"
                         inputStyleClass="w-full text-sm rounded-xl!" formControlName="password"
                         [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
                 </div>
@@ -134,12 +135,22 @@
                         styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
                         [disabled]="loginForm.invalid || loading" [loading]="loading" />
                 </div>
-                <p-button type="button"
-                    styleClass="w-full btn-npl-secondary rounded-xl! py-2.5 text-sm font-semibold flex items-center justify-center gap-2.5 cursor-pointer"
-                    (onClick)="entrarComGoogle()" [disabled]="loading">
-                    <img src="https://developers.google.com/identity/images/branding_guideline_sample_lt_rd_sl.svg" alt="Google Icon" class="w-4 h-4" />
-                    <span>Continuar com Google</span>
-                </p-button>
+
+                @if (googleButtonState() !== 'unavailable') {
+                    <div class="flex items-center gap-3 my-0.5">
+                        <div class="h-px flex-1 bg-slate-200"></div>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">ou</span>
+                        <div class="h-px flex-1 bg-slate-200"></div>
+                    </div>
+
+                    <div class="w-full min-h-[40px] flex items-center justify-center relative">
+                        <div #googleBtnContainer class="w-full flex justify-center" [class.hidden]="googleButtonState() !== 'ready'"></div>
+
+                        @if (googleButtonState() === 'loading') {
+                            <div class="w-full h-[40px] rounded bg-slate-100 border border-slate-200 animate-pulse"></div>
+                        }
+                    </div>
+                }
             </div>
         </form>
         <div class="hidden sm:block h-2"></div>
@@ -157,3 +168,13 @@
         </div>
     }
 </div>
+
+<app-google-consent-dialog
+    [visible]="googleConsentVisible()"
+    [nome]="googleConsentDados()?.nome ?? ''"
+    [email]="googleConsentDados()?.email ?? ''"
+    [fotoUrl]="googleConsentDados()?.fotoUrl ?? null"
+    [loading]="loading"
+    (confirm)="confirmarTermosGoogle()"
+    (cancel)="cancelarTermosGoogle()">
+</app-google-consent-dialog>

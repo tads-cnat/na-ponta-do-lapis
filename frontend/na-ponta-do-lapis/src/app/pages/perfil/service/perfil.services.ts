@@ -30,4 +30,8 @@ export class UsuarioService {
     // Agora dispara direto para /usuario/me sem precisar caçar ou passar IDs!
     return this.http.patch<Usuario>(`${this.BASE_URL}/usuario/me`, dadosParciais);
   }
+
+  public excluirMinhaConta(): Observable<void> {
+    return this.http.delete<void>(`${this.BASE_URL}/usuario/me`);
+  }
 }
