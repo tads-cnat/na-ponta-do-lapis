@@ -8,6 +8,8 @@ import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
 import com.npl.na_ponta_do_lapis.web.exception.BusinessException;
 import com.npl.na_ponta_do_lapis.web.exception.UsuarioIdNaoExisteException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -22,6 +24,9 @@ public class UsuarioService {
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
     private final UsuarioAuthCacheService usuarioAuthCacheService;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     public UsuarioService(
             UsuarioRepository usuarioRepository,
@@ -95,7 +100,82 @@ public class UsuarioService {
     public void excluirUsuario(Long id){
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new UsuarioIdNaoExisteException("Usuário de ID " + id + " não existe!"));
-        usuarioRepository.delete(usuario);
+        excluirUsuarioEDependencias(usuario);
+    }
+
+    /**
+     * Exclui definitivamente a conta do usuário autenticado e todos os seus dados pessoais/financeiros (LGPD Art. 18, VI).
+     */
+    @Transactional
+    public void excluirContaLogada() {
+        Usuario usuario = buscarUsuarioLogado();
+        excluirUsuarioEDependencias(usuario);
+    }
+
+    private void excluirUsuarioEDependencias(Usuario usuario) {
+        Long uid = usuario.getId();
+        Long familiaId = usuario.getFamilia() != null ? usuario.getFamilia().getId() : null;
+
+        if (entityManager != null) {
+            entityManager.createQuery(
+                    "DELETE FROM AporteMeta a WHERE a.usuario.id = :uid OR a.meta.usuario.id = :uid OR a.contaOrigem.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM Transacao t WHERE t.contaFinanceira.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM Meta m WHERE m.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM ContaFinanceira c WHERE c.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM ChaveIaUsuario c WHERE c.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM UsuarioPluggyIntegracao p WHERE p.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM UsuarioConquista uc WHERE uc.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM Notificacao n WHERE n.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM Convite c WHERE c.destinatario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM Marcador m WHERE m.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM Post p WHERE p.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+
+            if (familiaId != null) {
+                usuario.setFamilia(null);
+                usuarioRepository.saveAndFlush(usuario);
+                Long restantes = entityManager.createQuery(
+                        "SELECT COUNT(u) FROM Usuario u WHERE u.familia.id = :fid", Long.class)
+                        .setParameter("fid", familiaId)
+                        .getSingleResult();
+                if (restantes != null && restantes == 0L) {
+                    entityManager.createQuery("DELETE FROM Convite c WHERE c.familia.id = :fid")
+                            .setParameter("fid", familiaId)
+                            .executeUpdate();
+                    entityManager.createQuery("DELETE FROM Familia f WHERE f.id = :fid")
+                            .setParameter("fid", familiaId)
+                            .executeUpdate();
+                }
+            }
+
+            entityManager.createQuery("DELETE FROM Usuario u WHERE u.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+        } else {
+            usuarioRepository.delete(usuario);
+        }
+
         usuarioAuthCacheService.evictPorUsuario(usuario);
     }
 

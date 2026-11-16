@@ -135,14 +135,11 @@
         </div>
 
         <!-- MODO RECOLHIDO (Informativo e seguro) -->
-        <div *ngIf="!editandoSenha" class="flex items-center justify-between p-4 rounded-xl bg-slate-50/70 border border-slate-100">
+        <div *ngIf="!editandoSenha" class="flex items-center p-4 rounded-xl bg-slate-50/70 border border-slate-100">
           <div class="flex items-center gap-3">
             <span class="text-sm font-mono font-bold tracking-widest text-slate-600">••••••••••••</span>
             <span class="text-xs text-slate-400 font-normal">Sua senha está configurada</span>
           </div>
-          <span class="text-xs font-semibold text-[#6214CC] cursor-pointer hover:underline" (click)="alternarEdicaoSenha()">
-            Trocar senha
-          </span>
         </div>
 
         <!-- MODO EXPANDIDO (Exatamente 3 campos: Senha atual 1x, Nova senha, Confirmar nova senha) -->
@@ -203,7 +200,96 @@
         </div>
       </div>
 
+      <!-- 4. Privacidade e Conta (LGPD) -->
+      <div class="p-6 rounded-2xl bg-white border border-slate-100/90 shadow-2xs flex flex-col gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center gap-2.5">
+            <div class="w-8 h-8 rounded-xl bg-[#6214CC]/10 text-[#6214CC] flex items-center justify-center">
+              <i class="pi pi-shield text-sm"></i>
+            </div>
+            <div>
+              <h2 class="text-slate-900 font-bold text-base sm:text-lg tracking-tight">Privacidade e Conta</h2>
+              <p class="text-xs text-slate-400 font-normal m-0">Gerencie seus direitos de privacidade e exclusão da conta.</p>
+            </div>
+          </div>
+          <a href="/landing-page/termos_privacidade.pdf" target="_blank"
+             class="text-xs font-semibold text-[#7843CD] hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 self-start sm:self-auto">
+            Termos e Política de Privacidade
+          </a>
+        </div>
+
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">
+          <div>
+            <p class="text-sm font-semibold text-slate-800 m-0">Excluir conta</p>
+            <p class="text-xs text-slate-500 m-0">Remove permanentemente seus dados pessoais e registros financeiros.</p>
+          </div>
+          <p-button
+            type="button"
+            label="Excluir conta"
+            icon="pi pi-trash"
+            severity="danger"
+            [outlined]="true"
+            size="small"
+            styleClass="rounded-xl! text-xs px-4 py-2"
+            (onClick)="abrirModalExclusaoConta()">
+          </p-button>
+        </div>
+      </div>
+
     </div>
+
+    <p-dialog
+      header="Excluir conta definitivamente"
+      [(visible)]="exibirModalExclusaoConta"
+      [modal]="true"
+      [draggable]="false"
+      [resizable]="false"
+      [closable]="!excluindoConta"
+      [style]="{ width: '95vw', maxWidth: '440px' }">
+      <div class="flex flex-col gap-3 pt-1">
+        <div class="p-3 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-800 leading-relaxed">
+          Esta ação é <strong>irreversível</strong>. Todos os seus lançamentos, contas bancárias vinculadas, metas, marcadores e notificações serão apagados imediatamente.
+        </div>
+
+        <div class="flex flex-col gap-1.5">
+          <label class="text-xs font-semibold text-slate-700">
+            Digite <strong>EXCLUIR</strong> para confirmar:
+          </label>
+          <input
+            pInputText
+            [(ngModel)]="confirmacaoExclusaoTexto"
+            [ngModelOptions]="{ standalone: true }"
+            placeholder="EXCLUIR"
+            class="w-full text-sm rounded-xl!" />
+        </div>
+      </div>
+
+      <ng-template pTemplate="footer">
+        <div class="flex justify-end gap-2 w-full pt-1">
+          <p-button
+            type="button"
+            label="Cancelar"
+            severity="secondary"
+            [outlined]="true"
+            size="small"
+            styleClass="rounded-xl! text-xs"
+            [disabled]="excluindoConta"
+            (onClick)="exibirModalExclusaoConta = false">
+          </p-button>
+          <p-button
+            type="button"
+            label="Confirmar exclusão"
+            icon="pi pi-trash"
+            severity="danger"
+            size="small"
+            styleClass="rounded-xl! text-xs"
+            [disabled]="confirmacaoExclusaoTexto.trim().toUpperCase() !== 'EXCLUIR' || excluindoConta"
+            [loading]="excluindoConta"
+            (onClick)="confirmarExclusaoConta()">
+          </p-button>
+        </div>
+      </ng-template>
+    </p-dialog>
 
     <!-- Barra de Ações com Salvar e Descartar -->
     <app-botoes-acao 
