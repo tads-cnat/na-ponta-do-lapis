@@ -16,7 +16,7 @@ describe('TemaComponentComponent', () => {
     component = fixture.componentInstance;
     TestBed.inject(ThemeService).definir('claro');
     await fixture.whenStable();
-  });
+  }); 
 
   it('should create', () => {
     expect(component).toBeTruthy();
