@@ -8,9 +8,12 @@ import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
+import com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
+import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryQuestionResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
 import com.npl.na_ponta_do_lapis.web.exception.EmailJaCadastradoException;
@@ -39,12 +42,17 @@ import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Locale;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
 public class AuthServiceImpl implements AuthService{
 
     private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
+        private static final int MAX_RECOVERY_ATTEMPTS = 5;
+        private static final Duration RECOVERY_LOCK_DURATION = Duration.ofMinutes(15);
+        private static final String RECOVERY_FAILURE_MESSAGE = "Não foi possível confirmar os dados informados.";
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UsuarioRepository usuarioRepository;
@@ -52,6 +60,7 @@ public class AuthServiceImpl implements AuthService{
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
+    private final UsuarioAuthCacheService usuarioAuthCacheService;
 
     @Value("${google.client-id:}")
     private String googleClientId;
@@ -61,22 +70,33 @@ public class AuthServiceImpl implements AuthService{
                            UsuarioRepository usuarioRepository,
                            ContaFinanceiraRepository contaFinanceiraRepository,
                            PasswordEncoder passwordEncoder) {
-        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, new ObjectMapper());
+        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, new ObjectMapper(), null);
     }
 
-    @Autowired
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            JwtUtil jwtUtil,
                            UsuarioRepository usuarioRepository,
                            ContaFinanceiraRepository contaFinanceiraRepository,
                            PasswordEncoder passwordEncoder,
                            ObjectMapper objectMapper) {
+        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, objectMapper, null);
+    }
+
+                @Autowired
+                public AuthServiceImpl(AuthenticationManager authenticationManager,
+                           JwtUtil jwtUtil,
+                           UsuarioRepository usuarioRepository,
+                           ContaFinanceiraRepository contaFinanceiraRepository,
+                           PasswordEncoder passwordEncoder,
+                           ObjectMapper objectMapper,
+                           UsuarioAuthCacheService usuarioAuthCacheService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.usuarioRepository = usuarioRepository;
         this.contaFinanceiraRepository = contaFinanceiraRepository;
         this.passwordEncoder = passwordEncoder;
         this.objectMapper = objectMapper;
+        this.usuarioAuthCacheService = usuarioAuthCacheService;
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(8))
                 .build();
@@ -162,6 +182,18 @@ public class AuthServiceImpl implements AuthService{
         novoUsuario.setVersaoTermos(Usuario.VERSAO_TERMOS_ATUAL);
         novoUsuario.setTermosAceitosEm(LocalDateTime.now());
 
+        String pergunta = registerRequestDTO.perguntaSeguranca() == null ? "" : registerRequestDTO.perguntaSeguranca().trim();
+        String resposta = registerRequestDTO.respostaSeguranca() == null ? "" : registerRequestDTO.respostaSeguranca().trim();
+        if (!pergunta.isBlank() || !resposta.isBlank()) {
+            if (pergunta.isBlank() || resposta.isBlank()) {
+                throw new IllegalArgumentException("Informe a pergunta e a resposta de segurança.");
+            }
+            novoUsuario.setPerguntaSeguranca(pergunta);
+            novoUsuario.setRespostaSegurancaHash(passwordEncoder.encode(normalizarRespostaSeguranca(resposta)));
+            novoUsuario.setTentativasRecuperacao(0);
+            novoUsuario.setRecuperacaoBloqueadaAte(null);
+        }
+
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
         criarContaPadrao(usuarioSalvo);
     }
@@ -240,6 +272,75 @@ public class AuthServiceImpl implements AuthService{
         contaPadrao.setMoeda(Moeda.BRL);
         contaPadrao.setUsuario(usuarioSalvo);
         contaFinanceiraRepository.save(contaPadrao);
+    }
+
+    @Override
+    public PasswordRecoveryQuestionResponseDTO getRecoveryQuestion(String email) {
+        String normalizedEmail = email == null ? "" : email.strip();
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailIgnoreCase(normalizedEmail);
+        String question = usuarioOptional
+                .map(Usuario::getPerguntaSeguranca)
+                .filter(value -> value != null && !value.isBlank())
+                .orElse(null);
+        return new PasswordRecoveryQuestionResponseDTO(RECOVERY_FAILURE_MESSAGE, question);
+    }
+
+    @Override
+    @Transactional
+    public Long verifyRecoveryAnswer(String email, String answer) {
+        String normalizedEmail = email == null ? "" : email.strip();
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailIgnoreCase(normalizedEmail);
+        if (usuarioOptional.isEmpty()) {
+            return null;
+        }
+
+        Usuario usuario = usuarioOptional.get();
+        Instant now = Instant.now();
+        Instant blockedUntil = usuario.getRecuperacaoBloqueadaAte();
+        if (blockedUntil != null && blockedUntil.isAfter(now)) {
+            return null;
+        }
+        if (blockedUntil != null) {
+            usuario.setTentativasRecuperacao(0);
+            usuario.setRecuperacaoBloqueadaAte(null);
+        }
+
+        String answerHash = usuario.getRespostaSegurancaHash();
+        if (answerHash == null || answer == null
+                || !passwordEncoder.matches(normalizarRespostaSeguranca(answer), answerHash)) {
+            int failedAttempts = usuario.getTentativasRecuperacao() + 1;
+            usuario.setTentativasRecuperacao(failedAttempts);
+            if (failedAttempts >= MAX_RECOVERY_ATTEMPTS) {
+                usuario.setRecuperacaoBloqueadaAte(now.plus(RECOVERY_LOCK_DURATION));
+            }
+            usuarioRepository.save(usuario);
+            return null;
+        }
+
+        usuario.setTentativasRecuperacao(0);
+        usuario.setRecuperacaoBloqueadaAte(null);
+        usuarioRepository.save(usuario);
+        return usuario.getId();
+    }
+
+    @Override
+    @Transactional
+    public void changePasswordAfterRecovery(Long userId, String newPassword) {
+        Usuario usuario = usuarioRepository.findById(userId)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
+        usuario.setSenha(passwordEncoder.encode(newPassword));
+        usuario.setSenhaTemporaria(false);
+        usuario.setSenhaTemporariaExpiraEm(null);
+        usuario.setTentativasRecuperacao(0);
+        usuario.setRecuperacaoBloqueadaAte(null);
+        usuarioRepository.save(usuario);
+        if (usuarioAuthCacheService != null) {
+            usuarioAuthCacheService.evictPorUsuario(usuario);
+        }
+    }
+
+    private String normalizarRespostaSeguranca(String answer) {
+        return answer.trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
     }
 
     @Override
