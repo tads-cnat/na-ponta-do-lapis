@@ -207,34 +207,33 @@ export class CarrosselCartoesComponent {
     return temBancoDetectado(nome);
   }
 
-  obterClassesPosicao(i: number): Record<string, boolean> {
+  obterClassesPosicao(i: number): string {
     // 1 conta: sempre no centro absoluto
     if (this.contas.length <= 1) {
-      return {
-        'z-30 opacity-100 scale-100 translate-x-0': true
-      };
+      return 'z-30 opacity-100 scale-100 translate-x-0';
     }
 
     // 2 contas: a selecionada fica no centro e a outra fica à direita
     if (this.contas.length === 2) {
-      const isSelecionada = i === this.contaSelecionadaIndex;
-      return {
-        'z-30 opacity-100 scale-100 translate-x-0': isSelecionada,
-        'z-20 opacity-40 scale-90 translate-x-[72%]': !isSelecionada
-      };
+      return i === this.contaSelecionadaIndex
+        ? 'z-30 opacity-100 scale-100 translate-x-0'
+        : 'z-20 opacity-40 scale-90 translate-x-[72%]';
     }
 
     // 3 ou mais contas: carrossel tridimensional com esquerda, centro e direita
-    const isSelecionada = i === this.contaSelecionadaIndex;
-    const isAnterior = i === this.contaAnterior;
-    const isProxima = i === this.contaProxima;
+    if (i === this.contaSelecionadaIndex) {
+      return 'z-30 opacity-100 scale-100 translate-x-0';
+    }
 
-    return {
-      'z-30 opacity-100 scale-100 translate-x-0': isSelecionada,
-      'z-20 opacity-40 scale-90 -translate-x-[72%]': isAnterior && !isSelecionada,
-      'z-20 opacity-40 scale-90 translate-x-[72%]': isProxima && !isSelecionada && !isAnterior,
-      'opacity-0 scale-75 pointer-events-none': !isSelecionada && !isAnterior && !isProxima
-    };
+    if (i === this.contaAnterior) {
+      return 'z-20 opacity-40 scale-90 -translate-x-[72%]';
+    }
+
+    if (i === this.contaProxima) {
+      return 'z-20 opacity-40 scale-90 translate-x-[72%]';
+    }
+
+    return 'opacity-0 scale-75 pointer-events-none';
   }
 
   obterCorCartao(conta: IContas): string {
