@@ -46,7 +46,6 @@ interface CategoriaVM {
   imports: [ChartModule],
   template: `
     <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col">
-
       <div class="mb-5">
         <h2 class="section-title-npl">
           Gastos por categoria
