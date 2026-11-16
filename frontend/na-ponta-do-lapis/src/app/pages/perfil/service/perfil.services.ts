@@ -16,6 +16,10 @@ export class UsuarioService {
     return this.http.get<Usuario>(`${this.BASE_URL}/usuario/me`);
   }
 
+  public obterPerguntaSeguranca(): Observable<{ perguntaSeguranca: string | null }> {
+    return this.http.get<{ perguntaSeguranca: string | null }>(`${this.BASE_URL}/usuario/me/security-question`);
+  }
+
   /**
    * Dispara uma atualização parcial via PATCH para o ID especificado na URL
    */

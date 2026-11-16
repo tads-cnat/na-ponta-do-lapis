@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.service.auth;
 
 import com.npl.na_ponta_do_lapis.entity.ContaFinanceira;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
@@ -20,6 +21,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -60,7 +62,9 @@ class AuthServiceImplTest {
                 jwtUtil,
                 usuarioRepository,
                 contaFinanceiraRepository,
-                passwordEncoder
+                passwordEncoder,
+                new ObjectMapper(),
+                null
         );
     }
 
@@ -73,7 +77,9 @@ class AuthServiceImplTest {
                 "joaosilva",
                 "84999999999",
                 "senha123",
-                "senha123"
+            "senha123",
+            null,
+            null
         );
 
         when(usuarioRepository.findByEmailIgnoreCase("joao@email.com")).thenReturn(Optional.empty());
@@ -113,7 +119,9 @@ class AuthServiceImplTest {
                 "mariasilva",
                 null,
                 "senha123",
-                "senha123"
+            "senha123",
+            null,
+            null
         );
 
         when(usuarioRepository.findByEmailIgnoreCase("maria@email.com")).thenReturn(Optional.of(new Usuario()));
@@ -135,7 +143,9 @@ class AuthServiceImplTest {
                 "mariasilva",
                 null,
                 "senha123",
-                "outraSenha"
+            "outraSenha",
+            null,
+            null
         );
 
         when(usuarioRepository.findByEmailIgnoreCase("maria@email.com")).thenReturn(Optional.empty());
@@ -148,34 +158,88 @@ class AuthServiceImplTest {
         verify(contaFinanceiraRepository, never()).save(any());
     }
 
-        @Test
-        @DisplayName("Deve gerar senha temporária e marcar o usuário para redefinição")
-        void deveGerarSenhaTemporaria() {
-                Usuario usuario = new Usuario();
-                usuario.setEmail("ana@email.com");
-                when(usuarioRepository.findByEmailIgnoreCase("ana@email.com")).thenReturn(Optional.of(usuario));
-                when(passwordEncoder.encode(anyString())).thenReturn("senha-criptografada");
-                when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    @Test
+    @DisplayName("Deve retornar pergunta cadastrada sem retornar a resposta")
+    void deveBuscarPerguntaSeguranca() {
+        Usuario usuario = usuarioComPerguntaSeguranca();
+        when(usuarioRepository.findByEmailIgnoreCase("ana@email.com")).thenReturn(Optional.of(usuario));
 
-                var response = authService.recoverPassword(" ana@email.com ");
+        var response = authService.getRecoveryQuestion("ana@email.com");
 
-                assertThat(response.temporaryPassword()).startsWith("NPL-");
-                assertThat(usuario.getPassword()).isEqualTo("senha-criptografada");
-                assertThat(usuario.isSenhaTemporaria()).isTrue();
-                verify(usuarioRepository).save(usuario);
+        assertThat(response.question()).isEqualTo("Qual era o nome do seu primeiro animal?");
+        verify(usuarioRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve autorizar a recuperação quando a resposta estiver correta")
+    void deveAutorizarRecuperacaoComRespostaCorreta() {
+        Usuario usuario = usuarioComPerguntaSeguranca();
+        when(usuarioRepository.findByEmailIgnoreCase("ana@email.com")).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("luna", "resposta-hash")).thenReturn(true);
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Long authorizedUserId = authService.verifyRecoveryAnswer(" ana@email.com ", "  Luna  ");
+
+        assertThat(authorizedUserId).isEqualTo(42L);
+        assertThat(usuario.isSenhaTemporaria()).isFalse();
+        verify(passwordEncoder).matches("luna", "resposta-hash");
+        verify(usuarioRepository).save(usuario);
+        verify(passwordEncoder, never()).encode(anyString());
+    }
+
+    @Test
+    @DisplayName("Não deve autorizar recuperação para resposta incorreta")
+    void naoDeveAutorizarRecuperacaoComRespostaIncorreta() {
+        Usuario usuario = usuarioComPerguntaSeguranca();
+        when(usuarioRepository.findByEmailIgnoreCase("ana@email.com")).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("errada", "resposta-hash")).thenReturn(false);
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Long authorizedUserId = authService.verifyRecoveryAnswer("ana@email.com", "errada");
+
+        assertThat(authorizedUserId).isNull();
+        assertThat(usuario.isSenhaTemporaria()).isFalse();
+        assertThat(usuario.getTentativasRecuperacao()).isEqualTo(1);
+        verify(passwordEncoder, never()).encode(anyString());
+    }
+
+    @Test
+    @DisplayName("Deve bloquear a recuperação após cinco respostas incorretas")
+    void deveBloquearRecuperacaoAposCincoTentativas() {
+        Usuario usuario = usuarioComPerguntaSeguranca();
+        when(usuarioRepository.findByEmailIgnoreCase("ana@email.com")).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("errada", "resposta-hash")).thenReturn(false);
+        when(usuarioRepository.save(any(Usuario.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        for (int attempt = 0; attempt < 5; attempt++) {
+            authService.verifyRecoveryAnswer("ana@email.com", "errada");
         }
+        Long blockedUserId = authService.verifyRecoveryAnswer("ana@email.com", "luna");
 
-        @Test
-        @DisplayName("Não deve revelar se um e-mail não cadastrado existe")
-        void deveResponderGenericamenteParaEmailNaoCadastrado() {
-                when(usuarioRepository.findByEmailIgnoreCase("naoexiste@email.com")).thenReturn(Optional.empty());
+        assertThat(blockedUserId).isNull();
+        assertThat(usuario.getTentativasRecuperacao()).isEqualTo(5);
+        assertThat(usuario.getRecuperacaoBloqueadaAte()).isAfter(Instant.now());
+        verify(passwordEncoder, times(5)).matches("errada", "resposta-hash");
+    }
 
-                var response = authService.recoverPassword("naoexiste@email.com");
+    @Test
+    @DisplayName("Não deve retornar pergunta para e-mail sem pergunta configurada")
+    void naoDeveRetornarPerguntaSemConfiguracao() {
+        Usuario usuario = new Usuario();
+        when(usuarioRepository.findByEmailIgnoreCase("ana@email.com")).thenReturn(Optional.of(usuario));
 
-                assertThat(response.temporaryPassword()).isNull();
-                assertThat(response.message()).contains("Se o e-mail estiver cadastrado");
-                verify(usuarioRepository, never()).save(any());
-                verify(passwordEncoder, never()).encode(anyString());
-        }
+        var response = authService.getRecoveryQuestion("ana@email.com");
+
+        assertThat(response.question()).isNull();
+    }
+
+    private Usuario usuarioComPerguntaSeguranca() {
+        Usuario usuario = new Usuario();
+        usuario.setId(42L);
+        usuario.setEmail("ana@email.com");
+        usuario.setPerguntaSeguranca("Qual era o nome do seu primeiro animal?");
+        usuario.setRespostaSegurancaHash("resposta-hash");
+        return usuario;
+    }
 }
 

@@ -8,7 +8,7 @@
     [class.auth-slot-inactive]="isSignup()"
     [attr.aria-hidden]="isSignup()"
     [attr.inert]="isSignup() ? '' : null">
-    <app-login [embedded]="true"></app-login>
+    <app-login [embedded]="true" [initialRecovery]="isRecovery()"></app-login>
   </div>
 
   <!-- Coluna direita: Cadastro -->

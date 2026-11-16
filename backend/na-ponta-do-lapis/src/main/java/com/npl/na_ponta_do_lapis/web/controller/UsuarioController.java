@@ -4,6 +4,7 @@ import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.service.UsuarioService;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.UsuarioSecurityQuestionDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
 import java.util.Date;
@@ -46,6 +47,15 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
     public ResponseEntity<UsuarioResponseDTO> me(){
         return ResponseEntity.ok(new UsuarioResponseDTO(usuarioService.buscarUsuarioLogado()));
+    }
+
+    @Operation(summary = "Pergunta de segurança do usuário logado")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @GetMapping("/me/security-question")
+    public ResponseEntity<UsuarioSecurityQuestionDTO> securityQuestionMe() {
+        return ResponseEntity.ok(new UsuarioSecurityQuestionDTO(
+                usuarioService.buscarUsuarioLogado().getPerguntaSeguranca()
+        ));
     }
 
     @PreAuthorize("hasRole('ADMIN_SITE') or (hasRole('USUARIO') and #id == authentication.principal.id)")

@@ -25,7 +25,13 @@ public record RegisterRequestDTO(
 
         String password,
 
-        String passwordConfirmation
+        String passwordConfirmation,
+
+        @Size(max = 200, message = "A pergunta de segurança deve ter até 200 caracteres.")
+        String perguntaSeguranca,
+
+        @Size(max = 200, message = "A resposta de segurança deve ter até 200 caracteres.")
+        String respostaSeguranca
 ) {
     public Usuario toEntity(){
         Usuario usuario = new Usuario();

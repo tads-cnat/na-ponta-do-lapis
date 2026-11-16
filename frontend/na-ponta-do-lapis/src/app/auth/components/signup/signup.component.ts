@@ -19,6 +19,7 @@ export class SignupComponent {
   registerForm: FormGroup;
   termos: any = null;
   loading = false;
+  showSecurityFields = false;
 
   constructor(
     private fb: FormBuilder,
@@ -31,35 +32,74 @@ export class SignupComponent {
       username: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(200)]],
       telefone: ['', [Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
-      passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]]
+      passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]],
+      perguntaSeguranca: ['', [Validators.maxLength(200)]],
+      respostaSeguranca: ['', [Validators.maxLength(200)]]
     })
+  }
+
+  public get botaoPrincipalLabel(): string {
+    return this.showSecurityFields ? 'Finalizar cadastro' : 'Criar Conta';
   }
 
   public register() {
     if (this.loading) return;
+
+    if (!this.showSecurityFields) {
+      const formValido = this.registerForm.get('nomeCompleto')?.valid
+        && this.registerForm.get('email')?.valid
+        && this.registerForm.get('username')?.valid
+        && this.registerForm.get('password')?.valid
+        && this.registerForm.get('passwordConfirmation')?.valid
+        && !!this.termos;
+
+      if (!formValido) {
+        this.registerForm.markAllAsTouched();
+        return;
+      }
+
+      this.showSecurityFields = true;
+      return;
+    }
+
+    const pergunta = (this.registerForm.get('perguntaSeguranca')?.value ?? '').trim();
+    const resposta = (this.registerForm.get('respostaSeguranca')?.value ?? '').trim();
+
+    if (!pergunta || !resposta) {
+      this.registerForm.get('perguntaSeguranca')?.markAsTouched();
+      this.registerForm.get('respostaSeguranca')?.markAsTouched();
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Pergunta e resposta obrigatórias',
+        detail: 'Defina uma pergunta e a resposta para recuperar sua conta.',
+        life: 3000
+      });
+      return;
+    }
+
     this.loading = true;
 
     this.authService.register(this.registerForm.value).subscribe({
-      next: (res: any) => {
+      next: () => {
         this.loading = false;
         this.messageService.add({
           severity: 'success',
           summary: 'Registro Realizado com sucesso!',
           life: 2000
-        })
+        });
         setTimeout(() => {
           this.router.navigate(["/login"]);
         }, 2000);
       },
-      error: (error: Error) => {
+      error: () => {
         this.loading = false;
         this.messageService.add({
           severity: 'warn',
           summary: 'Erro ao registrar usuário',
           life: 2000
-        })
+        });
       }
-    })
+    });
   }
 
   public cadastrarComGoogle() {

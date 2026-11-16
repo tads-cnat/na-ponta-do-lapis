@@ -17,12 +17,16 @@ import { MascoteEstado, MascoteLoginComponent } from '../mascote-login/mascote-l
 })
 export class LoginComponent {
   @Input() embedded = false;
+  @Input() initialRecovery = false;
 
   loginForm: FormGroup;
   recoveryForm: FormGroup;
   loading = false;
-  recoveryLoading = false;
-  showRecoveryForm = false;
+  readonly recoveryLoading = signal(false);
+  readonly recoveryQuestionLoading = signal(false);
+  readonly showRecoveryForm = signal(false);
+  readonly recoveryQuestion = signal<string | null>(null);
+  readonly recoveryStep = signal<'answer' | 'new-password' | 'complete'>('answer');
   readonly mascoteEstado = signal<MascoteEstado>('idle');
   readonly lookProgress = signal(0.5);
   readonly isHoveringSubmit = signal(false);
@@ -33,50 +37,145 @@ export class LoginComponent {
       password: [null, [Validators.required]]
     });
     this.recoveryForm = this.fb.group({
-      email: [null, [Validators.required, Validators.email]]
+      email: [null, [Validators.required, Validators.email]],
+      answer: [''],
+      newPassword: [''],
+      confirmNewPassword: ['']
     });
   }
 
+  ngOnInit(): void {
+    if (this.initialRecovery) {
+      this.showRecoveryForm.set(true);
+      this.recoveryStep.set('answer');
+      this.recoveryQuestion.set(null);
+      this.recoveryForm.reset({ email: '', answer: '', newPassword: '', confirmNewPassword: '' });
+    }
+  }
+
   public toggleRecoveryForm(): void {
-    this.showRecoveryForm = !this.showRecoveryForm;
-    if (this.showRecoveryForm) {
+    this.showRecoveryForm.update(show => !show);
+    this.recoveryQuestion.set(null);
+    this.recoveryStep.set('answer');
+    if (this.showRecoveryForm()) {
       const email = (this.loginForm.get('email')?.value as string) ?? '';
-      this.recoveryForm.reset({ email: email.includes('@') ? email.trim() : '' });
+      this.recoveryForm.reset({
+        email: email.includes('@') ? email.trim() : '',
+        answer: '',
+        newPassword: '',
+        confirmNewPassword: ''
+      });
     } else {
       this.recoveryForm.reset();
     }
   }
 
-  public recoverPassword(): void {
-    if (this.recoveryForm.invalid || this.recoveryLoading) return;
+  public buscarPerguntaSeguranca(): void {
+    const emailControl = this.recoveryForm.get('email');
+    if (!emailControl || emailControl.invalid || this.recoveryQuestionLoading()) {
+      emailControl?.markAsTouched();
+      return;
+    }
 
-    this.recoveryLoading = true;
-    const email = (this.recoveryForm.get('email')?.value as string).trim();
-    this.authService.recoverPassword(email).subscribe({
+    this.recoveryQuestionLoading.set(true);
+    const email = (emailControl.value as string).trim();
+    this.authService.getRecoveryQuestion(email).subscribe({
       next: (response) => {
-        this.recoveryLoading = false;
-        const detail = response.temporaryPassword
-          ? `${response.message} Senha temporária: ${response.temporaryPassword}`
-          : response.message;
-        this.messageService.add({
-          severity: 'success',
-          summary: 'Recuperação de senha',
-          detail,
-          life: 7000
-        });
-        this.showRecoveryForm = false;
-        this.recoveryForm.reset();
+        this.recoveryQuestionLoading.set(false);
+        if (!response.question) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Não foi possível iniciar a recuperação',
+            detail: 'Confira o e-mail ou configure uma pergunta de segurança no perfil.',
+            life: 5000
+          });
+          return;
+        }
+        this.recoveryQuestion.set(response.question);
       },
       error: () => {
-        this.recoveryLoading = false;
+        this.recoveryQuestionLoading.set(false);
         this.messageService.add({
           severity: 'error',
-          summary: 'Não foi possível recuperar a senha',
-          detail: 'Verifique o e-mail informado e tente novamente.',
+          summary: 'Não foi possível buscar a pergunta',
+          detail: 'Tente novamente mais tarde.',
           life: 4000
         });
       }
     });
+  }
+
+  public confirmarRespostaSeguranca(): void {
+    const email = (this.recoveryForm.get('email')?.value as string ?? '').trim();
+    const answer = (this.recoveryForm.get('answer')?.value as string ?? '').trim();
+    if (!this.recoveryQuestion() || !email || !answer || this.recoveryLoading()) return;
+
+    this.recoveryLoading.set(true);
+    this.authService.verifyRecoveryAnswer(email, answer).subscribe({
+      next: (response) => {
+        this.recoveryLoading.set(false);
+        if (!response.verified) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Resposta incorreta',
+            detail: 'Confira a resposta e tente novamente.',
+            life: 4000
+          });
+          return;
+        }
+        this.recoveryStep.set('new-password');
+        this.recoveryForm.patchValue({ newPassword: '', confirmNewPassword: '' });
+      },
+      error: () => {
+        this.recoveryLoading.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Não foi possível confirmar a resposta',
+          detail: 'Tente novamente.',
+          life: 4000
+        });
+      }
+    });
+  }
+
+  public salvarNovaSenhaRecuperada(): void {
+    const newPassword = (this.recoveryForm.get('newPassword')?.value as string ?? '').trim();
+    const confirmNewPassword = (this.recoveryForm.get('confirmNewPassword')?.value as string ?? '').trim();
+    if (newPassword.length < 6 || newPassword !== confirmNewPassword || this.recoveryLoading()) return;
+
+    this.recoveryLoading.set(true);
+    this.authService.changeRecoveredPassword(newPassword).subscribe({
+      next: (response) => {
+        this.recoveryLoading.set(false);
+        this.recoveryStep.set('complete');
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Senha alterada',
+          detail: response.message,
+          life: 5000
+        });
+      },
+      error: () => {
+        this.recoveryLoading.set(false);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Sessão de recuperação expirada',
+          detail: 'Inicie a recuperação novamente.',
+          life: 5000
+        });
+        this.recoveryStep.set('answer');
+        this.recoveryQuestion.set(null);
+      }
+    });
+  }
+
+  public voltarParaLoginAposRecuperacao(): void {
+    const email = (this.recoveryForm.get('email')?.value as string ?? '').trim();
+    this.showRecoveryForm.set(false);
+    this.recoveryQuestion.set(null);
+    this.recoveryStep.set('answer');
+    this.recoveryForm.reset();
+    if (email) this.loginForm.patchValue({ email, password: '' });
   }
 
   public login() {

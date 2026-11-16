@@ -6,6 +6,7 @@ import com.npl.na_ponta_do_lapis.entity.enums.Moeda;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 
 import java.io.Serializable;
+import java.time.Instant;
 
 /**
  * Representação serializável e imutável dos dados de autenticação do usuário para cache distribuído.
@@ -18,6 +19,7 @@ public record UsuarioAuthCacheDTO(
         String username,
         String senha,
         boolean senhaTemporaria,
+        Instant senhaTemporariaExpiraEm,
         String telefone,
         String fotoPerfil,
         Papel papel,
@@ -36,6 +38,7 @@ public record UsuarioAuthCacheDTO(
                 usuario.getUsername(),
                 usuario.getPassword(),
                 usuario.isSenhaTemporaria(),
+                usuario.getSenhaTemporariaExpiraEm(),
                 usuario.getTelefone(),
                 usuario.getFotoPerfil(),
                 usuario.getPapel(),
@@ -54,6 +57,7 @@ public record UsuarioAuthCacheDTO(
         usuario.setUsername(username);
         usuario.setSenha(senha);
         usuario.setSenhaTemporaria(senhaTemporaria);
+        usuario.setSenhaTemporariaExpiraEm(senhaTemporariaExpiraEm);
         usuario.setTelefone(telefone);
         usuario.setFotoPerfil(fotoPerfil);
         usuario.setPapel(papel);

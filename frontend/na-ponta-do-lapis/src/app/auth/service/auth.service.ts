@@ -57,10 +57,26 @@ export class AuthService {
     return this.http.post<SignupRequest>(`${this.BASE_URL}/auth/register`, signupRequest)
   }
 
-  public recoverPassword(email: string): Observable<{ message: string; temporaryPassword?: string | null }> {
-    return this.http.post<{ message: string; temporaryPassword?: string | null }>(
-      `${this.BASE_URL}/auth/recover-password`,
+  public getRecoveryQuestion(email: string): Observable<{ message: string; question: string | null }> {
+    return this.http.post<{ message: string; question: string | null }>(
+      `${this.BASE_URL}/auth/recover-password/question`,
       { email }
+    );
+  }
+
+  public verifyRecoveryAnswer(email: string, answer: string): Observable<{ verified: boolean; message: string }> {
+    return this.http.post<{ verified: boolean; message: string }>(
+      `${this.BASE_URL}/auth/recover-password`,
+      { email, answer },
+      { withCredentials: true }
+    );
+  }
+
+  public changeRecoveredPassword(newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.BASE_URL}/auth/recover-password/change`,
+      { newPassword },
+      { withCredentials: true }
     );
   }
 

@@ -14,7 +14,12 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 
 
 export function authRouteMatcher(segments: UrlSegment[]): UrlMatchResult | null {
-    if (segments.length === 1 && (segments[0].path === 'login' || segments[0].path === 'signup')) {
+    if (segments.length === 1 && (
+        segments[0].path === 'login' ||
+        segments[0].path === 'signup' ||
+        segments[0].path === 'recuperar-senha' ||
+        segments[0].path === 'redefinir-senha'
+    )) {
         return { consumed: segments };
     }
     return null;
