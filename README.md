@@ -7,54 +7,35 @@ Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma
 
 ## Visão Geral do Sistema
 
-<table width="100%">
-  <tr>
-    <th width="50%" align="center">Landing Page</th>
-    <th width="50%" align="center">Dashboard</th>
-  </tr>
-  <tr>
-    <td width="50%" align="center"><img src="doc/imagens/LandingPage.png" alt="Landing Page" width="100%" /></td>
-    <td width="50%" align="center"><img src="doc/imagens/Dashboard.png" alt="Dashboard" width="100%" /></td>
-  </tr>
-</table>
+### Landing Page
+![Landing Page](doc/imagens/LandingPage.png)
+
+### Dashboard
+![Dashboard](doc/imagens/Dashboard.png)
 
 <details>
 <summary>📸 Ver todas as telas do sistema (Login, Cadastro, Transações, Contas, Metas, Família e Configurações)</summary>
 
-<br>
+### Login
+![Login](doc/imagens/Login.png)
 
-<table width="100%">
-  <tr>
-    <th width="50%" align="center">Login</th>
-    <th width="50%" align="center">Cadastro</th>
-  </tr>
-  <tr>
-    <td width="50%" align="center"><img src="doc/imagens/Login.png" alt="Login" width="100%" /></td>
-    <td width="50%" align="center"><img src="doc/imagens/Cadastro.png" alt="Cadastro" width="100%" /></td>
-  </tr>
-  <tr>
-    <th width="50%" align="center">Transações</th>
-    <th width="50%" align="center">Contas</th>
-  </tr>
-  <tr>
-    <td width="50%" align="center"><img src="doc/imagens/Transacao.png" alt="Transação" width="100%" /></td>
-    <td width="50%" align="center"><img src="doc/imagens/Contas.png" alt="Conta" width="100%" /></td>
-  </tr>
-  <tr>
-    <th width="50%" align="center">Metas</th>
-    <th width="50%" align="center">Família</th>
-  </tr>
-  <tr>
-    <td width="50%" align="center"><img src="doc/imagens/Metas.png" alt="Metas" width="100%" /></td>
-    <td width="50%" align="center"><img src="doc/imagens/Familia.png" alt="Família" width="100%" /></td>
-  </tr>
-  <tr>
-    <th colspan="2" align="center">Configurações e Integrações</th>
-  </tr>
-  <tr>
-    <td colspan="2" align="center"><img src="doc/imagens/Configuracao.png" alt="Configuração" width="50%" /></td>
-  </tr>
-</table>
+### Cadastro
+![Cadastro](doc/imagens/Cadastro.png)
+
+### Transações
+![Transação](doc/imagens/Transacao.png)
+
+### Contas
+![Conta](doc/imagens/Contas.png)
+
+### Metas
+![Metas](doc/imagens/Metas.png)
+
+### Família
+![Família](doc/imagens/Familia.png)
+
+### Configurações e Integrações
+![Configuração](doc/imagens/Configuracao.png)
 
 </details>
 
