@@ -18,7 +18,8 @@ export function authRouteMatcher(segments: UrlSegment[]): UrlMatchResult | null 
         segments[0].path === 'login' ||
         segments[0].path === 'signup' ||
         segments[0].path === 'recuperar-senha' ||
-        segments[0].path === 'redefinir-senha'
+        segments[0].path === 'redefinir-senha' ||
+        segments[0].path === 'confirmar-email'
     )) {
         return { consumed: segments };
     }

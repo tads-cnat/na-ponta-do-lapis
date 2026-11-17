@@ -94,8 +94,12 @@
             </div>
           </p-popover>
 
-          <div><img class="h-11 w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}"></div>
-          <div><p class="nomeUser font-medium text-slate-800">{{ nomeUsuario }}</p></div>
+          <a routerLink="/app/perfil"
+             title="Ir para o perfil"
+             class="flex items-center gap-2.5 cursor-pointer no-underline hover:opacity-80 transition-opacity focus:outline-none">
+            <img class="h-11 w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}">
+            <p class="nomeUser font-medium text-slate-800 m-0">{{ nomeUsuario }}</p>
+          </a>
           <div>
               <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]! text-xs rounded-xl" (onClick)="logout()">Sair<i class="pi pi-sign-out "></i></p-button>
           </div>

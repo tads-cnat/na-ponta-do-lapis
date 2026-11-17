@@ -56,23 +56,20 @@ public class Usuario implements UserDetails {
     @Column(name = "senha", nullable = false, length = 254)
     private String senha;
 
-    @Column(name = "senha_temporaria", nullable = false, columnDefinition = "boolean default false")
-    private boolean senhaTemporaria;
+    @Column(name = "recuperacao_token_hash", length = 64)
+    private String recuperacaoTokenHash;
 
-    @Column(name = "senha_temporaria_expira_em")
-    private Instant senhaTemporariaExpiraEm;
+    @Column(name = "recuperacao_token_expira_em")
+    private Instant recuperacaoTokenExpiraEm;
 
-    @Column(name = "pergunta_seguranca", length = 200)
-    private String perguntaSeguranca;
+    @Column(name = "email_verificado")
+    private Boolean emailVerificado;
 
-    @Column(name = "resposta_seguranca_hash", length = 254)
-    private String respostaSegurancaHash;
+    @Column(name = "email_verificacao_token_hash", length = 64)
+    private String emailVerificacaoTokenHash;
 
-    @Column(name = "tentativas_recuperacao", nullable = false, columnDefinition = "integer default 0")
-    private int tentativasRecuperacao;
-
-    @Column(name = "recuperacao_bloqueada_ate")
-    private Instant recuperacaoBloqueadaAte;
+    @Column(name = "email_verificacao_expira_em")
+    private Instant emailVerificacaoExpiraEm;
 
     @Column(name = "telefone", nullable = true, length = 20)
     private String telefone;
@@ -193,8 +190,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return !senhaTemporaria || senhaTemporariaExpiraEm != null
-            && senhaTemporariaExpiraEm.isAfter(Instant.now());
+        return UserDetails.super.isCredentialsNonExpired();
     }
 
     @Override
@@ -210,53 +206,48 @@ public class Usuario implements UserDetails {
         this.senha = senha;
     }
 
-    public boolean isSenhaTemporaria() {
-        return senhaTemporaria;
+    public String getRecuperacaoTokenHash() {
+        return recuperacaoTokenHash;
     }
 
-    public void setSenhaTemporaria(boolean senhaTemporaria) {
-        this.senhaTemporaria = senhaTemporaria;
+    public void setRecuperacaoTokenHash(String recuperacaoTokenHash) {
+        this.recuperacaoTokenHash = recuperacaoTokenHash;
     }
 
-    public Instant getSenhaTemporariaExpiraEm() {
-        return senhaTemporariaExpiraEm;
+    public Instant getRecuperacaoTokenExpiraEm() {
+        return recuperacaoTokenExpiraEm;
     }
 
-    public void setSenhaTemporariaExpiraEm(Instant senhaTemporariaExpiraEm) {
-        this.senhaTemporariaExpiraEm = senhaTemporariaExpiraEm;
+    public void setRecuperacaoTokenExpiraEm(Instant recuperacaoTokenExpiraEm) {
+        this.recuperacaoTokenExpiraEm = recuperacaoTokenExpiraEm;
     }
 
-    public String getPerguntaSeguranca() {
-        return perguntaSeguranca;
+    public Boolean getEmailVerificado() {
+        return emailVerificado;
     }
 
-    public void setPerguntaSeguranca(String perguntaSeguranca) {
-        this.perguntaSeguranca = perguntaSeguranca;
+    public void setEmailVerificado(Boolean emailVerificado) {
+        this.emailVerificado = emailVerificado;
     }
 
-    @JsonIgnore
-    public String getRespostaSegurancaHash() {
-        return respostaSegurancaHash;
+    public boolean isEmailVerificado() {
+        return !Boolean.FALSE.equals(emailVerificado);
     }
 
-    public void setRespostaSegurancaHash(String respostaSegurancaHash) {
-        this.respostaSegurancaHash = respostaSegurancaHash;
+    public String getEmailVerificacaoTokenHash() {
+        return emailVerificacaoTokenHash;
     }
 
-    public int getTentativasRecuperacao() {
-        return tentativasRecuperacao;
+    public void setEmailVerificacaoTokenHash(String emailVerificacaoTokenHash) {
+        this.emailVerificacaoTokenHash = emailVerificacaoTokenHash;
     }
 
-    public void setTentativasRecuperacao(int tentativasRecuperacao) {
-        this.tentativasRecuperacao = tentativasRecuperacao;
+    public Instant getEmailVerificacaoExpiraEm() {
+        return emailVerificacaoExpiraEm;
     }
 
-    public Instant getRecuperacaoBloqueadaAte() {
-        return recuperacaoBloqueadaAte;
-    }
-
-    public void setRecuperacaoBloqueadaAte(Instant recuperacaoBloqueadaAte) {
-        this.recuperacaoBloqueadaAte = recuperacaoBloqueadaAte;
+    public void setEmailVerificacaoExpiraEm(Instant emailVerificacaoExpiraEm) {
+        this.emailVerificacaoExpiraEm = emailVerificacaoExpiraEm;
     }
 
     public String getFotoPerfil() {

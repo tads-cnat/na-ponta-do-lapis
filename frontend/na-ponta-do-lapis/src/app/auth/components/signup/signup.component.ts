@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, ElementRef, Input, ViewChild, signal } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, Input, ViewChild, inject, signal } from '@angular/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
@@ -23,11 +23,17 @@ function senhasIguaisValidator(group: AbstractControl): ValidationErrors | null 
   styleUrl: './signup.component.css',
 })
 export class SignupComponent implements AfterViewInit {
+  private readonly destroyRef = inject(DestroyRef);
   @Input() embedded = false;
   @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
   registerForm: FormGroup;
   loading = false;
-  showSecurityFields = false;
+  readonly verificationPending = signal(false);
+  readonly registeredEmail = signal('');
+  readonly resendLoading = signal(false);
+  readonly resendCooldownSeconds = signal(0);
+  private resendAttempts = 0;
+  private resendTimerId: ReturnType<typeof setInterval> | null = null;
   readonly googleButtonState = signal<'loading' | 'ready' | 'unavailable'>('loading');
   readonly googleConsentVisible = signal(false);
   readonly googleConsentDados = signal<{ idToken: string; nome: string; email: string; fotoUrl: string | null } | null>(null);
@@ -44,10 +50,9 @@ export class SignupComponent implements AfterViewInit {
       telefone: ['', [Validators.maxLength(20)]],
       password: ['', [Validators.required, Validators.minLength(8)]],
       passwordConfirmation: ['', [Validators.required, Validators.minLength(8)]],
-      perguntaSeguranca: ['', [Validators.maxLength(200)]],
-      respostaSeguranca: ['', [Validators.maxLength(200)]],
       termos: [false, [Validators.requiredTrue]]
     }, { validators: senhasIguaisValidator });
+    this.destroyRef.onDestroy(() => this.limparTimerReenvio());
   }
 
   ngAfterViewInit(): void {
@@ -63,42 +68,14 @@ export class SignupComponent implements AfterViewInit {
   }
 
   public get botaoPrincipalLabel(): string {
-    return this.showSecurityFields ? 'Finalizar cadastro' : 'Criar Conta';
+    return 'Criar Conta';
   }
 
   public register() {
     if (this.loading) return;
 
-    if (!this.showSecurityFields) {
-      const formValido = this.registerForm.get('nomeCompleto')?.valid
-        && this.registerForm.get('email')?.valid
-        && this.registerForm.get('username')?.valid
-        && this.registerForm.get('password')?.valid
-        && this.registerForm.get('passwordConfirmation')?.valid
-        && this.registerForm.get('termos')?.valid
-        && !this.registerForm.hasError('senhasDiferentes');
-
-      if (!formValido) {
-        this.registerForm.markAllAsTouched();
-        return;
-      }
-
-      this.showSecurityFields = true;
-      return;
-    }
-
-    const pergunta = (this.registerForm.get('perguntaSeguranca')?.value ?? '').trim();
-    const resposta = (this.registerForm.get('respostaSeguranca')?.value ?? '').trim();
-
-    if (!pergunta || !resposta) {
-      this.registerForm.get('perguntaSeguranca')?.markAsTouched();
-      this.registerForm.get('respostaSeguranca')?.markAsTouched();
-      this.messageService.add({
-        severity: 'warn',
-        summary: 'Pergunta e resposta obrigatórias',
-        detail: 'Defina uma pergunta e a resposta para recuperar sua conta.',
-        life: 3000
-      });
+    if (this.registerForm.invalid) {
+      this.registerForm.markAllAsTouched();
       return;
     }
 
@@ -108,8 +85,15 @@ export class SignupComponent implements AfterViewInit {
     const payload = { ...dados, termosAceitos: !!termos };
 
     this.authService.register(payload).subscribe({
-      next: () => {
+      next: (res) => {
         this.loading = false;
+        if (res?.requiresEmailVerification) {
+          this.registeredEmail.set(((dados.email as string) ?? '').trim());
+          this.verificationPending.set(true);
+          this.resendAttempts = 1;
+          this.iniciarTimerReenvio(60);
+          return;
+        }
         this.messageService.add({
           severity: 'success',
           summary: 'Registro realizado com sucesso!',
@@ -130,6 +114,65 @@ export class SignupComponent implements AfterViewInit {
         });
       }
     });
+  }
+
+  public reenviarConfirmacaoEmail(): void {
+    const email = this.registeredEmail();
+    if (!email || this.resendLoading() || this.resendCooldownSeconds() > 0) {
+      return;
+    }
+    this.resendLoading.set(true);
+    this.authService.resendVerificationEmail(email).subscribe({
+      next: (res) => {
+        this.resendLoading.set(false);
+        this.resendAttempts += 1;
+        const steps = [60, 120, 300];
+        const wait = steps[Math.min(this.resendAttempts - 1, steps.length - 1)];
+        this.iniciarTimerReenvio(wait);
+        this.messageService.add({
+          severity: 'success',
+          summary: 'E-mail reenviado',
+          detail: res.message,
+          life: 4000
+        });
+      },
+      error: (err) => {
+        this.resendLoading.set(false);
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Atenção',
+          detail: err?.error?.message || 'Não foi possível reenviar o e-mail agora.',
+          life: 4000
+        });
+      }
+    });
+  }
+
+  public irParaLogin(): void {
+    this.limparTimerReenvio();
+    this.verificationPending.set(false);
+    this.router.navigate(['/login']);
+  }
+
+  private iniciarTimerReenvio(segundos: number): void {
+    this.limparTimerReenvio();
+    this.resendCooldownSeconds.set(segundos);
+    this.resendTimerId = setInterval(() => {
+      const restante = this.resendCooldownSeconds() - 1;
+      if (restante <= 0) {
+        this.limparTimerReenvio();
+      } else {
+        this.resendCooldownSeconds.set(restante);
+      }
+    }, 1000);
+  }
+
+  private limparTimerReenvio(): void {
+    if (this.resendTimerId !== null) {
+      clearInterval(this.resendTimerId);
+      this.resendTimerId = null;
+    }
+    this.resendCooldownSeconds.set(0);
   }
 
   private autenticarComGoogleToken(idToken: string, termosAceitos = false) {

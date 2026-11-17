@@ -1,7 +1,7 @@
 import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../auth/service/auth.service';
 import { StorageService } from '../../auth/service/storage.service';
 import { TokenPayload } from '../../model/IToken.models';
@@ -16,7 +16,7 @@ import { TemaComponentComponentSimples } from '../../pages/perfil/components/tem
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, PrimeNGModuleModule, IconComponent, MedalhaConquistaComponent, TemaComponentComponentSimples], 
+  imports: [CommonModule, PrimeNGModuleModule, RouterLink, IconComponent, MedalhaConquistaComponent, TemaComponentComponentSimples], 
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })

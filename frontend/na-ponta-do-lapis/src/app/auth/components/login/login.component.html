@@ -2,14 +2,26 @@
 <div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
     <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
         <div class="w-full flex items-center justify-start">
-            <button type="button" (click)="voltar()"
-                class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl transition-all cursor-pointer">
-                <i class="pi pi-arrow-left text-xs"></i>
-                <span>Voltar ao início</span>
-            </button>
+            @if (!showRecoveryForm()) {
+                <button type="button" (click)="voltar()"
+                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl transition-all cursor-pointer">
+                    <i class="pi pi-arrow-left text-xs"></i>
+                    <span>Voltar ao início</span>
+                </button>
+            } @else {
+                <button type="button" (click)="voltarParaLoginAposRecuperacao()"
+                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl transition-all cursor-pointer">
+                    <i class="pi pi-arrow-left text-xs"></i>
+                    <span>Voltar para entrar</span>
+                </button>
+            }
         </div>
 
-        <form [formGroup]="loginForm" (ngSubmit)="login()" class="npl-page-enter flex flex-col gap-3 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
+        <form [formGroup]="loginForm" (ngSubmit)="login()"
+            [class.hidden]="showRecoveryForm()"
+            [attr.aria-hidden]="showRecoveryForm()"
+            [attr.inert]="showRecoveryForm() ? '' : null"
+            class="npl-page-enter flex flex-col gap-3 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
             <app-mascote-login
                 [compact]="false"
                 [estado]="mascoteEstado()"
@@ -50,7 +62,7 @@
                 <div class="flex items-center justify-between">
                     <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
                     <button type="button" class="text-[#7843CD] cursor-pointer font-semibold hover:text-[#6214CC] hover:underline text-xs"
-                        (click)="toggleRecoveryForm()">Esqueceu a sua senha?</button>
+                        (click)="abrirRecuperacao()">Esqueceu a sua senha?</button>
                 </div>
                 <div #passwordWrapper
                     (focusin)="onPasswordFocus(passwordWrapper)"
@@ -65,68 +77,6 @@
                         <small class="text-[#C24E4E] text-xs font-semibold leading-4">A senha é obrigatória.</small>
                     }
                 </div>
-
-                @if (showRecoveryForm()) {
-                    <div class="mt-2 rounded-xl border border-slate-200 bg-slate-50 p-3" [formGroup]="recoveryForm">
-                        <label for="recover-email" class="mb-2 block text-xs font-semibold text-slate-700">Informe seu e-mail cadastrado</label>
-                        <input id="recover-email" pInputText type="email" formControlName="email" placeholder="nome@gmail.com"
-                            class="w-full text-sm rounded-xl!"
-                            [class.ng-invalid]="recoveryForm.get('email')?.invalid && recoveryForm.get('email')?.touched"
-                            [class.ng-dirty]="recoveryForm.get('email')?.touched" />
-                        @if (recoveryForm.get('email')?.invalid && recoveryForm.get('email')?.touched) {
-                            <small class="mt-1 block text-[#C24E4E] text-xs font-semibold">Informe um e-mail válido.</small>
-                        }
-                        @if (!recoveryQuestion()) {
-                            <p-button type="button" label="Buscar pergunta de segurança"
-                                styleClass="w-full mt-3 btn-npl-primary rounded-xl!"
-                            [disabled]="recoveryForm.get('email')?.invalid || recoveryQuestionLoading()"
-                            [loading]="recoveryQuestionLoading()"
-                                (onClick)="buscarPerguntaSeguranca()" />
-                        } @else if (recoveryStep() === 'answer') {
-                            <div class="mt-3 rounded-lg bg-white border border-slate-200 p-3">
-                            <p class="text-sm font-semibold text-slate-700 m-0">{{ recoveryQuestion() }}</p>
-                                <label for="recover-answer" class="mt-3 mb-2 block text-xs font-semibold text-slate-700">Sua resposta</label>
-                                <input id="recover-answer" pInputText type="text" formControlName="answer"
-                                    placeholder="Digite sua resposta" class="w-full text-sm rounded-xl!" />
-                            </div>
-                            <p-button type="button" label="Confirmar resposta"
-                                styleClass="w-full mt-3 btn-npl-primary rounded-xl!"
-                                [disabled]="!recoveryForm.get('answer')?.value?.trim() || recoveryLoading()"
-                                [loading]="recoveryLoading()"
-                                (onClick)="confirmarRespostaSeguranca()" />
-                            } @else if (recoveryStep() === 'new-password') {
-                            <div class="mt-3 rounded-lg bg-white border border-slate-200 p-3 flex flex-col gap-3">
-                                <label for="recovery-new-password" class="block text-xs font-semibold text-slate-700">Nova senha</label>
-                                <p-password id="recovery-new-password" formControlName="newPassword"
-                                    [toggleMask]="true" [feedback]="false" placeholder="Mínimo de 6 caracteres"
-                                    inputStyleClass="w-full text-sm rounded-xl!" styleClass="w-full" />
-                                <label for="recovery-confirm-password" class="block text-xs font-semibold text-slate-700">Confirmar nova senha</label>
-                                <p-password id="recovery-confirm-password" formControlName="confirmNewPassword"
-                                    [toggleMask]="true" [feedback]="false" placeholder="Digite novamente a nova senha"
-                                    inputStyleClass="w-full text-sm rounded-xl!" styleClass="w-full" />
-                                @if (recoveryForm.get('newPassword')?.value && recoveryForm.get('newPassword')?.value.length < 6) {
-                                    <small class="text-[#C24E4E] text-xs font-semibold">A senha deve ter pelo menos 6 caracteres.</small>
-                                }
-                                @if (recoveryForm.get('confirmNewPassword')?.value && recoveryForm.get('newPassword')?.value !== recoveryForm.get('confirmNewPassword')?.value) {
-                                    <small class="text-[#C24E4E] text-xs font-semibold">As senhas não conferem.</small>
-                                }
-                            </div>
-                            <p-button type="button" label="Salvar nova senha"
-                                styleClass="w-full mt-3 btn-npl-primary rounded-xl!"
-                                [disabled]="(recoveryForm.get('newPassword')?.value || '').length < 6 || recoveryForm.get('newPassword')?.value !== recoveryForm.get('confirmNewPassword')?.value || recoveryLoading()"
-                                [loading]="recoveryLoading()"
-                                (onClick)="salvarNovaSenhaRecuperada()" />
-                        } @else {
-                            <div class="mt-3 rounded-lg bg-white border border-slate-200 p-4 text-center">
-                                <i class="pi pi-check-circle text-2xl text-green-600"></i>
-                                <p class="mt-2 mb-0 text-sm font-semibold text-slate-700">Senha alterada com sucesso. Agora entre com a nova senha.</p>
-                            </div>
-                            <p-button type="button" label="Voltar para entrar"
-                                styleClass="w-full mt-3 btn-npl-primary rounded-xl!"
-                                (onClick)="voltarParaLoginAposRecuperacao()" />
-                        }
-                    </div>
-                }
             </div>
 
             <div class="flex flex-col gap-2.5 mt-2">
@@ -153,6 +103,187 @@
                 }
             </div>
         </form>
+
+        @if (showRecoveryForm()) {
+            @if (unverifiedEmail()) {
+                <div class="npl-page-enter flex flex-col gap-5 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Confirme seu e-mail</h1>
+                        <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+                            Sua conta ainda precisa de confirmação para liberar o acesso. Verifique o link enviado para <strong class="text-slate-800">{{ unverifiedEmail() }}</strong>.
+                        </p>
+                    </div>
+
+                    <div class="rounded-xl bg-slate-50 border border-slate-200/80 px-4 py-3 text-xs text-slate-600 leading-relaxed">
+                        Não encontrou? Verifique sua caixa de spam ou lixo eletrônico antes de solicitar um novo envio.
+                    </div>
+
+                    <p-button type="button"
+                        [label]="resendCooldownSeconds() > 0 ? 'Reenviar em ' + resendCooldownSeconds() + 's' : 'Reenviar e-mail de confirmação'"
+                        icon="pi pi-refresh"
+                        styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                        [disabled]="resendVerificationLoading() || resendCooldownSeconds() > 0"
+                        [loading]="resendVerificationLoading()"
+                        (onClick)="reenviarConfirmacaoNoLogin()" />
+
+                    <p class="text-center text-sm text-slate-500 m-0">
+                        <button type="button" (click)="voltarParaLoginAposRecuperacao()"
+                            class="text-[#7843CD] font-bold hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 cursor-pointer bg-transparent border-0 p-0">
+                            Voltar para entrar
+                        </button>
+                    </p>
+                </div>
+            } @else if (emailVerificationState() !== 'none') {
+                <div class="npl-page-enter flex flex-col gap-5 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
+                    @if (emailVerificationState() === 'verifying') {
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Confirmando seu e-mail...</h1>
+                            <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+                                Aguarde um instante enquanto validamos seu link de confirmação.
+                            </p>
+                        </div>
+                    } @else if (emailVerificationState() === 'success') {
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">E-mail confirmado!</h1>
+                            <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+                                {{ emailVerificationMessage() }}
+                            </p>
+                        </div>
+                        <p-button type="button" label="Ir para o login" icon="pi pi-sign-in"
+                            styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                            (onClick)="voltarParaLoginAposRecuperacao()" />
+                    } @else {
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Link inválido ou expirado</h1>
+                            <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+                                {{ emailVerificationMessage() }}
+                            </p>
+                        </div>
+                        <p-button type="button" label="Ir para o login" icon="pi pi-sign-in"
+                            styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                            (onClick)="voltarParaLoginAposRecuperacao()" />
+                    }
+                </div>
+            } @else {
+            <form [formGroup]="recoveryForm"
+                (ngSubmit)="recoveryStep() === 'new-password' ? salvarNovaSenhaRecuperada() : enviarEmailRecuperacao()"
+                class="npl-page-enter flex flex-col gap-5 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
+
+                @if (recoveryStep() === 'email') {
+                    @if (!recoveryEmailSent()) {
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Esqueceu sua senha?</h1>
+                            <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+                                Informe o e-mail da sua conta e enviaremos um link para você criar uma nova senha.
+                            </p>
+                        </div>
+
+                        <div class="flex flex-col gap-1.5">
+                            <label for="recover-email" class="text-xs font-semibold text-slate-700">E-mail cadastrado</label>
+                            <input id="recover-email" pInputText type="email" autocomplete="email" formControlName="email" placeholder="nome@gmail.com"
+                                class="w-full text-sm rounded-xl!"
+                                [class.ng-invalid]="recoveryForm.get('email')?.invalid && recoveryForm.get('email')?.touched"
+                                [class.ng-dirty]="recoveryForm.get('email')?.touched" />
+                            <div class="min-h-4 flex items-center">
+                                @if (recoveryForm.get('email')?.invalid && recoveryForm.get('email')?.touched) {
+                                    <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe um e-mail válido.</small>
+                                }
+                            </div>
+                        </div>
+
+                        <p-button type="submit" label="Enviar link de recuperação" icon="pi pi-envelope"
+                            styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                            [disabled]="recoveryForm.get('email')?.invalid || recoveryLoading()"
+                            [loading]="recoveryLoading()" />
+
+                        <p class="text-center text-sm text-slate-500 m-0">
+                            Lembrou sua senha?
+                            <button type="button" (click)="voltarParaLoginAposRecuperacao()"
+                                class="text-[#7843CD] font-bold hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 ml-1 cursor-pointer bg-transparent border-0 p-0">
+                                Voltar para entrar
+                            </button>
+                        </p>
+                    } @else {
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Verifique seu e-mail</h1>
+                            <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+                                Se existir uma conta associada a <strong class="text-slate-800">{{ recoveryForm.get('email')?.value }}</strong>, enviamos um link de redefinição válido por 15 minutos.
+                            </p>
+                        </div>
+
+                        <div class="rounded-xl bg-slate-50 border border-slate-200/80 px-4 py-3 text-xs text-slate-600 leading-relaxed">
+                            Não encontrou? Verifique sua caixa de spam ou lixo eletrônico antes de solicitar um novo envio.
+                        </div>
+
+                        <p-button type="button"
+                            [label]="resendCooldownSeconds() > 0 ? 'Reenviar em ' + resendCooldownSeconds() + 's' : 'Reenviar link'"
+                            icon="pi pi-refresh"
+                            styleClass="w-full btn-npl-secondary rounded-xl! py-3 text-sm font-bold"
+                            [disabled]="recoveryForm.get('email')?.invalid || recoveryLoading() || resendCooldownSeconds() > 0"
+                            [loading]="recoveryLoading()"
+                            (onClick)="enviarEmailRecuperacao()" />
+
+                        <div class="flex items-center justify-center gap-3 text-xs font-semibold text-slate-500">
+                            <button type="button" (click)="usarOutroEmailRecuperacao()"
+                                class="text-[#7843CD] hover:text-[#6214CC] hover:underline cursor-pointer bg-transparent border-0 p-0">
+                                Usar outro e-mail
+                            </button>
+                            <span aria-hidden="true">·</span>
+                            <button type="button" (click)="voltarParaLoginAposRecuperacao()"
+                                class="text-slate-600 hover:text-slate-900 hover:underline cursor-pointer bg-transparent border-0 p-0">
+                                Voltar para entrar
+                            </button>
+                        </div>
+                    }
+                } @else if (recoveryStep() === 'new-password') {
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Criar nova senha</h1>
+                        <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+                            Escolha uma nova senha com pelo menos 6 caracteres para acessar sua conta.
+                        </p>
+                    </div>
+
+                    <div class="flex flex-col gap-3">
+                        <div class="flex flex-col gap-1.5">
+                            <label for="recovery-new-password" class="text-xs font-semibold text-slate-700">Nova senha</label>
+                            <p-password id="recovery-new-password" autocomplete="new-password" formControlName="newPassword"
+                                [toggleMask]="true" [feedback]="false" placeholder="Mínimo de 6 caracteres"
+                                inputStyleClass="w-full text-sm rounded-xl!" styleClass="w-full" />
+                            @if (recoveryForm.get('newPassword')?.touched && (recoveryForm.get('newPassword')?.value || '').length < 6) {
+                                <small class="text-[#C24E4E] text-xs font-semibold">A senha deve ter pelo menos 6 caracteres.</small>
+                            }
+                        </div>
+
+                        <div class="flex flex-col gap-1.5">
+                            <label for="recovery-confirm-password" class="text-xs font-semibold text-slate-700">Confirmar nova senha</label>
+                            <p-password id="recovery-confirm-password" autocomplete="new-password" formControlName="confirmNewPassword"
+                                [toggleMask]="true" [feedback]="false" placeholder="Digite novamente a nova senha"
+                                inputStyleClass="w-full text-sm rounded-xl!" styleClass="w-full" />
+                            @if (recoveryForm.get('confirmNewPassword')?.touched && recoveryForm.get('newPassword')?.value !== recoveryForm.get('confirmNewPassword')?.value) {
+                                <small class="text-[#C24E4E] text-xs font-semibold">As senhas não conferem.</small>
+                            }
+                        </div>
+                    </div>
+
+                    <p-button type="submit" label="Redefinir senha" icon="pi pi-check"
+                        styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                        [disabled]="(recoveryForm.get('newPassword')?.value || '').length < 6 || recoveryForm.get('newPassword')?.value !== recoveryForm.get('confirmNewPassword')?.value || recoveryLoading()"
+                        [loading]="recoveryLoading()" />
+                } @else {
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Senha redefinida!</h1>
+                        <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+                            Sua senha foi alterada com sucesso. Agora você já pode acessar sua conta.
+                        </p>
+                    </div>
+
+                    <p-button type="button" label="Ir para o login" icon="pi pi-sign-in"
+                        styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                        (onClick)="voltarParaLoginAposRecuperacao()" />
+                }
+            </form>
+            }
+        }
         <div class="hidden sm:block h-2"></div>
     </div>
 

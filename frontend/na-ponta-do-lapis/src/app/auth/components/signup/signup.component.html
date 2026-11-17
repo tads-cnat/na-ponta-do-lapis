@@ -11,7 +11,11 @@
       </button>
     </div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="register()" class="npl-page-enter flex flex-col gap-3 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
+    <form [formGroup]="registerForm" (ngSubmit)="register()"
+          [class.hidden]="verificationPending()"
+          [attr.aria-hidden]="verificationPending()"
+          [attr.inert]="verificationPending() ? '' : null"
+          class="npl-page-enter flex flex-col gap-3 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
       <div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Criar Conta</h1>
         <p class="text-sm text-slate-500 mt-1">
@@ -112,36 +116,6 @@
         </label>
       </div>
 
-      @if (showSecurityFields) {
-        <div class="flex flex-col gap-2 pt-1 border-t border-slate-200 mt-1">
-          <div class="flex flex-col gap-1.5">
-            <label for="perguntaSeguranca" class="text-xs font-semibold text-slate-700">Pergunta de segurança</label>
-            <input id="perguntaSeguranca" pInputText placeholder="Ex: Qual era o nome do seu primeiro animal?" formControlName="perguntaSeguranca"
-                   class="w-full text-sm rounded-xl!"
-                   [class.ng-invalid]="registerForm.get('perguntaSeguranca')?.invalid && registerForm.get('perguntaSeguranca')?.touched"
-                   [class.ng-dirty]="registerForm.get('perguntaSeguranca')?.touched">
-            <div class="min-h-4 flex items-center">
-              @if (registerForm.get('perguntaSeguranca')?.invalid && registerForm.get('perguntaSeguranca')?.touched) {
-                <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe uma pergunta válida.</small>
-              }
-            </div>
-          </div>
-
-          <div class="flex flex-col gap-1.5">
-            <label for="respostaSeguranca" class="text-xs font-semibold text-slate-700">Resposta de segurança</label>
-            <input id="respostaSeguranca" pInputText placeholder="Sua resposta secreta" formControlName="respostaSeguranca"
-                   class="w-full text-sm rounded-xl!"
-                   [class.ng-invalid]="registerForm.get('respostaSeguranca')?.invalid && registerForm.get('respostaSeguranca')?.touched"
-                   [class.ng-dirty]="registerForm.get('respostaSeguranca')?.touched">
-            <div class="min-h-4 flex items-center">
-              @if (registerForm.get('respostaSeguranca')?.invalid && registerForm.get('respostaSeguranca')?.touched) {
-                <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe uma resposta válida.</small>
-              }
-            </div>
-          </div>
-        </div>
-      }
-
       <div class="flex flex-col gap-2 mt-2">
         <p-button type="submit" [label]="botaoPrincipalLabel" icon="pi pi-user-plus"
                   styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
@@ -149,6 +123,33 @@
                   [loading]="loading"></p-button>
       </div>
     </form>
+
+    @if (verificationPending()) {
+      <div class="npl-page-enter flex flex-col gap-5 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
+        <div>
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Verifique seu e-mail</h1>
+          <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+            Enviamos um link de confirmação para <strong class="text-slate-800">{{ registeredEmail() }}</strong>. Confirme seu e-mail para liberar o acesso à sua conta.
+          </p>
+        </div>
+
+        <div class="rounded-xl bg-slate-50 border border-slate-200/80 px-4 py-3 text-xs text-slate-600 leading-relaxed">
+          O link é válido por 24 horas. Não encontrou? Verifique sua caixa de spam ou lixo eletrônico.
+        </div>
+
+        <p-button type="button"
+                  [label]="resendCooldownSeconds() > 0 ? 'Reenviar em ' + resendCooldownSeconds() + 's' : 'Reenviar link de confirmação'"
+                  icon="pi pi-refresh"
+                  styleClass="w-full btn-npl-secondary rounded-xl! py-3 text-sm font-bold"
+                  [disabled]="resendLoading() || resendCooldownSeconds() > 0"
+                  [loading]="resendLoading()"
+                  (onClick)="reenviarConfirmacaoEmail()"></p-button>
+
+        <p-button type="button" label="Ir para o login" icon="pi pi-sign-in"
+                  styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                  (onClick)="irParaLogin()"></p-button>
+      </div>
+    }
 
     <div class="hidden sm:block h-2"></div>
   </div>

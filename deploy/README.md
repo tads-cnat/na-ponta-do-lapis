@@ -8,7 +8,7 @@ Documentação prática de como a nossa infraestrutura e a esteira de CI/CD fora
 
 A aplicação roda em uma **VPS na Oracle Cloud** (12 GB RAM / 2 vCPUs) utilizando o **Coolify** como orquestrador, com o **Cloudflare** na borda (CDN, WAF, proxy reverso e proteção de IP) e o **Traefik** atuando como proxy reverso, Load Balancer e gerenciador de certificados SSL/HTTPS automáticos.
 
-O modelo oficial de deploy utiliza **[docker-compose.deploy.yml](docker-compose.deploy.yml)** com os bancos desacoplados: **PostgreSQL 16** e **Redis 7** rodam como serviços gerenciados nativamente pelo Coolify (garantindo backups automáticos agendados pelo painel), enquanto cada ambiente (Homologação e Produção) sobe seu stack com **múltiplas réplicas do Backend** (`deploy.replicas`) e **Frontend (Nginx)**.
+O modelo oficial de deploy utiliza **[docker-compose.homolog.yml](docker-compose.homolog.yml)** (Homologação, 1 réplica) e **[docker-compose.prod.yml](docker-compose.prod.yml)** (Produção, 2 réplicas) com os bancos desacoplados: **PostgreSQL 16** e **Redis 7** rodam como serviços gerenciados nativamente pelo Coolify (garantindo backups automáticos agendados pelo painel), enquanto cada ambiente sobe seu stack com **Backend** e **Frontend (Nginx)**.
 
 ```mermaid
 flowchart LR
@@ -145,7 +145,7 @@ Como todas as versões no Docker Hub são salvas com tags fixas (`1.0.0`, `1.0.1
 
 ## 5. Como o Compose de Deploy está estruturado
 
-O arquivo oficial **[docker-compose.deploy.yml](docker-compose.deploy.yml)** é usado tanto em Homologação quanto em Produção no Coolify:
+Os arquivos oficiais **[docker-compose.homolog.yml](docker-compose.homolog.yml)** (Homologação) e **[docker-compose.prod.yml](docker-compose.prod.yml)** (Produção) definem os stacks no Coolify:
 
 - **PostgreSQL 16 e Redis 7 (gerenciados no Coolify):** Criados separadamente como bancos nativos do Coolify para permitir backups automáticos, retenção configurável e métricas independentes do ciclo de deploy da aplicação.
 - **`backend` (Spring Boot):** Sobe com `deploy.replicas: ${BACKEND_REPLICAS:-2}` e `mem_limit: 1024m`, conectado à rede interna `default` (junto do frontend) e à rede externa `coolify` (para Traefik, PostgreSQL e Redis). O Traefik só envia tráfego quando `/api/actuator/health` retornar `UP`.
@@ -181,7 +181,7 @@ O Coolify só entrega ao container as variáveis que aparecem no bloco `environm
 | `CLOUDINARY_CLOUD_NAME` / `CLOUDINARY_API_KEY` / `CLOUDINARY_API_SECRET` | credenciais | credenciais | Upload de imagens/comprovantes |
 | `GOOGLE_CLIENT_ID` | Client ID OAuth (opcional) | Client ID OAuth (opcional) | Client ID do Google Identity Services para login/cadastro com Google (vazio desativa o botão) |
 
-> **Importante:** o [docker-compose.deploy.yml](docker-compose.deploy.yml) já define defaults seguros (`SPRING_PROFILES_ACTIVE:-prod`, `APP_SEED_ENABLED:-false`, `FLYWAY_ENABLED:-false`, `CACHE_TYPE:-redis`, `REDIS_HEALTH_ENABLED:-false`).
+> **Importante:** o [docker-compose.homolog.yml](docker-compose.homolog.yml) e o [docker-compose.prod.yml](docker-compose.prod.yml) já definem defaults seguros (`SPRING_PROFILES_ACTIVE:-prod`, `APP_SEED_ENABLED:-false`, `FLYWAY_ENABLED:-false`, `CACHE_TYPE:-redis`, `REDIS_HEALTH_ENABLED:-false`).
 >
 > **Migrations com Flyway e ShedLock:** O projeto já inclui `org.flywaydb:flyway-core` e a migration inicial `V1__create_shedlock.sql`, mantendo `FLYWAY_ENABLED=false` por padrão para não quebrar bancos já criados com `ddl-auto=update`. Quando for adotar migrations em produção, habilite `FLYWAY_ENABLED=true` (`baseline-on-migrate=true` já está ativo) e mude `SPRING_JPA_HIBERNATE_DDLAUTO=validate`. A tabela `shedlock` também é garantida na inicialização do backend via `SchedulingLockConfig`.
 

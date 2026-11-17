@@ -56,7 +56,6 @@ public class JwtUtil {
                 .subject(userDetails.getUsername())
                 .claim("email", email)
                 .claim("papeis", papeis)
-                .claim("mustChangePassword", userDetails instanceof Usuario usuario && usuario.isSenhaTemporaria())
                 .expiration(limit)
                 .signWith(KEY)
                 .compact();
