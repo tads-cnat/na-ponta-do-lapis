@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 import { BotoesAcaoComponent } from '../botoes-acao/botoes-acao.component';
 import { FormularioSecaoComponent, CampoFormulario } from '../formulario-secao/formulario-secao.component';
@@ -18,7 +18,7 @@ import { Usuario } from '../../../../model/IUsuario.models';
 @Component({
   selector: 'app-ajustes-do-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, PrimeNGModuleModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink, PrimeNGModuleModule, FormularioSecaoComponent, BotoesAcaoComponent, IntegracoesPerfilComponent, ConquistasPerfilComponent, IconeBandeiraComponent],
   templateUrl: './ajustes-do-perfil.component.html'
 })
 export class AjustesPerfilComponent implements OnInit {

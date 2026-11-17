@@ -11,6 +11,7 @@ import { PerfilComponent } from './pages/perfil/perfil.component';
 import { FamiliaComponent } from './pages/familia/familia.component';
 
 import { NotFoundComponent } from './pages/not-found/not-found.component';
+import { PrivacidadeComponent } from './pages/privacidade/privacidade.component';
 
 
 export function authRouteMatcher(segments: UrlSegment[]): UrlMatchResult | null {
@@ -32,6 +33,8 @@ export const routes: Routes = [
         component: LandingPageComponent,
         pathMatch: 'full'
     },
+    { path: 'privacidade', component: PrivacidadeComponent },
+    { path: 'termos', component: PrivacidadeComponent },
     { matcher: authRouteMatcher, component: AuthPageComponent },
 
     // Área interna protegida
