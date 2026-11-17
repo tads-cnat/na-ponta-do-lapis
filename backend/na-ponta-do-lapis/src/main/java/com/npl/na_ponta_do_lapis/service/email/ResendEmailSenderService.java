@@ -19,7 +19,7 @@ public class ResendEmailSenderService implements EmailSenderService {
 
     private static final Logger log = LoggerFactory.getLogger(ResendEmailSenderService.class);
     private static final URI RESEND_ENDPOINT = URI.create("https://api.resend.com/emails");
-    private static final String DEFAULT_LOGO_URL = "https://res.cloudinary.com/z7kvl7h3/image/upload/v1794933736/logo_reduzida.png";
+    private static final String DEFAULT_LOGO_URL = "https://napontadolapis.app/logoReduzida.png";
 
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
