@@ -38,6 +38,17 @@
          [class.hover:text-[#7843CD]]="activeSection() !== 'o-que-fazemos'">
         O que fazemos
       </a>
+      <a href="#contato"
+         (click)="navegarPara($event, 'contato')"
+         class="npl-nav-link text-base transition-colors"
+         [class.npl-nav-active]="activeSection() === 'contato'"
+         [class.font-semibold]="activeSection() === 'contato'"
+         [class.text-[#7843CD]]="activeSection() === 'contato'"
+         [class.font-medium]="activeSection() !== 'contato'"
+         [class.text-slate-600]="activeSection() !== 'contato'"
+         [class.hover:text-[#7843CD]]="activeSection() !== 'contato'">
+        Contato
+      </a>
     </div>
 
     <div class="flex items-center justify-center gap-2 sm:gap-3">
@@ -69,6 +80,9 @@
       </a>
       <a href="#o-que-fazemos" (click)="navegarPara($event, 'o-que-fazemos')" class="py-2 text-base font-semibold text-slate-700 hover:text-[#7843CD] no-underline">
         O que fazemos
+      </a>
+      <a href="#contato" (click)="navegarPara($event, 'contato')" class="py-2 text-base font-semibold text-slate-700 hover:text-[#7843CD] no-underline">
+        Contato
       </a>
     </div>
   }

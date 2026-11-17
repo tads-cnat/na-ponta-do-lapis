@@ -65,6 +65,9 @@ export class FamiliaService {
   buscarContasPorFamilia(familiaId: number): Observable<IContas[]> {
     return this.http.get<IContas[]>(`${this.BASE_URL}/familias/${familiaId}/contas`);
   }
+  buscarFamiliaPorId(familiaId: number): Observable<Familia> {
+    return this.http.get<Familia>(`${this.BASE_URL}/familias/${familiaId}`);
+  }
   buscarTransacoesFamiliaPorDescricao(familiaId: number, descricao: string): Observable<ITransacoes[]> {
     return this.http.get<ITransacoes[]>(`${this.BASE_URL}/familias/${familiaId}/transacoes/descricao`, {
       params: { descricao }

@@ -1,7 +1,7 @@
 import { Component, HostListener, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-type SecaoLanding = 'inicio' | 'por-que-nos' | 'o-que-fazemos';
+type SecaoLanding = 'inicio' | 'por-que-nos' | 'o-que-fazemos' | 'contato';
 
 @Component({
   selector: 'app-navbar',
@@ -36,6 +36,13 @@ export class NavbarComponent {
     const scrollY = window.scrollY;
     if (scrollY < 260) {
       this.activeSection.set('inicio');
+      return;
+    }
+
+    const contato = document.getElementById('contato');
+    const chegouNoFim = window.innerHeight + scrollY >= document.documentElement.scrollHeight - 40;
+    if (contato && (scrollY >= contato.offsetTop - 200 || chegouNoFim)) {
+      this.activeSection.set('contato');
       return;
     }
 
