@@ -4,14 +4,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.HtmlUtils;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -19,12 +24,14 @@ public class ResendEmailSenderService implements EmailSenderService {
 
     private static final Logger log = LoggerFactory.getLogger(ResendEmailSenderService.class);
     private static final URI RESEND_ENDPOINT = URI.create("https://api.resend.com/emails");
+    private static final String LOGO_CID = "logo-npl";
 
     private final ObjectMapper objectMapper;
     private final HttpClient httpClient;
     private final String apiKey;
     private final String fromEmail;
     private final String publicLogoUrl;
+    private final String logoBase64;
 
     public ResendEmailSenderService(
             ObjectMapper objectMapper,
@@ -38,10 +45,26 @@ public class ResendEmailSenderService implements EmailSenderService {
         String cleanWebUrl = (appWebUrl == null || appWebUrl.isBlank() || appWebUrl.contains("localhost") || appWebUrl.contains("127.0.0.1"))
                 ? "https://napontadolapis.app"
                 : appWebUrl.strip().replaceAll("/+$", "");
-        this.publicLogoUrl = cleanWebUrl + "/logoReduzia.png";
+        this.publicLogoUrl = cleanWebUrl + "/logoReduzida.png";
+        this.logoBase64 = carregarLogoBase64();
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(8))
                 .build();
+    }
+
+    private String carregarLogoBase64() {
+        try {
+            ClassPathResource resource = new ClassPathResource("email/logoReduzida.png");
+            if (!resource.exists()) {
+                return null;
+            }
+            try (InputStream is = resource.getInputStream()) {
+                return Base64.getEncoder().encodeToString(is.readAllBytes());
+            }
+        } catch (Exception e) {
+            log.warn("Não foi possível carregar logo embutida para e-mail: {}", e.getMessage());
+            return null;
+        }
     }
 
     @Override
@@ -97,7 +120,7 @@ public class ResendEmailSenderService implements EmailSenderService {
 
         String nomeSeguro = (nomeUsuario == null || nomeUsuario.isBlank()) ? "usuário" : HtmlUtils.htmlEscape(nomeUsuario);
         String linkSeguro = HtmlUtils.htmlEscape(actionLink);
-        String logoSegura = HtmlUtils.htmlEscape(publicLogoUrl);
+        String logoSrc = logoBase64 != null ? "cid:" + LOGO_CID : HtmlUtils.htmlEscape(publicLogoUrl);
 
         String html = """
                 <div style="font-family: 'Segoe UI', Arial, sans-serif; background: #F8FAFC; padding: 32px 16px;">
@@ -130,7 +153,7 @@ public class ResendEmailSenderService implements EmailSenderService {
                   </div>
                 </div>
                 """.formatted(
-                logoSegura,
+                logoSrc,
                 nomeSeguro,
                 HtmlUtils.htmlEscape(introParagraph),
                 linkSeguro,
@@ -146,13 +169,20 @@ public class ResendEmailSenderService implements EmailSenderService {
                 + actionLink + "\n\n" + footerNote;
 
         try {
-            String body = objectMapper.writeValueAsString(Map.of(
-                    "from", fromEmail,
-                    "to", new String[]{toEmail},
-                    "subject", subject,
-                    "html", html,
-                    "text", text
-            ));
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("from", fromEmail);
+            payload.put("to", new String[]{toEmail});
+            payload.put("subject", subject);
+            payload.put("html", html);
+            payload.put("text", text);
+            if (logoBase64 != null) {
+                payload.put("attachments", List.of(Map.of(
+                        "content", logoBase64,
+                        "filename", "logoReduzida.png",
+                        "content_id", LOGO_CID
+                )));
+            }
+            String body = objectMapper.writeValueAsString(payload);
 
             HttpRequest request = HttpRequest.newBuilder()
                     .uri(RESEND_ENDPOINT)
