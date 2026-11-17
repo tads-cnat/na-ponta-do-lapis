@@ -1,7 +1,7 @@
-<nav class="w-full h-24 bg-white/95 backdrop-blur-xs border-b border-slate-200/80 fixed top-0 left-0 right-0 z-50">
-  <div class="w-full max-w-7xl mx-auto h-full px-6 md:px-12 lg:px-16 flex justify-between items-center">
+<nav class="w-full h-18 sm:h-20 md:h-24 bg-white/95 backdrop-blur-xs border-b border-slate-200/80 fixed top-0 left-0 right-0 z-50">
+  <div class="w-full max-w-7xl mx-auto h-full px-4 sm:px-6 md:px-12 lg:px-16 flex justify-between items-center gap-2">
     <a routerLink="/" (click)="navegarPara($event, 'inicio')" class="flex items-center justify-center shrink-0">
-      <img src="logo.svg" alt="Na Ponta do Lápis" class="h-9 sm:h-11 md:h-12 object-contain" />
+      <img src="logo.svg" alt="Na Ponta do Lápis" class="h-8 sm:h-11 md:h-12 object-contain" />
     </a>
 
     <div class="hidden md:flex items-center gap-8">
@@ -40,14 +40,36 @@
       </a>
     </div>
 
-    <div class="flex items-center justify-center gap-3">
-      <a routerLink="/login" class="h-11 px-5 sm:px-6 border border-[#7843CD]/30 bg-white text-[#7843CD] font-semibold text-sm flex items-center justify-center rounded-xl hover:bg-[#F3E8FF] hover:border-[#7843CD] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-2xs">
+    <div class="flex items-center justify-center gap-2 sm:gap-3">
+      <a routerLink="/login" class="h-11 px-3.5 sm:px-6 border border-[#7843CD]/30 bg-white text-[#7843CD] font-semibold text-xs sm:text-sm flex items-center justify-center rounded-xl hover:bg-[#F3E8FF] hover:border-[#7843CD] hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200 shadow-2xs">
         Entrar
       </a>
 
-      <a routerLink="/signup" class="btn-npl-primary h-11 px-5 sm:px-6 font-semibold text-sm flex items-center justify-center rounded-xl transition-all shadow-xs">
+      <a routerLink="/signup" class="btn-npl-primary h-11 px-3.5 sm:px-6 font-semibold text-xs sm:text-sm flex items-center justify-center rounded-xl transition-all shadow-xs">
         Cadastrar
       </a>
+
+      <button type="button"
+              aria-label="Abrir menu de navegação"
+              [attr.aria-expanded]="menuMobileAberto()"
+              (click)="alternarMenuMobile()"
+              class="md:hidden w-11 h-11 flex items-center justify-center rounded-xl border border-slate-200 bg-white text-slate-700 hover:text-[#7843CD] hover:border-[#7843CD]/40 transition-colors cursor-pointer">
+        <i class="pi text-base" [class.pi-bars]="!menuMobileAberto()" [class.pi-times]="menuMobileAberto()" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
+
+  @if (menuMobileAberto()) {
+    <div class="md:hidden bg-white border-b border-slate-200 px-6 py-4 flex flex-col gap-3 shadow-lg">
+      <a href="#inicio" (click)="navegarPara($event, 'inicio')" class="py-2 text-base font-semibold text-slate-700 hover:text-[#7843CD] no-underline">
+        Início
+      </a>
+      <a href="#por-que-nos" (click)="navegarPara($event, 'por-que-nos')" class="py-2 text-base font-semibold text-slate-700 hover:text-[#7843CD] no-underline">
+        Por que nós?
+      </a>
+      <a href="#o-que-fazemos" (click)="navegarPara($event, 'o-que-fazemos')" class="py-2 text-base font-semibold text-slate-700 hover:text-[#7843CD] no-underline">
+        O que fazemos
+      </a>
+    </div>
+  }
 </nav>

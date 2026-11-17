@@ -76,7 +76,7 @@
 }
 
 .sidebar.aberta .menuitem.botao-nova-transacao {
-    padding: 14px 22px;
+    padding: 12px 16px;
     justify-content: center;
 }
 
@@ -96,14 +96,22 @@
     .sidebar {
         width: 0;
         position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
         z-index: 1100;
-        padding: 28px 0;
+        padding: 24px 0;
         overflow: hidden;
     }
     .sidebar.aberta {
-        width: 100dvw;
+        width: min(240px, 75dvw);
         position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
         z-index: 1100;
-        overflow: visible;
+        padding: 20px 14px;
+        overflow-y: auto;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.28);
     }
 }

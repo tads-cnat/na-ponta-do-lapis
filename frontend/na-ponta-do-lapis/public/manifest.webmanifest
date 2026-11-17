@@ -1,0 +1,27 @@
+{
+  "name": "Na Ponta do Lápis - Controle Financeiro",
+  "short_name": "Na Ponta do Lápis",
+  "description": "Seu controle financeiro pessoal e familiar, simples e na ponta do lápis.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#F8FAFC",
+  "theme_color": "#7843CD",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
+

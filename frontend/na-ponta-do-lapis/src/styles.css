@@ -479,6 +479,65 @@ html.app-dark {
     color: var(--npl-dark-text) !important;
   }
 
+  /* Notificações e conteúdos dentro de .p-popover no modo escuro */
+  html.app-dark .p-popover :is(
+    [class*="text-slate-900"],
+    [class*="text-slate-800"],
+    [class*="text-slate-700"],
+    [class*="text-slate-600"]
+  ) {
+    color: var(--npl-dark-text) !important;
+  }
+
+  html.app-dark .p-popover :is(
+    [class*="text-slate-500"],
+    [class*="text-slate-400"],
+    [class*="text-slate-300"]
+  ) {
+    color: var(--npl-dark-muted) !important;
+  }
+
+  html.app-dark .p-popover :is(
+    [class*="text-[#7843CD]"],
+    [class*="text-[#7843cd]"],
+    [class*="text-[#6214CC]"]
+  ) {
+    color: #c4b5fd !important;
+  }
+
+  html.app-dark .p-popover :is(
+    [class*="border-slate-100"],
+    [class*="divide-slate-100"]
+  ) {
+    border-color: var(--npl-dark-border) !important;
+  }
+
+  html.app-dark .p-popover .divide-slate-100 > :not(:last-child) {
+    border-color: var(--npl-dark-border) !important;
+  }
+
+  html.app-dark .p-popover [class*="hover:bg-slate-50"]:hover {
+    background-color: var(--npl-dark-surface-elevated) !important;
+  }
+
+  html.app-dark .p-popover [class*="bg-[#FEF9E7]"] {
+    background-color: rgba(120, 67, 205, 0.16) !important;
+  }
+
+  /* Barra de ações em lote (exclusão em massa) no modo escuro */
+  html.app-dark app-main-layout .barra-acoes-lote {
+    background-image: none !important;
+    background-color: #2b213b !important;
+    border-color: #5b3a8c !important;
+    color: var(--npl-dark-text) !important;
+  }
+
+  /* Item ativo da barra inferior mobile no modo escuro */
+  html.app-dark app-main-layout nav[aria-label="Navegação principal mobile"] a.nav-bottom-ativo {
+    color: #e9d5ff !important;
+    background-color: var(--npl-dark-accent-soft) !important;
+  }
+
   html.app-dark .p-dialog .p-dialog-header,
   html.app-dark .p-dialog .p-dialog-content,
   html.app-dark .p-dialog .p-dialog-footer {
@@ -503,4 +562,75 @@ main > *:not(p-toast):not(router-outlet) {
 /* Previne que overlays flutuantes de tooltip interceptem eventos do ponteiro e travem o hover */
 .p-tooltip {
   pointer-events: none !important;
+}
+
+/* Garante que o p-toast fique acima do header/sidebar/dialog e se ajuste em telas mobile */
+.p-toast {
+  z-index: 12000 !important;
+}
+
+@media (max-width: 640px) {
+  .p-toast {
+    width: calc(100vw - 1.5rem) !important;
+    max-width: 24rem !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    top: 0.75rem !important;
+  }
+
+  .p-toast .p-toast-message-content {
+    padding: 0.75rem 0.875rem !important;
+    gap: 0.625rem !important;
+  }
+
+  .p-toast .p-toast-summary {
+    font-size: 0.875rem !important;
+  }
+
+  .p-toast .p-toast-detail {
+    font-size: 0.75rem !important;
+    line-height: 1.35 !important;
+  }
+
+  .p-paginator {
+    justify-content: center !important;
+    padding: 0.75rem 0.5rem !important;
+  }
+
+  .p-paginator .p-paginator-content {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    max-width: 16rem !important;
+    gap: 0.5rem !important;
+  }
+
+  .p-paginator .p-paginator-pages,
+  .p-paginator .p-paginator-first,
+  .p-paginator .p-paginator-last,
+  .p-paginator .p-paginator-rpp-dropdown {
+    display: none !important;
+  }
+
+  .p-paginator .p-paginator-prev,
+  .p-paginator .p-paginator-next {
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    border-radius: 0.75rem !important;
+    border: 1px solid #e2e8f0 !important;
+  }
+
+  html.app-dark .p-paginator .p-paginator-prev,
+  html.app-dark .p-paginator .p-paginator-next {
+    border-color: var(--npl-dark-border) !important;
+  }
+
+  .p-paginator .p-paginator-current {
+    font-size: 0.8125rem !important;
+    font-weight: 600 !important;
+    padding: 0 0.5rem !important;
+  }
 }

@@ -1,27 +1,29 @@
 <p-toast position="top-right" [baseZIndex]="10000"></p-toast>
-<div [class]="embedded ? 'flex h-full w-full bg-white overflow-hidden' : 'flex h-screen w-full bg-white overflow-hidden'">
-    <div class="flex flex-1 flex-col justify-between px-6 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
-        <div class="w-full flex items-center justify-start">
+<div [class]="embedded ? 'flex h-full w-full bg-[#F7F4FF] md:bg-white overflow-hidden' : 'flex h-dvh w-full bg-[#F7F4FF] md:bg-white overflow-hidden'">
+    <div class="flex flex-1 flex-col justify-between px-4 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
+        <div class="w-full flex items-center justify-between gap-3 shrink-0 mb-3 md:mb-0">
             @if (!showRecoveryForm()) {
                 <button type="button" (click)="voltar()"
-                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl transition-all cursor-pointer">
+                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-white/90 md:bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl border border-purple-100 md:border-transparent transition-all cursor-pointer">
                     <i class="pi pi-arrow-left text-xs"></i>
                     <span>Voltar ao início</span>
                 </button>
             } @else {
                 <button type="button" (click)="voltarParaLoginAposRecuperacao()"
-                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl transition-all cursor-pointer">
+                    class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-white/90 md:bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl border border-purple-100 md:border-transparent transition-all cursor-pointer">
                     <i class="pi pi-arrow-left text-xs"></i>
                     <span>Voltar para entrar</span>
                 </button>
             }
+            <img src="/logo.svg" alt="Na Ponta do Lápis" class="h-7 w-auto md:hidden">
         </div>
 
         <form [formGroup]="loginForm" (ngSubmit)="login()"
             [class.hidden]="showRecoveryForm()"
             [attr.aria-hidden]="showRecoveryForm()"
             [attr.inert]="showRecoveryForm() ? '' : null"
-            class="npl-page-enter flex flex-col gap-3 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
+            class="npl-page-enter flex flex-col gap-3.5 w-full max-w-[400px] mx-auto my-auto bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-[#E9D5FF]/70 md:bg-transparent md:rounded-none md:p-0 md:shadow-none md:border-0 md:py-8">
+
             <app-mascote-login
                 [compact]="false"
                 [estado]="mascoteEstado()"
@@ -32,7 +34,7 @@
 
             <div>
                 <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Entrar</h1>
-                <p class="text-sm text-slate-500 mt-1">
+                <p class="text-sm text-slate-500 mt-1 mb-0">
                     Ainda não tem uma conta?
                     <a routerLink="/signup"
                         class="text-[#7843CD] font-bold transition duration-200 hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 ml-1">Cadastre-se</a>
@@ -47,21 +49,19 @@
                     (blur)="onEmailBlur()"
                     [class.ng-invalid]="loginForm.get('email')?.invalid && loginForm.get('email')?.touched"
                     [class.ng-dirty]="loginForm.get('email')?.touched">
-                <div class="min-h-4 flex items-center">
-                    @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
-                        @if (loginForm.get('email')?.errors?.['required']) {
-                            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe seu e-mail ou nome de usuário.</small>
-                        } @else if (loginForm.get('email')?.errors?.['minlength']) {
-                            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 3 caracteres.</small>
-                        }
+                @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+                    @if (loginForm.get('email')?.errors?.['required']) {
+                        <small class="text-[#C24E4E] text-xs font-semibold leading-4">Informe seu e-mail ou nome de usuário.</small>
+                    } @else if (loginForm.get('email')?.errors?.['minlength']) {
+                        <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 3 caracteres.</small>
                     }
-            </div>
+                }
             </div>
 
             <div class="flex flex-col gap-1.5">
-                <div class="flex items-center justify-between">
+                <div class="flex items-center justify-between gap-2">
                     <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
-                    <button type="button" class="text-[#7843CD] cursor-pointer font-semibold hover:text-[#6214CC] hover:underline text-xs"
+                    <button type="button" class="text-[#7843CD] cursor-pointer font-semibold hover:text-[#6214CC] hover:underline text-xs py-1 px-1.5 -mr-1.5 rounded-lg"
                         (click)="abrirRecuperacao()">Esqueceu a sua senha?</button>
                 </div>
                 <div #passwordWrapper
@@ -72,24 +72,22 @@
                         inputStyleClass="w-full text-sm rounded-xl!" formControlName="password"
                         [styleClass]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'" />
                 </div>
-                <div class="min-h-4 flex items-center">
-                    @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
-                        <small class="text-[#C24E4E] text-xs font-semibold leading-4">A senha é obrigatória.</small>
-                    }
-                </div>
+                @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+                    <small class="text-[#C24E4E] text-xs font-semibold leading-4">A senha é obrigatória.</small>
+                }
             </div>
 
-            <div class="flex flex-col gap-2.5 mt-2">
+            <div class="flex flex-col gap-3 mt-1">
                 <div (mouseenter)="isHoveringSubmit.set(true)" (mouseleave)="isHoveringSubmit.set(false)">
                     <p-button type="submit" label="Entrar" icon="pi pi-sign-in"
-                        styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+                        styleClass="w-full min-h-11 btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
                         [disabled]="loginForm.invalid || loading" [loading]="loading" />
                 </div>
 
                 @if (googleButtonState() !== 'unavailable') {
-                    <div class="flex items-center gap-3 my-0.5">
+                    <div class="flex items-center gap-3">
                         <div class="h-px flex-1 bg-slate-200"></div>
-                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-400">ou</span>
+                        <span class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">ou</span>
                         <div class="h-px flex-1 bg-slate-200"></div>
                     </div>
 

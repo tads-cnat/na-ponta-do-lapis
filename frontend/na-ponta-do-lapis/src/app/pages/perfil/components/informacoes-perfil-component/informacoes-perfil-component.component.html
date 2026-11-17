@@ -6,4 +6,21 @@
 
   <app-tema-component class="w-full block"></app-tema-component>
 
+  @if (pwaService.podeInstalar()) {
+    <div class="h-px w-full bg-slate-100"></div>
+
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div>
+        <h3 class="text-sm font-bold text-slate-900 m-0">Instalar aplicativo</h3>
+        <p class="text-xs text-slate-500 mt-0.5 mb-0">Adicione o Na Ponta do Lápis à tela inicial para abrir como app.</p>
+      </div>
+      <button type="button"
+              (click)="pwaService.instalarApp()"
+              class="min-h-11 px-4 py-2 rounded-xl btn-npl-primary text-xs sm:text-sm font-bold inline-flex items-center justify-center gap-2 cursor-pointer shrink-0">
+        <i class="pi pi-download text-xs"></i>
+        <span>Instalar App</span>
+      </button>
+    </div>
+  }
+
 </div>

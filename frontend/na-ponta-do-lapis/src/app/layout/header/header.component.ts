@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { Router, RouterLink } from '@angular/router';
@@ -12,11 +12,10 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { Notificacao } from '../../model/INotificacao.model';
 import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
-import { TemaComponentComponentSimples } from '../../pages/perfil/components/tema-component/tema-component-simples.component';
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, PrimeNGModuleModule, RouterLink, IconComponent, MedalhaConquistaComponent, TemaComponentComponentSimples], 
+  imports: [CommonModule, PrimeNGModuleModule, RouterLink, IconComponent, MedalhaConquistaComponent], 
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
@@ -39,9 +38,7 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarDadosUsuario();
-    if (window.innerWidth < 769) {
-      this.isMobile = true;
-    }
+    this.atualizarModoMobile();
 
     this.notificacaoService.notificacoes$.subscribe((lista) => {
       this.notificacoes = lista;
@@ -54,6 +51,11 @@ export class HeaderComponent implements OnInit {
     });
 
     this.notificacaoService.carregarNotificacoes();
+  }
+
+  @HostListener('window:resize')
+  public atualizarModoMobile(): void {
+    this.isMobile = window.innerWidth < 769;
   }
 
   public abrirNotificacoes(event: Event, popover: any): void {

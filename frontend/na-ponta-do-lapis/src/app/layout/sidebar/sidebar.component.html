@@ -2,34 +2,24 @@
         <div class="flex menu-header">
             <img src="logo.svg" alt="logomarca" class="logo">
             <button
+                type="button"
+                aria-label="Alternar menu lateral"
                 (click)="sidebarService.toggleSidebar()"
-                class="menu-btn"
+                class="menu-btn w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100/80 transition-colors"
                 [class.text-white]="themeService.escuro()"
                 [class.text-black]="!themeService.escuro()">
-                <app-icon [name]="sidebarService.aberto() ? 'close' : 'menu'"/>
+                <app-icon [name]="sidebarService.aberto() ? 'close' : 'menu'" class="w-5 h-5"/>
             </button>
         </div>
-    @if(isMobile) {
-        <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" 
-        (click)="isMobile ? sidebarService.fecharSidebar() : null" 
-        routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" 
-        class="menuitem flex items-center justify-center">
-            <div class="botao-adicionar flex items-center justify-center gap-2 btn-npl-primary text-white! rounded-xl whitespace-nowrap">
-                <app-icon name="plus" class="w-5 h-5 shrink-0" />
-                <span class="menulabel text-sm font-semibold">
-                    Nova Transação
-                </span>
-            </div>
-        </a>
-    }
-    @else {
-        <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" (click)="isMobile ? sidebarService.fecharSidebar() : null" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" class="menuitem botao-nova-transacao flex gap-2 text-white! btn-npl-primary whitespace-nowrap">
-            <app-icon name="plus" class="w-5 h-5 shrink-0" />
-            <span class="menulabel text-sm font-semibold">
-                Nova Transação
-            </span>
-        </a>
-    }
+    <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }"
+       (click)="isMobile ? sidebarService.fecharSidebar() : null"
+       routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }"
+       class="menuitem botao-nova-transacao flex items-center justify-center gap-2 text-white! btn-npl-primary whitespace-nowrap shrink-0">
+        <app-icon name="plus" class="w-5 h-5 shrink-0" />
+        <span class="menulabel text-sm font-semibold">
+            Nova Transação
+        </span>
+    </a>
     @for (item of items; track item.label){
         <a [routerLink]="item.routerLink" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" (click)="isMobile ? sidebarService.fecharSidebar() : null" class="menuitem flex  text-gray-900 gap-2.5 ">
             <app-icon [name]="item.icon" class="w-5.5" /> 

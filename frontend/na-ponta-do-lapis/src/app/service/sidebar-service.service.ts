@@ -5,7 +5,7 @@ import { Injectable, signal } from '@angular/core';
 })
 
 export class SidebarService {
-  aberto = signal(true);
+  aberto = signal(typeof window !== 'undefined' ? window.innerWidth >= 769 : true);
 
   toggleSidebar() {
     this.aberto.update(valor => !valor);

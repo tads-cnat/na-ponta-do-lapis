@@ -1,3 +1,14 @@
 <p-toast></p-toast>
 <app-modal-celebracao></app-modal-celebracao>
+@if (pwaService.atualizacaoDisponivel()) {
+  <div role="status"
+       class="fixed top-3 left-1/2 -translate-x-1/2 z-[12500] flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#4A2585] text-white shadow-lg border border-[#EEC046]/60 max-w-[calc(100vw-2rem)]">
+    <span class="text-xs sm:text-sm font-medium">Nova versão disponível</span>
+    <button type="button"
+            (click)="pwaService.aplicarAtualizacao()"
+            class="px-3 py-1.5 rounded-xl bg-[#EEC046] text-slate-900 font-bold text-xs cursor-pointer hover:brightness-95 transition-all shrink-0">
+      Atualizar
+    </button>
+  </div>
+}
 <router-outlet></router-outlet>

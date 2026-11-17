@@ -29,7 +29,6 @@ import { PreferenciaMoedaService } from "../../../../shared/service/preferencia-
         </div>
 
         <span class="badge-npl-amarelo self-start sm:self-auto">
-          <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
           Ano atual
         </span>
       </div>
