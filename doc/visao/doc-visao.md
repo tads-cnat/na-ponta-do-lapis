@@ -8,6 +8,7 @@
 | 25/01/2026 |  2.0   | Segunda versão  | Bruno, Eduardo, Lucas, Pedro, Wagner |
 | 28/03/2026 |  3.0   | Terceira versão | Bruno, Eduardo, Eric, Lucas, Pedro, Vinicius, Wagner |
 | 10/05/2026 |  4.0   | Quarta versão   | Bruno, Eduardo, Eric, Lucas, Pedro, Vinicius, Wagner |
+| 16/11/2026 |  4.1   | Inclusão dos novos requisitos funcionais implementados (Open Finance, IA BYOK, Conquistas, Notificações, Parcelamentos e Aportes) | Bruno, Eduardo, Eric, Lucas, Pedro, Vinicius, Wagner |
 
 ## 1. Visão Geral do Sistema Proposto
 
@@ -141,7 +142,13 @@ Os usuários utilizarão o sistema através de um Navegador (Sistema Web), onde 
 |  RF32  |                        Excluir marcador                        |                                       O usuário poderá excluir um marcador registrado em sua conta.                                        |   Baixa    |
 |  RF33  |                        Editar marcador                         |                                  O usuário poderá editar os dados de um marcador registrado em sua conta.                                  |   Baixa    |
 |  RF34  |                       Vizualizar Cotação                       |                                               Permitir vizualizar a cotação de várias moedas                                               |   Baixa    |
-|  RF35  |                        Login com Google                        |                                     O usuário poderá logar no sistema através da sua conta do Google.                                      |   Baixa    |
+|  RF35  |                        Login com Google                        |               O usuário poderá autenticar-se ou cadastrar-se no sistema através da sua conta Google com consentimento LGPD.                |    Alta    |
+|  RF36  |          Integração e Sincronização via Open Finance           |              O usuário poderá conectar e sincronizar contas e transações automaticamente via provedor Open Finance (Pluggy).               |    Alta    |
+|  RF37  |        Importação Inteligente de Faturas PDF (IA BYOK)         |       O usuário poderá importar faturas PDF (inclusive com senha) com extração assistida por IA (Gemini, OpenAI, Claude) e revisão.        |    Alta    |
+|  RF38  |             Sistema de Conquistas e Gamificação                |             O sistema concederá medalhas e celebrações visuais conforme o usuário atinge marcos de organização e economia.                 |   Média    |
+|  RF39  |                   Central de Notificações                      |            O usuário receberá notificações internas sobre alertas de metas, convites de família e conquistas desbloqueadas.                |   Média    |
+|  RF40  |         Gestão de Compras Parceladas e Ações em Lote           |         O usuário poderá registrar compras parceladas (gerando parcelas futuras/anteriores), confirmar pagamentos e excluir em lote.       |    Alta    |
+|  RF41  |                 Registro de Aportes em Metas                   |                  O usuário poderá registrar aportes financeiros em suas metas e consultar o histórico de contribuições.                    |   Média    |
 
 > **Prioridade**: alta, média ou baixa
 
