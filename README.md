@@ -7,30 +7,54 @@ Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma
 
 ## Visão Geral do Sistema
 
-| Landing Page | Dashboard |
-| :---: | :---: |
-| ![Landing Page](doc/imagens/LandingPage.png) | ![Dashboard](doc/imagens/Dashboard.png) |
+<table width="100%">
+  <tr>
+    <th width="50%" align="center">Landing Page</th>
+    <th width="50%" align="center">Dashboard</th>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><img src="doc/imagens/LandingPage.png" alt="Landing Page" width="100%" /></td>
+    <td width="50%" align="center"><img src="doc/imagens/Dashboard.png" alt="Dashboard" width="100%" /></td>
+  </tr>
+</table>
 
 <details>
 <summary>📸 Ver todas as telas do sistema (Login, Cadastro, Transações, Contas, Metas, Família e Configurações)</summary>
 
 <br>
 
-| Login | Cadastro |
-| :---: | :---: |
-| ![Login](doc/imagens/Login.png) | ![Cadastro](doc/imagens/Cadastro.png) |
-
-| Transações | Contas |
-| :---: | :---: |
-| ![Transação](doc/imagens/Transacao.png) | ![Conta](doc/imagens/Contas.png) |
-
-| Metas | Família |
-| :---: | :---: |
-| ![Metas](doc/imagens/Metas.png) | ![Família](doc/imagens/Familia.png) |
-
-| Configurações e Integrações |
-| :---: |
-| ![Configuração](doc/imagens/Configuracao.png) |
+<table width="100%">
+  <tr>
+    <th width="50%" align="center">Login</th>
+    <th width="50%" align="center">Cadastro</th>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><img src="doc/imagens/Login.png" alt="Login" width="100%" /></td>
+    <td width="50%" align="center"><img src="doc/imagens/Cadastro.png" alt="Cadastro" width="100%" /></td>
+  </tr>
+  <tr>
+    <th width="50%" align="center">Transações</th>
+    <th width="50%" align="center">Contas</th>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><img src="doc/imagens/Transacao.png" alt="Transação" width="100%" /></td>
+    <td width="50%" align="center"><img src="doc/imagens/Contas.png" alt="Conta" width="100%" /></td>
+  </tr>
+  <tr>
+    <th width="50%" align="center">Metas</th>
+    <th width="50%" align="center">Família</th>
+  </tr>
+  <tr>
+    <td width="50%" align="center"><img src="doc/imagens/Metas.png" alt="Metas" width="100%" /></td>
+    <td width="50%" align="center"><img src="doc/imagens/Familia.png" alt="Família" width="100%" /></td>
+  </tr>
+  <tr>
+    <th colspan="2" align="center">Configurações e Integrações</th>
+  </tr>
+  <tr>
+    <td colspan="2" align="center"><img src="doc/imagens/Configuracao.png" alt="Configuração" width="50%" /></td>
+  </tr>
+</table>
 
 </details>
 
@@ -41,7 +65,7 @@ Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma
 - **Importação de Faturas PDF com IA (BYOK):** leitura de faturas (inclusive protegidas por senha) com extração assistida por IA (**Gemini**, **OpenAI** ou **Claude** usando a chave do próprio usuário) e detecção de duplicatas.
 - **Open Finance (Pluggy):** conexão e sincronização automática de contas e transações bancárias com credenciais criptografadas.
 - **Metas e Gamificação:** metas por categoria/objetivo, registro de aportes, alertas de progresso e conquistas com medalhas.
-- **Gestão Familiar e Segurança:** grupo familiar com convites, controle de permissões, notificações internas, login com **Google (LGPD)** e recuperação de senha.
+- **Gestão Familiar e Segurança:** grupo familiar com convites, controle de permissões, notificações internas, login com **Google** e recuperação de senha.
 
 ## Stack
 
