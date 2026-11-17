@@ -212,10 +212,17 @@
               <p class="text-xs text-slate-400 font-normal m-0">Gerencie seus direitos de privacidade e exclusão da conta.</p>
             </div>
           </div>
-          <a href="/landing-page/termos_privacidade.pdf" target="_blank"
-             class="text-xs font-semibold text-[#7843CD] hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4 self-start sm:self-auto">
-            Termos e Política de Privacidade
-          </a>
+          <div class="flex items-center gap-3 self-start sm:self-auto">
+            <a routerLink="/privacidade"
+               class="text-xs font-semibold text-[#7843CD] hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4">
+              Política de Privacidade
+            </a>
+            <span class="text-slate-300" aria-hidden="true">·</span>
+            <a routerLink="/termos"
+               class="text-xs font-semibold text-[#7843CD] hover:text-[#6214CC] underline decoration-[#EEC046] decoration-2 underline-offset-4">
+              Termos de Serviço
+            </a>
+          </div>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-slate-100">

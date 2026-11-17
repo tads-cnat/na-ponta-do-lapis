@@ -45,7 +45,11 @@ import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
         <label class="flex items-start gap-2.5 cursor-pointer select-none pt-1">
           <p-checkbox [(ngModel)]="aceitouTermos" [binary]="true" inputId="googleLgpdTermos"></p-checkbox>
           <span class="text-xs leading-snug text-[#0D0D0D]">
-            Li e concordo com os <strong>Termos de Uso</strong> e a <strong>Política de Privacidade (LGPD)</strong> para criar minha conta.
+            Li e concordo com os
+            <a href="/termos" target="_blank" rel="noopener noreferrer" class="text-[#7843CD] font-bold underline decoration-[#EEC046] decoration-2 underline-offset-2">Termos de Serviço</a>
+            e a
+            <a href="/privacidade" target="_blank" rel="noopener noreferrer" class="text-[#7843CD] font-bold underline decoration-[#EEC046] decoration-2 underline-offset-2">Política de Privacidade (LGPD)</a>
+            para criar minha conta.
           </span>
         </label>
       </div>
