@@ -1,8 +1,23 @@
 # CDU 06. Visualizar Dashboard
 
-- **Ator principal**: Cliente
-
+- **Ator principal**: Cliente.
 - **Atores secundários**: N/A.
-- **Resumo**: Ao entrar no sistema ou acessar a aba no menu lateral ["Dashboard"](https://www.figma.com/design/hbbNIiCbHjSmDtWXFRDvgs/Na-Ponta-do-Lapis?node-id=1545-21660&t=1d6Ev8nFJJXjzqGf-4) deve apresentar vários gráficos sobre as ações que o cliente logado fez no sistema e informações adicionais como seu saldo, atual cotação de moedas, gastos separados por categorias, metas correntes.
-- **Pré-condição**: O cliente deve estar devidamente autenticado.
-- **Pós-Condição**: N/A.
+- **Resumo**: Ao entrar no sistema ou acessar a opção **"Dashboard"** no menu lateral (`/app/dashboard`), o cliente visualiza o panorama consolidado de sua vida financeira: cards de resumo (Saldo Total, Receitas, Despesas e Balanço do período), gráfico de evolução financeira, gráfico de gastos por categoria, acompanhamento das metas ativas, últimas movimentações e opção de exportar relatório financeiro (PDF ou CSV).
+- **Pré-condição**: O cliente deve estar autenticado.
+- **Pós-Condição**: Dados financeiros consolidados são exibidos em tempo real na tela (ou exportados em arquivo quando solicitado).
+
+## Fluxo Principal
+
+| Ações do ator | Ações do sistema |
+| :-----------------: | :-----------------: |
+| 1 - Acessa `/app/dashboard` após login ou pelo menu lateral. | |
+| | 2 - Sistema carrega contas, transações, categorias e metas do usuário autenticado. |
+| | 3 - Sistema calcula e exibe os cards de resumo (Saldo Total, Entradas, Saídas), gráfico de evolução temporal, distribuição de gastos por categoria, progresso das metas e lista de últimas movimentações. |
+
+## Fluxo Alternativo I - Exportar Relatório Financeiro
+
+| Ações do ator | Ações do sistema |
+| :-----------------: | :-----------------: |
+| 1.1 - Clica no botão de exportação de relatório no Dashboard. | |
+| 1.2 - Seleciona o formato desejado (**PDF** ou **CSV**) e o período. | |
+| | 1.3 - Sistema gera o arquivo consolidado com o resumo e as movimentações do período e inicia o download no navegador. |

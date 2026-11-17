@@ -9,6 +9,7 @@
 | 25/01/2025 | 2.1 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Lucas Henrique, Pedro Ricardo, Wagner Souza |
 | 10/05/2026 | 3.0 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Erick Carlos, Lucas Henrique, Pedro Ricardo, Vinicius Soares, Wagner Souza |
 | 05/07/2026 | 3.1 | Versão atualizada | Bruno Dias, Eduardo Medeiros, Erick Carlos, Lucas Henrique, Pedro Ricardo, Vinicius Soares, Wagner Souza |
+| 16/11/2026 | 3.2 | Atualização do status real de implementação e inclusão dos CDUs 34 a 38 | Bruno Dias, Eduardo Medeiros, Erick Carlos, Lucas Henrique, Pedro Ricardo, Vinicius Soares, Wagner Souza |
 
 ## 1. Diagrama de Casos de Uso
 
@@ -21,7 +22,7 @@
 | [CDU-01 - Login](./cdu-01/detalhamento-01.md) | ✅ | ✅ | ✅ |
 | [CDU-02 - Logout](./cdu-02/detalhamento-02.md) | ✅ | ✅ | ✅ |
 | [CDU-03 - Cadastro Usuario](./cdu-03/detalhamento-03.md) | ✅ | ✅ | ✅ |
-| [CDU-04 - Recuperar Senha](./cdu-04/detalhamento-04.md) | ✅ | - | - |
+| [CDU-04 - Recuperar Senha](./cdu-04/detalhamento-04.md) | ✅ | ✅ | ✅ |
 | [CDU-05 - Consultar Cotação](./cdu-05/detalhamento-05.md) | ✅ | ✅ | ✅ |
 | [CDU-06 - Visualizar Dashboard](./cdu-06/detalhamento-06.md) | ✅ | ✅ | ✅ |
 | [CDU-07 - Visualizar Post](./cdu-07/detalhamento-07.md) | ✅ | - | - |
@@ -29,7 +30,7 @@
 | [CDU-09 - ~~Manter Conta Financeira (Temporária)~~](./cdu-09/detalhamento-09.md) **[OBSOLETO]** | - | - | - |
 | [CDU-10 - ~~Manter Transação (Temporária)~~](./cdu-10/detalhamento-10.md) **[OBSOLETO]** | - | - | - |
 | [CDU-11 - ~~Manter Marcador (Temporária)~~](./cdu-11/detalhamento-11.md) **[OBSOLETO]** | - | - | - |
-| [CDU-12 - Alterar Tema](./cdu-12/detalhamento-12.md) | ✅ | - | - |
+| [CDU-12 - Alterar Tema e Preferências](./cdu-12/detalhamento-12.md) | ✅ | ✅ | ✅ |
 | [CDU-13 - Manter Post](./cdu-13/detalhamento-13.md) | ✅ | - | - |
 | [CDU-14 - ~~Manter Cotação~~](./cdu-14/detalhamento-14.md) **[OBSOLETO]** | - | - | - |
 | [CDU-15 - Manter Conta de Administrador](./cdu-15/detalhamento-15.md) | ✅ | - | - |
@@ -40,14 +41,19 @@
 | [CDU-20 - Atualizar Perfil](./cdu-20/detalhamento-20.md) | ✅ | ✅ | ✅ |
 | [CDU-21 - Remover Membro da Família](./cdu-21/detalhamento-21.md) | ✅ | ✅ | ✅ |
 | [CDU-22 - Convidar Membro à Família](./cdu-22/detalhamento-22.md) | ✅ | ✅ | ✅ |
-| [CDU-23 - Tornar Administrador da Fámilia](./cdu-23/detalhamento-23.md) | ✅ | ✅ | ✅ |
-| [CDU-24 - Visualizar Relatório da Família](./cdu-24/detalh'amento-24.md) | ✅ | - | - |
+| [CDU-23 - Tornar Administrador da Família](./cdu-23/detalhamento-23.md) | ✅ | ✅ | ✅ |
+| [CDU-24 - Visualizar Relatório da Família](./cdu-24/detalhamento-24.md) | ✅ | ✅ | ✅ |
 | [CDU-25 - Tour Funcionalidades](./cdu-25/detalhamento-25.md) | ✅ | - | - |
 | [CDU-26 - Adicionar Transação (Fatura)](./cdu-26/detalhamento-26.md) | ✅ | ✅ | ✅ |
-| [CDU-27 - Aceitar Convite](./cdu-27/detalhamento-27.md) | - | - | - |
+| [CDU-27 - Aceitar Convite](./cdu-27/detalhamento-27.md) | ✅ | ✅ | - |
 | [CDU-28 - Alterar Senha](./cdu-28/detalhamento-28.md) | ✅ | ✅ | ✅ |
-| [CDU-29 - Manter Tipo de Categoria](./cdu-29/detalhamento-29.md) | ✅ | - | - |
-| [CDU-30 - Excluir Família](./cdu-30/detalhamento-30.md) | ✅ | - | - |
-| [CDU-31 - Alterar Foto da Família](./cdu-31/detalhamento-31.md) | ✅ | - | - |
-| [CDU-32 - Alterar Nome da Família](./cdu-32/detalhamento-32.md) | ✅ | - | - |
-| [CDU-33 - Auto Exclusão de Conta](./cdu-33/detalhamento-33.md) | ✅ | - | - |
+| [CDU-29 - Manter Tipo de Categoria](./cdu-29/detalhamento-29.md) | ✅ | ✅ | - |
+| [CDU-30 - Excluir Família](./cdu-30/detalhamento-30.md) | ✅ | ✅ | - |
+| [CDU-31 - Alterar Foto da Família](./cdu-31/detalhamento-31.md) | ✅ | ✅ | - |
+| [CDU-32 - Alterar Nome da Família](./cdu-32/detalhamento-32.md) | ✅ | ✅ | - |
+| [CDU-33 - Auto Exclusão de Conta](./cdu-33/detalhamento-33.md) | ✅ | ✅ | ✅ |
+| [CDU-34 - Autenticar/Cadastrar com Google (LGPD)](./cdu-34/detalhamento-34.md) | ✅ | ✅ | ✅ |
+| [CDU-35 - Conectar e Sincronizar Open Finance (Pluggy)](./cdu-35/detalhamento-35.md) | ✅ | ✅ | ✅ |
+| [CDU-36 - Gerenciar Chaves de IA Pessoais (BYOK)](./cdu-36/detalhamento-36.md) | ✅ | ✅ | ✅ |
+| [CDU-37 - Visualizar Conquistas e Gamificação](./cdu-37/detalhamento-37.md) | ✅ | ✅ | ✅ |
+| [CDU-38 - Gerenciar Notificações do Usuário](./cdu-38/detalhamento-38.md) | ✅ | ✅ | ✅ |
