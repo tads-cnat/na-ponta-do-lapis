@@ -148,7 +148,7 @@ Como todas as versões no Docker Hub são salvas com tags fixas (`1.0.0`, `1.0.1
 Os arquivos oficiais **[docker-compose.homolog.yml](docker-compose.homolog.yml)** (Homologação) e **[docker-compose.prod.yml](docker-compose.prod.yml)** (Produção) definem os stacks no Coolify:
 
 - **PostgreSQL 16 e Redis 7 (gerenciados no Coolify):** Criados separadamente como bancos nativos do Coolify para permitir backups automáticos, retenção configurável e métricas independentes do ciclo de deploy da aplicação.
-- **`backend` (Spring Boot):** Sobe com `deploy.replicas: ${BACKEND_REPLICAS:-2}` e `mem_limit: 1024m`, conectado à rede interna `default` (junto do frontend) e à rede externa `coolify` (para Traefik, PostgreSQL e Redis). O Traefik só envia tráfego quando `/api/actuator/health` retornar `UP`.
+- **`backend` (Spring Boot):** Em homologação sobe 1 réplica (`backend`); em produção sobe 2 réplicas (`backend-1` e `backend-2` com `aliases: [backend]`), sempre com `mem_limit: 1024m`, conectado à rede interna `default` (junto do frontend) e à rede externa `coolify` (para Traefik, PostgreSQL e Redis). O Traefik só envia tráfego quando `/api/actuator/health` retornar `UP`.
 - **`frontend` (Angular + Nginx):** Puxa `npl2026/frontend:${APP_VERSION}` (`mem_limit: 128m`) e encaminha chamadas `/api` para `http://backend:8080` na rede interna isolada de cada ambiente, com balanceamento automático via DNS Docker entre as réplicas daquele ambiente.
 
 ### Variáveis de ambiente no Coolify (homologação x produção)
@@ -158,7 +158,6 @@ O Coolify só entrega ao container as variáveis que aparecem no bloco `environm
 | Variável | Homologação | Produção | Para que serve |
 |---|---|---|---|
 | `APP_VERSION` | `homolog` | `1.0.1`, `1.0.2`... | Tag da imagem no Docker Hub |
-| `BACKEND_REPLICAS` | `1` (ou `2`) | `2` | Número de réplicas do backend no stack |
 | `SPRING_PROFILES_ACTIVE` | `prod` | `prod` | Profile do backend deployado (o nome `prod` vale para os dois ambientes) |
 | `SPRING_JPA_HIBERNATE_DDLAUTO` | `update` | `update` (ou `validate` com Flyway) | Homolog atualiza schema; em prod alterne para `validate` quando ativar Flyway |
 | `FLYWAY_ENABLED` | `false` | `false` (`true` após transição) | Habilita migrations versionadas (`db/migration`) com `baseline-on-migrate=true` |

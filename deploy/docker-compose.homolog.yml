@@ -1,18 +1,18 @@
 # ==============================================================================
-# NA PONTA DO LÁPIS — DEPLOY OFICIAL NO COOLIFY (RÉPLICAS + BANCOS GERENCIADOS)
+# NA PONTA DO LÁPIS — DEPLOY DE HOMOLOGAÇÃO NO COOLIFY (BANCOS GERENCIADOS)
 # ==============================================================================
-# Pré-requisitos no painel do Coolify (por ambiente: Homologação e Produção):
+# Pré-requisitos no painel do Coolify (Homologação):
 # 1. PostgreSQL 16 e Redis 7 criados como Databases nativos no Coolify
 #    (habilitando backups automáticos do banco pelo próprio painel do Coolify).
 # 2. Definir no Environment do stack no Coolify:
-#    - APP_VERSION (ex: homolog ou 1.0.2)
-#    - BACKEND_REPLICAS (ex: 1 em homolog, 2 em produção)
+#    - APP_VERSION (ex: homolog)
 #    - DB_URL (ex: jdbc:postgresql://<host-postgres-coolify>:5432/<db>)
 #    - DB_USER / DB_PASSWORD
 #    - CACHE_TYPE (redis) / REDIS_HOST / REDIS_PORT=6379 / REDIS_PASSWORD
 #    - JWT_SECRET / CORS_ALLOWED_ORIGINS / APP_WEB_URL / CLOUDINARY_*
+#    - GOOGLE_CLIENT_ID / RESEND_API_KEY / RESEND_FROM_EMAIL
 # 3. Rede externa 'coolify' habilitada ("Connect to Predefined Network") para o
-#    Traefik alcançar as réplicas do backend/frontend e o backend acessar Postgres/Redis.
+#    Traefik alcançar o backend/frontend e o backend acessar Postgres/Redis.
 # ==============================================================================
 
 services:
@@ -21,7 +21,6 @@ services:
     pull_policy: always                      # garante pull da tag móvel :homolog
     restart: unless-stopped
     deploy:
-      replicas: ${BACKEND_REPLICAS:-2}
       resources:
         limits:
           memory: 1024M
