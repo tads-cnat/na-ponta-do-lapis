@@ -5,32 +5,50 @@
 Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma oferece ferramentas de controle financeiro, planejamento de gastos e educação financeira personalizada — ajudando o usuário a desenvolver hábitos saudáveis de gestão do dinheiro e construir uma base sólida para o crescimento pessoal e profissional.
 
 
-## Landing Page
-![Landing Page](doc/imagens/LandingPage.png)
+## Visão Geral do Sistema
 
-## Login
-![Login](doc/imagens/Login.png)
+| Landing Page | Dashboard |
+| :---: | :---: |
+| ![Landing Page](doc/imagens/LandingPage.png) | ![Dashboard](doc/imagens/Dashboard.png) |
 
-## Cadastro
-![Cadastro](doc/imagens/Cadastro.png)
+<details>
+<summary>📸 Ver todas as telas do sistema (Login, Cadastro, Transações, Contas, Metas, Família e Configurações)</summary>
 
-## Dashboard
-![Dashboard](doc/imagens/Dashboard.png)
+<br>
 
-## Transação
-![Transação](doc/imagens/Transacao.png)
+| Login | Cadastro |
+| :---: | :---: |
+| ![Login](doc/imagens/Login.png) | ![Cadastro](doc/imagens/Cadastro.png) |
 
-## Conta
-![Conta](doc/imagens/Contas.png)
+| Transações | Contas |
+| :---: | :---: |
+| ![Transação](doc/imagens/Transacao.png) | ![Conta](doc/imagens/Contas.png) |
 
-## Configuração
-![Configuração](doc/imagens/Configuracao.png)
+| Metas | Família |
+| :---: | :---: |
+| ![Metas](doc/imagens/Metas.png) | ![Família](doc/imagens/Familia.png) |
+
+| Configurações e Integrações |
+| :---: |
+| ![Configuração](doc/imagens/Configuracao.png) |
+
+</details>
+
+## Principais Funcionalidades
+
+- **Dashboard e Relatórios:** resumo financeiro em tempo real, gráficos por categoria/período e exportação de relatórios em **PDF** e **CSV**.
+- **Transações e Parcelamentos:** lançamentos manuais de receitas/despesas, controle de compras parceladas, confirmação de pagamentos e exclusão em lote.
+- **Importação de Faturas PDF com IA (BYOK):** leitura de faturas (inclusive protegidas por senha) com extração assistida por IA (**Gemini**, **OpenAI** ou **Claude** usando a chave do próprio usuário) e detecção de duplicatas.
+- **Open Finance (Pluggy):** conexão e sincronização automática de contas e transações bancárias com credenciais criptografadas.
+- **Metas e Gamificação:** metas por categoria/objetivo, registro de aportes, alertas de progresso e conquistas com medalhas.
+- **Gestão Familiar e Segurança:** grupo familiar com convites, controle de permissões, notificações internas, login com **Google (LGPD)** e recuperação de senha.
 
 ## Stack
 
-- **Backend:** Java 21 + Spring Boot 3.5 + PostgreSQL (ou H2 em memória)
+- **Backend:** Java 21 + Spring Boot 3.5 + PostgreSQL (ou H2 em memória) + Redis (cache)
 - **Frontend:** Angular 21 + PrimeNG + Tailwind CSS
-- **Autenticação:** JWT (jjwt 0.12)
+- **Autenticação:** JWT (jjwt 0.12) + Google Identity Services
+- **Testes:** JUnit 5, Vitest e Cypress (E2E)
 - **Docs da API:** Swagger UI em `/api/docs`
 
 ---
@@ -52,7 +70,7 @@ Antes de iniciar, crie o arquivo `.env` na raiz do projeto a partir do exemplo f
 cp .env.example .env
 ```
 
-Edite o arquivo `.env` caso precise customizar credenciais de banco de dados (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`) ou segredos de autenticação (`JWT_SECRET`). Para o upload de fotos, preencha `CLOUDINARY_*`. A chave de IA para leitura de faturas não fica no `.env`: cada usuário a informa na tela de importação.
+Edite o arquivo `.env` caso precise customizar credenciais de banco de dados (`POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD`), segredos de autenticação (`JWT_SECRET`) ou o `GOOGLE_CLIENT_ID` (para habilitar o login com Google). Para o upload de fotos, preencha `CLOUDINARY_*`. A chave de IA para leitura de faturas não fica no `.env`: cada usuário a informa e gerencia diretamente na plataforma.
 
 > **Arquivo único centralizado:** O backend foi configurado para detectar automaticamente o arquivo `.env` na raiz do projeto (ou no subdiretório se existir). Basta criar um único `.env` na raiz!
 
@@ -209,8 +227,9 @@ Você pode rodar os testes diretamente da raiz ou em cada módulo:
   # Backend
   cd backend/na-ponta-do-lapis && ./mvnw test
 
-  # Frontend
+  # Frontend (unitários e E2E)
   cd frontend/na-ponta-do-lapis && npm test
+  cd frontend/na-ponta-do-lapis && npm run cypress:run
   ```
 
 ---
