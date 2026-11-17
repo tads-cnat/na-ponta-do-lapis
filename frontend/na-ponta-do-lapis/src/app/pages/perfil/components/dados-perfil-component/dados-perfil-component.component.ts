@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { UsuarioService } from '../../service/perfil.services'; // Ajuste o caminho até o novo service
+import { UsuarioService } from '../../service/perfil.services';
+import { FamiliaService } from '../../../familia/service/familia.service';
 import { Usuario } from '../../../../model/IUsuario.models';
-import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-dados-perfil',
@@ -13,11 +13,14 @@ import { ChangeDetectorRef } from '@angular/core';
 })
 export class DadosPerfilComponent implements OnInit {
 
-  // Injetando o novo UsuarioService dedicado do Perfil
-  constructor(private usuarioService: UsuarioService, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private usuarioService: UsuarioService,
+    private familiaService: FamiliaService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  // Voltamos com segurança para a tipagem forte de Usuario!
   public usuarioLogado: Usuario | null = null;
+  public nomeFamilia: string | null = null;
 
   ngOnInit(): void {
     this.carregarDadosDoPerfil();
@@ -27,8 +30,21 @@ export class DadosPerfilComponent implements OnInit {
     this.usuarioService.obterPerfilCompleto().subscribe({
       next: (res: Usuario) => {
         this.usuarioLogado = res;
-        console.log('Perfil completo carregado com sucesso:', res);
-        this.cdr.detectChanges(); // Atualiza a view após carregar os dados do perfil
+        if (res.idFamilia) {
+          this.familiaService.buscarFamiliaPorId(res.idFamilia).subscribe({
+            next: (familia) => {
+              this.nomeFamilia = familia?.nome ?? null;
+              this.cdr.detectChanges();
+            },
+            error: () => {
+              this.nomeFamilia = null;
+              this.cdr.detectChanges();
+            }
+          });
+        } else {
+          this.nomeFamilia = null;
+        }
+        this.cdr.detectChanges();
       },
       error: (err: Error) => {
         console.error('Erro ao buscar dados do perfil detalhado:', err);
@@ -38,9 +54,10 @@ export class DadosPerfilComponent implements OnInit {
 
   public obterPapel(): string {
     const p = this.usuarioLogado?.papel?.toUpperCase();
-    if (p === 'ADMIN') return 'Administrador';
+    if (p === 'ADMIN_FAMILIA' || p === 'ADMIN') return 'Administrador da Família';
+    if (p === 'ADMIN_SITE') return 'Administrador do Sistema';
     if (p === 'RESPONSAVEL') return 'Responsável';
-    return 'Membro';
+    return this.usuarioLogado?.idFamilia ? 'Membro' : 'Usuário';
   }
 
   public obterMoeda(): string {
@@ -51,6 +68,7 @@ export class DadosPerfilComponent implements OnInit {
   }
 
   public obterFamilia(): string {
-    return this.usuarioLogado?.idFamilia ? 'Grupo Familiar' : 'Individual';
+    if (!this.usuarioLogado?.idFamilia) return 'Individual';
+    return this.nomeFamilia || 'Grupo Familiar';
   }
 }
