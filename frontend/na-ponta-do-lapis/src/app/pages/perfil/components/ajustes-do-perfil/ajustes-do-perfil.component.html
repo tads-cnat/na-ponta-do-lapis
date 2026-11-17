@@ -1,15 +1,15 @@
-<div class="w-full bg-white rounded-3xl border border-slate-100 p-6 sm:p-8 md:p-10 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex flex-col font-sans transition-all">
+<div class="w-full bg-white rounded-3xl border border-slate-100 p-4 sm:p-8 md:p-10 shadow-[0_4px_20px_rgba(0,0,0,0.04)] flex flex-col font-sans transition-all">
 
   <!-- Header com Abas de Navegação (Roxo e Amarelo da Marca) -->
-  <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-8">
-    <div class="flex items-center gap-1.5 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200/60">
+  <div class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 pb-5 mb-6 sm:mb-8">
+    <div class="flex flex-wrap sm:inline-flex w-full sm:w-auto items-center gap-1.5 p-1.5 bg-slate-100/80 rounded-2xl border border-slate-200/60">
       
       <!-- Aba: Ajustes do Perfil -->
       <button type="button"
               (click)="abaAtiva = 'dados'"
               [class]="abaAtiva === 'dados' 
-                ? 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer' 
-                : 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer'">
+                ? 'flex-1 sm:flex-initial justify-center flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer whitespace-nowrap' 
+                : 'flex-1 sm:flex-initial justify-center flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer whitespace-nowrap'">
         <i class="pi pi-user text-sm" [ngClass]="abaAtiva === 'dados' ? 'text-[#6214CC]' : 'text-slate-400'"></i>
         <span class="text-xs sm:text-sm">Ajustes do Perfil</span>
       </button>
@@ -18,8 +18,8 @@
       <button type="button"
               (click)="abaAtiva = 'conquistas'"
               [class]="abaAtiva === 'conquistas' 
-                ? 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer' 
-                : 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer'">
+                ? 'flex-1 sm:flex-initial justify-center flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer whitespace-nowrap' 
+                : 'flex-1 sm:flex-initial justify-center flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer whitespace-nowrap'">
         <i class="pi pi-trophy text-sm" [ngClass]="abaAtiva === 'conquistas' ? 'text-[#EEC046]' : 'text-slate-400'"></i>
         <span class="text-xs sm:text-sm">Conquistas & Nível</span>
         <span class="text-[10px] bg-purple-100 text-[#6214CC] px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-purple-200/80">XP</span>
@@ -29,8 +29,8 @@
       <button type="button"
               (click)="abaAtiva = 'integracoes'"
               [class]="abaAtiva === 'integracoes' 
-                ? 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer' 
-                : 'flex items-center gap-2.5 px-4 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer'">
+                ? 'flex-1 sm:flex-initial justify-center flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl bg-white text-[#6214CC] font-bold shadow-xs border-b-2 border-[#EEC046] transition-all cursor-pointer whitespace-nowrap' 
+                : 'flex-1 sm:flex-initial justify-center flex items-center gap-2 px-3 sm:px-5 py-2.5 rounded-xl text-slate-500 font-semibold hover:text-slate-800 transition-all cursor-pointer whitespace-nowrap'">
         <i class="pi pi-sliders-h text-sm" [ngClass]="abaAtiva === 'integracoes' ? 'text-[#6214CC]' : 'text-slate-400'"></i>
         <span class="text-xs sm:text-sm">Conexões & IA</span>
         <span class="text-[10px] bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full font-bold uppercase tracking-wider border border-amber-200/80">Novo</span>

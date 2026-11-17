@@ -357,7 +357,7 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
                     (click)="selecionarCorRapida(cor.hex)"
                     [title]="cor.nome"
                     [style.backgroundColor]="'#' + cor.hex"
-                    class="w-8 h-8 rounded-xl transition-all duration-150 transform hover:scale-110 flex items-center justify-center shadow-xs cursor-pointer border-2"
+                    class="w-11 h-11 sm:w-9 sm:h-9 rounded-xl transition-all duration-150 transform hover:scale-110 flex items-center justify-center shadow-xs cursor-pointer border-2"
                     [class.border-[#7843CD]]="formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()"
                     [class.ring-2]="formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()"
                     [class.ring-[#D1C4FF]]="formContaFinanceira.get('cor')?.value?.toLowerCase() === cor.hex.toLowerCase()"

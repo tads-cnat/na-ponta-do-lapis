@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { RouterLink, RouterLinkActive } from '@angular/router'
 import { IconComponent } from '../../shared/components/icon/icon.component';
@@ -28,9 +28,12 @@ export class SidebarComponent implements OnInit {
       {label: 'Família', icon: 'familia', routerLink:'/app/familia'},
       {label: 'Perfil', icon:'ajuste', routerLink:'/app/perfil'},
     ]
-    if (window.innerWidth < 769) {
-      this.isMobile = true;
-    }
+    this.atualizarModoMobile();
+  }
+
+  @HostListener('window:resize')
+  atualizarModoMobile(): void {
+    this.isMobile = window.innerWidth < 769;
   }
 
   toggleSidebar(){

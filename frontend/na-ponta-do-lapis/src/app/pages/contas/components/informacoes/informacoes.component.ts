@@ -11,12 +11,12 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
   imports: [CommonModule, IconeBancoComponent, AppMoedaPipe],
   template: `
     @if (conta) {
-      <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col gap-5">
+      <div class="bg-white rounded-[2rem] p-4 sm:p-6 shadow-sm border border-slate-100 flex flex-col gap-5">
 
-        <div class="flex items-center justify-between">
-          <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-start sm:items-center justify-between gap-3">
+          <div class="flex items-center gap-3 min-w-0">
             <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'" [fallbackIcon]="ehCartao ? 'pi pi-credit-card' : 'pi pi-wallet'"></app-icone-banco>
-            <div>
+            <div class="min-w-0">
               <h2 class="section-title-npl">
                 Informações da Conta
               </h2>
@@ -26,7 +26,7 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
             </div>
           </div>
 
-          <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold"
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap shrink-0"
                 [ngClass]="ehCartao ? 'bg-purple-100 text-[#7843cd]' : 'bg-emerald-100 text-emerald-700'">
             <i [class]="ehCartao ? 'pi pi-credit-card' : 'pi pi-wallet'"></i>
             {{ ehCartao ? 'Cartão de Crédito' : 'Conta Corrente / Bancária' }}

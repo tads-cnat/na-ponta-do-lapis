@@ -21,8 +21,8 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // Quebra a string de URLs por vírgula e aplica como origens permitidas
-        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(","))); 
+        // Quebra a string de URLs/padrões por vírgula e aplica como origens permitidas (suporta * em dev)
+        configuration.setAllowedOriginPatterns(Arrays.asList(allowedOrigins.split(",")));
 
         // Métodos HTTP permitidos (mantive o PATCH que você já tinha)
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));

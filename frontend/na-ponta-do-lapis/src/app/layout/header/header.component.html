@@ -2,33 +2,35 @@
   <div class=" mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16">
 
-        <div class="flex items-center gap-5 ">
+        <div class="flex items-center gap-2 sm:gap-5">
             @if(isMobile) {
                 <div class="flex gap-2.5">
-                    <button (click)="sidebarService.toggleSidebar()" class="menu-btn w-5">
-                        <app-icon name="menu" class="text-black"/>
+                    <button type="button"
+                            aria-label="Abrir menu lateral"
+                            (click)="sidebarService.toggleSidebar()"
+                            class="menu-btn w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100/80 transition-colors cursor-pointer">
+                        <app-icon name="menu" class="w-5 h-5 text-slate-800"/>
                     </button>
                 </div>
             }
         </div>
-        <div class="flex justify-end items-center gap-5 ">
+        <div class="flex justify-end items-center gap-2 sm:gap-4 min-w-0">
 
-          <!-- Botões de alterar tema -->
-          <app-tema-component-simples></app-tema-component-simples>
-          
           <!-- Sino com Popover de Notificações -->
-          <div class="relative cursor-pointer text-slate-600 hover:text-[#7843CD] transition-colors p-1"
-               title="Notificações"
-               (click)="abrirNotificacoes($event, opNotificacoes)">
-            <i class="pi pi-bell text-lg"></i>
+          <button type="button"
+                  aria-label="Notificações"
+                  title="Notificações"
+                  class="relative w-11 h-11 flex items-center justify-center rounded-xl cursor-pointer text-slate-600 hover:text-[#7843CD] transition-colors bg-transparent border-0"
+                  (click)="abrirNotificacoes($event, opNotificacoes)">
+            <i class="pi pi-bell text-lg" aria-hidden="true"></i>
             @if (totalNaoLidas > 0) {
-              <span class="absolute -top-1 -right-1 min-w-[20px] h-[20px] px-1 bg-gradient-to-r from-[#EEC046] to-[#F59E0B] text-slate-950 font-black text-[10px] rounded-full ring-2 ring-white flex items-center justify-center shadow-sm animate-pulse">
+              <span class="absolute top-1 right-1 min-w-[20px] h-[20px] px-1 bg-gradient-to-r from-[#EEC046] to-[#F59E0B] text-slate-950 font-black text-[10px] rounded-full ring-2 ring-white flex items-center justify-center shadow-sm animate-pulse">
                 {{ totalNaoLidas > 99 ? '99+' : totalNaoLidas }}
               </span>
             }
-          </div>
+          </button>
 
-          <p-popover #opNotificacoes styleClass="w-80 sm:w-96 shadow-xl rounded-2xl border border-slate-100 overflow-hidden">
+          <p-popover #opNotificacoes styleClass="w-[calc(100vw-2rem)] max-w-80 sm:max-w-96 shadow-xl rounded-2xl border border-slate-100 overflow-hidden">
             <div class="p-4 flex flex-col gap-3">
               <div class="flex items-center justify-between border-b border-slate-100 pb-2">
                 <div class="flex items-center gap-2">
@@ -48,8 +50,8 @@
 
               <div class="max-h-80 overflow-y-auto flex flex-col divide-y divide-slate-100">
                 @if (notificacoes.length === 0) {
-                  <div class="py-8 text-center text-slate-400 flex flex-col items-center gap-2">
-                    <i class="pi pi-inbox text-3xl text-slate-300"></i>
+                  <div class="py-8 text-center text-slate-500 flex flex-col items-center gap-2">
+                    <i class="pi pi-inbox text-3xl text-slate-400"></i>
                     <p class="text-xs">Nenhuma notificação por enquanto.</p>
                   </div>
                 } @else {
@@ -79,11 +81,12 @@
                           }
                         </div>
                         <p class="text-xs text-slate-600 line-clamp-2 mt-0.5 leading-snug">{{ n.mensagem }}</p>
-                        <span class="text-[10px] text-slate-400 mt-1 block">{{ n.dataCriacao | date:'short' }}</span>
+                        <span class="text-[10px] text-slate-500 mt-1 block">{{ n.dataCriacao | date:'short' }}</span>
                       </div>
                       <button type="button"
                               (click)="excluirNotificacao($event, n.id)"
-                              class="opacity-0 group-hover:opacity-100 text-slate-300 hover:text-rose-500 transition-opacity p-1"
+                              class="opacity-75 sm:opacity-0 sm:group-hover:opacity-100 text-slate-500 hover:text-rose-500 transition-opacity p-2 cursor-pointer"
+                              aria-label="Remover notificação"
                               title="Remover">
                         <i class="pi pi-times text-xs"></i>
                       </button>
@@ -96,9 +99,9 @@
 
           <a routerLink="/app/perfil"
              title="Ir para o perfil"
-             class="flex items-center gap-2.5 cursor-pointer no-underline hover:opacity-80 transition-opacity focus:outline-none">
-            <img class="h-11 w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}">
-            <p class="nomeUser font-medium text-slate-800 m-0">{{ nomeUsuario }}</p>
+             class="flex items-center gap-2.5 cursor-pointer no-underline hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7843CD] rounded-xl min-w-0">
+            <img class="h-10 w-10 sm:h-11 sm:w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover shrink-0" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}">
+            <p class="nomeUser hidden sm:block max-w-[130px] md:max-w-[180px] truncate font-medium text-slate-800 m-0">{{ nomeUsuario }}</p>
           </a>
           <div>
               <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]! text-xs rounded-xl" (onClick)="logout()">Sair<i class="pi pi-sign-out "></i></p-button>

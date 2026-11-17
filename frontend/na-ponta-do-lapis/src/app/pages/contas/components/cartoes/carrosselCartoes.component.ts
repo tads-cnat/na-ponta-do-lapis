@@ -10,23 +10,23 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
   standalone: true,
   imports: [NgClass, AppMoedaPipe, IconeBancoComponent],
   template: `
-    <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 overflow-hidden">
+    <div class="bg-white rounded-[2rem] p-4 sm:p-6 shadow-sm border border-slate-100 overflow-hidden">
 
       <!-- TOPO -->
-      <div class="flex items-center justify-between mb-8">
+      <div class="flex items-center justify-between gap-3 mb-5 sm:mb-8">
 
-        <div>
-          <div class="flex items-center gap-2.5">
+        <div class="min-w-0">
+          <div class="flex items-center gap-2.5 flex-wrap">
             <h2 class="section-title-npl m-0">
               Suas Contas
             </h2>
             <span class="badge-npl-amarelo">
-              <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
               {{ contas.length }} {{ contas.length === 1 ? 'conta' : 'contas' }}
             </span>
           </div>
           <p class="text-slate-500 mt-0.5 text-xs">
-            Navegue entre as contas cadastradas
+            <span class="hidden sm:inline">Navegue entre as contas cadastradas</span>
+            <span class="sm:hidden">{{ contas.length > 1 ? 'Deslize o cartão ou use as setas' : 'Sua conta cadastrada' }}</span>
           </p>
         </div>
 
@@ -64,7 +64,9 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
       </div>
 
       <!-- ÁREA DO CARROSSEL -->
-      <div class="relative h-[280px] flex items-center justify-center overflow-hidden">
+      <div class="relative h-[240px] sm:h-[280px] flex items-center justify-center overflow-hidden touch-pan-y select-none"
+           (touchstart)="onTouchStart($event)"
+           (touchend)="onTouchEnd($event)">
 
         @if (!carregando && contas.length > 0) {
 
@@ -72,12 +74,12 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
 
             <div
               (click)="onContaSelecionada.emit(i)"
-              class="absolute transition-all duration-500 ease-in-out cursor-pointer"
+              class="absolute w-full max-w-[360px] sm:max-w-[400px] transition-all duration-500 ease-in-out cursor-pointer"
               [ngClass]="obterClassesPosicao(i)">
 
               <!-- CARD -->
               <div
-                class="relative w-[400px] max-w-[82vw] h-[220px] rounded-[2rem] overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]"
+                class="relative w-full h-[205px] sm:h-[220px] rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden shadow-2xl transition-transform hover:scale-[1.02]"
                 [title]="conta.nome"
                 [style.background]="obterCorCartao(conta)">
 
@@ -87,7 +89,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
                 <div class="absolute inset-0 bg-black/10"></div>
 
                 <!-- CONTEÚDO -->
-                <div class="relative z-10 h-full p-7 flex flex-col justify-between text-white">
+                <div class="relative z-10 h-full p-5 sm:p-7 flex flex-col justify-between text-white">
 
                   <div class="flex items-start justify-between gap-4">
 
@@ -199,6 +201,32 @@ export class CarrosselCartoesComponent {
   @Output() onAnterior = new EventEmitter<void>();
   @Output() onProxima = new EventEmitter<void>();
 
+  private touchStartX: number | null = null;
+  private touchStartY: number | null = null;
+
+  onTouchStart(event: TouchEvent): void {
+    if (event.touches.length !== 1) return;
+    this.touchStartX = event.touches[0].clientX;
+    this.touchStartY = event.touches[0].clientY;
+  }
+
+  onTouchEnd(event: TouchEvent): void {
+    if (this.touchStartX === null || this.touchStartY === null || event.changedTouches.length === 0) return;
+    const deltaX = event.changedTouches[0].clientX - this.touchStartX;
+    const deltaY = event.changedTouches[0].clientY - this.touchStartY;
+    this.touchStartX = null;
+    this.touchStartY = null;
+
+    if (this.contas.length <= 1 || Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) {
+      return;
+    }
+    if (deltaX < 0) {
+      this.onProxima.emit();
+    } else {
+      this.onAnterior.emit();
+    }
+  }
+
   ehCartao(conta: IContas): boolean {
     return ehCartaoCredito(conta);
   }
@@ -213,11 +241,11 @@ export class CarrosselCartoesComponent {
       return 'z-30 opacity-100 scale-100 translate-x-0';
     }
 
-    // 2 contas: a selecionada fica no centro e a outra fica à direita
+    // 2 contas: a selecionada fica no centro e a outra fica à direita no desktop (peek sutil no mobile)
     if (this.contas.length === 2) {
       return i === this.contaSelecionadaIndex
         ? 'z-30 opacity-100 scale-100 translate-x-0'
-        : 'z-20 opacity-40 scale-90 translate-x-[72%]';
+        : 'z-20 max-sm:opacity-35 max-sm:translate-x-[88%] max-sm:pointer-events-none opacity-40 scale-90 translate-x-[72%]';
     }
 
     // 3 ou mais contas: carrossel tridimensional com esquerda, centro e direita
@@ -226,11 +254,11 @@ export class CarrosselCartoesComponent {
     }
 
     if (i === this.contaAnterior) {
-      return 'z-20 opacity-40 scale-90 -translate-x-[72%]';
+      return 'z-20 max-sm:opacity-0 max-sm:pointer-events-none opacity-40 scale-90 -translate-x-[72%]';
     }
 
     if (i === this.contaProxima) {
-      return 'z-20 opacity-40 scale-90 translate-x-[72%]';
+      return 'z-20 max-sm:opacity-35 max-sm:translate-x-[88%] max-sm:pointer-events-none opacity-40 scale-90 translate-x-[72%]';
     }
 
     return 'opacity-0 scale-75 pointer-events-none';

@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PrimeNGModuleModule } from "./shared/primeNg.module";
 import { ModalCelebracaoComponent } from './shared/components/modal-celebracao/modal-celebracao.component';
+import { PwaService } from './shared/service/pwa.service';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,5 @@ import { ModalCelebracaoComponent } from './shared/components/modal-celebracao/m
 })
 export class App {
   protected readonly title = signal('na-ponta-do-lapis');
+  protected readonly pwaService = inject(PwaService);
 }

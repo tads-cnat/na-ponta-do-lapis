@@ -45,8 +45,8 @@ interface CategoriaVM {
   standalone: true,
   imports: [ChartModule],
   template: `
-    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-100 flex flex-col">
-      <div class="mb-5">
+    <div class="bg-white rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 flex flex-col">
+      <div class="mb-4 sm:mb-5">
         <h2 class="section-title-npl">
           Gastos por categoria
         </h2>
@@ -55,17 +55,17 @@ interface CategoriaVM {
         </p>
       </div>
 
-      <div class="flex items-start gap-4 flex-1 min-h-0">
+      <div class="flex flex-col sm:flex-row items-center sm:items-start gap-5 flex-1 min-h-0">
 
         <!-- Doughnut chart -->
-        <div class="flex-shrink-0 flex items-center justify-center"
-             style="width:185px; height:185px;">
+        <div class="shrink-0 flex items-center justify-center w-[165px] h-[165px] sm:w-[185px] sm:h-[185px]">
           @if (temDados) {
             <p-chart
               type="doughnut"
               [data]="chartData"
               [options]="chartOptions"
-              [style]="{ height: '185px', width: '185px' }">
+              class="w-full h-full"
+              [style]="{ height: '100%', width: '100%' }">
             </p-chart>
           } @else {
             <!--
@@ -73,7 +73,7 @@ interface CategoriaVM {
               mas exibe todas as categorias na legenda com 0%.
             -->
             <div class="w-full h-full rounded-full flex items-center justify-center"
-                 style="border: 26px solid #f1f5f9;">
+                 style="border: 24px solid #f1f5f9;">
               <span class="text-[11px] text-gray-400 text-center leading-snug">
                 Sem<br>despesas
               </span>
@@ -86,16 +86,16 @@ interface CategoriaVM {
           GET /categorias) SEMPRE, independentemente de haver transações nelas.
           Categorias sem dados mostram "0%" para preservar a cor/rótulo.
         -->
-        <div class="flex-1 overflow-y-auto min-w-0 pr-1" style="max-height: 185px;">
+        <div class="w-full flex-1 overflow-y-auto min-w-0 pr-1 max-h-[220px] sm:max-h-[185px]">
           @for (cat of categorias; track cat.nome) {
-            <div class="flex items-center gap-2 py-1">
-              <span class="w-3 h-3 rounded-md flex-shrink-0 shadow-2xs"
+            <div class="flex items-center gap-2.5 py-1.5 border-b border-slate-100/70 last:border-b-0">
+              <span class="w-3 h-3 rounded-md shrink-0 shadow-2xs"
                     [style.background-color]="cat.cor">
               </span>
-              <span class="text-xs text-slate-700 font-medium flex-1 min-w-0 truncate">
+              <span class="text-xs sm:text-sm text-slate-700 font-medium flex-1 min-w-0 truncate">
                 {{ cat.nome }}
               </span>
-              <span class="text-xs font-bold text-slate-900 tabular-nums ml-1 flex-shrink-0">
+              <span class="text-xs sm:text-sm font-bold text-slate-900 tabular-nums ml-1 shrink-0">
                 {{ cat.percentual }}
               </span>
             </div>

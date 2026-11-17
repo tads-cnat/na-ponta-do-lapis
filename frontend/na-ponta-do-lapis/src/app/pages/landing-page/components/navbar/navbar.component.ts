@@ -12,10 +12,16 @@ type SecaoLanding = 'inicio' | 'por-que-nos' | 'o-que-fazemos';
 })
 export class NavbarComponent {
   readonly activeSection = signal<SecaoLanding>('inicio');
+  readonly menuMobileAberto = signal(false);
+
+  alternarMenuMobile(): void {
+    this.menuMobileAberto.update((aberto) => !aberto);
+  }
 
   navegarPara(event: Event, secao: SecaoLanding): void {
     event.preventDefault();
     this.activeSection.set(secao);
+    this.menuMobileAberto.set(false);
 
     if (secao === 'inicio') {
       window.scrollTo({ top: 0, behavior: 'smooth' });

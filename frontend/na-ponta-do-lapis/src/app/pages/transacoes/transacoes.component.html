@@ -19,7 +19,7 @@
 
         <div class="w-full">
 
-            <p-card class="bg-[#F8FAFC]! w-full block overflow-x-auto">
+            <p-card class="bg-[#F8FAFC]! w-full block overflow-x-hidden md:overflow-x-auto">
 
                 <div class="flex flex-col gap-4 mb-4">
                     <div class="flex flex-col xl:flex-row xl:justify-between xl:items-center gap-4">
@@ -29,24 +29,25 @@
                                     Histórico de Lançamentos
                                 </h2>
                                 <span class="badge-npl-amarelo">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-[#EEC046]"></span>
                                     {{ transacoesDados.length }} {{ transacoesDados.length === 1 ? 'item' : 'itens' }}
                                 </span>
                             </div>
                             <p class="text-xs text-slate-500 mt-0.5">Visualize, filtre e cadastre suas transações</p>
                         </div>
 
-                        <div class="flex flex-wrap gap-2 justify-start xl:justify-end items-center">
+                        <div class="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 justify-start xl:justify-end items-center w-full xl:w-auto">
                             <p-button
-                                styleClass="font-semibold rounded-xl! btn-npl-primary text-sm px-3.5 py-2 shadow-xs"
+                                class="col-span-2 sm:col-span-1 w-full sm:w-auto"
+                                styleClass="w-full sm:w-auto justify-center font-semibold rounded-xl! btn-npl-primary text-sm px-3.5 py-2.5 sm:py-2 shadow-xs"
                                 (onClick)="abrirDialogEscolha()">
                                 <i class="pi pi-plus mr-1"></i> Nova Transação
                             </p-button>
 
                             <p-button
+                                class="w-full sm:w-auto"
                                 [styleClass]="painelFiltrosAberto || qtdFiltrosAtivos > 0
-                                    ? 'font-semibold text-[#7843cd]! bg-purple-50! border-[#7843cd]! rounded-xl! text-sm px-3 py-2'
-                                    : 'font-semibold text-slate-700! bg-white! border-slate-300! rounded-xl! text-sm px-3 py-2'"
+                                    ? 'w-full sm:w-auto justify-center font-semibold text-[#7843cd]! bg-purple-50! border-[#7843cd]! rounded-xl! text-sm px-3 py-2.5 sm:py-2'
+                                    : 'w-full sm:w-auto justify-center font-semibold text-slate-700! bg-white! border-slate-300! rounded-xl! text-sm px-3 py-2.5 sm:py-2'"
                                 (onClick)="alternarPainelFiltros()">
                                 <i class="pi pi-filter mr-1.5"></i>
                                 <span>Filtrar</span>
@@ -58,12 +59,13 @@
                             </p-button>
 
                             <p-button
-                                styleClass="font-semibold text-slate-700! bg-white! border-slate-300! hover:bg-slate-50! rounded-xl! text-sm px-3 py-2"
+                                class="w-full sm:w-auto"
+                                styleClass="w-full sm:w-auto justify-center font-semibold text-slate-700! bg-white! border-slate-300! hover:bg-slate-50! rounded-xl! text-sm px-3 py-2.5 sm:py-2"
                                 (onClick)="abrirDialogMarcador()">
                                 <i class="pi pi-bookmark-fill mr-1 text-[#7843cd]" pButtonIcon></i> Marcadores
                             </p-button>
 
-                            <div class="relative w-full sm:w-64">
+                            <div class="hidden xl:block relative w-64">
                                 <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none z-10"></i>
                                 <input pInputText [ngModel]="textoBusca" (ngModelChange)="buscarPorDescricao($event)"
                                     placeholder="Buscar movimentação..."
@@ -223,7 +225,7 @@
                                     <i class="pi pi-arrow-up-right text-sm"></i>
                                 </div>
                                 <div class="flex flex-col">
-                                    <span class="text-slate-400 font-medium">Despesas no filtro</span>
+                                    <span class="text-slate-500 font-medium">Despesas no filtro</span>
                                     <span class="font-bold text-[#C24E4E] text-sm">- {{ totalDespesasFiltradas | appMoeda }}</span>
                                 </div>
                             </div>
@@ -233,7 +235,7 @@
                                     <i class="pi pi-wallet text-sm"></i>
                                 </div>
                                 <div class="flex flex-col">
-                                    <span class="text-slate-400 font-medium">Balanço do período</span>
+                                    <span class="text-slate-500 font-medium">Balanço do período</span>
                                     <span [class]="saldoFiltrado >= 0 ? 'font-bold text-emerald-600 text-sm' : 'font-bold text-[#C24E4E] text-sm'">
                                         {{ saldoFiltrado | appMoeda }}
                                     </span>
@@ -243,7 +245,7 @@
                     }
                     <!-- Barra de Ações em Lote (Bulk Actions) -->
                     @if (transacoesMarcadas.length > 0) {
-                        <div class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50/40 to-rose-50 border border-purple-200/80 shadow-xs animate-fadein">
+                        <div class="barra-acoes-lote flex flex-col sm:flex-row items-center justify-between gap-3 p-3 rounded-2xl bg-gradient-to-r from-purple-50 via-indigo-50/40 to-rose-50 border border-purple-200/80 shadow-xs animate-fadein">
                             <div class="flex items-center gap-3 w-full sm:w-auto">
                                 <div class="w-8 h-8 rounded-xl bg-[#7843cd] text-white flex items-center justify-center font-bold text-xs shadow-xs shrink-0">
                                     {{ transacoesMarcadas.length }}
@@ -268,13 +270,30 @@
                             </div>
                         </div>
                     }
+
+                    <!-- Busca rápida próxima à lista de transações (Mobile / Tablet) -->
+                    <div class="xl:hidden relative w-full">
+                        <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm pointer-events-none z-10"></i>
+                        <input pInputText [ngModel]="textoBusca" (ngModelChange)="buscarPorDescricao($event)"
+                            placeholder="Buscar movimentação..."
+                            class="w-full text-sm rounded-xl border border-slate-300 bg-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            style="padding-left: 2.5rem !important; padding-right: 2.25rem !important;" />
+                        @if (textoBusca) {
+                            <button type="button" (click)="buscarPorDescricao('')"
+                                class="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer z-10"
+                                title="Limpar busca">
+                                <i class="pi pi-times text-xs"></i>
+                            </button>
+                        }
+                    </div>
                 </div>
 
                 <p-table [value]="transacoesDados" [(selection)]="transacoesMarcadas" dataKey="id" [paginator]="true" [rows]="10" [rowsPerPageOptions]="[10, 25, 50]"
-                    [rowHover]="true" responsiveLayout="scroll" sortField="dataHora" [sortOrder]="-1" styleClass="p-datatable-sm w-full">
+                    [showCurrentPageReport]="true" currentPageReportTemplate="{currentPage} de {totalPages}"
+                    [rowHover]="true" sortField="dataHora" [sortOrder]="-1" styleClass="p-datatable-sm w-full max-md:[&_table]:table-fixed max-md:[&_table]:w-full">
 
                     <ng-template pTemplate="header">
-                        <tr>
+                        <tr class="hidden! md:table-row!">
                             <th class="bg-[#F8F8FC]! text-slate-700! w-[48px]">
                                 <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
                             </th>
@@ -301,17 +320,105 @@
                             </th>
                             <th class="bg-[#F8F8FC]! text-slate-700! w-[110px] text-center! pl-4!">Ações</th>
                         </tr>
+                        <tr class="md:hidden!">
+                            <th colspan="8" class="bg-[#F8F8FC]! text-slate-700! px-2! py-2.5!">
+                                <div class="flex items-center justify-between gap-2 text-xs font-semibold">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                                        <span>Selecionar página</span>
+                                    </label>
+                                    <span pSortableColumn="dataHora" class="inline-flex items-center gap-1 cursor-pointer text-[#7843cd]">
+                                        Ordenar por data <p-sortIcon field="dataHora"></p-sortIcon>
+                                    </span>
+                                </div>
+                            </th>
+                        </tr>
                     </ng-template>
 
                     <ng-template pTemplate="body" let-t>
                         <tr [class.p-datatable-row-selected]="isTransacaoMarcada(t)">
-                            <td>
+                            <!-- Célula Card Mobile (< 768px) -->
+                            <td colspan="8" class="md:hidden! p-1.5! border-b border-slate-100">
+                                <div class="rounded-xl bg-white border border-slate-200/80 p-3 flex flex-col gap-2.5 shadow-2xs">
+                                    <div class="flex items-start justify-between gap-2">
+                                        <div class="flex items-start gap-2.5 min-w-0 flex-1">
+                                            <div class="pt-0.5 shrink-0">
+                                                <p-tableCheckbox [value]="t" />
+                                            </div>
+                                            <div class="min-w-0 flex-1">
+                                                <p class="font-bold text-slate-800 text-sm truncate m-0 leading-snug">
+                                                    {{ t.descricao }}
+                                                </p>
+                                                <div class="flex items-center flex-wrap gap-1.5 text-[11px] text-slate-500 mt-0.5">
+                                                    <span>{{ t.dataHora | date:'dd/MM/yyyy' }}</span>
+                                                    <span>·</span>
+                                                    <span class="font-medium text-slate-600">{{ t.categoria?.nome || '-' }}</span>
+                                                    <span>·</span>
+                                                    <span>{{ t.conta?.nome || '-' }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <span class="tabular-nums text-sm font-extrabold whitespace-nowrap shrink-0"
+                                            [class]="t.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-[#C24E4E]'">
+                                            {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | appMoeda }}
+                                        </span>
+                                    </div>
+
+                                    @if ((t.numeroParcela && t.totalParcelas) || t.marcador) {
+                                        <div class="flex items-center flex-wrap gap-1.5 pl-6">
+                                            @if (t.numeroParcela && t.totalParcelas) {
+                                                <p-tag
+                                                    [value]="t.numeroParcela + '/' + t.totalParcelas"
+                                                    severity="warn"
+                                                    [rounded]="true"
+                                                    styleClass="text-[11px] font-semibold cursor-pointer"
+                                                    (click)="abrirGrupoParcelamento(t)"></p-tag>
+                                            }
+                                            @if (t.marcador) {
+                                                <span class="inline-flex items-center text-[11px] font-medium px-2 py-0.5 rounded-md"
+                                                    [style.backgroundColor]="t.marcador.cor ? t.marcador.cor + '18' : '#f1f5f9'"
+                                                    [style.color]="t.marcador.cor || '#475569'">
+                                                    <i class="pi pi-bookmark-fill text-[9px] mr-1"></i>{{ t.marcador.nome }}
+                                                </span>
+                                            }
+                                        </div>
+                                    }
+
+                                    <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-100">
+                                        <div>
+                                            @if (t.estado === 'REALIZADA') {
+                                                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                                    <i class="pi pi-check text-[10px]"></i> Realizada
+                                                </span>
+                                            } @else {
+                                                <button type="button" (click)="confirmarPagamento(t)"
+                                                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200 hover:bg-emerald-50 hover:text-emerald-700 transition-colors cursor-pointer">
+                                                    <i class="pi pi-clock text-[10px]"></i> Confirmar pagamento
+                                                </button>
+                                            }
+                                        </div>
+                                        <div class="flex items-center gap-1.5">
+                                            <p-button icon="pi pi-pencil"
+                                                ariaLabel="Editar transação"
+                                                styleClass="btn-icon-edit-npl"
+                                                (onClick)="prepararEdicao(t)"></p-button>
+                                            <p-button icon="pi pi-trash"
+                                                ariaLabel="Excluir transação"
+                                                styleClass="btn-icon-delete-npl"
+                                                (onClick)="abrirConfirmacaoExcluir(t)"></p-button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+
+                            <!-- Colunas Desktop (>= 768px) -->
+                            <td class="hidden! md:table-cell!">
                                 <p-tableCheckbox [value]="t" />
                             </td>
-                            <td>
+                            <td class="hidden! md:table-cell!">
                                 <span class="text-slate-600 text-xs font-medium whitespace-nowrap">{{ t.dataHora | date:'dd/MM/yyyy' }}</span>
                             </td>
-                            <td class="max-w-[240px] lg:max-w-[320px]">
+                            <td class="hidden! md:table-cell! max-w-[240px] lg:max-w-[320px]">
                                 <div class="flex items-center gap-1.5 py-0.5">
                                     <span class="font-semibold text-slate-800 text-sm truncate"
                                         [pTooltip]="t.descricao && t.descricao.length > 25 ? t.descricao : ''" tooltipPosition="top" [showDelay]="300">
@@ -337,13 +444,13 @@
                                     }
                                 </div>
                             </td>
-                            <td class="whitespace-nowrap text-xs text-slate-700 font-medium">
+                            <td class="hidden! md:table-cell! whitespace-nowrap text-xs text-slate-700 font-medium">
                                 {{ t.categoria?.nome || '-' }}
                             </td>
-                            <td class="whitespace-nowrap text-xs text-slate-600 font-medium">
+                            <td class="hidden! md:table-cell! whitespace-nowrap text-xs text-slate-600 font-medium">
                                 {{ t.conta?.nome || '-' }}
                             </td>
-                            <td>
+                            <td class="hidden! md:table-cell!">
                                 @if (t.estado === 'REALIZADA') {
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
                                         <i class="pi pi-check text-[10px]"></i> Realizada
@@ -356,13 +463,13 @@
                                     </button>
                                 }
                             </td>
-                            <td class="text-right! whitespace-nowrap pr-8!">
+                            <td class="hidden! md:table-cell! text-right! whitespace-nowrap pr-8!">
                                 <span class="tabular-nums text-sm font-semibold"
                                     [class]="t.tipo === 'RECEITA' ? 'text-emerald-600' : 'text-[#C24E4E]'">
                                     {{ t.tipo === 'RECEITA' ? '+' : '-' }} {{ t.valor | appMoeda }}
                                 </span>
                             </td>
-                            <td class="pl-4! whitespace-nowrap">
+                            <td class="hidden! md:table-cell! pl-4! whitespace-nowrap">
                                 <div class="flex items-center justify-center gap-1.5">
                                     <p-button icon="pi pi-pencil"
                                         pTooltip="Editar transação" tooltipPosition="top" [showDelay]="300"
