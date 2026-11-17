@@ -334,9 +334,7 @@ public class AuthServiceImpl implements AuthService{
         contaFinanceiraRepository.save(contaPadrao);
     }
 
-    private void changePasswordAfterRecovery(Long userId, String newPassword) {
-        Usuario usuario = usuarioRepository.findById(userId)
-                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
+    private void changePasswordAfterRecovery(Usuario usuario, String newPassword) {
         usuario.setSenha(passwordEncoder.encode(newPassword));
         usuario.setRecuperacaoTokenHash(null);
         usuario.setRecuperacaoTokenExpiraEm(null);
@@ -413,7 +411,7 @@ public class AuthServiceImpl implements AuthService{
             return false;
         }
 
-        changePasswordAfterRecovery(usuario.getId(), newPassword);
+        changePasswordAfterRecovery(usuario, newPassword);
         authRateLimitService.resetEmailSend("recover-password", usuario.getEmail());
         return true;
     }
