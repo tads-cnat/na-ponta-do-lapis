@@ -62,30 +62,41 @@ export class AuthService {
     return this.http.post<GoogleAuthResponse>(`${this.BASE_URL}/auth/google`, { idToken, termosAceitos });
   }
 
-  public register(signupRequest:SignupRequest): Observable<SignupRequest> {
-    return this.http.post<SignupRequest>(`${this.BASE_URL}/auth/register`, signupRequest)
+  public register(signupRequest:SignupRequest): Observable<{ message: string; requiresEmailVerification?: boolean }> {
+    return this.http.post<{ message: string; requiresEmailVerification?: boolean }>(`${this.BASE_URL}/auth/register`, signupRequest)
   }
 
-  public getRecoveryQuestion(email: string): Observable<{ message: string; question: string | null }> {
-    return this.http.post<{ message: string; question: string | null }>(
-      `${this.BASE_URL}/auth/recover-password/question`,
+  public verifyEmail(token: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.BASE_URL}/auth/verify-email`,
+      { token }
+    );
+  }
+
+  public resendVerificationEmail(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.BASE_URL}/auth/verify-email/resend`,
       { email }
     );
   }
 
-  public verifyRecoveryAnswer(email: string, answer: string): Observable<{ verified: boolean; message: string }> {
-    return this.http.post<{ verified: boolean; message: string }>(
-      `${this.BASE_URL}/auth/recover-password`,
-      { email, answer },
-      { withCredentials: true }
+  public getRecoveryConfig(): Observable<{ emailEnabled: boolean }> {
+    return this.http.get<{ emailEnabled: boolean }>(
+      `${this.BASE_URL}/auth/recover-password/config`
     );
   }
 
-  public changeRecoveredPassword(newPassword: string): Observable<{ message: string }> {
+  public requestPasswordRecoveryEmail(email: string): Observable<{ message: string }> {
     return this.http.post<{ message: string }>(
-      `${this.BASE_URL}/auth/recover-password/change`,
-      { newPassword },
-      { withCredentials: true }
+      `${this.BASE_URL}/auth/recover-password/email`,
+      { email }
+    );
+  }
+
+  public resetPasswordWithToken(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(
+      `${this.BASE_URL}/auth/recover-password/reset`,
+      { token, newPassword }
     );
   }
 

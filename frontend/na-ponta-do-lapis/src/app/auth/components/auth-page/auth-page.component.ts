@@ -34,7 +34,7 @@ export class AuthPageComponent {
   private resolverModo(): 'login' | 'signup' | 'recovery' {
     const url = this.router.url.split('?')[0];
     if (url.startsWith('/signup')) return 'signup';
-    if (url.startsWith('/recuperar-senha') || url.startsWith('/redefinir-senha')) return 'recovery';
+    if (url.startsWith('/recuperar-senha') || url.startsWith('/redefinir-senha') || url.startsWith('/confirmar-email')) return 'recovery';
     return 'login';
   }
 }

@@ -10,13 +10,13 @@ import com.npl.na_ponta_do_lapis.repository.ContaFinanceiraRepository;
 import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
+import com.npl.na_ponta_do_lapis.service.email.EmailSenderService;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
-import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryQuestionResponseDTO;
-import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
 import com.npl.na_ponta_do_lapis.web.exception.EmailJaCadastradoException;
+import com.npl.na_ponta_do_lapis.web.exception.EmailNaoVerificadoException;
 import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,10 +38,15 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.sql.Date;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Base64;
+import java.util.HexFormat;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,27 +55,34 @@ import java.util.UUID;
 public class AuthServiceImpl implements AuthService{
 
     private static final Logger log = LoggerFactory.getLogger(AuthServiceImpl.class);
-        private static final int MAX_RECOVERY_ATTEMPTS = 5;
-        private static final Duration RECOVERY_LOCK_DURATION = Duration.ofMinutes(15);
-        private static final String RECOVERY_FAILURE_MESSAGE = "Não foi possível confirmar os dados informados.";
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final UsuarioRepository usuarioRepository;
     private final ContaFinanceiraRepository contaFinanceiraRepository;
     private final PasswordEncoder passwordEncoder;
     private final ObjectMapper objectMapper;
+    private static final Duration EMAIL_RESET_TOKEN_DURATION = Duration.ofMinutes(15);
+    private static final Duration EMAIL_VERIFICATION_TOKEN_DURATION = Duration.ofHours(24);
+    private static final Duration EMAIL_RESEND_COOLDOWN = Duration.ofSeconds(60);
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     private final HttpClient httpClient;
     private final UsuarioAuthCacheService usuarioAuthCacheService;
+    private final EmailSenderService emailSenderService;
+    private final AuthRateLimitService authRateLimitService;
 
     @Value("${google.client-id:}")
     private String googleClientId;
+
+    @Value("${app.web-url:http://localhost:4200}")
+    private String appWebUrl;
 
     public AuthServiceImpl(AuthenticationManager authenticationManager,
                            JwtUtil jwtUtil,
                            UsuarioRepository usuarioRepository,
                            ContaFinanceiraRepository contaFinanceiraRepository,
                            PasswordEncoder passwordEncoder) {
-        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, new ObjectMapper(), null);
+        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, new ObjectMapper(), null, null);
     }
 
     public AuthServiceImpl(AuthenticationManager authenticationManager,
@@ -79,17 +91,40 @@ public class AuthServiceImpl implements AuthService{
                            ContaFinanceiraRepository contaFinanceiraRepository,
                            PasswordEncoder passwordEncoder,
                            ObjectMapper objectMapper) {
-        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, objectMapper, null);
+        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, objectMapper, null, null);
     }
 
-                @Autowired
-                public AuthServiceImpl(AuthenticationManager authenticationManager,
+    public AuthServiceImpl(AuthenticationManager authenticationManager,
                            JwtUtil jwtUtil,
                            UsuarioRepository usuarioRepository,
                            ContaFinanceiraRepository contaFinanceiraRepository,
                            PasswordEncoder passwordEncoder,
                            ObjectMapper objectMapper,
                            UsuarioAuthCacheService usuarioAuthCacheService) {
+        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, objectMapper, usuarioAuthCacheService, null);
+    }
+
+    public AuthServiceImpl(AuthenticationManager authenticationManager,
+                           JwtUtil jwtUtil,
+                           UsuarioRepository usuarioRepository,
+                           ContaFinanceiraRepository contaFinanceiraRepository,
+                           PasswordEncoder passwordEncoder,
+                           ObjectMapper objectMapper,
+                           UsuarioAuthCacheService usuarioAuthCacheService,
+                           EmailSenderService emailSenderService) {
+        this(authenticationManager, jwtUtil, usuarioRepository, contaFinanceiraRepository, passwordEncoder, objectMapper, usuarioAuthCacheService, emailSenderService, new AuthRateLimitService());
+    }
+
+    @Autowired
+    public AuthServiceImpl(AuthenticationManager authenticationManager,
+                           JwtUtil jwtUtil,
+                           UsuarioRepository usuarioRepository,
+                           ContaFinanceiraRepository contaFinanceiraRepository,
+                           PasswordEncoder passwordEncoder,
+                           ObjectMapper objectMapper,
+                           UsuarioAuthCacheService usuarioAuthCacheService,
+                           EmailSenderService emailSenderService,
+                           AuthRateLimitService authRateLimitService) {
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
         this.usuarioRepository = usuarioRepository;
@@ -97,6 +132,8 @@ public class AuthServiceImpl implements AuthService{
         this.passwordEncoder = passwordEncoder;
         this.objectMapper = objectMapper;
         this.usuarioAuthCacheService = usuarioAuthCacheService;
+        this.emailSenderService = emailSenderService;
+        this.authRateLimitService = authRateLimitService != null ? authRateLimitService : new AuthRateLimitService();
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(8))
                 .build();
@@ -125,6 +162,13 @@ public class AuthServiceImpl implements AuthService{
                         () -> new UsernameNotFoundException("Usuário: " + identifier + " não encontrado")
                 );
 
+        if (!usuario.isEmailVerificado()) {
+            throw new EmailNaoVerificadoException(
+                    "Confirme seu e-mail antes de entrar. Verifique sua caixa de entrada ou solicite um novo link.",
+                    usuario.getEmail()
+            );
+        }
+
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
         return new TokenResponseDTO(token);
     }
@@ -148,6 +192,11 @@ public class AuthServiceImpl implements AuthService{
                 return GoogleAuthResponseDTO.pendenteTermos(nomeExibicao, email, picture);
             }
             usuario = registrarUsuarioGoogle(email, nome, picture);
+        } else if (!usuario.isEmailVerificado()) {
+            usuario.setEmailVerificado(true);
+            usuario.setEmailVerificacaoTokenHash(null);
+            usuario.setEmailVerificacaoExpiraEm(null);
+            usuarioRepository.save(usuario);
         }
 
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
@@ -182,20 +231,30 @@ public class AuthServiceImpl implements AuthService{
         novoUsuario.setVersaoTermos(Usuario.VERSAO_TERMOS_ATUAL);
         novoUsuario.setTermosAceitosEm(LocalDateTime.now());
 
-        String pergunta = registerRequestDTO.perguntaSeguranca() == null ? "" : registerRequestDTO.perguntaSeguranca().trim();
-        String resposta = registerRequestDTO.respostaSeguranca() == null ? "" : registerRequestDTO.respostaSeguranca().trim();
-        if (!pergunta.isBlank() || !resposta.isBlank()) {
-            if (pergunta.isBlank() || resposta.isBlank()) {
-                throw new IllegalArgumentException("Informe a pergunta e a resposta de segurança.");
-            }
-            novoUsuario.setPerguntaSeguranca(pergunta);
-            novoUsuario.setRespostaSegurancaHash(passwordEncoder.encode(normalizarRespostaSeguranca(resposta)));
-            novoUsuario.setTentativasRecuperacao(0);
-            novoUsuario.setRecuperacaoBloqueadaAte(null);
+        boolean requerConfirmacao = emailSenderService != null && emailSenderService.isEnabled();
+        String rawVerificationToken = null;
+        if (requerConfirmacao) {
+            rawVerificationToken = gerarTokenAleatorio();
+            novoUsuario.setEmailVerificado(false);
+            novoUsuario.setEmailVerificacaoTokenHash(sha256Hex(rawVerificationToken));
+            novoUsuario.setEmailVerificacaoExpiraEm(Instant.now().plus(EMAIL_VERIFICATION_TOKEN_DURATION));
+        } else {
+            novoUsuario.setEmailVerificado(true);
         }
 
         Usuario usuarioSalvo = usuarioRepository.save(novoUsuario);
         criarContaPadrao(usuarioSalvo);
+
+        if (requerConfirmacao) {
+            authRateLimitService.tryConsumeEmailSend("verify-email", email);
+            String verificationLink = resolverBaseUrl() + "/confirmar-email?token="
+                    + URLEncoder.encode(rawVerificationToken, StandardCharsets.UTF_8);
+            emailSenderService.sendEmailVerificationEmail(
+                    usuarioSalvo.getEmail(),
+                    resolverNomeExibicao(usuarioSalvo),
+                    verificationLink
+            );
+        }
     }
 
     private JsonNode verifyGoogleIdToken(String idToken) {
@@ -258,6 +317,7 @@ public class AuthServiceImpl implements AuthService{
         usuario.setSenha(passwordEncoder.encode(UUID.randomUUID().toString()));
         usuario.setVersaoTermos(Usuario.VERSAO_TERMOS_ATUAL);
         usuario.setTermosAceitosEm(LocalDateTime.now());
+        usuario.setEmailVerificado(true);
 
         Usuario usuarioSalvo = usuarioRepository.save(usuario);
         criarContaPadrao(usuarioSalvo);
@@ -274,73 +334,182 @@ public class AuthServiceImpl implements AuthService{
         contaFinanceiraRepository.save(contaPadrao);
     }
 
-    @Override
-    public PasswordRecoveryQuestionResponseDTO getRecoveryQuestion(String email) {
-        String normalizedEmail = email == null ? "" : email.strip();
-        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailIgnoreCase(normalizedEmail);
-        String question = usuarioOptional
-                .map(Usuario::getPerguntaSeguranca)
-                .filter(value -> value != null && !value.isBlank())
-                .orElse(null);
-        return new PasswordRecoveryQuestionResponseDTO(RECOVERY_FAILURE_MESSAGE, question);
-    }
-
-    @Override
-    @Transactional
-    public Long verifyRecoveryAnswer(String email, String answer) {
-        String normalizedEmail = email == null ? "" : email.strip();
-        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailIgnoreCase(normalizedEmail);
-        if (usuarioOptional.isEmpty()) {
-            return null;
-        }
-
-        Usuario usuario = usuarioOptional.get();
-        Instant now = Instant.now();
-        Instant blockedUntil = usuario.getRecuperacaoBloqueadaAte();
-        if (blockedUntil != null && blockedUntil.isAfter(now)) {
-            return null;
-        }
-        if (blockedUntil != null) {
-            usuario.setTentativasRecuperacao(0);
-            usuario.setRecuperacaoBloqueadaAte(null);
-        }
-
-        String answerHash = usuario.getRespostaSegurancaHash();
-        if (answerHash == null || answer == null
-                || !passwordEncoder.matches(normalizarRespostaSeguranca(answer), answerHash)) {
-            int failedAttempts = usuario.getTentativasRecuperacao() + 1;
-            usuario.setTentativasRecuperacao(failedAttempts);
-            if (failedAttempts >= MAX_RECOVERY_ATTEMPTS) {
-                usuario.setRecuperacaoBloqueadaAte(now.plus(RECOVERY_LOCK_DURATION));
-            }
-            usuarioRepository.save(usuario);
-            return null;
-        }
-
-        usuario.setTentativasRecuperacao(0);
-        usuario.setRecuperacaoBloqueadaAte(null);
-        usuarioRepository.save(usuario);
-        return usuario.getId();
-    }
-
-    @Override
-    @Transactional
-    public void changePasswordAfterRecovery(Long userId, String newPassword) {
+    private void changePasswordAfterRecovery(Long userId, String newPassword) {
         Usuario usuario = usuarioRepository.findById(userId)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado."));
         usuario.setSenha(passwordEncoder.encode(newPassword));
-        usuario.setSenhaTemporaria(false);
-        usuario.setSenhaTemporariaExpiraEm(null);
-        usuario.setTentativasRecuperacao(0);
-        usuario.setRecuperacaoBloqueadaAte(null);
+        usuario.setRecuperacaoTokenHash(null);
+        usuario.setRecuperacaoTokenExpiraEm(null);
         usuarioRepository.save(usuario);
         if (usuarioAuthCacheService != null) {
             usuarioAuthCacheService.evictPorUsuario(usuario);
         }
     }
 
-    private String normalizarRespostaSeguranca(String answer) {
-        return answer.trim().replaceAll("\\s+", " ").toLowerCase(Locale.ROOT);
+    @Override
+    @Transactional
+    public void requestPasswordResetEmail(String email) {
+        if (emailSenderService == null || !emailSenderService.isEnabled()) {
+            return;
+        }
+        String normalizedEmail = email == null ? "" : email.strip();
+        if (normalizedEmail.isBlank()) {
+            return;
+        }
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailIgnoreCase(normalizedEmail);
+        if (usuarioOptional.isEmpty()) {
+            return;
+        }
+
+        Usuario usuario = usuarioOptional.get();
+        if (!usuario.isEmailVerificado()) {
+            log.info("Recuperação ignorada para conta com e-mail ainda não confirmado id={}.", usuario.getId());
+            return;
+        }
+
+        Instant agora = Instant.now();
+        if (usuario.getRecuperacaoTokenExpiraEm() != null) {
+            Instant ultimoEnvio = usuario.getRecuperacaoTokenExpiraEm().minus(EMAIL_RESET_TOKEN_DURATION);
+            if (ultimoEnvio.plus(EMAIL_RESEND_COOLDOWN).isAfter(agora)) {
+                log.info("Cooldown de reenvio de recuperação ativo para o usuário id={}.", usuario.getId());
+                return;
+            }
+        }
+
+        long backoffSegundos = authRateLimitService.tryConsumeEmailSend("recover-password", usuario.getEmail());
+        if (backoffSegundos > 0) {
+            log.info("Backoff progressivo de recuperação ativo ({}s) para usuário id={}.", backoffSegundos, usuario.getId());
+            return;
+        }
+
+        String rawToken = gerarTokenAleatorio();
+        usuario.setRecuperacaoTokenHash(sha256Hex(rawToken));
+        usuario.setRecuperacaoTokenExpiraEm(agora.plus(EMAIL_RESET_TOKEN_DURATION));
+        usuarioRepository.save(usuario);
+
+        String resetLink = resolverBaseUrl() + "/redefinir-senha?token=" + URLEncoder.encode(rawToken, StandardCharsets.UTF_8);
+        emailSenderService.sendPasswordResetEmail(usuario.getEmail(), resolverNomeExibicao(usuario), resetLink);
+    }
+
+    @Override
+    @Transactional
+    public boolean resetPasswordWithToken(String token, String newPassword) {
+        if (token == null || token.isBlank() || newPassword == null || newPassword.isBlank()) {
+            return false;
+        }
+        String tokenHash = sha256Hex(token.strip());
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByRecuperacaoTokenHash(tokenHash);
+        if (usuarioOptional.isEmpty()) {
+            return false;
+        }
+
+        Usuario usuario = usuarioOptional.get();
+        Instant expiraEm = usuario.getRecuperacaoTokenExpiraEm();
+        if (expiraEm == null || !expiraEm.isAfter(Instant.now())) {
+            usuario.setRecuperacaoTokenHash(null);
+            usuario.setRecuperacaoTokenExpiraEm(null);
+            usuarioRepository.save(usuario);
+            return false;
+        }
+
+        changePasswordAfterRecovery(usuario.getId(), newPassword);
+        authRateLimitService.resetEmailSend("recover-password", usuario.getEmail());
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public boolean verifyEmailToken(String token) {
+        if (token == null || token.isBlank()) {
+            return false;
+        }
+        String tokenHash = sha256Hex(token.strip());
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailVerificacaoTokenHash(tokenHash);
+        if (usuarioOptional.isEmpty()) {
+            return false;
+        }
+
+        Usuario usuario = usuarioOptional.get();
+        Instant expiraEm = usuario.getEmailVerificacaoExpiraEm();
+        if (expiraEm == null || !expiraEm.isAfter(Instant.now())) {
+            usuario.setEmailVerificacaoTokenHash(null);
+            usuario.setEmailVerificacaoExpiraEm(null);
+            usuarioRepository.save(usuario);
+            return false;
+        }
+
+        usuario.setEmailVerificado(true);
+        usuario.setEmailVerificacaoTokenHash(null);
+        usuario.setEmailVerificacaoExpiraEm(null);
+        usuarioRepository.save(usuario);
+        authRateLimitService.resetEmailSend("verify-email", usuario.getEmail());
+        return true;
+    }
+
+    @Override
+    @Transactional
+    public void resendVerificationEmail(String email) {
+        if (emailSenderService == null || !emailSenderService.isEnabled()) {
+            return;
+        }
+        String normalizedEmail = email == null ? "" : email.strip();
+        if (normalizedEmail.isBlank()) {
+            return;
+        }
+
+        Optional<Usuario> usuarioOptional = usuarioRepository.findByEmailIgnoreCase(normalizedEmail);
+        if (usuarioOptional.isEmpty()) {
+            return;
+        }
+
+        Usuario usuario = usuarioOptional.get();
+        if (usuario.isEmailVerificado()) {
+            return;
+        }
+
+        long backoffSegundos = authRateLimitService.tryConsumeEmailSend("verify-email", usuario.getEmail());
+        if (backoffSegundos > 0) {
+            log.info("Backoff progressivo de confirmação de e-mail ativo ({}s) para usuário id={}.", backoffSegundos, usuario.getId());
+            return;
+        }
+
+        String rawToken = gerarTokenAleatorio();
+        usuario.setEmailVerificacaoTokenHash(sha256Hex(rawToken));
+        usuario.setEmailVerificacaoExpiraEm(Instant.now().plus(EMAIL_VERIFICATION_TOKEN_DURATION));
+        usuarioRepository.save(usuario);
+
+        String verificationLink = resolverBaseUrl() + "/confirmar-email?token="
+                + URLEncoder.encode(rawToken, StandardCharsets.UTF_8);
+        emailSenderService.sendEmailVerificationEmail(usuario.getEmail(), resolverNomeExibicao(usuario), verificationLink);
+    }
+
+    private String gerarTokenAleatorio() {
+        byte[] randomBytes = new byte[32];
+        SECURE_RANDOM.nextBytes(randomBytes);
+        return Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
+    }
+
+    private String resolverBaseUrl() {
+        return (appWebUrl == null || appWebUrl.isBlank())
+                ? "http://localhost:4200"
+                : appWebUrl.strip().replaceAll("/+$", "");
+    }
+
+    private String resolverNomeExibicao(Usuario usuario) {
+        return (usuario.getNome() != null && !usuario.getNome().isBlank())
+                ? usuario.getNome()
+                : usuario.getUsername();
+    }
+
+    private String sha256Hex(String value) {
+        try {
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hashBytes = digest.digest(value.getBytes(StandardCharsets.UTF_8));
+            return HexFormat.of().formatHex(hashBytes);
+        } catch (NoSuchAlgorithmException e) {
+            throw new IllegalStateException("Algoritmo SHA-256 indisponível.", e);
+        }
     }
 
     @Override

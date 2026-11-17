@@ -9,7 +9,5 @@ export interface SignupRequest {
     username:string
     telefone:string,
     password:string,
-    passwordConfirmation:string,
-    perguntaSeguranca?: string,
-    respostaSeguranca?: string
+    passwordConfirmation:string
 }

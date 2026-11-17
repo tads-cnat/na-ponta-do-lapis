@@ -1,19 +1,18 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
+import com.npl.na_ponta_do_lapis.service.auth.AuthRateLimitService;
 import com.npl.na_ponta_do_lapis.service.auth.AuthService;
+import com.npl.na_ponta_do_lapis.service.email.EmailSenderService;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.GoogleAuthResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.LoginRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryEmailRequestDTO;
-import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryChangeRequestDTO;
-import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryQuestionResponseDTO;
-import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryRequestDTO;
-import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordRecoveryResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.auth.PasswordResetByTokenRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.RegisterRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.auth.TokenResponseDTO;
-import jakarta.servlet.http.HttpServletResponse;
+import com.npl.na_ponta_do_lapis.web.exception.EmailNaoVerificadoException;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -28,15 +27,26 @@ import java.util.Map;
 @RequestMapping("/auth")
 public class AuthController {
 
-    private static final String RECOVERY_USER_ID = "passwordRecoveryUserId";
-
     private AuthService authService;
+    private EmailSenderService emailSenderService;
+    private AuthRateLimitService authRateLimitService;
 
     @Value("${google.client-id:}")
     private String googleClientId;
 
     public AuthController(AuthService authService) {
+        this(authService, null, new AuthRateLimitService());
+    }
+
+    public AuthController(AuthService authService, EmailSenderService emailSenderService) {
+        this(authService, emailSenderService, new AuthRateLimitService());
+    }
+
+    @org.springframework.beans.factory.annotation.Autowired
+    public AuthController(AuthService authService, EmailSenderService emailSenderService, AuthRateLimitService authRateLimitService) {
         this.authService = authService;
+        this.emailSenderService = emailSenderService;
+        this.authRateLimitService = authRateLimitService != null ? authRateLimitService : new AuthRateLimitService();
     }
 
     @PostMapping("/login")
@@ -44,6 +54,12 @@ public class AuthController {
         try {
            TokenResponseDTO token = authService.login(loginRequestDTO, response);
            return ResponseEntity.ok(token);
+        } catch (EmailNaoVerificadoException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Map.of(
+                    "message", e.getMessage(),
+                    "emailNaoVerificado", true,
+                    "email", e.getEmail() != null ? e.getEmail() : ""
+            ));
         } catch (AuthenticationCredentialsNotFoundException e) {
             return ResponseEntity.ok(Collections.singletonMap("message", "Email ou senha inválido."));
         }
@@ -65,49 +81,96 @@ public class AuthController {
         );
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody @Valid RegisterRequestDTO registerRequestDTO, HttpServletResponse response) {
+    public ResponseEntity<?> register(
+            @RequestBody @Valid RegisterRequestDTO registerRequestDTO,
+            HttpServletRequest httpRequest,
+            HttpServletResponse response
+    ) {
+        if (!authRateLimitService.allowIpRequest("register", resolverClientIp(httpRequest), 5)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(Collections.singletonMap("message", "Muitas tentativas de cadastro. Aguarde alguns minutos e tente novamente."));
+        }
         authService.signup(registerRequestDTO, response);
-        return ResponseEntity.ok(Collections.singletonMap("message", "Usuário cadastrado com sucesso."));
+        boolean requiresEmailVerification = emailSenderService != null && emailSenderService.isEnabled();
+        String message = requiresEmailVerification
+                ? "Conta criada! Enviamos um link de confirmação para o seu e-mail."
+                : "Usuário cadastrado com sucesso.";
+        return ResponseEntity.ok(Map.of(
+                "message", message,
+                "requiresEmailVerification", requiresEmailVerification
+        ));
     }
 
-    @PostMapping("/recover-password/question")
-    public ResponseEntity<PasswordRecoveryQuestionResponseDTO> recoveryQuestion(
-            @RequestBody @Valid PasswordRecoveryEmailRequestDTO request
-    ) {
-        return ResponseEntity.ok(authService.getRecoveryQuestion(request.email()));
-    }
-
-    @PostMapping("/recover-password")
-    public ResponseEntity<PasswordRecoveryResponseDTO> recoverPassword(
-            @RequestBody @Valid PasswordRecoveryRequestDTO request,
-            HttpServletRequest servletRequest
-    ) {
-        Long userId = authService.verifyRecoveryAnswer(request.email(), request.answer());
-        if (userId == null) {
-            return ResponseEntity.ok(new PasswordRecoveryResponseDTO(false, "Não foi possível confirmar os dados informados."));
+    @PostMapping("/verify-email")
+    public ResponseEntity<Map<String, String>> verifyEmail(@RequestBody Map<String, String> request) {
+        String token = request != null ? request.get("token") : null;
+        boolean verified = authService.verifyEmailToken(token);
+        if (!verified) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "Link de confirmação inválido ou expirado. Solicite um novo envio."));
         }
-
-        HttpSession session = servletRequest.getSession(true);
-        servletRequest.changeSessionId();
-        session.setMaxInactiveInterval(5 * 60);
-        session.setAttribute(RECOVERY_USER_ID, userId);
-        return ResponseEntity.ok(new PasswordRecoveryResponseDTO(true, "Resposta confirmada. Defina uma nova senha no perfil."));
+        return ResponseEntity.ok(Collections.singletonMap("message", "E-mail confirmado com sucesso! Agora você já pode entrar."));
     }
 
-    @PostMapping("/recover-password/change")
-    public ResponseEntity<?> changeRecoveredPassword(
-            @RequestBody @Valid PasswordRecoveryChangeRequestDTO request,
-            HttpServletRequest servletRequest
+    @PostMapping("/verify-email/resend")
+    public ResponseEntity<Map<String, String>> resendVerificationEmail(
+            @RequestBody @Valid PasswordRecoveryEmailRequestDTO request,
+            HttpServletRequest httpRequest
     ) {
-        HttpSession session = servletRequest.getSession(false);
-        Object userId = session == null ? null : session.getAttribute(RECOVERY_USER_ID);
-        if (!(userId instanceof Long id)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Collections.singletonMap("message", "A sessão de recuperação expirou. Inicie novamente."));
+        if (!authRateLimitService.allowIpRequest("verify-email", resolverClientIp(httpRequest), 5)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(Collections.singletonMap("message", "Muitas solicitações. Aguarde alguns minutos e tente novamente."));
         }
+        authService.resendVerificationEmail(request.email());
+        return ResponseEntity.ok(Collections.singletonMap(
+                "message",
+                "Se a conta estiver pendente de confirmação, enviaremos um novo link para o seu e-mail."
+        ));
+    }
 
-        authService.changePasswordAfterRecovery(id, request.newPassword());
-        session.invalidate();
-        return ResponseEntity.ok(Collections.singletonMap("message", "Senha alterada. Entre com sua nova senha."));
+    @GetMapping("/recover-password/config")
+    public ResponseEntity<Map<String, Object>> recoveryConfig() {
+        boolean emailEnabled = emailSenderService != null && emailSenderService.isEnabled();
+        return ResponseEntity.ok(Map.of("emailEnabled", emailEnabled));
+    }
+
+    @PostMapping("/recover-password/email")
+    public ResponseEntity<Map<String, String>> requestRecoveryEmail(
+            @RequestBody @Valid PasswordRecoveryEmailRequestDTO request,
+            HttpServletRequest httpRequest
+    ) {
+        if (!authRateLimitService.allowIpRequest("recover-password", resolverClientIp(httpRequest), 8)) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(Collections.singletonMap("message", "Muitas solicitações. Aguarde alguns minutos e tente novamente."));
+        }
+        authService.requestPasswordResetEmail(request.email());
+        return ResponseEntity.ok(Collections.singletonMap(
+                "message",
+                "Se o e-mail estiver cadastrado e confirmado, enviaremos um link de recuperação válido por 15 minutos."
+        ));
+    }
+
+    private String resolverClientIp(HttpServletRequest request) {
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            return forwardedFor.split(",")[0].strip();
+        }
+        String realIp = request.getHeader("X-Real-IP");
+        if (realIp != null && !realIp.isBlank()) {
+            return realIp.strip();
+        }
+        return request.getRemoteAddr();
+    }
+
+    @PostMapping("/recover-password/reset")
+    public ResponseEntity<Map<String, String>> resetPasswordByToken(
+            @RequestBody @Valid PasswordResetByTokenRequestDTO request
+    ) {
+        boolean resetOk = authService.resetPasswordWithToken(request.token(), request.newPassword());
+        if (!resetOk) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "Link de recuperação inválido ou expirado. Solicite um novo."));
+        }
+        return ResponseEntity.ok(Collections.singletonMap("message", "Senha alterada com sucesso. Entre com sua nova senha."));
     }
 }

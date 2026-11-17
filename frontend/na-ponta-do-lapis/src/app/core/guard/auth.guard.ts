@@ -13,11 +13,5 @@ export const authGuard: CanActivateFn = (route, state) => {
     return false
   }
 
-  const usuario = StorageService.getUsuarioDecodificado();
-  if (usuario?.mustChangePassword && !state.url.startsWith('/app/perfil')) {
-    router.navigateByUrl('/app/perfil');
-    return false;
-  }
-
   return true;
 };

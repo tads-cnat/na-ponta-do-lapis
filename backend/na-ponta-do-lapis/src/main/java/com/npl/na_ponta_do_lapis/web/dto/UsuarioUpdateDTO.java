@@ -14,15 +14,9 @@ public record UsuarioUpdateDTO (
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres ")
     String senha,
 
-    Moeda moedaPadrao,
-
-    @Size(max = 200, message = "A pergunta de segurança deve ter no máximo 200 caracteres")
-    String perguntaSeguranca,
-
-    @Size(max = 200, message = "A resposta de segurança deve ter no máximo 200 caracteres")
-    String respostaSeguranca
+    Moeda moedaPadrao
 ) {
     public UsuarioUpdateDTO(String nome, String email, String senha) {
-        this(nome, email, null, senha, null, null, null);
+        this(nome, email, null, senha, null);
     }
 }
