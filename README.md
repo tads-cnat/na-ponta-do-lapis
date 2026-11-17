@@ -37,6 +37,9 @@ Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma
 ### Configurações e Integrações
 ![Configuração](doc/imagens/Configuracao.png)
 
+### Dashboard (Tema Escuro)
+![Dashboard Tema Escuro](doc/imagens/DashboardDark.png)
+
 </details>
 
 ## Principais Funcionalidades
@@ -47,6 +50,7 @@ Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma
 - **Open Finance (Pluggy):** conexão e sincronização automática de contas e transações bancárias com credenciais criptografadas.
 - **Metas e Gamificação:** metas por categoria/objetivo, registro de aportes, alertas de progresso e conquistas com medalhas.
 - **Gestão Familiar e Segurança:** grupo familiar com convites, controle de permissões, notificações internas, login com **Google** e recuperação de senha.
+- **Personalização e Acessibilidade:** alternância rápida entre **Tema Claro e Tema Escuro** (Dark Mode) e seleção de moeda preferida.
 
 ## Stack
 
