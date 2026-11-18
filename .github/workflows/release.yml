@@ -18,8 +18,19 @@ permissions:
   issues: write
 
 jobs:
+  validar-branch:
+    name: Validar Branch (main)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Garantir execução apenas na main
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          echo "::error::A release de produção só pode ser executada a partir da branch main (branch atual: ${GITHUB_REF_NAME})."
+          exit 1
+
   approve:
     name: Solicitar Aprovação da Release
+    needs: validar-branch
     runs-on: ubuntu-latest
     steps:
       - name: Aguardar Aprovação Manual
