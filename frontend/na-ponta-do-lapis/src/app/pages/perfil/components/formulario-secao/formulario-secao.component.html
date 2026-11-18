@@ -26,6 +26,8 @@
         </div>
         <input 
           [type]="tipoDoCampo(campo)" 
+          inputmode="tel"
+          autocomplete="tel"
           [placeholder]="campo.placeholder" 
           [formControlName]="campo.key"
           class="flex-1 h-full bg-transparent border-none text-slate-900 placeholder:text-slate-400 focus:outline-none text-sm"

@@ -1,5 +1,6 @@
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 import { AuthPageComponent } from './auth/components/auth-page/auth-page.component';
 import { TransacoesComponent } from './pages/transacoes/transacoes.component';
 import { ContasComponent } from './pages/contas/contas.component';
@@ -31,6 +32,12 @@ export const routes: Routes = [
     {
         path: '',
         component: LandingPageComponent,
+        canMatch: [() => !Capacitor.isNativePlatform()],
+        pathMatch: 'full'
+    },
+    {
+        path: '',
+        redirectTo: 'app/dashboard',
         pathMatch: 'full'
     },
     { path: 'privacidade', component: PrivacidadeComponent },
@@ -42,6 +49,7 @@ export const routes: Routes = [
         path: 'app',
         component: MainLayoutComponent,
         canActivate: [authGuard],
+        canActivateChild: [authGuard],
         children: [
             { path: 'dashboard', component: DashboardComponent },
             { path: 'transacoes', component: TransacoesComponent },

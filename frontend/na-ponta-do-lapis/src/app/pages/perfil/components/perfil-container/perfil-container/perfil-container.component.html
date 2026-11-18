@@ -20,4 +20,15 @@
     </main>
   </div>
 
+  <!-- Ação de Sair dedicada para mobile/app (padrão mobile: no fim do Perfil) -->
+  <div class="md:hidden pt-2">
+    <button
+      type="button"
+      (click)="sairDaConta()"
+      class="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 rounded-2xl border border-rose-200 bg-rose-50/70 hover:bg-rose-100/80 text-rose-600 font-bold text-sm transition-colors cursor-pointer">
+      <i class="pi pi-sign-out text-sm"></i>
+      <span>Sair da conta</span>
+    </button>
+  </div>
+
 </div>

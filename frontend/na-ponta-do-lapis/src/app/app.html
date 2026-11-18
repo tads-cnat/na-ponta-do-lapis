@@ -1,8 +1,17 @@
 <p-toast></p-toast>
 <app-modal-celebracao></app-modal-celebracao>
+@if (offline()) {
+  <div role="alert"
+       style="top: calc(0.5rem + var(--npl-safe-top));"
+       class="fixed left-1/2 -translate-x-1/2 z-[12600] flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/95 text-white shadow-lg border border-rose-400/50 max-w-[calc(100vw-2rem)]">
+    <i class="pi pi-wifi text-rose-400 text-xs"></i>
+    <span class="text-xs sm:text-sm font-medium">Sem conexão com a internet</span>
+  </div>
+}
 @if (pwaService.atualizacaoDisponivel()) {
   <div role="status"
-       class="fixed top-3 left-1/2 -translate-x-1/2 z-[12500] flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#4A2585] text-white shadow-lg border border-[#EEC046]/60 max-w-[calc(100vw-2rem)]">
+       style="top: calc(0.5rem + var(--npl-safe-top));"
+       class="fixed left-1/2 -translate-x-1/2 z-[12500] flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-[#4A2585] text-white shadow-lg border border-[#EEC046]/60 max-w-[calc(100vw-2rem)]">
     <span class="text-xs sm:text-sm font-medium">Nova versão disponível</span>
     <button type="button"
             (click)="pwaService.aplicarAtualizacao()"

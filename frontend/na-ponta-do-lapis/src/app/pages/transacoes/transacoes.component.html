@@ -654,7 +654,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="font-bold text-sm text-slate-700">Parcela atual</label>
                             <p-inputNumber formControlName="numeroParcela" [min]="1" [max]="formTransacao.get('totalParcelas')?.value || 60" [showButtons]="true"
-                                styleClass="w-full" inputStyleClass="w-full" />
+                                inputmode="numeric" styleClass="w-full" inputStyleClass="w-full" />
                             @if (formTransacao.hasError('numeroMaiorQueTotal') || (formTransacao.get('numeroParcela')?.value > (formTransacao.get('totalParcelas')?.value || 60))) {
                                 <span class="text-xs text-rose-500 font-medium">A parcela atual não pode ser maior que o total (máx. {{ formTransacao.get('totalParcelas')?.value }}).</span>
                             }
@@ -662,7 +662,7 @@
                         <div class="flex flex-col gap-1">
                             <label class="font-bold text-sm text-slate-700">Número de parcelas</label>
                             <p-inputNumber formControlName="totalParcelas" [min]="2" [max]="60" [showButtons]="true"
-                                styleClass="w-full" inputStyleClass="w-full" />
+                                inputmode="numeric" styleClass="w-full" inputStyleClass="w-full" />
                         </div>
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

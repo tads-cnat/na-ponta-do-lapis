@@ -1,4 +1,4 @@
-<nav class="sticky z-50 w-full border-b border-gray-300">
+<nav class="sticky top-0 z-50 w-full border-b border-gray-300" style="padding-top: var(--npl-safe-top);">
   <div class=" mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-16">
 
@@ -103,7 +103,7 @@
             <img class="h-10 w-10 sm:h-11 sm:w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover shrink-0" [src]="usuarioLogado?.fotoPerfil" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}">
             <p class="nomeUser hidden sm:block max-w-[130px] md:max-w-[180px] truncate font-medium text-slate-800 m-0">{{ nomeUsuario }}</p>
           </a>
-          <div>
+          <div class="hidden md:block">
               <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]! text-xs rounded-xl" (onClick)="logout()">Sair<i class="pi pi-sign-out "></i></p-button>
           </div>
         </div>

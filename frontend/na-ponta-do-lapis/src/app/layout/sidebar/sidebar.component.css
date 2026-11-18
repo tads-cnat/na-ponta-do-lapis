@@ -110,7 +110,7 @@
         bottom: 0;
         left: 0;
         z-index: 1100;
-        padding: 20px 14px;
+        padding: calc(20px + var(--npl-safe-top)) 14px calc(20px + var(--npl-safe-bottom));
         overflow-y: auto;
         box-shadow: 0 20px 50px rgba(15, 23, 42, 0.28);
     }
