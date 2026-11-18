@@ -127,8 +127,8 @@ Quando a versão em homologação estiver testada e aprovada:
    - `minor`: Novas funcionalidades sem quebrar o que já existe (ex: `1.0.0` → `1.1.0`).
    - `major`: Mudanças estruturais grandes (ex: `1.0.0` → `2.0.0`).
 4. O workflow vai calcular a versão automaticamente, promover a imagem do Docker Hub **sem recompilar nada do zero** e (se `gerar_apk` estiver marcado) anexar o APK assinado na GitHub Release.
-5. Para gerar APKs sob demanda (homologação ou produção) sem criar tag de release, use o workflow dedicado **Mobile APK (Android)** (`.github/workflows/mobile-apk.yml`), que publica o `.apk` como artifact.
-6. No painel do **Coolify**:
+5. Para gerar APKs sob demanda (homologação ou produção) sem criar tag de release, use o workflow dedicado **Mobile APK (Android)** (`.github/workflows/mobile-apk.yml`), que publica o `.apk` como artifact. Em builds `homolog`, o app é compilado como **`NPL Homolog`** (`app.napontadolapis.homolog`) para coexistir com o de produção no mesmo celular e aceita `HOMOLOG_CF_CLIENT_ID` / `HOMOLOG_CF_CLIENT_SECRET` (Service Token do Cloudflare Zero Trust).
+6. O workflow **Release (Produção)** valida automaticamente que está rodando a partir da branch `main`. No painel do **Coolify**:
    - Vá no recurso de **Produção** → aba **Environment Variables**.
    - Atualize `APP_VERSION` com a versão gerada (ex: `1.0.1`).
    - Clique no botão **Deploy**. Pronto!

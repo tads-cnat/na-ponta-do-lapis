@@ -56,6 +56,7 @@ Sistema web voltado para jovens que estão iniciando a vida adulta. A plataforma
 
 - **Backend:** Java 21 + Spring Boot 3.5 + PostgreSQL (ou H2 em memória) + Redis (cache)
 - **Frontend:** Angular 21 + PrimeNG + Tailwind CSS
+- **Mobile:** Capacitor 8 (Android APK a partir do build `mobile`)
 - **Autenticação:** JWT (jjwt 0.12) + Google Identity Services
 - **Testes:** JUnit 5, Vitest e Cypress (E2E)
 - **Docs da API:** Swagger UI em `/api/docs`
