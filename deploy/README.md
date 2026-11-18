@@ -122,12 +122,13 @@ sequenceDiagram
 Quando a versão em homologação estiver testada e aprovada:
 1. Vá na aba **Actions** do GitHub.
 2. Selecione o workflow **Release (Produção)** e clique em **Run workflow**.
-3. Escolha o tipo de versão:
+3. Escolha o tipo de versão (`patch`, `minor` ou `major`) e defina se deseja gerar o APK Android nessa release (`gerar_apk: true/false` — para ajustes exclusivos de web/landing/backend, basta desmarcar):
    - `patch`: Correções de bugs (ex: `1.0.0` → `1.0.1`).
    - `minor`: Novas funcionalidades sem quebrar o que já existe (ex: `1.0.0` → `1.1.0`).
    - `major`: Mudanças estruturais grandes (ex: `1.0.0` → `2.0.0`).
-4. O workflow vai calcular a versão automaticamente e promover a imagem do Docker Hub **sem recompilar nada do zero** (garantindo que o que vai pra produção é exatamente o que testamos em homologação).
-5. No painel do **Coolify**:
+4. O workflow vai calcular a versão automaticamente, promover a imagem do Docker Hub **sem recompilar nada do zero** e (se `gerar_apk` estiver marcado) anexar o APK assinado na GitHub Release.
+5. Para gerar APKs sob demanda (homologação ou produção) sem criar tag de release, use o workflow dedicado **Mobile APK (Android)** (`.github/workflows/mobile-apk.yml`), que publica o `.apk` como artifact.
+6. No painel do **Coolify**:
    - Vá no recurso de **Produção** → aba **Environment Variables**.
    - Atualize `APP_VERSION` com a versão gerada (ex: `1.0.1`).
    - Clique no botão **Deploy**. Pronto!
@@ -148,7 +149,7 @@ Como todas as versões no Docker Hub são salvas com tags fixas (`1.0.0`, `1.0.1
 Os arquivos oficiais **[docker-compose.homolog.yml](docker-compose.homolog.yml)** (Homologação) e **[docker-compose.prod.yml](docker-compose.prod.yml)** (Produção) definem os stacks no Coolify:
 
 - **PostgreSQL 16 e Redis 7 (gerenciados no Coolify):** Criados separadamente como bancos nativos do Coolify para permitir backups automáticos, retenção configurável e métricas independentes do ciclo de deploy da aplicação.
-- **`backend` (Spring Boot):** Em homologação sobe 1 réplica (`backend`); em produção sobe 2 réplicas (`backend-1` e `backend-2` com `aliases: [backend]`), sempre com `mem_limit: 1024m`, conectado à rede interna `default` (junto do frontend) e à rede externa `coolify` (para Traefik, PostgreSQL e Redis). O Traefik só envia tráfego quando `/api/actuator/health` retornar `UP`.
+- **`backend` (Spring Boot):** Em homologação sobe 1 réplica (`backend-homolog`); em produção sobe 2 réplicas (`backend-1` e `backend-2`), sempre com `aliases: [backend]` restrito à rede interna `default` (nunca na rede compartilhada `coolify`, evitando colisão DNS entre ambientes), `mem_limit: 1024m`, e conectado à rede `coolify` para Traefik, PostgreSQL e Redis. O Traefik só envia tráfego quando `/api/actuator/health` retornar `UP`.
 - **`frontend` (Angular + Nginx):** Puxa `npl2026/frontend:${APP_VERSION}` (`mem_limit: 128m`) e encaminha chamadas `/api` para `http://backend:8080` na rede interna isolada de cada ambiente, com balanceamento automático via DNS Docker entre as réplicas daquele ambiente.
 
 ### Variáveis de ambiente no Coolify (homologação x produção)
@@ -164,7 +165,7 @@ O Coolify só entrega ao container as variáveis que aparecem no bloco `environm
 | `APP_SEED_ENABLED` | `true` | `false` | Popula dados de demonstração no primeiro start (banco vazio) |
 | `APP_WEB_URL` | `https://homolog.napontadolapis.app` | `https://napontadolapis.app` | URL usada nos redirects e na página de erro da API |
 | `SWAGGER_ENABLED` | `true` | `false` | Expõe (ou não) o Swagger UI |
-| `CORS_ALLOWED_ORIGINS` | `https://homolog.napontadolapis.app` | `https://napontadolapis.app,https://www.napontadolapis.app` | Origens liberadas no navegador |
+| `CORS_ALLOWED_ORIGINS` | `https://homolog.napontadolapis.app,https://localhost` | `https://napontadolapis.app,https://www.napontadolapis.app,https://localhost` | Origens liberadas no navegador e no app Android Capacitor (`androidScheme: https`) |
 | `DB_URL` / `DB_USER` / `DB_PASSWORD` | credenciais Postgres | credenciais Postgres | Conexão JDBC com o PostgreSQL gerenciado no Coolify |
 | `CACHE_TYPE` | `redis` | `redis` | `redis` (cache compartilhado entre réplicas) ou `simple` (memória local) |
 | `REDIS_HOST` / `REDIS_PORT` / `REDIS_PASSWORD` | dados do Redis | dados do Redis | Conexão com o Redis 7 gerenciado no Coolify |

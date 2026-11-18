@@ -58,8 +58,10 @@ A URL base da API é gerenciada dinamicamente pelos arquivos de ambiente em `src
 
 - **Desenvolvimento (`environment.development.ts`):**  
   Detecta se a execução ocorre em localhost (`http://localhost:8080/api/v1`) ou em ambiente GitHub Codespaces (`https://...-8080.app.github.dev/api/v1`).
-- **Produção (`environment.ts`):**  
+- **Produção Web (`environment.ts`):**  
   Utiliza a rota relativa `/api`, sendo roteada pelo Nginx diretamente para o container do backend.
+- **Mobile Capacitor (`environment.mobile.ts`):**  
+  Aponta para `https://napontadolapis.app/api/v1` (ou homologação nos builds de teste via workflow).
 
 ---
 
@@ -69,6 +71,9 @@ A URL base da API é gerenciada dinamicamente pelos arquivos de ambiente em `src
 |---|---|
 | `npm start` | Inicia o servidor Angular na porta `4200` acessível pela rede local |
 | `npm run build` | Compila o projeto otimizado para produção na pasta `dist/` |
+| `npm run build:mobile` | Compila o bundle mobile (`dist-mobile/`) usando `environment.mobile.ts` |
+| `npm run cap:sync` | Gera o build mobile e sincroniza os assets com o projeto Android (`android/`) |
+| `npm run cap:android` | Abre o projeto Android no Android Studio |
 | `npm run watch` | Compila em modo desenvolvimento observando mudanças de arquivos |
 | `npm test` | Executa a suíte de testes unitários com Vitest |
 
@@ -97,3 +102,18 @@ docker run -p 8081:80 npl2026/frontend:local
 ```
 
 Acesse em: [http://localhost:8081](http://localhost:8081).
+
+---
+
+## App Mobile Android (Capacitor)
+
+O aplicativo Android é empacotado com **Capacitor 8** a partir do build `mobile` (`dist-mobile/browser`), mantendo a mesma base Angular:
+
+- **Integração nativa ([`CapacitorService`](na-ponta-do-lapis/src/app/shared/service/capacitor.service.ts)):** configura StatusBar edge-to-edge sincronizada com o tema claro/escuro, variáveis CSS de safe-area (`--npl-safe-top` e `--npl-safe-bottom`) e tratamento do botão físico Voltar no Android.
+- **Roteamento nativo:** pula a landing page pública no app instalado, redirecionando direto para a área autenticada (`/app/dashboard` ou `/login`).
+- **Build local do APK:**
+  ```bash
+  npm run cap:sync
+  cd android && ./gradlew assembleDebug
+  ```
+- **CI/CD do APK:** gerenciado pelos workflows `.github/workflows/mobile-apk.yml` (builds sob demanda de `homolog`/`prod` em `debug` ou `release`) e `.github/workflows/release.yml` (anexo opcional na release de produção usando os secrets `ANDROID_KEYSTORE_*`).
