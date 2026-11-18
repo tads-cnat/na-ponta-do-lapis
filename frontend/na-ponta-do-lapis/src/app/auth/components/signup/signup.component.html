@@ -1,22 +1,26 @@
 <p-toast position="top-right" [baseZIndex]="10000"></p-toast>
-<div [class]="embedded ? 'flex h-full w-full bg-[#F7F4FF] md:bg-white overflow-hidden' : 'flex h-dvh w-full bg-[#F7F4FF] md:bg-white overflow-hidden'">
-  <div class="flex flex-1 flex-col justify-between px-4 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
+<div
+  [class]="embedded ? 'flex h-full w-full bg-[#F7F4FF] md:bg-white overflow-hidden' : 'flex h-dvh w-full bg-[#F7F4FF] md:bg-white overflow-hidden'">
+  <div class="flex flex-1 flex-col justify-between px-4 sm:px-10 overflow-y-auto"
+    style="scrollbar-width: none; padding-top: max(1rem, var(--npl-safe-top)); padding-bottom: max(1rem, var(--npl-safe-bottom));">
 
     <!-- Botão Voltar ao Início ancorado no canto superior esquerdo, distante do formulário -->
-    <div class="w-full flex items-center justify-between gap-3">
+    <div class="w-full flex items-center justify-between gap-3 shrink-0 mb-4 md:mb-0">
+      @if (!ehAppNativo) {
       <button type="button" (click)="voltar()"
         class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-white/90 md:bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl border border-purple-100 md:border-transparent transition-all cursor-pointer">
         <i class="pi pi-arrow-left text-xs"></i>
         <span>Voltar ao início</span>
       </button>
+      } @else {
+      <span></span>
+      }
       <img src="/logo.svg" alt="Na Ponta do Lápis" class="h-7 w-auto md:hidden">
     </div>
 
-    <form [formGroup]="registerForm" (ngSubmit)="register()"
-          [class.hidden]="verificationPending()"
-          [attr.aria-hidden]="verificationPending()"
-          [attr.inert]="verificationPending() ? '' : null"
-          class="npl-page-enter flex flex-col gap-3.5 w-full max-w-[400px] mx-auto my-auto bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-[#E9D5FF]/70 md:bg-transparent md:rounded-none md:p-0 md:shadow-none md:border-0 md:py-8">
+    <form [formGroup]="registerForm" (ngSubmit)="register()" [class.hidden]="verificationPending()"
+      [attr.aria-hidden]="verificationPending()" [attr.inert]="verificationPending() ? '' : null"
+      class="npl-page-enter flex flex-col gap-3.5 w-full max-w-[400px] mx-auto my-auto bg-white rounded-3xl p-5 sm:p-6 shadow-sm border border-[#E9D5FF]/70 md:bg-transparent md:rounded-none md:p-0 md:shadow-none md:border-0 md:py-8">
       <div>
         <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Criar Conta</h1>
         <p class="text-sm text-slate-500 mt-1 mb-0">
@@ -29,10 +33,11 @@
       @if (googleButtonState() !== 'unavailable') {
       <div class="flex flex-col gap-3">
         <div class="w-full min-h-[40px] flex items-center justify-center relative">
-          <div #googleBtnContainer class="w-full flex justify-center" [class.hidden]="googleButtonState() !== 'ready'"></div>
+          <div #googleBtnContainer class="w-full max-w-full overflow-hidden flex justify-center" [class.hidden]="googleButtonState() !== 'ready'">
+          </div>
 
           @if (googleButtonState() === 'loading') {
-            <div class="w-full h-[40px] rounded bg-slate-100 border border-slate-200 animate-pulse"></div>
+          <div class="w-full h-[40px] rounded bg-slate-100 border border-slate-200 animate-pulse"></div>
           }
         </div>
 
@@ -46,40 +51,44 @@
 
       <div class="flex flex-col gap-1.5">
         <label for="nome" class="text-xs font-semibold text-slate-700">Nome Completo</label>
-        <input id="nome" pInputText autocomplete="name" placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto" class="w-full text-sm rounded-xl!"
-               [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
-               [class.ng-dirty]="registerForm.get('nomeCompleto')?.touched">
+        <input id="nome" pInputText autocomplete="name" placeholder="Ex: Lucas Henrique" formControlName="nomeCompleto"
+          class="w-full text-sm rounded-xl!"
+          [class.ng-invalid]="registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched"
+          [class.ng-dirty]="registerForm.get('nomeCompleto')?.touched">
         @if (registerForm.get('nomeCompleto')?.invalid && registerForm.get('nomeCompleto')?.touched) {
-          <small class="text-[#C24E4E] text-xs font-semibold leading-4">O nome deve ter no mínimo 3 caracteres.</small>
+        <small class="text-[#C24E4E] text-xs font-semibold leading-4">O nome deve ter no mínimo 3 caracteres.</small>
         }
       </div>
 
       <div class="flex flex-col gap-1.5">
         <label for="username" class="text-xs font-semibold text-slate-700">Nome de usuário</label>
-        <input id="username" pInputText autocomplete="username" placeholder="Ex: lucaasshq" formControlName="username" class="w-full text-sm rounded-xl!"
-               [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
-               [class.ng-dirty]="registerForm.get('username')?.touched">
+        <input id="username" pInputText autocomplete="username" placeholder="Ex: lucaasshq" formControlName="username"
+          class="w-full text-sm rounded-xl!"
+          [class.ng-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+          [class.ng-dirty]="registerForm.get('username')?.touched">
         @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
-          <small class="text-[#C24E4E] text-xs font-semibold leading-4">Nome de usuário obrigatório (mín. 3 letras).</small>
+        <small class="text-[#C24E4E] text-xs font-semibold leading-4">Nome de usuário obrigatório (mín. 3
+          letras).</small>
         }
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3.5">
         <div class="flex flex-col gap-1.5">
           <label for="email" class="text-xs font-semibold text-slate-700">E-mail</label>
-          <input id="email" pInputText autocomplete="email" placeholder="nome@gmail.com" formControlName="email" class="w-full text-sm rounded-xl!"
-                 [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
-                 [class.ng-dirty]="registerForm.get('email')?.touched">
+          <input id="email" pInputText autocomplete="email" placeholder="nome@gmail.com" formControlName="email"
+            class="w-full text-sm rounded-xl!"
+            [class.ng-invalid]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+            [class.ng-dirty]="registerForm.get('email')?.touched">
           @if (registerForm.get('email')?.invalid && registerForm.get('email')?.touched) {
-            <small class="text-[#C24E4E] text-xs font-semibold leading-4">E-mail inválido.</small>
+          <small class="text-[#C24E4E] text-xs font-semibold leading-4">E-mail inválido.</small>
           }
         </div>
         <div class="flex flex-col gap-1.5">
           <label for="celular" class="text-xs font-semibold text-slate-700">
             Celular <span class="text-slate-500 font-normal text-[11px]">(opcional)</span>
           </label>
-          <p-inputMask id="celular" autocomplete="tel" mask="(99) 99999-9999" placeholder="(00) 00000-0000" formControlName="telefone"
-            styleClass="w-full text-sm rounded-xl!"></p-inputMask>
+          <p-inputMask id="celular" type="tel" autocomplete="tel" mask="(99) 99999-9999" placeholder="(00) 00000-0000"
+            formControlName="telefone" styleClass="w-full text-sm rounded-xl!"></p-inputMask>
         </div>
       </div>
 
@@ -87,25 +96,26 @@
         <div class="flex flex-col gap-1.5">
           <label for="password" class="text-xs font-semibold text-slate-700">Senha</label>
           <p-password id="password" autocomplete="new-password" [toggleMask]="true" placeholder="Mínimo 8 caracteres"
-            inputStyleClass="w-full text-sm rounded-xl!" formControlName="password" [feedback]="true" promptLabel="Força da senha"
-            weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte"
+            inputStyleClass="w-full text-sm rounded-xl!" formControlName="password" [feedback]="true"
+            promptLabel="Força da senha" weakLabel="Fraca" mediumLabel="Média" strongLabel="Forte"
             [styleClass]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
           @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
-            <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 8 caracteres.</small>
+          <small class="text-[#C24E4E] text-xs font-semibold leading-4">Mínimo de 8 caracteres.</small>
           }
         </div>
 
         <div class="flex flex-col gap-1.5">
           <label for="confirmPassword" class="text-xs font-semibold text-slate-700">Confirmar Senha</label>
-          <p-password id="confirmPassword" autocomplete="new-password" [toggleMask]="true" [feedback]="false" placeholder="Repita a senha"
-            inputStyleClass="w-full text-sm rounded-xl!" formControlName="passwordConfirmation"
+          <p-password id="confirmPassword" autocomplete="new-password" [toggleMask]="true" [feedback]="false"
+            placeholder="Repita a senha" inputStyleClass="w-full text-sm rounded-xl!"
+            formControlName="passwordConfirmation"
             [styleClass]="(registerForm.get('passwordConfirmation')?.invalid || registerForm.hasError('senhasDiferentes')) && registerForm.get('passwordConfirmation')?.touched ? 'ng-invalid ng-dirty w-full' : 'w-full'"></p-password>
           @if (registerForm.get('passwordConfirmation')?.touched) {
-            @if (registerForm.get('passwordConfirmation')?.invalid) {
-              <small class="text-[#C24E4E] text-xs font-semibold leading-4">Confirme sua senha (mín. 8 caracteres).</small>
-            } @else if (registerForm.hasError('senhasDiferentes')) {
-              <small class="text-[#C24E4E] text-xs font-semibold leading-4">As senhas não coincidem.</small>
-            }
+          @if (registerForm.get('passwordConfirmation')?.invalid) {
+          <small class="text-[#C24E4E] text-xs font-semibold leading-4">Confirme sua senha (mín. 8 caracteres).</small>
+          } @else if (registerForm.hasError('senhasDiferentes')) {
+          <small class="text-[#C24E4E] text-xs font-semibold leading-4">As senhas não coincidem.</small>
+          }
           }
         </div>
       </div>
@@ -113,43 +123,47 @@
       <div class="flex items-start gap-2.5 mt-1">
         <p-checkbox inputId="termos" formControlName="termos" [binary]="true" class="mt-0.5"></p-checkbox>
         <label for="termos" class="text-xs sm:text-sm text-slate-600 cursor-pointer leading-snug">
-          Eu concordo com os <a routerLink="/termos" target="_blank" class="text-[#7843CD] font-semibold underline decoration-[#EEC046] decoration-2 underline-offset-2 hover:text-[#6214CC]">termos de serviço</a> e a <a routerLink="/privacidade" target="_blank" class="text-[#7843CD] font-semibold underline decoration-[#EEC046] decoration-2 underline-offset-2 hover:text-[#6214CC]">política de privacidade</a>.
+          Eu concordo com os <a routerLink="/termos" [attr.target]="ehAppNativo ? null : '_blank'"
+            [attr.rel]="ehAppNativo ? null : 'noopener noreferrer'"
+            class="text-[#7843CD] font-semibold underline decoration-[#EEC046] decoration-2 underline-offset-2 hover:text-[#6214CC]">termos
+            de serviço</a> e a <a routerLink="/privacidade" [attr.target]="ehAppNativo ? null : '_blank'"
+            [attr.rel]="ehAppNativo ? null : 'noopener noreferrer'"
+            class="text-[#7843CD] font-semibold underline decoration-[#EEC046] decoration-2 underline-offset-2 hover:text-[#6214CC]">política
+            de privacidade</a>.
         </label>
       </div>
 
       <div class="flex flex-col gap-2 mt-1">
         <p-button type="submit" [label]="botaoPrincipalLabel" icon="pi pi-user-plus"
-                  styleClass="w-full min-h-11 btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
-                  [disabled]="registerForm.invalid || loading"
-                  [loading]="loading"></p-button>
+          styleClass="w-full min-h-11 btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+          [disabled]="registerForm.invalid || loading" [loading]="loading"></p-button>
       </div>
     </form>
 
     @if (verificationPending()) {
-      <div class="npl-page-enter flex flex-col gap-5 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
-        <div>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Verifique seu e-mail</h1>
-          <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
-            Enviamos um link de confirmação para <strong class="text-slate-800">{{ registeredEmail() }}</strong>. Confirme seu e-mail para liberar o acesso à sua conta.
-          </p>
-        </div>
-
-        <div class="rounded-xl bg-slate-50 border border-slate-200/80 px-4 py-3 text-xs text-slate-600 leading-relaxed">
-          O link é válido por 24 horas. Não encontrou? Verifique sua caixa de spam ou lixo eletrônico.
-        </div>
-
-        <p-button type="button"
-                  [label]="resendCooldownSeconds() > 0 ? 'Reenviar em ' + resendCooldownSeconds() + 's' : 'Reenviar link de confirmação'"
-                  icon="pi pi-refresh"
-                  styleClass="w-full btn-npl-secondary rounded-xl! py-3 text-sm font-bold"
-                  [disabled]="resendLoading() || resendCooldownSeconds() > 0"
-                  [loading]="resendLoading()"
-                  (onClick)="reenviarConfirmacaoEmail()"></p-button>
-
-        <p-button type="button" label="Ir para o login" icon="pi pi-sign-in"
-                  styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
-                  (onClick)="irParaLogin()"></p-button>
+    <div class="npl-page-enter flex flex-col gap-5 w-full max-w-[400px] mx-auto my-auto py-6 sm:py-8">
+      <div>
+        <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight m-0">Verifique seu e-mail</h1>
+        <p class="text-sm text-slate-500 mt-1.5 leading-relaxed mb-0">
+          Enviamos um link de confirmação para <strong class="text-slate-800">{{ registeredEmail() }}</strong>. Confirme
+          seu e-mail para liberar o acesso à sua conta.
+        </p>
       </div>
+
+      <div class="rounded-xl bg-slate-50 border border-slate-200/80 px-4 py-3 text-xs text-slate-600 leading-relaxed">
+        O link é válido por 24 horas. Não encontrou? Verifique sua caixa de spam ou lixo eletrônico.
+      </div>
+
+      <p-button type="button"
+        [label]="resendCooldownSeconds() > 0 ? 'Reenviar em ' + resendCooldownSeconds() + 's' : 'Reenviar link de confirmação'"
+        icon="pi pi-refresh" styleClass="w-full btn-npl-secondary rounded-xl! py-3 text-sm font-bold"
+        [disabled]="resendLoading() || resendCooldownSeconds() > 0" [loading]="resendLoading()"
+        (onClick)="reenviarConfirmacaoEmail()"></p-button>
+
+      <p-button type="button" label="Ir para o login" icon="pi pi-sign-in"
+        styleClass="w-full btn-npl-primary rounded-xl! py-3 text-sm sm:text-base font-bold shadow-sm"
+        (onClick)="irParaLogin()"></p-button>
+    </div>
     }
 
     <div class="hidden sm:block h-2"></div>
@@ -168,12 +182,7 @@
   }
 </div>
 
-<app-google-consent-dialog
-  [visible]="googleConsentVisible()"
-  [nome]="googleConsentDados()?.nome ?? ''"
-  [email]="googleConsentDados()?.email ?? ''"
-  [fotoUrl]="googleConsentDados()?.fotoUrl ?? null"
-  [loading]="loading"
-  (confirm)="confirmarTermosGoogle()"
-  (cancel)="cancelarTermosGoogle()">
+<app-google-consent-dialog [visible]="googleConsentVisible()" [nome]="googleConsentDados()?.nome ?? ''"
+  [email]="googleConsentDados()?.email ?? ''" [fotoUrl]="googleConsentDados()?.fotoUrl ?? null" [loading]="loading"
+  (confirm)="confirmarTermosGoogle()" (cancel)="cancelarTermosGoogle()">
 </app-google-consent-dialog>

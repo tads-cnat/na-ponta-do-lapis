@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, Input, ViewChild, inject, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { AuthService } from '../../service/auth.service';
@@ -28,6 +29,7 @@ export class SignupComponent implements AfterViewInit {
   @ViewChild('googleBtnContainer') googleBtnContainer?: ElementRef<HTMLDivElement>;
   registerForm: FormGroup;
   loading = false;
+  readonly ehAppNativo = Capacitor.isNativePlatform();
   readonly verificationPending = signal(false);
   readonly registeredEmail = signal('');
   readonly resendLoading = signal(false);

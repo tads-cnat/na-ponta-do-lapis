@@ -1,19 +1,21 @@
 <p-toast position="top-right" [baseZIndex]="10000"></p-toast>
 <div [class]="embedded ? 'flex h-full w-full bg-[#F7F4FF] md:bg-white overflow-hidden' : 'flex h-dvh w-full bg-[#F7F4FF] md:bg-white overflow-hidden'">
-    <div class="flex flex-1 flex-col justify-between px-4 py-4 sm:px-10 sm:py-5 overflow-y-auto" style="scrollbar-width: none;">
+    <div class="flex flex-1 flex-col justify-between px-4 sm:px-10 overflow-y-auto" style="scrollbar-width: none; padding-top: max(1rem, var(--npl-safe-top)); padding-bottom: max(1rem, var(--npl-safe-bottom));">
         <div class="w-full flex items-center justify-between gap-3 shrink-0 mb-3 md:mb-0">
-            @if (!showRecoveryForm()) {
+            @if (!showRecoveryForm() && !ehAppNativo) {
                 <button type="button" (click)="voltar()"
                     class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-white/90 md:bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl border border-purple-100 md:border-transparent transition-all cursor-pointer">
                     <i class="pi pi-arrow-left text-xs"></i>
                     <span>Voltar ao início</span>
                 </button>
-            } @else {
+            } @else if (showRecoveryForm()) {
                 <button type="button" (click)="voltarParaLoginAposRecuperacao()"
                     class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-slate-600 hover:text-[#7843CD] bg-white/90 md:bg-slate-100/80 hover:bg-[#F3E8FF] px-3.5 py-2 rounded-xl border border-purple-100 md:border-transparent transition-all cursor-pointer">
                     <i class="pi pi-arrow-left text-xs"></i>
                     <span>Voltar para entrar</span>
                 </button>
+            } @else {
+                <span></span>
             }
             <img src="/logo.svg" alt="Na Ponta do Lápis" class="h-7 w-auto md:hidden">
         </div>
@@ -92,7 +94,7 @@
                     </div>
 
                     <div class="w-full min-h-[40px] flex items-center justify-center relative">
-                        <div #googleBtnContainer class="w-full flex justify-center" [class.hidden]="googleButtonState() !== 'ready'"></div>
+                        <div #googleBtnContainer class="w-full max-w-full overflow-hidden flex justify-center" [class.hidden]="googleButtonState() !== 'ready'"></div>
 
                         @if (googleButtonState() === 'loading') {
                             <div class="w-full h-[40px] rounded bg-slate-100 border border-slate-200 animate-pulse"></div>

@@ -16,7 +16,7 @@
 # ==============================================================================
 
 services:
-  backend:
+  backend-homolog:
     image: npl2026/backend:${APP_VERSION}
     pull_policy: always                      # garante pull da tag móvel :homolog
     restart: unless-stopped
@@ -27,8 +27,10 @@ services:
     mem_limit: 1024m                         # limita MaxRAMPercentage=75 da JVM (~768MB heap máx por réplica)
     expose: ["8080"]                         # sem ports → só Traefik (api.) e Nginx (/api) alcançam
     networks:
-      - default
-      - coolify
+      default:
+        aliases:
+          - backend
+      coolify: {}
     environment:
       # Defaults seguros: se a variável não existir no Coolify, não cai no profile local
       SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-prod}
@@ -87,7 +89,7 @@ services:
       - default
       - coolify
     depends_on:
-      backend: { condition: service_healthy }
+      backend-homolog: { condition: service_healthy }
 
 networks:
   coolify:

@@ -2,6 +2,7 @@
 
 # Compiled output
 /dist
+/dist-mobile
 /tmp
 /out-tsc
 /bazel-out

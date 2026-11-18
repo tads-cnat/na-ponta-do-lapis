@@ -1,44 +1,43 @@
 <div class="layout-body flex h-dvh overflow-hidden relative">
     @if (sidebarService.aberto()) {
-        <button type="button"
-                aria-label="Fechar menu lateral"
-                (click)="sidebarService.fecharSidebar()"
-                class="md:hidden fixed inset-0 bg-slate-900/45 backdrop-blur-[1px] z-[1050] border-0 cursor-pointer"></button>
+    <button type="button" aria-label="Fechar menu lateral" (click)="sidebarService.fecharSidebar()"
+        class="md:hidden fixed inset-0 bg-slate-900/45 backdrop-blur-[1px] z-[1050] border-0 cursor-pointer"></button>
     }
     <app-sidebar></app-sidebar>
     <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
         <app-header></app-header>
-        <main class="flex flex-col flex-1 w-full px-3 sm:px-6 lg:px-12 pt-4 pb-24 md:py-5 overflow-y-auto overflow-x-hidden">
+        <main
+            class="flex flex-col flex-1 w-full px-3 sm:px-6 lg:px-12 pt-4 pb-24 md:py-5 overflow-y-auto overflow-x-hidden"
+            style="padding-bottom: calc(5.5rem + var(--npl-safe-bottom));">
             <router-outlet></router-outlet>
         </main>
     </div>
 
     <!-- Barra de navegação inferior mobile (PWA / Smartphone) -->
     <nav aria-label="Navegação principal mobile"
-         class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1 flex items-center justify-around shadow-[0_-4px_16px_rgba(15,23,42,0.06)]"
-         style="padding-bottom: max(0.25rem, env(safe-area-inset-bottom));">
+        class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 px-2 py-1 flex items-center justify-around shadow-[0_-4px_16px_rgba(15,23,42,0.06)]"
+        style="padding-bottom: max(0.35rem, var(--npl-safe-bottom));">
         <a routerLink="/app/dashboard" routerLinkActive="nav-bottom-ativo text-[#7843CD]! bg-[#F3E8FF]/70 font-bold"
-           class="flex flex-col items-center justify-center min-w-12 min-h-11 px-2 py-1 rounded-xl text-slate-500 hover:text-[#7843CD] no-underline text-[11px] font-medium gap-0.5 transition-colors">
+            class="flex flex-col items-center justify-center min-w-12 min-h-11 px-2 py-1 rounded-xl text-slate-500 hover:text-[#7843CD] no-underline text-[11px] font-medium gap-0.5 transition-colors">
             <app-icon name="dashboard" class="w-5 h-5" />
             <span>Início</span>
         </a>
         <a routerLink="/app/transacoes" routerLinkActive="nav-bottom-ativo text-[#7843CD]! bg-[#F3E8FF]/70 font-bold"
-           class="flex flex-col items-center justify-center min-w-12 min-h-11 px-2 py-1 rounded-xl text-slate-500 hover:text-[#7843CD] no-underline text-[11px] font-medium gap-0.5 transition-colors">
+            class="flex flex-col items-center justify-center min-w-12 min-h-11 px-2 py-1 rounded-xl text-slate-500 hover:text-[#7843CD] no-underline text-[11px] font-medium gap-0.5 transition-colors">
             <app-icon name="transacao" class="w-5 h-5" />
             <span>Transações</span>
         </a>
-        <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }"
-           aria-label="Nova transação"
-           class="flex items-center justify-center w-11 h-11 rounded-2xl btn-npl-primary text-white! shadow-md no-underline shrink-0">
+        <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }" aria-label="Nova transação"
+            class="flex items-center justify-center w-11 h-11 rounded-2xl btn-npl-primary text-white! shadow-md no-underline shrink-0">
             <app-icon name="plus" class="w-5 h-5" />
         </a>
         <a routerLink="/app/contas" routerLinkActive="nav-bottom-ativo text-[#7843CD]! bg-[#F3E8FF]/70 font-bold"
-           class="flex flex-col items-center justify-center min-w-12 min-h-11 px-2 py-1 rounded-xl text-slate-500 hover:text-[#7843CD] no-underline text-[11px] font-medium gap-0.5 transition-colors">
+            class="flex flex-col items-center justify-center min-w-12 min-h-11 px-2 py-1 rounded-xl text-slate-500 hover:text-[#7843CD] no-underline text-[11px] font-medium gap-0.5 transition-colors">
             <app-icon name="conta" class="w-5 h-5" />
             <span>Contas</span>
         </a>
         <a routerLink="/app/metas" routerLinkActive="nav-bottom-ativo text-[#7843CD]! bg-[#F3E8FF]/70 font-bold"
-           class="flex flex-col items-center justify-center min-w-12 min-h-11 px-2 py-1 rounded-xl text-slate-500 hover:text-[#7843CD] no-underline text-[11px] font-medium gap-0.5 transition-colors">
+            class="flex flex-col items-center justify-center min-w-12 min-h-11 px-2 py-1 rounded-xl text-slate-500 hover:text-[#7843CD] no-underline text-[11px] font-medium gap-0.5 transition-colors">
             <app-icon name="meta" class="w-5 h-5" />
             <span>Metas</span>
         </a>

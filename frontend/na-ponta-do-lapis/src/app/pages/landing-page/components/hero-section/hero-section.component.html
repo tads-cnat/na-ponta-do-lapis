@@ -62,6 +62,21 @@
         Já tenho conta
       </a>
     </div>
+
+    <div class="mt-4 hero-text-rise relative z-50" style="--npl-delay: 620ms;">
+      <a href="https://github.com/tads-cnat/na-ponta-do-lapis/releases/latest"
+         target="_blank"
+         rel="noopener noreferrer"
+         class="group inline-flex items-center gap-2 py-1 text-sm font-['Lexend_Deca'] text-[#2D2640] hover:text-[#4A2585] transition-colors no-underline">
+        <span class="w-6 h-6 rounded-md bg-[#241B35] inline-flex items-center justify-center shrink-0">
+          <svg aria-hidden="true" class="w-3.5 h-3.5 text-[#3DDC84]" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M17.523 15.341a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5m-11.046 0a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5m11.405-6.02 1.997-3.459a.416.416 0 0 0-.152-.567.416.416 0 0 0-.568.152l-2.022 3.503C15.61 8.248 13.863 7.85 12 7.85s-3.61.398-5.137 1.1L4.841 5.447a.416.416 0 0 0-.568-.152.416.416 0 0 0-.152.567l1.997 3.459C2.688 11.186.343 14.658 0 18.761h24c-.343-4.103-2.688-7.575-6.118-9.44"/>
+          </svg>
+        </span>
+        <span>Disponível também para Android · <strong class="font-semibold text-[#4A2585] underline decoration-[#EEC046] decoration-2 underline-offset-4 group-hover:text-[#7843CD]">Baixar APK</strong></span>
+        <span aria-hidden="true" class="text-[#7843CD] group-hover:translate-x-0.5 transition-transform">→</span>
+      </a>
+    </div>
   </div>
 
   <img src="/landing-page/hero-fill.png" class="hidden md:block absolute pointer-events-none z-30" style="bottom: 0; right: 0; transform: translateY(50%); width: 140px; height: auto;" alt="" />
@@ -246,6 +261,23 @@
         <p class="font-['Lexend_Deca'] font-normal text-sm text-[#2D2640] leading-6 m-0">
           Avenida Senador Salgado Filho, 1559, Tirol, Natal - RN
         </p>
+        <div class="pt-2">
+          <a href="https://github.com/tads-cnat/na-ponta-do-lapis/releases/latest"
+             target="_blank"
+             rel="noopener noreferrer"
+             class="group inline-flex items-center gap-3 px-4 py-2.5 rounded-xl bg-[#241B35] hover:bg-[#32254A] text-white border border-[#7843CD]/40 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 no-underline">
+            <svg aria-hidden="true" class="w-6 h-6 text-[#3DDC84] shrink-0" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.523 15.341a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5m-11.046 0a.75.75 0 1 1 0-1.5.75.75 0 0 1 0 1.5m11.405-6.02 1.997-3.459a.416.416 0 0 0-.152-.567.416.416 0 0 0-.568.152l-2.022 3.503C15.61 8.248 13.863 7.85 12 7.85s-3.61.398-5.137 1.1L4.841 5.447a.416.416 0 0 0-.568-.152.416.416 0 0 0-.152.567l1.997 3.459C2.688 11.186.343 14.658 0 18.761h24c-.343-4.103-2.688-7.575-6.118-9.44"/>
+            </svg>
+            <div class="flex flex-col leading-tight text-left">
+              <span class="text-[10px] font-['Lexend_Deca'] uppercase tracking-wider text-white/75">Disponível para Android</span>
+              <span class="text-sm font-['Urbanist'] font-bold text-white">Baixar App (APK)</span>
+            </div>
+            <svg aria-hidden="true" class="w-4 h-4 text-white/70 group-hover:text-[#3DDC84] group-hover:translate-y-0.5 transition-all ml-1 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </a>
+        </div>
       </div>
 
       <div appReveal [revealDelay]="100" class="grid grid-cols-1 sm:grid-cols-3 gap-8 sm:gap-12 lg:gap-14 w-full lg:w-auto">
@@ -259,6 +291,7 @@
           <span class="font-['Lexend_Deca'] text-xs font-semibold uppercase tracking-wider text-[#4A2585]">Acesso</span>
           <a routerLink="/login" class="font-['Urbanist'] font-semibold text-base sm:text-lg text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Entrar</a>
           <a routerLink="/signup" class="font-['Urbanist'] font-semibold text-base sm:text-lg text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Criar conta</a>
+          <a href="https://github.com/tads-cnat/na-ponta-do-lapis/releases/latest" target="_blank" rel="noopener noreferrer" class="font-['Urbanist'] font-semibold text-base sm:text-lg text-[#1A1A1A] hover:text-[#7843CD] transition-colors">App Android (APK)</a>
           <a routerLink="/privacidade" class="font-['Urbanist'] font-semibold text-base sm:text-lg text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Política de privacidade</a>
           <a routerLink="/termos" class="font-['Urbanist'] font-semibold text-base sm:text-lg text-[#1A1A1A] hover:text-[#7843CD] transition-colors">Termos de serviço</a>
         </div>

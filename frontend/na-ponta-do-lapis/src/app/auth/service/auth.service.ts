@@ -138,7 +138,9 @@ export class AuthService {
             },
           });
           container.innerHTML = '';
-          const width = Math.max(240, Math.min(400, container.clientWidth || container.parentElement?.clientWidth || 400));
+          const measuredWidth = container.clientWidth || container.parentElement?.clientWidth || 0;
+          const viewportFallback = typeof window !== 'undefined' ? Math.min(360, window.innerWidth - 88) : 300;
+          const width = Math.max(220, Math.min(400, measuredWidth || viewportFallback));
           gis.renderButton(container, {
             type: 'standard',
             theme: 'outline',

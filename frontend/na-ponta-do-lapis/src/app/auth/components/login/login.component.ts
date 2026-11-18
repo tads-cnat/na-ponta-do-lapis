@@ -1,4 +1,5 @@
 import { AfterViewInit, Component, DestroyRef, ElementRef, Input, OnChanges, OnInit, SimpleChanges, ViewChild, inject, signal } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -44,6 +45,7 @@ export class LoginComponent implements OnInit, OnChanges, AfterViewInit {
   readonly mascoteEstado = signal<MascoteEstado>('idle');
   readonly lookProgress = signal(0.5);
   readonly isHoveringSubmit = signal(false);
+  readonly ehAppNativo = Capacitor.isNativePlatform();
 
   constructor(
     private fb: FormBuilder,

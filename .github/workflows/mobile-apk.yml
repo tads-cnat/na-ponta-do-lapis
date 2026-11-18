@@ -1,0 +1,96 @@
+name: Mobile APK (Android)
+
+on:
+  workflow_dispatch:
+    inputs:
+      ambiente:
+        description: "Ambiente da API apontada pelo APK"
+        type: choice
+        options: [homolog, prod]
+        default: homolog
+      tipo:
+        description: "Tipo de build Android"
+        type: choice
+        options: [debug, release]
+        default: debug
+  pull_request:
+    paths:
+      - 'frontend/na-ponta-do-lapis/android/**'
+      - 'frontend/na-ponta-do-lapis/capacitor.config.ts'
+      - '.github/workflows/mobile-apk.yml'
+
+jobs:
+  build-apk:
+    name: Build APK (${{ inputs.ambiente || 'homolog' }} / ${{ inputs.tipo || 'debug' }})
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/na-ponta-do-lapis/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Ajustar API de homologação (quando aplicável)
+        if: ${{ (inputs.ambiente || 'homolog') == 'homolog' }}
+        run: |
+          sed -i "s|https://napontadolapis.app/api/v1|https://homolog.napontadolapis.app/api/v1|g" \
+            frontend/na-ponta-do-lapis/src/environments/environment.mobile.ts
+
+      - name: Build Angular mobile e sync Capacitor
+        run: |
+          cd frontend/na-ponta-do-lapis
+          npm ci
+          npm run cap:sync
+
+      - name: Compilar APK Debug
+        if: ${{ (inputs.tipo || 'debug') == 'debug' }}
+        run: |
+          cd frontend/na-ponta-do-lapis/android
+          chmod +x gradlew
+          ./gradlew assembleDebug --no-daemon \
+            -PversionCode="${{ github.run_number }}" \
+            -PversionName="1.0.${{ github.run_number }}"
+          cp app/build/outputs/apk/debug/app-debug.apk \
+            "${{ github.workspace }}/na-ponta-do-lapis-${{ inputs.ambiente || 'homolog' }}-debug.apk"
+
+      - name: Compilar APK Release Assinado
+        if: ${{ inputs.tipo == 'release' }}
+        env:
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          cd frontend/na-ponta-do-lapis/android
+          chmod +x gradlew
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
+            echo "::error::Secrets de assinatura Android são obrigatórios para build release."
+            exit 1
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/release.keystore
+          ./gradlew assembleRelease --no-daemon \
+            -PversionCode="${{ github.run_number }}" \
+            -PversionName="1.0.${{ github.run_number }}" \
+            -Pandroid.injected.signing.store.file="$(pwd)/app/release.keystore" \
+            -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$ANDROID_KEY_PASSWORD"
+          cp app/build/outputs/apk/release/app-release.apk \
+            "${{ github.workspace }}/na-ponta-do-lapis-${{ inputs.ambiente || 'homolog' }}-release.apk"
+          rm -f app/release.keystore
+
+      - name: Publicar APK como Artifact
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: na-ponta-do-lapis-apk-${{ inputs.ambiente || 'homolog' }}-${{ inputs.tipo || 'debug' }}
+          path: ${{ github.workspace }}/*.apk
+          retention-days: 14
+

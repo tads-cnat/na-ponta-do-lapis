@@ -27,9 +27,10 @@ classes/
 *.log
 logs/
 
-# Maven 
+# Maven / Gradle wrappers
 .mvn/
 !/.mvn/wrapper/maven-wrapper.jar
+!/frontend/na-ponta-do-lapis/android/gradle/wrapper/gradle-wrapper.jar
 
 # ==========================================
 # FRONTEND: ANGULAR (Node.js / npm)
@@ -38,11 +39,17 @@ logs/
 # Dependências do Node (MUITO IMPORTANTE ignorar)
 node_modules/
 
-# Builds e artefatos de compilação do Angular
+# Builds e artefatos de compilação do Angular / Capacitor
 dist/
+dist-mobile/
 tmp/
 out-tsc/
 bazel-out/
+*.apk
+*.aab
+*.keystore
+*.jks
+.gradle/
 
 # Cache local do Angular
 .angular/

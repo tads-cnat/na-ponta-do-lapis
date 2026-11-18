@@ -152,7 +152,7 @@ export class HeaderComponent implements OnInit {
 
   logout(){
     StorageService.logout()
-    this.router.navigateByUrl("/login")
+    this.router.navigateByUrl("/login", { replaceUrl: true })
   }
 
   usarFotoPadrao(event:any) {
