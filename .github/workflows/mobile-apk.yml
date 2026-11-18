@@ -19,6 +19,10 @@ on:
       - 'frontend/na-ponta-do-lapis/capacitor.config.ts'
       - '.github/workflows/mobile-apk.yml'
 
+concurrency:
+  group: mobile-apk-${{ github.ref }}-${{ inputs.ambiente || 'pr' }}-${{ inputs.tipo || 'debug' }}
+  cancel-in-progress: true
+
 jobs:
   build-apk:
     name: Build APK (${{ inputs.ambiente || 'homolog' }} / ${{ inputs.tipo || 'debug' }})
