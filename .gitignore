@@ -38,11 +38,17 @@ logs/
 # Dependências do Node (MUITO IMPORTANTE ignorar)
 node_modules/
 
-# Builds e artefatos de compilação do Angular
+# Builds e artefatos de compilação do Angular / Capacitor
 dist/
+dist-mobile/
 tmp/
 out-tsc/
 bazel-out/
+*.apk
+*.aab
+*.keystore
+*.jks
+.gradle/
 
 # Cache local do Angular
 .angular/
