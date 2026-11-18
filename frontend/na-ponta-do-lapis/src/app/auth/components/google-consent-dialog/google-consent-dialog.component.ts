@@ -1,11 +1,13 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
 
 @Component({
   selector: 'app-google-consent-dialog',
   standalone: true,
-  imports: [PrimeNGModuleModule, FormsModule],
+  imports: [PrimeNGModuleModule, FormsModule, RouterLink],
   template: `
     <p-dialog
       [visible]="visible"
@@ -46,9 +48,9 @@ import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
           <p-checkbox [(ngModel)]="aceitouTermos" [binary]="true" inputId="googleLgpdTermos"></p-checkbox>
           <span class="text-xs leading-snug text-[#0D0D0D]">
             Li e concordo com os
-            <a href="/termos" target="_blank" rel="noopener noreferrer" class="text-[#7843CD] font-bold underline decoration-[#EEC046] decoration-2 underline-offset-2">Termos de Serviço</a>
+            <a [routerLink]="['/termos']" [attr.target]="ehAppNativo ? null : '_blank'" [attr.rel]="ehAppNativo ? null : 'noopener noreferrer'" (click)="onAbrirLinkLegal()" class="text-[#7843CD] font-bold underline decoration-[#EEC046] decoration-2 underline-offset-2">Termos de Serviço</a>
             e a
-            <a href="/privacidade" target="_blank" rel="noopener noreferrer" class="text-[#7843CD] font-bold underline decoration-[#EEC046] decoration-2 underline-offset-2">Política de Privacidade (LGPD)</a>
+            <a [routerLink]="['/privacidade']" [attr.target]="ehAppNativo ? null : '_blank'" [attr.rel]="ehAppNativo ? null : 'noopener noreferrer'" (click)="onAbrirLinkLegal()" class="text-[#7843CD] font-bold underline decoration-[#EEC046] decoration-2 underline-offset-2">Política de Privacidade (LGPD)</a>
             para criar minha conta.
           </span>
         </label>
@@ -86,7 +88,14 @@ export class GoogleConsentDialogComponent implements OnChanges {
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 
+  readonly ehAppNativo = Capacitor.isNativePlatform();
   aceitouTermos = false;
+
+  onAbrirLinkLegal(): void {
+    if (this.ehAppNativo) {
+      this.cancel.emit();
+    }
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['visible']?.currentValue === true) {

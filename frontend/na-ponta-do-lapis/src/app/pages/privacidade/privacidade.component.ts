@@ -1,23 +1,26 @@
+import { Location } from '@angular/common';
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import { Capacitor } from '@capacitor/core';
 
 @Component({
   selector: 'app-privacidade',
   standalone: true,
   imports: [RouterLink],
   template: `
-    <div class="min-h-screen bg-[#F8FAFC] text-slate-800">
-      <header class="bg-[#D1C4FF] border-b-4 border-[#EEC046]">
+    <div class="min-h-screen bg-[#F8FAFC] text-slate-800" style="padding-bottom: var(--npl-safe-bottom);">
+      <header class="bg-[#D1C4FF] border-b-4 border-[#EEC046]" style="padding-top: var(--npl-safe-top);">
         <div class="max-w-4xl mx-auto px-6 py-6 flex items-center justify-between gap-4">
-          <a routerLink="/" class="flex items-center gap-3 no-underline">
+          <a [routerLink]="ehAppNativo ? '/login' : '/'" class="flex items-center gap-3 no-underline">
             <img src="/logoReduzida.png" alt="Na Ponta do Lápis" class="w-10 h-10 rounded-xl shadow-xs">
             <span class="text-xl font-extrabold text-[#4A2585] tracking-tight">Na Ponta do Lápis</span>
           </a>
-          <a routerLink="/"
-             class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#4A2585] bg-white/80 hover:bg-white px-3.5 py-2 rounded-xl transition-all no-underline shadow-2xs">
+          <button type="button"
+             (click)="voltar()"
+             class="inline-flex items-center gap-2 text-xs sm:text-sm font-semibold text-[#4A2585] bg-white/80 hover:bg-white px-3.5 py-2 rounded-xl transition-all shadow-2xs cursor-pointer">
             <i class="pi pi-arrow-left text-xs"></i>
-            <span>Voltar ao início</span>
-          </a>
+            <span>{{ ehAppNativo ? 'Voltar' : 'Voltar ao início' }}</span>
+          </button>
         </div>
       </header>
 
@@ -126,7 +129,7 @@ import { Router, RouterLink } from '@angular/router';
           }
 
           <div class="pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-            <a href="/landing-page/termos_privacidade.pdf" target="_blank" rel="noopener noreferrer"
+            <a [href]="ehAppNativo ? 'https://napontadolapis.app/landing-page/termos_privacidade.pdf' : '/landing-page/termos_privacidade.pdf'" target="_blank" rel="noopener noreferrer"
                class="inline-flex items-center gap-2 text-sm font-semibold text-[#7843CD] hover:text-[#6214CC] hover:underline">
               <i class="pi pi-file-pdf"></i>
               <span>Baixar versão completa em PDF</span>
@@ -143,8 +146,18 @@ import { Router, RouterLink } from '@angular/router';
 })
 export class PrivacidadeComponent {
   private readonly router = inject(Router);
+  private readonly location = inject(Location);
+  readonly ehAppNativo = Capacitor.isNativePlatform();
 
   get isTermos(): boolean {
     return this.router.url.split('?')[0].startsWith('/termos');
+  }
+
+  voltar(): void {
+    if (this.ehAppNativo && typeof window !== 'undefined' && window.history.length > 1) {
+      this.location.back();
+      return;
+    }
+    this.router.navigateByUrl(this.ehAppNativo ? '/login' : '/');
   }
 }
