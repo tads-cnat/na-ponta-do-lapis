@@ -8,7 +8,7 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
   standalone: true,
   imports: [PrimeNGModuleModule, ChartModule, FormsModule],
   template: `
-    <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100">
+    <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 h-full flex flex-col justify-between">
 
       <!-- HEADER -->
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">

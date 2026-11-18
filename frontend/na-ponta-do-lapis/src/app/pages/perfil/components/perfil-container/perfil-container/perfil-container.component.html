@@ -1,4 +1,4 @@
-<div class="w-full flex flex-col gap-6 pb-8 text-left">
+<div class="w-full flex flex-col gap-6 pb-2 md:pb-0 text-left">
 
   <!-- Cabeçalho Principal da Página (Padrão Design System) -->
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -10,8 +10,11 @@
 
   <div class="w-full flex flex-col lg:flex-row items-start gap-8">
     <!-- Coluna Lateral (Perfil e Resumo) -->
-    <aside class="w-full lg:w-80 lg:shrink-0 flex flex-col">
+    <aside class="w-full lg:w-80 lg:shrink-0 flex flex-col gap-3">
       <app-area-perfil-component class="w-full block"></app-area-perfil-component>
+      <p class="hidden lg:block text-xs text-slate-400 font-medium px-2 m-0 select-none">
+        Na Ponta do Lápis • v{{ capacitorService.versaoApp() }}
+      </p>
     </aside>
 
     <!-- Coluna Principal (Ajustes e Conexões) -->
@@ -31,7 +34,7 @@
     </button>
   </div>
 
-  <p class="text-center text-xs text-slate-400 font-medium pt-2 m-0 select-none">
+  <p class="lg:hidden text-center text-xs text-slate-400 font-medium pt-1 m-0 select-none">
     Na Ponta do Lápis • v{{ capacitorService.versaoApp() }}
   </p>
 

@@ -564,6 +564,12 @@ main > *:not(p-toast):not(router-outlet) {
   flex-direction: column;
 }
 
+@media (max-width: 767px) {
+  .npl-main-content {
+    padding-bottom: calc(5.5rem + var(--npl-safe-bottom));
+  }
+}
+
 /* Previne que overlays flutuantes de tooltip interceptem eventos do ponteiro e travem o hover */
 .p-tooltip {
   pointer-events: none !important;
