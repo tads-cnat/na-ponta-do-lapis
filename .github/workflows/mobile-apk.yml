@@ -1,6 +1,16 @@
-name: Mobile APK (Android)
+name: Mobile APK (Homolog / Testes)
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/mobile-apk.yml'
+  pull_request:
+    paths:
+      - 'frontend/na-ponta-do-lapis/android/**'
+      - 'frontend/na-ponta-do-lapis/capacitor.config.ts'
+      - '.github/workflows/mobile-apk.yml'
   workflow_dispatch:
     inputs:
       ambiente:
@@ -13,14 +23,9 @@ on:
         type: choice
         options: [debug, release]
         default: debug
-  pull_request:
-    paths:
-      - 'frontend/na-ponta-do-lapis/android/**'
-      - 'frontend/na-ponta-do-lapis/capacitor.config.ts'
-      - '.github/workflows/mobile-apk.yml'
 
 concurrency:
-  group: mobile-apk-${{ github.ref }}-${{ inputs.ambiente || 'pr' }}-${{ inputs.tipo || 'debug' }}
+  group: mobile-apk-${{ github.ref }}-${{ inputs.ambiente || 'homolog' }}-${{ inputs.tipo || 'debug' }}
   cancel-in-progress: true
 
 jobs:
@@ -29,6 +34,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
 
       - uses: actions/setup-node@v4
         with:
@@ -41,11 +47,31 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Ajustar API de homologação (quando aplicável)
-        if: ${{ (inputs.ambiente || 'homolog') == 'homolog' }}
+      - name: Calcular versão base mobile
+        id: mobver
         run: |
-          sed -i "s|https://napontadolapis.app/api/v1|https://homolog.napontadolapis.app/api/v1|g" \
-            frontend/na-ponta-do-lapis/src/environments/environment.mobile.ts
+          LAST=$(git tag --list 'mobile-v*.*.*' --sort=-v:refname | head -n1)
+          BASE=${LAST#mobile-v}
+          BASE=${BASE:-1.0.0}
+          echo "base=$BASE" >> "$GITHUB_OUTPUT"
+
+      - name: Ajustar API e Service Token de homologação (quando aplicável)
+        if: ${{ (inputs.ambiente || 'homolog') == 'homolog' }}
+        env:
+          CF_ID: ${{ secrets.HOMOLOG_CF_CLIENT_ID }}
+          CF_SECRET: ${{ secrets.HOMOLOG_CF_CLIENT_SECRET }}
+        run: |
+          node -e '
+            const fs = require("fs");
+            const file = "frontend/na-ponta-do-lapis/src/environments/environment.mobile.ts";
+            const env = {
+              production: true,
+              apiBaseUrl: "https://homolog.napontadolapis.app/api/v1",
+              cfAccessClientId: process.env.CF_ID || "",
+              cfAccessClientSecret: process.env.CF_SECRET || "",
+            };
+            fs.writeFileSync(file, "export const environment = " + JSON.stringify(env, null, 4) + ";\n");
+          '
 
       - name: Build Angular mobile e sync Capacitor
         run: |
@@ -55,19 +81,22 @@ jobs:
 
       - name: Compilar APK Debug
         if: ${{ (inputs.tipo || 'debug') == 'debug' }}
+        env:
+          BASE_VERSION: ${{ steps.mobver.outputs.base }}
         run: |
           cd frontend/na-ponta-do-lapis/android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon \
             -Phomolog="${{ (inputs.ambiente || 'homolog') == 'homolog' }}" \
             -PversionCode="${{ github.run_number }}" \
-            -PversionName="1.0.${{ github.run_number }}"
+            -PversionName="${BASE_VERSION}-${{ inputs.ambiente || 'homolog' }}.${{ github.run_number }}"
           cp app/build/outputs/apk/debug/app-debug.apk \
             "${{ github.workspace }}/na-ponta-do-lapis-${{ inputs.ambiente || 'homolog' }}-debug.apk"
 
       - name: Compilar APK Release Assinado
         if: ${{ inputs.tipo == 'release' }}
         env:
+          BASE_VERSION: ${{ steps.mobver.outputs.base }}
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -83,7 +112,7 @@ jobs:
           ./gradlew assembleRelease --no-daemon \
             -Phomolog="${{ (inputs.ambiente || 'homolog') == 'homolog' }}" \
             -PversionCode="${{ github.run_number }}" \
-            -PversionName="1.0.${{ github.run_number }}" \
+            -PversionName="${BASE_VERSION}-${{ inputs.ambiente || 'homolog' }}.${{ github.run_number }}" \
             -Pandroid.injected.signing.store.file="$(pwd)/app/release.keystore" \
             -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
             -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
@@ -93,10 +122,9 @@ jobs:
           rm -f app/release.keystore
 
       - name: Publicar APK como Artifact
-        if: ${{ github.event_name == 'workflow_dispatch' }}
+        if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
           name: na-ponta-do-lapis-apk-${{ inputs.ambiente || 'homolog' }}-${{ inputs.tipo || 'debug' }}
           path: ${{ github.workspace }}/*.apk
           retention-days: 14
-

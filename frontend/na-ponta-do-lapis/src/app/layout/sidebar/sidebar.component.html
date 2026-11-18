@@ -29,4 +29,9 @@
         </a>
 
     }
+    @if (capacitorService.versaoApp(); as versao) {
+        <div class="mt-auto pt-4 text-center text-[11px] font-medium text-slate-400 select-none">
+            v{{ versao }}
+        </div>
+    }
 </aside>

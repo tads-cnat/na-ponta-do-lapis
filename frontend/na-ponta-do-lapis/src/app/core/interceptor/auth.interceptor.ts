@@ -1,17 +1,21 @@
 import { HttpInterceptorFn } from '@angular/common/http';
 import { StorageService } from '../../auth/service/storage.service';
+import { environment } from '../../../environments/environment';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-
   const authToken = StorageService.getToken();
-  // console.log(req.url)
-  // console.log(authToken)
+  const headers: Record<string, string> = {
+    Authorization: `Bearer ${authToken}`,
+  };
 
-  const authReq = req.clone({
-    setHeaders:{
-      Authorization: `Bearer ${authToken}`
-    } 
-  })
+  if (
+    req.url.startsWith(environment.apiBaseUrl) &&
+    environment.cfAccessClientId &&
+    environment.cfAccessClientSecret
+  ) {
+    headers['CF-Access-Client-Id'] = environment.cfAccessClientId;
+    headers['CF-Access-Client-Secret'] = environment.cfAccessClientSecret;
+  }
 
-  return next(authReq);
+  return next(req.clone({ setHeaders: headers }));
 };

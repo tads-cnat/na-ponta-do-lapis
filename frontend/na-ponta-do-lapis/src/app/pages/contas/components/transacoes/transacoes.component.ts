@@ -10,7 +10,7 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
   imports: [CommonModule, PrimeNGModuleModule, AppMoedaPipe],
   template: `
     <div
-      class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col min-h-0">
+      class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col min-h-0 h-full">
 
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
 

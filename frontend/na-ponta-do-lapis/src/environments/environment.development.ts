@@ -10,4 +10,6 @@ export const environment = {
 
         return `${protocol}//${hostname}:8080/api/v1`;
     })(),
+    cfAccessClientId: '',
+    cfAccessClientSecret: '',
 };

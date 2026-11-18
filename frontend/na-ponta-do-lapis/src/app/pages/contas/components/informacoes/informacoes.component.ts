@@ -11,7 +11,7 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
   imports: [CommonModule, IconeBancoComponent, AppMoedaPipe],
   template: `
     @if (conta) {
-      <div class="bg-white rounded-[2rem] p-4 sm:p-6 shadow-sm border border-slate-100 flex flex-col gap-5">
+      <div class="bg-white rounded-[2rem] p-4 sm:p-6 shadow-sm border border-slate-100 flex flex-col gap-5 h-full">
 
         <div class="flex flex-wrap items-start sm:items-center justify-between gap-3">
           <div class="flex items-center gap-3 min-w-0">
