@@ -27,9 +27,10 @@ classes/
 *.log
 logs/
 
-# Maven 
+# Maven / Gradle wrappers
 .mvn/
 !/.mvn/wrapper/maven-wrapper.jar
+!/frontend/na-ponta-do-lapis/android/gradle/wrapper/gradle-wrapper.jar
 
 # ==========================================
 # FRONTEND: ANGULAR (Node.js / npm)
