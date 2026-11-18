@@ -41,11 +41,23 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - name: Ajustar API de homologação (quando aplicável)
+      - name: Ajustar API e Service Token de homologação (quando aplicável)
         if: ${{ (inputs.ambiente || 'homolog') == 'homolog' }}
+        env:
+          CF_ID: ${{ secrets.HOMOLOG_CF_CLIENT_ID }}
+          CF_SECRET: ${{ secrets.HOMOLOG_CF_CLIENT_SECRET }}
         run: |
-          sed -i "s|https://napontadolapis.app/api/v1|https://homolog.napontadolapis.app/api/v1|g" \
-            frontend/na-ponta-do-lapis/src/environments/environment.mobile.ts
+          node -e '
+            const fs = require("fs");
+            const file = "frontend/na-ponta-do-lapis/src/environments/environment.mobile.ts";
+            const env = {
+              production: true,
+              apiBaseUrl: "https://homolog.napontadolapis.app/api/v1",
+              cfAccessClientId: process.env.CF_ID || "",
+              cfAccessClientSecret: process.env.CF_SECRET || "",
+            };
+            fs.writeFileSync(file, "export const environment = " + JSON.stringify(env, null, 4) + ";\n");
+          '
 
       - name: Build Angular mobile e sync Capacitor
         run: |
