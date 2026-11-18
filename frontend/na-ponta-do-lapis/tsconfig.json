@@ -12,6 +12,7 @@
     "isolatedModules": true,
     "experimentalDecorators": true,
     "importHelpers": true,
+    "resolveJsonModule": true,
     "target": "ES2022",
     "module": "preserve",
     "paths": {

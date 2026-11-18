@@ -13,11 +13,18 @@ on:
         type: choice
         options: [debug, release]
         default: debug
+      publicar_release:
+        description: "Publicar GitHub Release pública (mobile-v*)? (apenas prod + release)"
+        type: boolean
+        default: false
   pull_request:
     paths:
       - 'frontend/na-ponta-do-lapis/android/**'
       - 'frontend/na-ponta-do-lapis/capacitor.config.ts'
       - '.github/workflows/mobile-apk.yml'
+
+permissions:
+  contents: write
 
 concurrency:
   group: mobile-apk-${{ github.ref }}-${{ inputs.ambiente || 'pr' }}-${{ inputs.tipo || 'debug' }}
@@ -41,6 +48,12 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Ler versão do package.json
+        id: pkg
+        run: |
+          PKG_VERSION=$(node -p "require('./frontend/na-ponta-do-lapis/package.json').version")
+          echo "version=$PKG_VERSION" >> "$GITHUB_OUTPUT"
+
       - name: Ajustar API e Service Token de homologação (quando aplicável)
         if: ${{ (inputs.ambiente || 'homolog') == 'homolog' }}
         env:
@@ -53,7 +66,6 @@ jobs:
             const env = {
               production: true,
               apiBaseUrl: "https://homolog.napontadolapis.app/api/v1",
-              appVersion: "1.0.${{ github.run_number }}",
               cfAccessClientId: process.env.CF_ID || "",
               cfAccessClientSecret: process.env.CF_SECRET || "",
             };
@@ -68,19 +80,22 @@ jobs:
 
       - name: Compilar APK Debug
         if: ${{ (inputs.tipo || 'debug') == 'debug' }}
+        env:
+          PKG_VERSION: ${{ steps.pkg.outputs.version }}
         run: |
           cd frontend/na-ponta-do-lapis/android
           chmod +x gradlew
           ./gradlew assembleDebug --no-daemon \
             -Phomolog="${{ (inputs.ambiente || 'homolog') == 'homolog' }}" \
             -PversionCode="${{ github.run_number }}" \
-            -PversionName="1.0.${{ github.run_number }}"
+            -PversionName="${PKG_VERSION}-debug.${{ github.run_number }}"
           cp app/build/outputs/apk/debug/app-debug.apk \
             "${{ github.workspace }}/na-ponta-do-lapis-${{ inputs.ambiente || 'homolog' }}-debug.apk"
 
       - name: Compilar APK Release Assinado
         if: ${{ inputs.tipo == 'release' }}
         env:
+          PKG_VERSION: ${{ steps.pkg.outputs.version }}
           ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
           ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
           ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
@@ -93,10 +108,14 @@ jobs:
             exit 1
           fi
           echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/release.keystore
+          VERSION_NAME="$PKG_VERSION"
+          if [ "${{ inputs.ambiente || 'homolog' }}" = "homolog" ]; then
+            VERSION_NAME="${PKG_VERSION}-homolog.${{ github.run_number }}"
+          fi
           ./gradlew assembleRelease --no-daemon \
             -Phomolog="${{ (inputs.ambiente || 'homolog') == 'homolog' }}" \
             -PversionCode="${{ github.run_number }}" \
-            -PversionName="1.0.${{ github.run_number }}" \
+            -PversionName="$VERSION_NAME" \
             -Pandroid.injected.signing.store.file="$(pwd)/app/release.keystore" \
             -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
             -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
@@ -112,4 +131,32 @@ jobs:
           name: na-ponta-do-lapis-apk-${{ inputs.ambiente || 'homolog' }}-${{ inputs.tipo || 'debug' }}
           path: ${{ github.workspace }}/*.apk
           retention-days: 14
+
+      - name: Publicar GitHub Release Mobile (mobile-v* e mobile-latest)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.publicar_release && inputs.ambiente == 'prod' && inputs.tipo == 'release' }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PKG_VERSION: ${{ steps.pkg.outputs.version }}
+        run: |
+          SRC_APK="${{ github.workspace }}/na-ponta-do-lapis-prod-release.apk"
+          VERSIONED_APK="${{ github.workspace }}/na-ponta-do-lapis-mobile-v${PKG_VERSION}.apk"
+          LATEST_APK="${{ github.workspace }}/na-ponta-do-lapis.apk"
+          cp "$SRC_APK" "$VERSIONED_APK"
+          cp "$SRC_APK" "$LATEST_APK"
+
+          if gh release view "mobile-v${PKG_VERSION}" >/dev/null 2>&1; then
+            gh release upload "mobile-v${PKG_VERSION}" "$VERSIONED_APK" --clobber
+          else
+            gh release create "mobile-v${PKG_VERSION}" "$VERSIONED_APK" --target "$GITHUB_SHA" \
+              --title "App Android v${PKG_VERSION}" --generate-notes \
+              --notes "APK Android assinado (versão ${PKG_VERSION}, build ${{ github.run_number }})"
+          fi
+
+          if gh release view "mobile-latest" >/dev/null 2>&1; then
+            gh release upload "mobile-latest" "$LATEST_APK" --clobber
+          else
+            gh release create "mobile-latest" "$LATEST_APK" --target "$GITHUB_SHA" \
+              --title "App Android (Última Versão)" \
+              --notes "Último APK Android oficial publicado (v${PKG_VERSION})."
+          fi
 

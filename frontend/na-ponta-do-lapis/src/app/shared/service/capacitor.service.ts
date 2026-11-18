@@ -5,6 +5,7 @@ import { StatusBar, Style } from '@capacitor/status-bar';
 import { SidebarService } from '../../service/sidebar-service.service';
 import { ThemeService } from '../../service/theme.service';
 import { environment } from '../../../environments/environment';
+import packageJson from '../../../../package.json';
 
 /**
  * Integração nativa com Capacitor (Android/iOS). No navegador web não executa ações nativas.
@@ -16,7 +17,7 @@ export class CapacitorService {
   private readonly sidebarService = inject(SidebarService);
   private readonly themeService = inject(ThemeService);
   readonly versaoApp = signal<string>(
-    environment.production ? environment.appVersion : `${environment.appVersion} (dev)`
+    environment.production ? packageJson.version : `${packageJson.version} (dev)`
   );
 
   constructor() {

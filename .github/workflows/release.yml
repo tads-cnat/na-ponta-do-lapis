@@ -139,9 +139,17 @@ jobs:
         run: |
           if [ "$GERAR_APK" = "true" ]; then
             APK_FILE=$(ls na-ponta-do-lapis-v${VERSION}*.apk | head -n1)
+            cp "$APK_FILE" na-ponta-do-lapis.apk
             gh release create "v$VERSION" "$APK_FILE" --target "$GITHUB_SHA" \
               --title "v$VERSION" --generate-notes \
               --notes "Imagens: npl2026/backend:$VERSION, npl2026/frontend:$VERSION | APK Android anexado"
+            if gh release view "mobile-latest" >/dev/null 2>&1; then
+              gh release upload "mobile-latest" na-ponta-do-lapis.apk --clobber
+            else
+              gh release create "mobile-latest" na-ponta-do-lapis.apk --target "$GITHUB_SHA" \
+                --title "App Android (Última Versão)" \
+                --notes "Último APK Android oficial publicado (v$VERSION)."
+            fi
           else
             gh release create "v$VERSION" --target "$GITHUB_SHA" \
               --title "v$VERSION" --generate-notes \
