@@ -53,6 +53,7 @@ jobs:
             const env = {
               production: true,
               apiBaseUrl: "https://homolog.napontadolapis.app/api/v1",
+              appVersion: "1.0.${{ github.run_number }}",
               cfAccessClientId: process.env.CF_ID || "",
               cfAccessClientSecret: process.env.CF_SECRET || "",
             };
