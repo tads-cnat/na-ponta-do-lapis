@@ -1,0 +1,130 @@
+name: Release Mobile (Android APK)
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Tipo de versão do App Android"
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  validar-branch:
+    name: Validar Branch (main)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Garantir execução apenas na main
+        if: ${{ github.ref != 'refs/heads/main' }}
+        run: |
+          echo "::error::A release do App Android só pode ser executada a partir da branch main (branch atual: ${GITHUB_REF_NAME})."
+          exit 1
+
+  approve:
+    name: Solicitar Aprovação da Release Mobile
+    needs: validar-branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Aguardar Aprovação Manual
+        uses: trstringer/manual-approval@v1
+        with:
+          secret: ${{ secrets.GITHUB_TOKEN }}
+          approvers: ${{ vars.RELEASE_APPROVERS }}
+          minimum-approvals: ${{ vars.RELEASE_MIN_APPROVALS || 3 }}
+          issue-timeout-seconds: ${{ vars.RELEASE_TIMEOUT_SECONDS || 86400 }}
+          issue-title: "Aprovação necessária para Release Mobile (Tipo: ${{ inputs.bump }})"
+          issue-body: |
+            Uma nova execução de Release do App Android (APK) foi iniciada.
+
+            **Disparado por:** `@${{ github.actor }}`
+            **Tipo de bump:** `${{ inputs.bump }}`
+            **Commit SHA:** `${{ github.sha }}`
+
+            Por favor, aprovem digitando `approved` nesta issue ou utilizando o botão de resposta.
+
+  release-mobile:
+    name: Gerar APK e Publicar Release Mobile
+    needs: approve
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+
+      - name: Calcular próxima versão mobile (mobile-v*)
+        id: semver
+        run: |
+          LAST=$(git tag --list 'mobile-v*.*.*' --sort=-v:refname | head -n1)
+          LAST=${LAST:-mobile-v0.0.0}
+          IFS='.' read -r MAJ MIN PAT <<< "${LAST#mobile-v}"
+          case "${{ inputs.bump }}" in
+            major) MAJ=$((MAJ+1)); MIN=0; PAT=0 ;;
+            minor) MIN=$((MIN+1)); PAT=0 ;;
+            patch) PAT=$((PAT+1)) ;;
+          esac
+          echo "version=$MAJ.$MIN.$PAT" >> "$GITHUB_OUTPUT"
+          echo "### $LAST → mobile-v$MAJ.$MIN.$PAT" >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/na-ponta-do-lapis/package-lock.json
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - name: Compilar APK Android Release Assinado
+        env:
+          VERSION: ${{ steps.semver.outputs.version }}
+          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+        run: |
+          cd frontend/na-ponta-do-lapis
+          npm ci
+          npm run cap:sync
+          cd android
+          chmod +x gradlew
+          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
+            echo "::error::Secrets de assinatura Android são obrigatórios na release mobile."
+            exit 1
+          fi
+          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/release.keystore
+          ./gradlew assembleRelease --no-daemon \
+            -Phomolog=false \
+            -PversionCode="${{ github.run_number }}" \
+            -PversionName="$VERSION" \
+            -Pandroid.injected.signing.store.file="$(pwd)/app/release.keystore" \
+            -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
+            -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
+            -Pandroid.injected.signing.key.password="$ANDROID_KEY_PASSWORD"
+          cp app/build/outputs/apk/release/app-release.apk "${{ github.workspace }}/na-ponta-do-lapis-mobile-v${VERSION}.apk"
+          cp app/build/outputs/apk/release/app-release.apk "${{ github.workspace }}/na-ponta-do-lapis.apk"
+          rm -f app/release.keystore
+
+      - name: Publicar GitHub Release Mobile (mobile-v* e mobile-latest)
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.semver.outputs.version }}
+        run: |
+          VERSIONED_APK="${{ github.workspace }}/na-ponta-do-lapis-mobile-v${VERSION}.apk"
+          LATEST_APK="${{ github.workspace }}/na-ponta-do-lapis.apk"
+
+          gh release create "mobile-v${VERSION}" "$VERSIONED_APK" --target "$GITHUB_SHA" \
+            --title "App Android v${VERSION}" --generate-notes \
+            --notes "APK Android oficial assinado (v${VERSION}, build ${{ github.run_number }})."
+
+          if gh release view "mobile-latest" >/dev/null 2>&1; then
+            gh release upload "mobile-latest" "$LATEST_APK" --clobber
+          else
+            gh release create "mobile-latest" "$LATEST_APK" --target "$GITHUB_SHA" \
+              --title "App Android (Última Versão)" \
+              --notes "Último APK Android oficial publicado (v${VERSION})."
+          fi

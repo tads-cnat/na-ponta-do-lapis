@@ -8,10 +8,6 @@ on:
         type: choice
         options: [patch, minor, major]
         default: patch
-      gerar_apk:
-        description: "Gerar e anexar APK Android nesta release?"
-        type: boolean
-        default: true
 
 permissions:
   contents: write
@@ -89,69 +85,11 @@ jobs:
               npl2026/$svc:$SHA_TAG
           done
 
-      - uses: actions/setup-node@v4
-        if: ${{ inputs.gerar_apk }}
-        with:
-          node-version: 22
-          cache: npm
-          cache-dependency-path: frontend/na-ponta-do-lapis/package-lock.json
-
-      - uses: actions/setup-java@v4
-        if: ${{ inputs.gerar_apk }}
-        with:
-          distribution: temurin
-          java-version: 21
-
-      - name: Compilar APK Android (Capacitor)
-        if: ${{ inputs.gerar_apk }}
-        env:
-          VERSION: ${{ steps.semver.outputs.version }}
-          ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-        run: |
-          cd frontend/na-ponta-do-lapis
-          npm ci
-          npm run cap:sync
-          cd android
-          chmod +x gradlew
-          if [ -z "$ANDROID_KEYSTORE_BASE64" ] || [ -z "$ANDROID_KEYSTORE_PASSWORD" ] || [ -z "$ANDROID_KEY_ALIAS" ] || [ -z "$ANDROID_KEY_PASSWORD" ]; then
-            echo "::error::Secrets de assinatura Android (ANDROID_KEYSTORE_BASE64, ANDROID_KEYSTORE_PASSWORD, ANDROID_KEY_ALIAS, ANDROID_KEY_PASSWORD) são obrigatórios na release de produção."
-            exit 1
-          fi
-          echo "$ANDROID_KEYSTORE_BASE64" | base64 -d > app/release.keystore
-          ./gradlew assembleRelease --no-daemon \
-            -PversionCode="${{ github.run_number }}" \
-            -PversionName="$VERSION" \
-            -Pandroid.injected.signing.store.file="$(pwd)/app/release.keystore" \
-            -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
-            -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
-            -Pandroid.injected.signing.key.password="$ANDROID_KEY_PASSWORD"
-          cp app/build/outputs/apk/release/app-release.apk "${{ github.workspace }}/na-ponta-do-lapis-v${VERSION}.apk"
-          rm -f app/release.keystore
-
       - name: Criar tag Git e GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.semver.outputs.version }}
-          GERAR_APK: ${{ inputs.gerar_apk }}
         run: |
-          if [ "$GERAR_APK" = "true" ]; then
-            APK_FILE=$(ls na-ponta-do-lapis-v${VERSION}*.apk | head -n1)
-            cp "$APK_FILE" na-ponta-do-lapis.apk
-            gh release create "v$VERSION" "$APK_FILE" --target "$GITHUB_SHA" \
-              --title "v$VERSION" --generate-notes \
-              --notes "Imagens: npl2026/backend:$VERSION, npl2026/frontend:$VERSION | APK Android anexado"
-            if gh release view "mobile-latest" >/dev/null 2>&1; then
-              gh release upload "mobile-latest" na-ponta-do-lapis.apk --clobber
-            else
-              gh release create "mobile-latest" na-ponta-do-lapis.apk --target "$GITHUB_SHA" \
-                --title "App Android (Última Versão)" \
-                --notes "Último APK Android oficial publicado (v$VERSION)."
-            fi
-          else
-            gh release create "v$VERSION" --target "$GITHUB_SHA" \
-              --title "v$VERSION" --generate-notes \
-              --notes "Imagens: npl2026/backend:$VERSION, npl2026/frontend:$VERSION (sem novo APK)"
-          fi
+          gh release create "v$VERSION" --target "$GITHUB_SHA" \
+            --title "v$VERSION" --generate-notes \
+            --notes "Imagens: npl2026/backend:$VERSION, npl2026/frontend:$VERSION"
