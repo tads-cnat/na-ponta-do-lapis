@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { SocialLogin } from '@capgo/capacitor-social-login';
-import { Observable } from 'rxjs';
+import { firstValueFrom, Observable, shareReplay } from 'rxjs';
 import { LoginRequest, SignupRequest } from '../../model/ILoginRequest';
 import { Token } from '../../model/IToken.models';
 import { Usuario } from '../../model/IUsuario.models';
@@ -47,6 +47,7 @@ declare global {
 export class AuthService {
 
   private BASE_URL:string = environment.apiBaseUrl;
+  private googleConfig$: Observable<GoogleConfigResponse> | null = null;
   private googleScriptPromise: Promise<void> | null = null;
   private googleNativeInitPromise: Promise<void> | null = null;
   private activeGoogleCredentialHandler: ((idToken: string) => void) | null = null;
@@ -58,7 +59,12 @@ export class AuthService {
   }
 
   public getGoogleConfig(): Observable<GoogleConfigResponse> {
-    return this.http.get<GoogleConfigResponse>(`${this.BASE_URL}/auth/google/config`);
+    if (!this.googleConfig$) {
+      this.googleConfig$ = this.http
+        .get<GoogleConfigResponse>(`${this.BASE_URL}/auth/google/config`)
+        .pipe(shareReplay({ bufferSize: 1, refCount: false }));
+    }
+    return this.googleConfig$;
   }
 
   public loginWithGoogle(idToken: string, termosAceitos = false): Observable<GoogleAuthResponse> {
@@ -114,20 +120,25 @@ export class AuthService {
     onRendered?: () => void,
     onUnavailable?: (reason: string) => void
   ): void {
+    if (Capacitor.isNativePlatform()) {
+      const initPromise = firstValueFrom(this.getGoogleConfig()).then(async (config) => {
+        if (!config.enabled || !config.clientId) {
+          throw new Error('Login com Google ainda não configurado no servidor (GOOGLE_CLIENT_ID).');
+        }
+        await this.inicializarGoogleNativo(config.clientId);
+      });
+      this.renderizarBotaoGoogleNativo(container, textMode, onCredential, onUnavailable, initPromise);
+      onRendered?.();
+      initPromise.catch((err) => {
+        console.error('[Google Native Init]', err);
+      });
+      return;
+    }
+
     this.getGoogleConfig().subscribe({
       next: async (config) => {
         if (!config.enabled || !config.clientId) {
           onUnavailable?.('Login com Google ainda não configurado no servidor (GOOGLE_CLIENT_ID).');
-          return;
-        }
-        if (Capacitor.isNativePlatform()) {
-          try {
-            await this.inicializarGoogleNativo(config.clientId);
-            this.renderizarBotaoGoogleNativo(container, textMode, onCredential, onUnavailable);
-            onRendered?.();
-          } catch {
-            onUnavailable?.('Não foi possível inicializar o login com Google no dispositivo.');
-          }
           return;
         }
         try {
@@ -230,7 +241,8 @@ export class AuthService {
     container: HTMLElement,
     textMode: 'continue_with' | 'signup_with',
     onCredential: (idToken: string) => void,
-    onUnavailable?: (reason: string) => void
+    onUnavailable?: (reason: string) => void,
+    initPromise?: Promise<void>
   ): void {
     const texto = textMode === 'signup_with' ? 'Inscrever-se com o Google' : 'Continuar com o Google';
     container.innerHTML = '';
@@ -253,6 +265,9 @@ export class AuthService {
       if (btn.disabled) return;
       btn.disabled = true;
       try {
+        if (initPromise) {
+          await initPromise;
+        }
         const res = await SocialLogin.login({
           provider: 'google',
           options: { scopes: ['email', 'profile'] },
@@ -265,9 +280,20 @@ export class AuthService {
             onUnavailable?.('Não foi possível obter a credencial do Google.');
           }
         });
-      } catch {
+      } catch (err) {
+        console.error('[Google Native Login]', err);
+        const detalhe =
+          err instanceof Error
+            ? err.message
+            : typeof err === 'object' && err !== null && 'message' in err
+              ? String((err as { message: unknown }).message)
+              : '';
         this.ngZone.run(() => {
-          onUnavailable?.('Login com Google cancelado ou indisponível no dispositivo.');
+          onUnavailable?.(
+            detalhe
+              ? `Erro no login com Google: ${detalhe}`
+              : 'Login com Google cancelado ou indisponível no dispositivo.'
+          );
         });
       } finally {
         btn.disabled = false;

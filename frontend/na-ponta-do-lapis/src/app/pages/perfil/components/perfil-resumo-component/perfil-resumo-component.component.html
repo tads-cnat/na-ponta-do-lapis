@@ -9,7 +9,8 @@
       <div class="relative mb-3 group">
         <img 
           class="h-28 w-28 rounded-full border-4 border-[#f9db70] shadow-md object-cover bg-white ring-2 ring-white" 
-          [src]="usuarioLogado.fotoPerfil ? usuarioLogado.fotoPerfil : 'user_anonimo.png'" 
+          [src]="usuarioLogado.fotoPerfil ? usuarioLogado.fotoPerfil : 'user_anonimo.png'"
+          referrerpolicy="no-referrer"
           (error)="usarFotoPadrao($event)" 
           alt="Foto de {{ usuarioLogado.nome }}">
 

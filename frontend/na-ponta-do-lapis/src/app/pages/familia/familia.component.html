@@ -206,7 +206,7 @@
             <div class="flex flex-col items-center gap-2 w-16">
               <div class="w-12 h-12 rounded-full bg-[#F3E8FF] text-[#7843CD] border border-purple-200 flex items-center justify-center shrink-0">
                 @if (membro.fotoPerfil) {
-                  <img class="h-12 w-12 rounded-full object-cover" [src]="membro.fotoPerfil" alt="Foto do perfil" />
+                  <img class="h-12 w-12 rounded-full object-cover" [src]="membro.fotoPerfil" referrerpolicy="no-referrer" alt="Foto do perfil" />
                 } @else {
                   <span class="pi pi-user text-base"></span>
                 }
@@ -374,7 +374,7 @@
                   <div class="w-8 h-8 rounded-full bg-[#F3E8FF] text-[#7843CD] flex items-center justify-center shrink-0">
                     <span>
                       @if (convidado[1].fotoPerfil) {
-                        <img class="h-8 w-8 rounded-full object-cover" [src]="convidado[1].fotoPerfil" alt="Foto do perfil" />
+                        <img class="h-8 w-8 rounded-full object-cover" [src]="convidado[1].fotoPerfil" referrerpolicy="no-referrer" alt="Foto do perfil" />
                       } @else {
                         <span class="pi pi-user text-xs"></span>
                       }

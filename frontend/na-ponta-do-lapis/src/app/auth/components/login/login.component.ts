@@ -274,7 +274,9 @@ export class LoginComponent implements OnInit, OnChanges, AfterViewInit {
       (idToken) => this.autenticarComGoogleToken(idToken),
       () => this.googleButtonState.set('ready'),
       (reason) => {
-        this.googleButtonState.set('unavailable');
+        if (this.googleButtonState() === 'loading') {
+          this.googleButtonState.set('unavailable');
+        }
         this.messageService.add({
           severity: 'error',
           summary: 'Erro no Google',

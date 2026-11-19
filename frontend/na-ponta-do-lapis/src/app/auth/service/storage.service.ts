@@ -1,5 +1,7 @@
 
 import { Injectable } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { SocialLogin } from '@capgo/capacitor-social-login';
 import { jwtDecode } from 'jwt-decode';
 import { TokenPayload } from '../../model/IToken.models';
 
@@ -70,5 +72,8 @@ export class StorageService {
   static logout(): void {
     localStorage.removeItem(TOKEN);
     localStorage.removeItem(USUARIO);
+    if (Capacitor.isNativePlatform()) {
+      SocialLogin.logout({ provider: 'google' }).catch(() => {});
+    }
   }
 }

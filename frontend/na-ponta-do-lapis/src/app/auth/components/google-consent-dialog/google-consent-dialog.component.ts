@@ -22,7 +22,7 @@ import { PrimeNGModuleModule } from '../../../shared/primeNg.module';
       <div class="flex flex-col gap-4 text-sm text-[#413B59]">
         <div class="flex items-center gap-3 p-3 rounded-xl bg-[#F3EEFD] border border-[#DDD0FB]">
           @if (fotoUrl) {
-            <img [src]="fotoUrl" [alt]="nome || 'Foto Google'" class="w-10 h-10 rounded-full object-cover border border-[#9F79F2]/40" />
+            <img [src]="fotoUrl" referrerpolicy="no-referrer" [alt]="nome || 'Foto Google'" class="w-10 h-10 rounded-full object-cover border border-[#9F79F2]/40" />
           } @else {
             <div class="w-10 h-10 rounded-full bg-[#9F79F2]/20 flex items-center justify-center text-[#413B59] font-bold">
               {{ (nome || email || 'U').charAt(0).toUpperCase() }}
