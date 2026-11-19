@@ -99,7 +99,7 @@ public class FaturaAnaliseException extends RuntimeException {
 
     public static FaturaAnaliseException consentimentoObrigatorio() {
         return new FaturaAnaliseException(HttpStatus.UNPROCESSABLE_ENTITY, "CONSENTIMENTO_OBRIGATORIO",
-                "Para enviar o PDF à IA é necessário autorizar explicitamente o envio dos dados pessoais.");
+                "Autorize o envio dos dados da fatura ao provedor de IA.");
     }
 
     public static FaturaAnaliseException provedorSemSuportePdf() {

@@ -569,6 +569,10 @@
 
 
   <!-- ================= MODAL NOVA CHAVE IA (PADRONIZADO COM P-DIALOG) ================= -->
+  @if (autorizacaoDados; as solicitacao) {
+      <app-autorizacao-dados [solicitacao]="solicitacao" (concluida)="autorizacaoDados = null" />
+  }
+
   <p-dialog
     header="Nova Chave de IA"
     [(visible)]="modalNovaChaveAberta"

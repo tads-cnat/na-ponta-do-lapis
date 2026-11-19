@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, ViewChild } from '@angular/core';
+import { AutorizacaoDados, AutorizacaoDadosComponent } from '../../shared/components/autorizacao-dados/autorizacao-dados.component';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { CommonModule } from '@angular/common';
@@ -44,7 +45,7 @@ interface GrupoParcelamentoResumo {
 
 @Component({
   selector: 'app-transacoes',
-  imports: [CardSaldoComponent, PullToRefreshComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
+  imports: [AutorizacaoDadosComponent, CardSaldoComponent, PullToRefreshComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
@@ -91,6 +92,7 @@ export class TransacoesComponent {
   salvarChaveTemporaria: boolean = false;
   erroConsentimento: string | null = null;
   arquivoSelecionado: File | null = null;
+  autorizacaoDados: AutorizacaoDados | null = null;
 
   get podeAnalisarFatura(): boolean {
     if (!this.arquivoSelecionado || this.carregando || this.validandoArquivo) {
@@ -1044,8 +1046,12 @@ export class TransacoesComponent {
     });
   }
 
-  selecionarArquivo(event: any) {
-    const file = event.target?.files?.[0] ?? null;
+  selecionarArquivo(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';
+    if (!file || this.carregando || this.validandoArquivo || this.autorizacaoDados) return;
+    this.arquivoSelecionado = null;
     this.erroUpload = null;
     this.codigoErroUpload = null;
     this.precisaAtivarIa = false;
@@ -1055,40 +1061,38 @@ export class TransacoesComponent {
     this.faturaPreviaValida = false;
     this.emissorDetectado = null;
 
-    if (file) {
-      const nome = file.name.toLowerCase();
-      if (!nome.endsWith('.pdf')) {
-        this.arquivoSelecionado = null;
-        this.codigoErroUpload = 'FORMATO_INVALIDO';
-        this.erroUpload = 'Formato não suportado. O Na Ponta do Lápis suporta apenas faturas em formato PDF.';
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Formato não suportado',
-          detail: 'Por favor, selecione um arquivo em formato PDF.',
-          life: 4000
-        });
-        if (event.target) event.target.value = '';
-        return;
-      }
-      if (file.size > 10 * 1024 * 1024) {
-        this.arquivoSelecionado = null;
-        this.codigoErroUpload = 'ARQUIVO_MUITO_GRANDE';
-        this.erroUpload = 'O arquivo selecionado excede o limite máximo permitido de 10 MB.';
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Arquivo muito grande',
-          detail: 'O limite máximo para upload é de 10 MB.',
-          life: 4000
-        });
-        if (event.target) event.target.value = '';
-        return;
-      }
-
-      this.arquivoSelecionado = file;
-      this.executarValidacaoPrevia(file);
-    } else {
-      this.arquivoSelecionado = null;
+    const nome = file.name.toLowerCase();
+    if (!nome.endsWith('.pdf')) {
+      this.codigoErroUpload = 'FORMATO_INVALIDO';
+      this.erroUpload = 'Formato não suportado. O Na Ponta do Lápis suporta apenas faturas em formato PDF.';
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Formato não suportado',
+        detail: 'Por favor, selecione um arquivo em formato PDF.',
+        life: 4000
+      });
+      return;
     }
+    if (file.size > 10 * 1024 * 1024) {
+      this.codigoErroUpload = 'ARQUIVO_MUITO_GRANDE';
+      this.erroUpload = 'O arquivo selecionado excede o limite máximo permitido de 10 MB.';
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Arquivo muito grande',
+        detail: 'O limite máximo para upload é de 10 MB.',
+        life: 4000
+      });
+      return;
+    }
+
+    this.autorizacaoDados = {
+      titulo: 'Autorizar envio da fatura',
+      descricao: 'O PDF pode conter seu nome, CPF, endereço e movimentações. Autorize o envio ao servidor do Na Ponta do Lápis para verificar se o arquivo é uma fatura.',
+      autorizar: () => {
+        this.arquivoSelecionado = file;
+        this.executarValidacaoPrevia(file);
+      },
+    };
   }
 
   executarValidacaoPrevia(file: File, senha?: string) {
@@ -1138,12 +1142,12 @@ export class TransacoesComponent {
 
   enviarFatura() {
     if (!this.arquivoSelecionado) return;
-    this.analisarFatura({});
+    this.solicitarAnaliseFatura();
   }
 
   enviarFaturaComSenha() {
     if (!this.arquivoSelecionado || !this.senhaPdf.trim()) return;
-    this.analisarFatura({});
+    this.solicitarAnaliseFatura();
   }
 
   ativarIaETentarNovamente() {
@@ -1154,10 +1158,21 @@ export class TransacoesComponent {
     this.enviarFatura();
   }
 
-  private analisarFatura(extras: FaturaAnaliseOpcoes) {
-    if (!this.arquivoSelecionado) return;
+  private solicitarAnaliseFatura(): void {
+    const arquivo = this.arquivoSelecionado;
+    if (!arquivo || this.carregando || this.validandoArquivo || this.autorizacaoDados) return;
 
-    const opcoes: FaturaAnaliseOpcoes = {
+    const opcoes = this.opcoesAnaliseFatura({ consentimentoLgpd: true });
+    this.autorizacaoDados = {
+      titulo: 'Autorizar leitura da fatura com IA',
+      descricao: 'O texto extraído da fatura, incluindo estabelecimentos, datas e valores, poderá ser enviado ao provedor de IA associado à chave usada na análise para identificar e categorizar as transações. Se for necessário enviar o PDF original, pediremos outra autorização.'
+        + (opcoes.senha ? ' A senha do PDF será usada no servidor do Na Ponta do Lápis para abrir o arquivo.' : ''),
+      autorizar: () => this.analisarFatura(arquivo, opcoes),
+    };
+  }
+
+  private opcoesAnaliseFatura(extras: FaturaAnaliseOpcoes): FaturaAnaliseOpcoes {
+    return {
       provedor: this.provedorSelecionado,
       apiKey: this.modoChaveIa === 'avulsa' ? (this.apiKeyIa?.trim() || undefined) : undefined,
       chaveIaId: this.modoChaveIa === 'salva' ? (this.chaveIaSelecionadaId ?? undefined) : undefined,
@@ -1167,6 +1182,10 @@ export class TransacoesComponent {
       usarIa: this.usarIa,
       ...extras,
     };
+  }
+
+  private analisarFatura(arquivo: File, opcoes: FaturaAnaliseOpcoes): void {
+    if (this.carregando) return;
 
     this.carregando = true;
     this.erroUpload = null;
@@ -1175,7 +1194,7 @@ export class TransacoesComponent {
     this.erroConsentimento = null;
     this.iniciarMensagensProgresso();
 
-    this.transacoesService.analisarFatura(this.arquivoSelecionado, opcoes).subscribe({
+    this.transacoesService.analisarFatura(arquivo, opcoes).subscribe({
       next: (res: FaturaAnaliseResponse) => {
         this.carregando = false;
         this.pararMensagensProgresso();
@@ -1200,6 +1219,7 @@ export class TransacoesComponent {
 
         // Fecha o modal de upload primeiro para que a animação não trave na tela
         this.exibirDialogUpload = false;
+        this.exibirDialogConsentimento = false;
         this.cdr.detectChanges();
 
         // Abre a revisão suavemente no próximo ciclo
@@ -1267,7 +1287,7 @@ export class TransacoesComponent {
       this.messageService.add({
         severity: 'info',
         summary: 'Fatura lida a partir da imagem',
-        detail: 'Nenhum dado saiu do nosso servidor.',
+        detail: 'O servidor extraiu o texto da imagem antes da análise.',
         life: 3500
       });
     }
@@ -1287,12 +1307,12 @@ export class TransacoesComponent {
 
     this.carregandoConsentimento = true;
     this.erroConsentimento = null;
-    this.analisarFatura({
+    this.analisarFatura(this.arquivoSelecionado, this.opcoesAnaliseFatura({
       enviarPdfParaIa: true,
       consentimentoLgpd: true,
       usarIa: true,
       provedor: this.provedorSelecionado,
-    });
+    }));
   }
 
   cancelarConsentimento() {

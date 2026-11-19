@@ -81,7 +81,7 @@ class FaturaAnaliseServiceTest {
         when(iaService.analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class)))
                 .thenReturn(resultadoIa);
 
-        FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+        FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, true);
 
         assertThat(resposta.fonte()).isEqualTo("IA");
         assertThat(resposta.emissor()).isEqualTo("Nubank");
@@ -90,6 +90,17 @@ class FaturaAnaliseServiceTest {
         assertThat(resposta.valorTotalFatura()).isEqualByComparingTo("50.00");
         assertThat(resposta.alertaSoma()).isFalse();
         verify(iaService).analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
+    }
+
+    @Test
+    void textoSemConsentimentoNaoEhEnviadoParaIa() throws Exception {
+        when(regexService.extrairTexto(any(), any())).thenReturn(textoFatura());
+
+        assertThatThrownBy(() -> service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, false))
+                .isInstanceOfSatisfying(FaturaAnaliseException.class,
+                        e -> assertThat(e.getCodigo()).isEqualTo("CONSENTIMENTO_OBRIGATORIO"));
+
+        verify(iaService, never()).analisarTexto(any(), any(), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class));
     }
 
     @Test
@@ -109,7 +120,7 @@ class FaturaAnaliseServiceTest {
         when(iaService.analisarTexto(eq(ProvedorIa.GEMINI), eq("chave"), any(), anyList(), any(FaturaIaService.ContextoFaturaIa.class)))
                 .thenReturn(resultadoIa);
 
-        FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, false);
+        FaturaAnaliseResponseDTO resposta = service.analisar(arquivo(), ProvedorIa.GEMINI, "chave", true, false, true);
 
         assertThat(resposta.somaCalculada()).isEqualByComparingTo("30.00");
         assertThat(resposta.diferenca()).isEqualByComparingTo("0.00");

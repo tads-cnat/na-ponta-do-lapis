@@ -11,15 +11,18 @@ import { mapearNomeBanco } from '../../../../shared/utils/banco-icon.helper';
 import {
   IChaveIaRequest,
   IChaveIaResponse,
+  IOpenFinanceConectarRequest,
   IOpenFinanceItem,
   IOpenFinanceStatus,
   ProvedorIa
 } from '../../../../model/IIntegracoes.models';
 
+import { AutorizacaoDados, AutorizacaoDadosComponent } from '../../../../shared/components/autorizacao-dados/autorizacao-dados.component';
+
 @Component({
   selector: 'app-integracoes-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, DialogModule, ButtonModule, IconeBancoComponent],
+  imports: [AutorizacaoDadosComponent, CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, DialogModule, ButtonModule, IconeBancoComponent],
   templateUrl: './integracoes-perfil.component.html',
   styleUrl: './integracoes-perfil.component.css'
 })
@@ -31,6 +34,7 @@ export class IntegracoesPerfilComponent implements OnInit {
   public sincronizandoOpenFinance = false;
   public openFinanceMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
   public mostrarTutorialConectado = false;
+  public autorizacaoDados: AutorizacaoDados | null = null;
 
   // Itens Bancários Conectados
   public itensConectados: IOpenFinanceItem[] = [];
@@ -136,14 +140,21 @@ export class IntegracoesPerfilComponent implements OnInit {
   }
 
   public salvarNovoItemPorId(): void {
-    if (!this.novoItemId.trim()) {
-      return;
-    }
+    const itemId = this.novoItemId.trim();
+    if (!itemId || this.salvandoItem || this.autorizacaoDados) return;
 
+    this.autorizacaoDados = {
+      titulo: 'Autorizar vínculo bancário',
+      descricao: 'O Na Ponta do Lápis usará o Item ID para importar dados das contas, saldos e movimentações desse banco via Pluggy e mantê-los atualizados enquanto o vínculo estiver ativo.',
+      autorizar: () => this.adicionarItemOpenFinance(itemId),
+    };
+  }
+
+  private adicionarItemOpenFinance(itemId: string): void {
     this.salvandoItem = true;
     this.openFinanceMensagem = null;
 
-    this.integracoesService.adicionarItemOpenFinance(this.novoItemId.trim()).subscribe({
+    this.integracoesService.adicionarItemOpenFinance(itemId).subscribe({
       next: (status) => {
         this.openFinanceStatus = status;
         this.salvandoItem = false;
@@ -177,7 +188,7 @@ export class IntegracoesPerfilComponent implements OnInit {
           texto: `Conexão com "${item.nomeInstituicao}" desvinculada.`
         };
         this.carregarItensConectados();
-        this.sincronizarAgora();
+        this.executarSincronizacaoOpenFinance();
       },
       error: (err) => {
         console.error('Erro ao remover item:', err);
@@ -192,10 +203,19 @@ export class IntegracoesPerfilComponent implements OnInit {
       return;
     }
 
-    this.carregandoOpenFinance = true;
-    this.openFinanceMensagem = null;
+    if (this.carregandoOpenFinance || this.autorizacaoDados) return;
 
     const payload = this.openFinanceForm.value;
+    this.autorizacaoDados = {
+      titulo: 'Autorizar integração bancária',
+      descricao: 'O Na Ponta do Lápis usará suas credenciais da Pluggy para acessar dados das contas, saldos e movimentações dos bancos vinculados. A importação é periódica enquanto a integração estiver ativa e pode ser interrompida em Perfil, na seção Integrações.',
+      autorizar: () => this.enviarConexaoOpenFinance(payload),
+    };
+  }
+
+  private enviarConexaoOpenFinance(payload: IOpenFinanceConectarRequest): void {
+    this.carregandoOpenFinance = true;
+    this.openFinanceMensagem = null;
     this.integracoesService.conectarOpenFinance(payload).subscribe({
       next: (status) => {
         this.openFinanceStatus = status;
@@ -219,6 +239,16 @@ export class IntegracoesPerfilComponent implements OnInit {
   }
 
   public sincronizarAgora(): void {
+    if (!this.openFinanceStatus?.conectado || this.sincronizandoOpenFinance || this.autorizacaoDados) return;
+
+    this.autorizacaoDados = {
+      titulo: 'Autorizar sincronização bancária',
+      descricao: 'O Na Ponta do Lápis consultará suas contas, saldos e movimentações na Pluggy para atualizar os dados financeiros no sistema.',
+      autorizar: () => this.executarSincronizacaoOpenFinance(),
+    };
+  }
+
+  private executarSincronizacaoOpenFinance(): void {
     if (!this.openFinanceStatus?.conectado || this.sincronizandoOpenFinance) {
       return;
     }
@@ -320,8 +350,7 @@ export class IntegracoesPerfilComponent implements OnInit {
       return;
     }
 
-    this.salvandoChaveIa = true;
-    this.chaveIaMensagem = null;
+    if (this.salvandoChaveIa || this.autorizacaoDados) return;
 
     const payload: IChaveIaRequest = {
       apelido: this.novaChaveForm.value.apelido,
@@ -329,6 +358,17 @@ export class IntegracoesPerfilComponent implements OnInit {
       apiKey: this.novaChaveForm.value.apiKey,
       padrao: !!this.novaChaveForm.value.padrao
     };
+
+    this.autorizacaoDados = {
+      titulo: 'Autorizar armazenamento da chave de IA',
+      descricao: 'O Na Ponta do Lápis armazenará sua chave de API criptografada para autenticar futuras análises de faturas no provedor escolhido. Você pode removê-la em Perfil, na seção Integrações.',
+      autorizar: () => this.cadastrarChaveIa(payload),
+    };
+  }
+
+  private cadastrarChaveIa(payload: IChaveIaRequest): void {
+    this.salvandoChaveIa = true;
+    this.chaveIaMensagem = null;
 
     this.integracoesService.cadastrarChaveIa(payload).subscribe({
       next: () => {
