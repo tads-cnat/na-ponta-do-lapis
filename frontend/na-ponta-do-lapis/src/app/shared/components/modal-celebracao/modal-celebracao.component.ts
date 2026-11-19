@@ -23,6 +23,9 @@ export class ModalCelebracaoComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.sub = this.celebracaoService.eventoCelebracao$.subscribe((dados) => {
       this.dados = dados;
+      if (dados?.tipo === 'CONQUISTA' && typeof navigator !== 'undefined' && 'vibrate' in navigator) {
+        navigator.vibrate([80, 50, 120]);
+      }
       this.cdr.detectChanges();
     });
   }

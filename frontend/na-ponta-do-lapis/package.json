@@ -24,6 +24,7 @@
     "@capacitor/app": "^8.1.2",
     "@capacitor/core": "^8.6.2",
     "@capacitor/status-bar": "^8.0.4",
+    "@capgo/capacitor-social-login": "^8.7.11",
     "@edusites/bancos-brasil": "^1.3.0",
     "@edusites/bandeiras-paises": "^1.1.0",
     "@primeuix/themes": "^2.0.3",

@@ -38,8 +38,10 @@ export class CapacitorService {
   private async carregarVersaoNativa(): Promise<void> {
     try {
       const info = await CapacitorApp.getInfo();
-      const sufixoHomolog = info.id?.endsWith('.homolog') ? ' · Homolog' : '';
-      this.versaoApp.set(`${info.version} (${info.build})${sufixoHomolog}`);
+      const ehHomolog = info.id?.endsWith('.homolog');
+      this.versaoApp.set(
+        ehHomolog ? `${info.version} (${info.build}) · Homolog` : info.version
+      );
     } catch {
       // Mantém versão padrão de environment
     }

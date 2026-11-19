@@ -1,5 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, NgZone } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
+import { SocialLogin } from '@capgo/capacitor-social-login';
 import { Observable } from 'rxjs';
 import { LoginRequest, SignupRequest } from '../../model/ILoginRequest';
 import { Token } from '../../model/IToken.models';
@@ -46,6 +48,7 @@ export class AuthService {
 
   private BASE_URL:string = environment.apiBaseUrl;
   private googleScriptPromise: Promise<void> | null = null;
+  private googleNativeInitPromise: Promise<void> | null = null;
   private activeGoogleCredentialHandler: ((idToken: string) => void) | null = null;
 
   constructor(private http:HttpClient, private ngZone: NgZone){}
@@ -115,6 +118,16 @@ export class AuthService {
       next: async (config) => {
         if (!config.enabled || !config.clientId) {
           onUnavailable?.('Login com Google ainda não configurado no servidor (GOOGLE_CLIENT_ID).');
+          return;
+        }
+        if (Capacitor.isNativePlatform()) {
+          try {
+            await this.inicializarGoogleNativo(config.clientId);
+            this.renderizarBotaoGoogleNativo(container, textMode, onCredential, onUnavailable);
+            onRendered?.();
+          } catch {
+            onUnavailable?.('Não foi possível inicializar o login com Google no dispositivo.');
+          }
           return;
         }
         try {
@@ -199,6 +212,69 @@ export class AuthService {
       },
       error: () => onUnavailable('Erro ao consultar configuração do Google no servidor.'),
     });
+  }
+
+  private inicializarGoogleNativo(webClientId: string): Promise<void> {
+    if (!this.googleNativeInitPromise) {
+      this.googleNativeInitPromise = SocialLogin.initialize({
+        google: { webClientId },
+      }).catch((err) => {
+        this.googleNativeInitPromise = null;
+        throw err;
+      });
+    }
+    return this.googleNativeInitPromise;
+  }
+
+  private renderizarBotaoGoogleNativo(
+    container: HTMLElement,
+    textMode: 'continue_with' | 'signup_with',
+    onCredential: (idToken: string) => void,
+    onUnavailable?: (reason: string) => void
+  ): void {
+    const texto = textMode === 'signup_with' ? 'Inscrever-se com o Google' : 'Continuar com o Google';
+    container.innerHTML = '';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className =
+      'w-full min-h-11 px-4 py-2.5 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 active:bg-slate-100 text-slate-800 font-semibold text-sm flex items-center justify-center gap-3 shadow-2xs transition-colors cursor-pointer';
+    btn.innerHTML = `
+      <svg class="w-5 h-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="#4285F4" d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.665-5.17 3.665-9.17Z"/>
+        <path fill="#34A853" d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.11-6.72-4.96H1.29v3.14C3.26 21.3 7.31 24 12 24Z"/>
+        <path fill="#FBBC05" d="M5.28 14.24c-.24-.72-.38-1.49-.38-2.24s.14-1.52.38-2.24V6.62H1.29C.47 8.24 0 10.06 0 12s.47 3.76 1.29 5.38l3.99-3.14Z"/>
+        <path fill="#EA4335" d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.99 3.14c.95-2.85 3.6-4.96 6.72-4.96Z"/>
+      </svg>
+      <span>${texto}</span>
+    `;
+
+    btn.addEventListener('click', async () => {
+      if (btn.disabled) return;
+      btn.disabled = true;
+      try {
+        const res = await SocialLogin.login({
+          provider: 'google',
+          options: { scopes: ['email', 'profile'] },
+        });
+        const idToken = res.result.responseType === 'online' ? res.result.idToken : null;
+        this.ngZone.run(() => {
+          if (idToken) {
+            onCredential(idToken);
+          } else {
+            onUnavailable?.('Não foi possível obter a credencial do Google.');
+          }
+        });
+      } catch {
+        this.ngZone.run(() => {
+          onUnavailable?.('Login com Google cancelado ou indisponível no dispositivo.');
+        });
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    container.appendChild(btn);
   }
 
   private carregarScriptGoogle(): Promise<void> {
