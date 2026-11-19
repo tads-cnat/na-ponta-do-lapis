@@ -8,19 +8,6 @@
         <div class="min-w-0 flex-1">
           <div class="flex items-center gap-1.5 flex-wrap min-w-0">
             <p class="font-bold text-sm text-slate-900 truncate m-0">{{ meta.nome }}</p>
-            @if (ehConcluida) {
-              <span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 border border-emerald-200 shrink-0">
-                <i class="pi pi-check text-[9px]"></i> Feita
-              </span>
-            } @else if (ehEstourada) {
-              <span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-rose-50 text-[#C24E4E] border border-rose-200 shrink-0">
-                <i class="pi pi-exclamation-triangle text-[9px]"></i> Estourada
-              </span>
-            } @else if (ehExpirada) {
-              <span class="inline-flex items-center gap-0.5 text-[10px] font-bold px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200 shrink-0">
-                <i class="pi pi-clock text-[9px]"></i> Expirada
-              </span>
-            }
           </div>
           <p class="text-[11px] text-slate-400 mt-0.5 mb-0 truncate">
             {{ meta.tipoMeta === 'GASTO' ? 'Teto de Gastos' : (meta.tipoMeta === 'DIVIDA' ? 'Quitar Dívida' : 'Juntar Dinheiro') }}
@@ -35,8 +22,8 @@
           <span class="text-[11px] text-slate-400 font-normal">/ {{ meta.valorTotal | appMoeda }}</span>
         </p>
         <p class="text-[11px] m-0"
-           [ngClass]="ehEstourada ? 'text-[#C24E4E] font-semibold' : (ehConcluida ? 'text-emerald-600 font-semibold' : 'text-slate-400')">
-          {{ ehConcluida ? 'Total atingido' : (ehEstourada ? 'Teto ultrapassado' : (meta.tipoMeta === 'GASTO' ? 'restam ' : 'faltam ') + (valorFalta | appMoeda)) }}
+           [ngClass]="ehEstourada ? 'text-[#C24E4E] font-semibold' : (ehConcluida ? 'text-emerald-600 font-semibold' : (ehExpirada ? 'text-amber-700 font-semibold' : 'text-slate-400'))">
+          {{ ehConcluida ? 'Total atingido' : (ehEstourada ? 'Teto ultrapassado' : (ehExpirada ? 'Prazo expirado' : (meta.tipoMeta === 'GASTO' ? 'restam ' : 'faltam ') + (valorFalta | appMoeda))) }}
         </p>
       </div>
     </div>

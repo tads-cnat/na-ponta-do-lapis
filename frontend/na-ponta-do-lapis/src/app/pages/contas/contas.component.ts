@@ -84,14 +84,13 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
         </app-acoes-cartoes>
       </div>
 
-      <!-- GRID PRINCIPAL (em telas xl e superiores fica em 2 colunas: 5 e 7; abaixo de xl fica em coluna única) -->
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 w-full items-start">
+      <!-- GRID PRINCIPAL EM 2 LINHAS ALINHADAS (xl: 5 e 7 colunas com mesma altura por linha) -->
+      <div class="flex flex-col gap-6 w-full">
 
-        <!-- COLUNA ESQUERDA -->
-        <div class="xl:col-span-5 flex flex-col gap-6 min-w-0">
-
-          <!-- CARTÕES (carrossel) -->
+        <!-- LINHA 1: CARTÕES + GRÁFICO -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 w-full items-stretch">
           <app-cartoes-contas
+            class="xl:col-span-5 flex flex-col min-w-0"
             [contas]="contaFinanceiraDados"
             [contaSelecionadaIndex]="contaSelecionadaIndex"
             [contaAnterior]="contaAnterior"
@@ -102,25 +101,23 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
             (onProxima)="selecionarProxima()">
           </app-cartoes-contas>
 
-          <!-- INFORMAÇÕES DA CONTA SELECIONADA -->
-          <app-informacoes-conta
-            [conta]="contaSelecionada">
-          </app-informacoes-conta>
-
-        </div>
-
-        <!-- COLUNA DIREITA -->
-        <div class="xl:col-span-7 flex flex-col gap-6 min-w-0">
-
-          <!-- GRÁFICO -->
           <app-grafico-conta
+            class="xl:col-span-7 flex flex-col min-w-0"
             [chartData]="chartData"
             [chartOptions]="chartOptions"
             (onPeriodoMudou)="atualizarGraficoSaldo($event)">
           </app-grafico-conta>
+        </div>
 
-          <!-- TRANSAÇÕES -->
+        <!-- LINHA 2: INFORMAÇÕES DA CONTA + ÚLTIMAS TRANSAÇÕES -->
+        <div class="grid grid-cols-1 xl:grid-cols-12 gap-6 w-full items-stretch">
+          <app-informacoes-conta
+            class="xl:col-span-5 flex flex-col min-w-0"
+            [conta]="contaSelecionada">
+          </app-informacoes-conta>
+
           <app-transacoes-conta
+            class="xl:col-span-7 flex flex-col min-w-0"
             [transacoesPaginadas]="transacoesPaginadas"
             [ultimasTransacoes]="ultimasTransacoes"
             [transacoesPorPagina]="transacoesPorPagina"
@@ -129,7 +126,6 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
             (onPaginaAnterior)="paginaAnteriorTransacoes()"
             (onIrParaTransacoes)="irParaTransacoes()">
           </app-transacoes-conta>
-
         </div>
 
       </div>
@@ -553,7 +549,7 @@ export class ContasComponent implements OnInit {
 
   ultimasTransacoes: ITransacoes[] = [];
   paginaAtualTransacoes: number = 0;
-  readonly transacoesPorPagina: number = 5;
+  readonly transacoesPorPagina: number = 3;
 
   // =========================================
   // CONSTRUCTOR

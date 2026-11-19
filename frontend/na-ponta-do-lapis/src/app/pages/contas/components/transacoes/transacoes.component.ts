@@ -10,9 +10,9 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
   imports: [CommonModule, PrimeNGModuleModule, AppMoedaPipe],
   template: `
     <div
-      class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col min-h-0 h-full">
+      class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex flex-col min-h-0 flex-1">
 
-      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-4">
 
         <div>
           <h2 class="section-title-npl">
@@ -37,32 +37,32 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
       <!-- LISTA -->
       <div class="flex-1 min-h-0 overflow-y-auto pr-2 max-h-[480px]">
 
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-2.5">
 
           @for (transacao of transacoesPaginadas; track transacao.id) {
 
             <div
-              class="transacao-item flex items-center justify-between gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all duration-200 border border-slate-100">
+              class="transacao-item flex items-center justify-between gap-4 p-3 rounded-2xl hover:bg-slate-50 transition-all duration-200 border border-slate-100">
 
-              <div class="flex items-center gap-4 min-w-0">
+              <div class="flex items-center gap-3.5 min-w-0">
 
                 <!-- ÍCONE -->
-                <div class="w-12 h-12 rounded-2xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
+                <div class="w-10 h-10 rounded-xl bg-[#F3E8FF] border border-[#E9D5FF] flex items-center justify-center shrink-0">
                   <i
-                    class="text-[#7843CD] text-lg pi"
+                    class="text-[#7843CD] text-base pi"
                     [ngClass]="obterIconeCategoria(transacao.categoria?.nome)">
                   </i>
                 </div>
 
                 <!-- INFO -->
                 <div class="min-w-0 flex flex-col">
-                  <span class="font-semibold text-lg truncate">
+                  <span class="font-semibold text-base truncate">
                     {{ transacao.descricao }}
                   </span>
-                  <span class="text-slate-400 text-sm truncate">
+                  <span class="text-slate-400 text-xs truncate">
                     {{ transacao.categoria?.nome }}
                   </span>
-                  <span class="text-slate-400 text-sm">
+                  <span class="text-slate-400 text-xs">
                     {{ transacao.dataHora | date:'dd/MM/yyyy HH:mm' }}
                   </span>
                 </div>
@@ -89,7 +89,7 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 
       <!-- PAGINAÇÃO -->
       @if (ultimasTransacoes.length > transacoesPorPagina) {
-        <div class="flex items-center justify-center gap-4 mt-6">
+        <div class="flex items-center justify-center gap-4 mt-4">
 
           <button
             type="button"

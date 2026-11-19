@@ -48,7 +48,7 @@
     transition: all 0.2s ease;
 }
 
-.menuitem:hover {
+.menuitem:not(.botao-nova-transacao):hover {
     background-color: #f8f5ff;
     color: #7843CD;
 }

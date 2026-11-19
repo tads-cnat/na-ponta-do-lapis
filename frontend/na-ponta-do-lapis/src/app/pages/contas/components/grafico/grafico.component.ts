@@ -8,7 +8,7 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
   standalone: true,
   imports: [PrimeNGModuleModule, ChartModule, FormsModule],
   template: `
-    <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 h-full flex flex-col justify-between">
+    <div class="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-100 flex-1 flex flex-col justify-between">
 
       <!-- HEADER -->
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
@@ -41,12 +41,12 @@ import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
           [data]="chartData"
           [options]="chartOptions"
           [plugins]="chartPlugins"
-          [style]="{ height: '360px' }"
+          [style]="{ height: '280px' }"
           styleClass="w-full">
         </p-chart>
       } @else {
         <div
-          class="h-[360px] rounded-2xl border border-slate-100 bg-slate-50
+          class="h-[280px] rounded-2xl border border-slate-100 bg-slate-50
                  flex items-center justify-center">
           <span class="text-slate-400 text-sm">
             Selecione uma conta para visualizar o histórico

@@ -41,10 +41,7 @@ import { Capacitor } from '@capacitor/core';
         <article class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 sm:p-10 space-y-6">
           @if (!isTermos) {
             <div class="border-b border-slate-100 pb-6">
-              <span class="inline-block text-xs font-bold uppercase tracking-wider text-[#7843CD] bg-[#F3E8FF] px-3 py-1 rounded-full">
-                LGPD &amp; Privacidade
-              </span>
-              <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-3 mb-2">
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
                 Política de Privacidade
               </h1>
               <p class="text-sm text-slate-500 m-0">
@@ -85,10 +82,7 @@ import { Capacitor } from '@capacitor/core';
             </section>
           } @else {
             <div class="border-b border-slate-100 pb-6">
-              <span class="inline-block text-xs font-bold uppercase tracking-wider text-[#7843CD] bg-[#F3E8FF] px-3 py-1 rounded-full">
-                Regras de Uso
-              </span>
-              <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-3 mb-2">
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mb-2">
                 Termos de Serviço
               </h1>
               <p class="text-sm text-slate-500 m-0">
