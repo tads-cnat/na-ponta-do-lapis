@@ -1,4 +1,5 @@
-import { Component, ChangeDetectorRef, OnInit } from '@angular/core';
+import { Component, ChangeDetectorRef, DestroyRef, OnInit, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { TransacoesService } from '../transacoes/service/transacoes.service';
@@ -30,6 +31,10 @@ import { TransacoesComponent }   from './components/transacoes/transacoes.compon
 import { IconeBancoComponent }    from '../../shared/components/icone-banco/icone-banco.component';
 import { InputMoedaComponent }    from '../../shared/components/input-moeda/input-moeda.component';
 import { AppMoedaPipe }          from '../../shared/pipes/app-moeda.pipe';
+import { PullToRefreshComponent } from '../../shared/components/pull-to-refresh/pull-to-refresh.component';
+import { CacheLocalService } from '../../shared/service/cache-local.service';
+import { CapacitorService } from '../../shared/service/capacitor.service';
+import { ConexaoService } from '../../shared/service/conexao.service';
 import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
 import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectado } from '../../shared/utils/banco-icon.helper';
 
@@ -52,13 +57,15 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
     TransacoesComponent,
     IconeBancoComponent,
     InputMoedaComponent,
-    AppMoedaPipe
+    AppMoedaPipe,
+    PullToRefreshComponent
   ],
   template: `
 
     <!-- TOAST — deve ficar no nível raiz para sobrepor qualquer conteúdo -->
     <p-toast position="top-right" [life]="3000" />
 
+    <app-pull-to-refresh (refresh)="recarregarDados()">
     <div class="w-full flex flex-col gap-6 pb-8">
 
       <!-- HEADER PRINCIPAL DA PÁGINA (largura total: título e ações sem competir por espaço) -->
@@ -476,6 +483,7 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
       </form>
 
     </div>
+    </app-pull-to-refresh>
 
   `,
 })
@@ -579,7 +587,25 @@ export class ContasComponent implements OnInit {
   // INIT
   // =========================================
 
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly capacitorService = inject(CapacitorService);
+  private readonly conexaoService = inject(ConexaoService);
+  private readonly cacheLocal = inject(CacheLocalService);
+
   ngOnInit(): void {
+    const cache = this.cacheLocal.obter<IContas[]>('contas_lista');
+    if (cache?.length) {
+      this.contaFinanceiraDados = cache;
+      this.carregandoContas = false;
+      this.atualizarIndicesCarrossel();
+    }
+    this.recarregarDados();
+    this.conexaoService.reconectado$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.recarregarDados());
+  }
+
+  recarregarDados(): void {
     this.listarContas();
     this.verificarStatusOpenFinance();
   }
@@ -1033,6 +1059,7 @@ export class ContasComponent implements OnInit {
 
     this.contaFinanceiraService.deletarContaPorId(idExcluir).subscribe({
       next: () => {
+        this.capacitorService.vibrarExclusao();
         this.messageService.add({
           severity: 'success',
           summary:  'Conta excluída!',
@@ -1073,6 +1100,7 @@ export class ContasComponent implements OnInit {
           return;
         }
         this.contaFinanceiraDados  = [...res].sort((a, b) => (a.id ?? 0) - (b.id ?? 0));
+        this.cacheLocal.salvar('contas_lista', this.contaFinanceiraDados);
         if (this.contaFinanceiraDados.some(c => c.sincronizada)) {
           this.openFinanceConectado = true;
         }

@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import confetti from 'canvas-confetti';
+import { CapacitorService } from './capacitor.service';
 
 export interface DadosCelebracao {
   tipo: 'CONQUISTA' | 'META_ATINGIDA';
@@ -16,13 +17,14 @@ export interface DadosCelebracao {
   providedIn: 'root'
 })
 export class CelebracaoService {
-
+  private readonly capacitorService = inject(CapacitorService);
   private eventoCelebracaoSubject = new BehaviorSubject<DadosCelebracao | null>(null);
   public eventoCelebracao$ = this.eventoCelebracaoSubject.asObservable();
 
   public celebrarConquista(titulo: string, descricao: string, pontosXp: number, idConquista: string): void {
     this.dispararEfeitoConfetes();
     this.tocarSomVitoria();
+    this.capacitorService.vibrarSucesso();
 
     this.eventoCelebracaoSubject.next({
       tipo: 'CONQUISTA',
@@ -36,6 +38,7 @@ export class CelebracaoService {
   public celebrarMetaAtingida(nomeMeta: string, valor: number): void {
     this.dispararEfeitoConfetes();
     this.tocarSomVitoria();
+    this.capacitorService.vibrarSucesso();
 
     this.eventoCelebracaoSubject.next({
       tipo: 'META_ATINGIDA',

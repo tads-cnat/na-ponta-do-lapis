@@ -1,7 +1,11 @@
-import { ChangeDetectorRef, Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
+import { PullToRefreshComponent } from '../../shared/components/pull-to-refresh/pull-to-refresh.component';
+import { CacheLocalService } from '../../shared/service/cache-local.service';
+import { ConexaoService } from '../../shared/service/conexao.service';
 import { CardsResumoComponent } from './components/cards/cards-resumo.component';
 import { RelatorioComponent } from './components/relatorio/relatorio.component';
 import { GastosCategoriaComponent } from './components/gastos-categoria/gastos.component';
@@ -22,6 +26,7 @@ import { Categoria } from '../../model/ITransacoes.model';
   standalone: true,
   imports: [
     PrimeNGModuleModule,
+    PullToRefreshComponent,
     CardsResumoComponent,
     RelatorioComponent,
     GastosCategoriaComponent,
@@ -47,6 +52,7 @@ import { Categoria } from '../../model/ITransacoes.model';
    * direto do <main> do main-layout), então o wrapper <div> se comporta corretamente.
    */
   template: `
+    <app-pull-to-refresh (refresh)="recarregarDados()">
     <div class="w-full flex flex-col gap-6 pb-8">
 
       <!-- Cabeçalho Padronizado do Design System -->
@@ -112,6 +118,7 @@ import { Categoria } from '../../model/ITransacoes.model';
       </section>
 
     </div>
+    </app-pull-to-refresh>
 
     <app-exportar-relatorio-modal
       [(visible)]="modalRelatorioVisivel"
@@ -137,6 +144,12 @@ export class DashboardComponent implements OnInit {
 
   private metaService = inject(MetasService);
 
+  private conexaoService = inject(ConexaoService);
+
+  private cacheLocal = inject(CacheLocalService);
+
+  private destroyRef = inject(DestroyRef);
+
   contas: IContas[] = [];
 
   transacoes: ITransacoes[] = [];
@@ -148,10 +161,33 @@ export class DashboardComponent implements OnInit {
   categorias: Categoria[] = [];
 
   ngOnInit(): void {
+    this.restaurarCache();
+    this.recarregarDados();
+    this.conexaoService.reconectado$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.recarregarDados());
+  }
+
+  recarregarDados(): void {
     this.buscarContas();
     this.buscarTransacoes();
     this.buscarMetas();
     this.buscarCategorias();
+  }
+
+  private restaurarCache(): void {
+    const contasCache = this.cacheLocal.obter<IContas[]>('dashboard_contas');
+    const transacoesCache = this.cacheLocal.obter<ITransacoes[]>('dashboard_transacoes');
+    const metasCache = this.cacheLocal.obter<MetaResponse[]>('dashboard_metas');
+    const categoriasCache = this.cacheLocal.obter<Categoria[]>('dashboard_categorias');
+
+    if (contasCache) this.contas = contasCache;
+    if (transacoesCache) this.transacoes = transacoesCache;
+    if (metasCache) this.metas = metasCache;
+    if (categoriasCache) this.categorias = categoriasCache;
+    if (contasCache || transacoesCache) {
+      this.atualizarSaldoRelatorio();
+    }
   }
 
   private atualizarSaldoRelatorio(): void {
@@ -165,6 +201,7 @@ export class DashboardComponent implements OnInit {
     this.contaService.listarContasUsuario().subscribe({
       next: (res: IContas[]) => {
         this.contas = res;
+        this.cacheLocal.salvar('dashboard_contas', res);
         this.atualizarSaldoRelatorio();
         this.cdr.detectChanges();
       },
@@ -185,6 +222,7 @@ export class DashboardComponent implements OnInit {
     this.transacaoService.listarTransacoes().subscribe({
       next: (res: ITransacoes[]) => {
         this.transacoes = res;
+        this.cacheLocal.salvar('dashboard_transacoes', res);
         this.atualizarSaldoRelatorio();
         this.cdr.detectChanges();
       },
@@ -205,6 +243,7 @@ export class DashboardComponent implements OnInit {
     this.transacaoService.listarCategorias().subscribe({
       next: (res: Categoria[]) => {
         this.categorias = res;
+        this.cacheLocal.salvar('dashboard_categorias', res);
         this.cdr.detectChanges();
       },
       error: (err: Error) => {
@@ -233,7 +272,8 @@ export class DashboardComponent implements OnInit {
     this.metaService.listarMetas().subscribe({
       next: (res: MetaResponse[]) => {
         this.metas = res;
-        console.log("QTd de metas:", res.length);
+        this.cacheLocal.salvar('dashboard_metas', res);
+        this.cdr.detectChanges();
       },
       error: (err: Error) => {
         console.error(err);

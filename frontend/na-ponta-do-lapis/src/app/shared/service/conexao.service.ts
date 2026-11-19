@@ -2,6 +2,7 @@ import { DestroyRef, Injectable, NgZone, inject, signal } from '@angular/core';
 import { App as CapacitorApp } from '@capacitor/app';
 import { Capacitor } from '@capacitor/core';
 import { MessageService } from 'primeng/api';
+import { Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -11,7 +12,9 @@ export class ConexaoService {
   private readonly messageService = inject(MessageService);
   private readonly ngZone = inject(NgZone);
   private reconexaoTimer: ReturnType<typeof setTimeout> | null = null;
+  private readonly reconectadoSubject = new Subject<void>();
 
+  readonly reconectado$ = this.reconectadoSubject.asObservable();
   readonly offline = signal(typeof navigator !== 'undefined' ? !navigator.onLine : false);
   readonly verificandoConexao = signal(false);
 
@@ -60,7 +63,7 @@ export class ConexaoService {
     if (estaOffline) {
       this.messageService.clear();
     } else if (estavaOffline) {
-      window.location.reload();
+      this.reconectadoSubject.next();
     }
   }
 
@@ -77,7 +80,7 @@ export class ConexaoService {
       this.offline.set(estaOffline);
       this.verificandoConexao.set(false);
       if (!estaOffline) {
-        window.location.reload();
+        this.reconectadoSubject.next();
       }
     }, 350);
   }

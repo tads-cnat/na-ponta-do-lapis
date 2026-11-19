@@ -21,8 +21,12 @@ import { Marcador, MarcadorRequest } from '../../model/IMarcador.models';
 import { Popover } from 'primeng/popover';
 import { MessageService } from 'primeng/api';
 import { CardSaldoComponent } from '../../shared/components/card-saldo/card-saldo.component';
+import { PullToRefreshComponent } from '../../shared/components/pull-to-refresh/pull-to-refresh.component';
 import { InputMoedaComponent } from '../../shared/components/input-moeda/input-moeda.component';
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
+import { CacheLocalService } from '../../shared/service/cache-local.service';
+import { CapacitorService } from '../../shared/service/capacitor.service';
+import { ConexaoService } from '../../shared/service/conexao.service';
 import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { HttpErrorResponse } from '@angular/common/http';
@@ -40,7 +44,7 @@ interface GrupoParcelamentoResumo {
 
 @Component({
   selector: 'app-transacoes',
-  imports: [CardSaldoComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
+  imports: [CardSaldoComponent, PullToRefreshComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
@@ -282,6 +286,10 @@ export class TransacoesComponent {
     this.formTransacao.updateValueAndValidity({ emitEvent: false });
   }
 
+  private readonly capacitorService = inject(CapacitorService);
+  private readonly conexaoService = inject(ConexaoService);
+  private readonly cacheLocal = inject(CacheLocalService);
+
   ngOnInit(): void {
     this.codigoMoeda = this.preferenciaMoedaService.obterMoedaAtiva();
     this.preferenciaMoedaService.moeda$
@@ -291,10 +299,11 @@ export class TransacoesComponent {
         this.cdr.markForCheck();
       });
 
-    this.listarTransacoes()
-    this.listarContas()
-    this.listarCategorias()
-    this.listarMarcadores()
+    this.restaurarCache();
+    this.recarregarDados();
+    this.conexaoService.reconectado$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.recarregarDados());
 
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -546,6 +555,22 @@ export class TransacoesComponent {
     this.cdr.detectChanges();
   }
 
+  public recarregarDados(): void {
+    this.listarTransacoes();
+    this.listarContas();
+    this.listarCategorias();
+    this.listarMarcadores();
+    this.atualizarSaldo();
+  }
+
+  private restaurarCache(): void {
+    const cache = this.cacheLocal.obter<ITransacoes[]>('transacoes_lista');
+    if (cache?.length) {
+      this.transacoesTodas = cache;
+      this.aplicarFiltros();
+    }
+  }
+
   public listarTransacoes(): any {
     this.transacoesService.listarTransacoes().subscribe({
       next: (res: ITransacoes[]) => {
@@ -554,6 +579,7 @@ export class TransacoesComponent {
           t.valorComSinal = t.tipo === 'DESPESA' ? -v : v;
         });
         this.transacoesTodas = res;
+        this.cacheLocal.salvar('transacoes_lista', res);
         if (this.transacoesMarcadas.length > 0) {
           const idsExistentes = new Set(res.map(r => r.id));
           this.transacoesMarcadas = this.transacoesMarcadas.filter(m => m.id && idsExistentes.has(m.id));
@@ -609,6 +635,7 @@ export class TransacoesComponent {
 
     this.transacoesService.deletarTransacoesEmLote(idsParaExcluir).subscribe({
       next: () => {
+        this.capacitorService.vibrarExclusao();
         const qtd = idsParaExcluir.length;
         this.messageService.add({
           severity: 'success',
@@ -655,6 +682,7 @@ export class TransacoesComponent {
 
     this.transacoesService.deletarTransacaoPorId(id).subscribe({
       next: () => {
+        this.capacitorService.vibrarExclusao();
         this.messageService.add({
           severity: 'success',
           summary: 'Movimentação excluída',
@@ -1837,6 +1865,7 @@ export class TransacoesComponent {
   }
 
   private sucessoAoSalvar(mensagem: string) {
+    this.capacitorService.vibrarSucesso();
     this.messageService.add({ severity: 'success', summary: mensagem, life: 2000 });
     this.listarTransacoes();
     this.atualizarSaldo();
