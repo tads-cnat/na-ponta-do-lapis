@@ -89,7 +89,7 @@ jobs:
           ./gradlew assembleDebug --no-daemon \
             -Phomolog="${{ (inputs.ambiente || 'homolog') == 'homolog' }}" \
             -PversionCode="${{ github.run_number }}" \
-            -PversionName="${BASE_VERSION}-${{ inputs.ambiente || 'homolog' }}.${{ github.run_number }}"
+            -PversionName="${BASE_VERSION}"
           cp app/build/outputs/apk/debug/app-debug.apk \
             "${{ github.workspace }}/na-ponta-do-lapis-${{ inputs.ambiente || 'homolog' }}-debug.apk"
 
@@ -112,7 +112,7 @@ jobs:
           ./gradlew assembleRelease --no-daemon \
             -Phomolog="${{ (inputs.ambiente || 'homolog') == 'homolog' }}" \
             -PversionCode="${{ github.run_number }}" \
-            -PversionName="${BASE_VERSION}-${{ inputs.ambiente || 'homolog' }}.${{ github.run_number }}" \
+            -PversionName="${BASE_VERSION}" \
             -Pandroid.injected.signing.store.file="$(pwd)/app/release.keystore" \
             -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
             -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
