@@ -91,7 +91,7 @@ jobs:
             -PversionCode="${{ github.run_number }}" \
             -PversionName="${BASE_VERSION}"
           cp app/build/outputs/apk/debug/app-debug.apk \
-            "${{ github.workspace }}/na-ponta-do-lapis-${{ inputs.ambiente || 'homolog' }}-debug.apk"
+            "${{ github.workspace }}/npl-${{ inputs.ambiente || 'homolog' }}-debug.apk"
 
       - name: Compilar APK Release Assinado
         if: ${{ inputs.tipo == 'release' }}
@@ -118,13 +118,13 @@ jobs:
             -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
             -Pandroid.injected.signing.key.password="$ANDROID_KEY_PASSWORD"
           cp app/build/outputs/apk/release/app-release.apk \
-            "${{ github.workspace }}/na-ponta-do-lapis-${{ inputs.ambiente || 'homolog' }}-release.apk"
+            "${{ github.workspace }}/npl-${{ inputs.ambiente || 'homolog' }}-release.apk"
           rm -f app/release.keystore
 
       - name: Publicar APK como Artifact
         if: ${{ github.event_name != 'pull_request' }}
         uses: actions/upload-artifact@v4
         with:
-          name: na-ponta-do-lapis-apk-${{ inputs.ambiente || 'homolog' }}-${{ inputs.tipo || 'debug' }}
+          name: npl-apk-${{ inputs.ambiente || 'homolog' }}-${{ inputs.tipo || 'debug' }}
           path: ${{ github.workspace }}/*.apk
           retention-days: 14

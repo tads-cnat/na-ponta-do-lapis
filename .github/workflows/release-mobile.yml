@@ -105,8 +105,8 @@ jobs:
             -Pandroid.injected.signing.store.password="$ANDROID_KEYSTORE_PASSWORD" \
             -Pandroid.injected.signing.key.alias="$ANDROID_KEY_ALIAS" \
             -Pandroid.injected.signing.key.password="$ANDROID_KEY_PASSWORD"
-          cp app/build/outputs/apk/release/app-release.apk "${{ github.workspace }}/na-ponta-do-lapis-mobile-v${VERSION}.apk"
-          cp app/build/outputs/apk/release/app-release.apk "${{ github.workspace }}/na-ponta-do-lapis.apk"
+          cp app/build/outputs/apk/release/app-release.apk "${{ github.workspace }}/npl-v${VERSION}.apk"
+          cp app/build/outputs/apk/release/app-release.apk "${{ github.workspace }}/npl.apk"
           rm -f app/release.keystore
 
       - name: Publicar GitHub Release Mobile (mobile-v* e mobile-latest)
@@ -114,8 +114,8 @@ jobs:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.semver.outputs.version }}
         run: |
-          VERSIONED_APK="${{ github.workspace }}/na-ponta-do-lapis-mobile-v${VERSION}.apk"
-          LATEST_APK="${{ github.workspace }}/na-ponta-do-lapis.apk"
+          VERSIONED_APK="${{ github.workspace }}/npl-v${VERSION}.apk"
+          LATEST_APK="${{ github.workspace }}/npl.apk"
 
           gh release create "mobile-v${VERSION}" "$VERSIONED_APK" --target "$GITHUB_SHA" \
             --title "App Android v${VERSION}" --generate-notes \
