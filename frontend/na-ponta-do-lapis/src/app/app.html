@@ -1,11 +1,34 @@
-<p-toast></p-toast>
+@if (!conexaoService.offline()) {
+  <p-toast></p-toast>
+}
 <app-modal-celebracao></app-modal-celebracao>
-@if (offline()) {
+@if (conexaoService.offline()) {
   <div role="alert"
-       style="top: calc(0.5rem + var(--npl-safe-top));"
-       class="fixed left-1/2 -translate-x-1/2 z-[12600] flex items-center gap-2 px-4 py-2 rounded-2xl bg-slate-900/95 text-white shadow-lg border border-rose-400/50 max-w-[calc(100vw-2rem)]">
-    <i class="pi pi-wifi text-rose-400 text-xs"></i>
-    <span class="text-xs sm:text-sm font-medium">Sem conexão com a internet</span>
+       aria-live="assertive"
+       style="padding-top: var(--npl-safe-top); padding-bottom: var(--npl-safe-bottom);"
+       class="fixed inset-0 z-[12600] flex items-center justify-center bg-[#f8fafc] dark:bg-[#141318] px-6">
+    <div class="w-full max-w-md bg-white dark:bg-[#1f1d26] rounded-[2rem] p-8 shadow-xl border border-slate-100 dark:border-[#383444] flex flex-col items-center text-center gap-5">
+      <div class="w-20 h-20 rounded-3xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200/80 dark:border-rose-800/60 flex items-center justify-center">
+        <i class="pi pi-wifi text-3xl text-rose-500"></i>
+      </div>
+
+      <div class="flex flex-col gap-2">
+        <h1 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-zinc-100 tracking-tight m-0">
+          Sem conexão com a internet
+        </h1>
+        <p class="text-sm text-slate-500 dark:text-zinc-400 leading-relaxed m-0">
+          Não foi possível conectar aos servidores do Na Ponta do Lápis. Verifique seu Wi-Fi ou dados móveis e tente novamente.
+        </p>
+      </div>
+
+      <button type="button"
+              (click)="conexaoService.tentarReconectar()"
+              [disabled]="conexaoService.verificandoConexao()"
+              class="w-full py-3 px-5 rounded-xl btn-npl-primary font-semibold text-sm flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 transition-all">
+        <i class="pi text-sm" [class.pi-refresh]="!conexaoService.verificandoConexao()" [class.pi-spin]="conexaoService.verificandoConexao()" [class.pi-spinner]="conexaoService.verificandoConexao()"></i>
+        <span>{{ conexaoService.verificandoConexao() ? 'Verificando conexão...' : 'Tentar novamente' }}</span>
+      </button>
+    </div>
   </div>
 }
 @if (pwaService.atualizacaoDisponivel()) {
