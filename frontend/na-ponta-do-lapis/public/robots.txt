@@ -3,3 +3,4 @@ Allow: /
 Disallow: /app/
 Disallow: /api/
 
+Sitemap: https://napontadolapis.app/sitemap.xml

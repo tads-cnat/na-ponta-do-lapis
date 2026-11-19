@@ -20,6 +20,7 @@ export function authRouteMatcher(segments: UrlSegment[]): UrlMatchResult | null 
 export const routes: Routes = [
     {
         path: '',
+        title: 'Na Ponta do Lápis — Controle Financeiro Pessoal e Familiar',
         loadComponent: () => import('./pages/landing-page/landing-page.component').then(m => m.LandingPageComponent),
         canMatch: [() => !Capacitor.isNativePlatform()],
         pathMatch: 'full'
@@ -31,14 +32,17 @@ export const routes: Routes = [
     },
     {
         path: 'privacidade',
+        title: 'Política de Privacidade — Na Ponta do Lápis',
         loadComponent: () => import('./pages/privacidade/privacidade.component').then(m => m.PrivacidadeComponent)
     },
     {
         path: 'termos',
+        title: 'Termos de Uso — Na Ponta do Lápis',
         loadComponent: () => import('./pages/privacidade/privacidade.component').then(m => m.PrivacidadeComponent)
     },
     {
         matcher: authRouteMatcher,
+        title: 'Acesso — Na Ponta do Lápis',
         loadComponent: () => import('./auth/components/auth-page/auth-page.component').then(m => m.AuthPageComponent),
         canActivate: [guestGuard]
     },
@@ -50,12 +54,12 @@ export const routes: Routes = [
         canActivate: [authGuard],
         canActivateChild: [authGuard],
         children: [
-            { path: 'dashboard', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) },
-            { path: 'transacoes', loadComponent: () => import('./pages/transacoes/transacoes.component').then(m => m.TransacoesComponent) },
-            { path: 'contas', loadComponent: () => import('./pages/contas/contas.component').then(m => m.ContasComponent) },
-            { path: 'metas', loadComponent: () => import('./pages/metas/metas.component').then(m => m.MetasComponent) },
-            { path: 'perfil', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent) },
-            { path: 'familia', loadComponent: () => import('./pages/familia/familia.component').then(m => m.FamiliaComponent) },
+            { path: 'dashboard', title: 'Dashboard — Na Ponta do Lápis', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+            { path: 'transacoes', title: 'Transações — Na Ponta do Lápis', loadComponent: () => import('./pages/transacoes/transacoes.component').then(m => m.TransacoesComponent) },
+            { path: 'contas', title: 'Contas e Cartões — Na Ponta do Lápis', loadComponent: () => import('./pages/contas/contas.component').then(m => m.ContasComponent) },
+            { path: 'metas', title: 'Metas — Na Ponta do Lápis', loadComponent: () => import('./pages/metas/metas.component').then(m => m.MetasComponent) },
+            { path: 'perfil', title: 'Perfil — Na Ponta do Lápis', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent) },
+            { path: 'familia', title: 'Família — Na Ponta do Lápis', loadComponent: () => import('./pages/familia/familia.component').then(m => m.FamiliaComponent) },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
@@ -68,6 +72,7 @@ export const routes: Routes = [
     { path: 'familia', redirectTo: 'app/familia' },
     {
         path: '**',
+        title: 'Página não encontrada — Na Ponta do Lápis',
         loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent)
     }
 ];

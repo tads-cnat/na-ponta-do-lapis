@@ -1,4 +1,5 @@
-import { Component, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { MetaItemComponent } from './components/meta-item/meta-item.component';
@@ -22,6 +23,9 @@ import { InputMoedaComponent } from '../../shared/components/input-moeda/input-m
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { CelebracaoService } from '../../shared/service/celebracao.service';
+import { CacheLocalService } from '../../shared/service/cache-local.service';
+import { CapacitorService } from '../../shared/service/capacitor.service';
+import { ConexaoService } from '../../shared/service/conexao.service';
 import { IlustracaoMetaComponent, CATALOGO_ILUSTRACOES_METAS, IlustracaoMetaItem } from '../../shared/components/ilustracao-meta/ilustracao-meta.component';
 
 @Component({
@@ -241,7 +245,23 @@ export class MetasComponent implements OnInit {
     });
   }
 
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly capacitorService = inject(CapacitorService);
+  private readonly conexaoService = inject(ConexaoService);
+  private readonly cacheLocal = inject(CacheLocalService);
+
   ngOnInit(): void {
+    const metasCache = this.cacheLocal.obter<MetaResponse[]>('metas_lista');
+    if (metasCache?.length) {
+      this.metas.set(metasCache);
+    }
+    this.recarregarDados();
+    this.conexaoService.reconectado$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.recarregarDados());
+  }
+
+  recarregarDados(): void {
     this.verificarFamiliaUsuario();
     this.carregarMetas();
     this.carregarTiposMeta();
@@ -288,7 +308,10 @@ export class MetasComponent implements OnInit {
 
   carregarMetas(): void {
     this.metasService.listarMetas().subscribe({
-      next: (response) => this.metas.set(response),
+      next: (response) => {
+        this.metas.set(response);
+        this.cacheLocal.salvar('metas_lista', response);
+      },
       error: (error) => console.error('Erro ao listar metas:', error),
     });
   }
@@ -308,6 +331,7 @@ export class MetasComponent implements OnInit {
     const metaAlvo = this.metaParaExcluir;
     this.metasService.deletarMeta(metaAlvo.id).subscribe({
       next: () => {
+        this.capacitorService.vibrarExclusao();
         this.metas.update((metas) => metas.filter((m) => m.id !== metaAlvo.id));
         this.messageService.add({ severity: 'success', summary: 'Meta excluída com sucesso!', life: 3000 });
         this.cancelarExclusao();
