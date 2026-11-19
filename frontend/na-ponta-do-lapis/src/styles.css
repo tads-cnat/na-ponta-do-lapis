@@ -659,26 +659,6 @@ main > *:not(p-toast):not(router-outlet) {
     font-weight: 600 !important;
     padding: 0 0.5rem !important;
   }
-
-  /* Padrão mobile: diálogos em estilo Bottom Sheet ancorados na base */
-  .p-dialog-mask {
-    align-items: flex-end !important;
-    padding: 0 !important;
-  }
-
-  .p-dialog {
-    width: 100vw !important;
-    max-width: 100vw !important;
-    max-height: 90dvh !important;
-    margin: 0 !important;
-    border-radius: 1.5rem 1.5rem 0 0 !important;
-    border-bottom-left-radius: 0 !important;
-    border-bottom-right-radius: 0 !important;
-  }
-
-  .p-dialog .p-dialog-footer {
-    padding-bottom: max(1rem, var(--npl-safe-bottom)) !important;
-  }
 }
 
 /* Sensação nativa em WebView/Mobile: sem highlight azul, sem pull-elástico do navegador e sem seleção acidental em controles */
