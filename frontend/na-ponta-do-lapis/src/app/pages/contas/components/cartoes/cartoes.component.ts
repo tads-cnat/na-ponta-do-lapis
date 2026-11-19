@@ -7,9 +7,10 @@ import { CarrosselCartoesComponent } from './carrosselCartoes.component';
   standalone: true,
   imports: [CarrosselCartoesComponent], 
   template: `
-    <div class="flex flex-col gap-5 h-full justify-center">
+    <div class="flex flex-col gap-5 flex-1">
       <!-- CARROSSEL DE CONTAS -->
       <app-carrossel-cartoes
+        class="flex-1 flex flex-col"
         [contas]="contas"
         [contaSelecionadaIndex]="contaSelecionadaIndex"
         [contaAnterior]="contaAnterior"

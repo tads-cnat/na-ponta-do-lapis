@@ -8,6 +8,7 @@ import { MetasComponent } from './pages/metas/metas.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { authGuard } from './core/guard/auth.guard';
+import { guestGuard } from './core/guard/guest.guard';
 import { PerfilComponent } from './pages/perfil/perfil.component';
 import { FamiliaComponent } from './pages/familia/familia.component';
 
@@ -42,7 +43,7 @@ export const routes: Routes = [
     },
     { path: 'privacidade', component: PrivacidadeComponent },
     { path: 'termos', component: PrivacidadeComponent },
-    { matcher: authRouteMatcher, component: AuthPageComponent },
+    { matcher: authRouteMatcher, component: AuthPageComponent, canActivate: [guestGuard] },
 
     // Área interna protegida
     {

@@ -4,7 +4,6 @@ import { RouterLink, RouterLinkActive } from '@angular/router'
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { SidebarService } from '../../service/sidebar-service.service';
 import { ThemeService } from '../../service/theme.service';
-import { CapacitorService } from '../../shared/service/capacitor.service';
 
 
 @Component({
@@ -18,7 +17,6 @@ export class SidebarComponent implements OnInit {
   items: MenuItem[] | undefined ;
   sidebarService: SidebarService = inject(SidebarService);
   themeService: ThemeService = inject(ThemeService);
-  protected readonly capacitorService = inject(CapacitorService);
   isMobile: boolean = false;
 
   ngOnInit(): void {

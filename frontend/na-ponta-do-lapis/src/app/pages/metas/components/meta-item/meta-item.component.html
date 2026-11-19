@@ -10,27 +10,13 @@
 
             <!-- Informações Principais -->
             <div class="min-w-0 flex-1">
-                <!-- Título + Tag de Status Relevante -->
+                <!-- Título + Tag de Meta Familiar -->
                 <div class="flex items-center gap-2 flex-wrap min-w-0">
                     <h3 class="font-bold text-base sm:text-lg text-slate-900 truncate m-0 leading-tight">{{ meta.nome }}</h3>
 
-                    @if (ehConcluida) {
-                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 shrink-0">
-                            <i class="pi pi-check text-[9px]"></i> Concluída
-                        </span>
-                    } @else if (ehEstourada) {
-                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-rose-50 text-[#C24E4E] border border-rose-200/80 shrink-0">
-                            <i class="pi pi-exclamation-triangle text-[9px]"></i> Teto Ultrapassado
-                        </span>
-                    } @else if (ehExpirada) {
-                        <span class="inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/80 shrink-0">
-                            <i class="pi pi-clock text-[9px]"></i> Prazo Expirado
-                        </span>
-                    }
-
                     @if (meta.familiar) {
-                        <span class="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-purple-50 text-[#7843CD] border border-purple-200/60 shrink-0">
-                            <i class="pi pi-users text-[9px]"></i> Família
+                        <span class="inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded-full bg-purple-50 text-[#7843CD] border border-purple-200/60 shrink-0 leading-tight">
+                            <i class="pi pi-users text-[10px] leading-none"></i> Família
                         </span>
                     }
                 </div>

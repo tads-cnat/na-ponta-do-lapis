@@ -11,25 +11,25 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
   imports: [CommonModule, IconeBancoComponent, AppMoedaPipe],
   template: `
     @if (conta) {
-      <div class="bg-white rounded-[2rem] p-4 sm:p-6 shadow-sm border border-slate-100 flex flex-col gap-5 h-full">
+      <div class="bg-white rounded-[2rem] p-4 sm:p-6 shadow-sm border border-slate-100 flex flex-col gap-5 flex-1">
 
-        <div class="flex flex-wrap items-start sm:items-center justify-between gap-3">
+        <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-3 min-w-0">
             <app-icone-banco [nome]="conta.nome" [tamanho]="44" [formato]="'quadrado'" [fallbackIcon]="ehCartao ? 'pi pi-credit-card' : 'pi pi-wallet'"></app-icone-banco>
             <div class="min-w-0">
-              <h2 class="section-title-npl">
+              <h2 class="section-title-npl truncate">
                 Informações da Conta
               </h2>
-              <p class="text-slate-500 text-xs mt-0.5">
+              <p class="text-slate-500 text-xs mt-0.5 truncate">
                 {{ ehCartao ? 'Resumo da fatura e limite do cartão' : 'Resumo e saldo disponível' }}
               </p>
             </div>
           </div>
 
-          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold whitespace-nowrap shrink-0"
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold whitespace-nowrap shrink-0"
                 [ngClass]="ehCartao ? 'bg-purple-100 text-[#7843cd]' : 'bg-emerald-100 text-emerald-700'">
             <i [class]="ehCartao ? 'pi pi-credit-card' : 'pi pi-wallet'"></i>
-            {{ ehCartao ? 'Cartão de Crédito' : 'Conta Corrente / Bancária' }}
+            {{ ehCartao ? 'Cartão de Crédito' : 'Conta Bancária' }}
           </span>
         </div>
 
@@ -49,9 +49,6 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
                       <i class="pi pi-exclamation-circle text-xs"></i>
                       Fatura Fechada (A Pagar)
                     </span>
-                    <span class="text-[10px] font-bold bg-[#FCE8E8] text-[#9E3636] px-2 py-0.5 rounded-full border border-[#F5D5D5]">
-                      Pagar Agora
-                    </span>
                   </div>
                   <span class="text-2xl font-extrabold text-[#C24E4E] tracking-tight">
                     - {{ (conta.valorFaturaFechada ?? conta.saldo) | appMoeda }}
@@ -70,9 +67,6 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
                     <span class="text-xs font-bold text-amber-800 uppercase tracking-wider flex items-center gap-1">
                       <i class="pi pi-clock text-xs"></i>
                       Fatura em Aberto (Próximo Mês)
-                    </span>
-                    <span class="text-[10px] font-bold bg-amber-200 text-amber-900 px-2 py-0.5 rounded-full">
-                      Em Aberto
                     </span>
                   </div>
                   <span class="text-2xl font-extrabold text-amber-900 tracking-tight">
@@ -104,9 +98,6 @@ import { PreferenciaMoedaService } from '../../../../shared/service/preferencia-
                 <p class="text-xs font-bold uppercase tracking-wider text-slate-500">
                   Saldo Disponível (Dinheiro em Conta)
                 </p>
-                <span class="text-[11px] font-semibold text-emerald-700 bg-emerald-100/70 px-2 py-0.5 rounded-md">
-                  Disponível
-                </span>
               </div>
 
               <span class="text-3xl font-extrabold text-slate-900 break-words leading-tight">

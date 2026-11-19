@@ -10,7 +10,7 @@ import { obterCorOficialBanco, temBancoDetectado } from '../../../../shared/util
   standalone: true,
   imports: [NgClass, AppMoedaPipe, IconeBancoComponent],
   template: `
-    <div class="bg-white rounded-[2rem] p-4 sm:p-6 shadow-sm border border-slate-100 overflow-hidden">
+    <div class="bg-white rounded-[2rem] p-4 sm:p-6 shadow-sm border border-slate-100 overflow-hidden flex-1 flex flex-col justify-between">
 
       <!-- TOPO -->
       <div class="flex items-center justify-between gap-3 mb-5 sm:mb-8">

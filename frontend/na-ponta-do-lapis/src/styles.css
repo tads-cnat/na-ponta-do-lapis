@@ -131,7 +131,9 @@ html.app-dark {
     [class*="bg-purple-50"],
     [class*="bg-purple-100"],
     [class*="bg-[#F3E8FF]"],
-    [class*="bg-[#6214CC]/10"]
+    [class*="bg-[#6214CC]/"],
+    [class*="bg-[#7843CD]/"],
+    [class*="bg-[#7843cd]/"]
   ) {
     background-color: var(--npl-dark-accent-soft) !important;
     border-color: var(--npl-dark-accent-border) !important;
@@ -149,7 +151,10 @@ html.app-dark {
 
   html.app-dark app-main-layout :is(
     [class^="bg-amber-50"], [class*=" bg-amber-50"],
-    [class^="bg-amber-100"], [class*=" bg-amber-100"]
+    [class^="bg-amber-100"], [class*=" bg-amber-100"],
+    [class^="bg-yellow-50"], [class*=" bg-yellow-50"],
+    [class^="bg-yellow-100"], [class*=" bg-yellow-100"],
+    [class*="bg-[#EEC046]/"]
   ) {
     background-color: #3a2d15 !important;
     border-color: #6b501f !important;
@@ -208,7 +213,7 @@ html.app-dark {
   }
 
   /* Badge amarelo sólido (#EEC046) exige texto escuro para contraste */
-  html.app-dark [class*="bg-[#EEC046]"] {
+  html.app-dark [class*="bg-[#EEC046]"]:not([class*="bg-[#EEC046]/"]) {
     background-color: #EEC046 !important;
     color: #1e1b2e !important;
   }
@@ -286,8 +291,12 @@ html.app-dark {
     [class*="text-[#7843cd]"],
     [class*="text-[#7843CD]"],
     [class*="text-[#6214CC]"],
+    [class*="text-[#4A2585]"],
+    [class*="text-purple-500"],
     [class*="text-purple-600"],
-    [class*="text-purple-700"]
+    [class*="text-purple-700"],
+    [class*="text-indigo-600"],
+    [class*="text-indigo-700"]
   ) {
     color: #c4b5fd !important;
   }
@@ -295,7 +304,10 @@ html.app-dark {
   html.app-dark app-main-layout :is(
     [class*="text-purple-950"],
     [class*="text-purple-900"],
-    [class*="text-purple-800"]
+    [class*="text-purple-800"],
+    [class*="text-indigo-950"],
+    [class*="text-indigo-900"],
+    [class*="text-indigo-800"]
   ) {
     color: #e9d5ff !important;
   }
@@ -305,6 +317,9 @@ html.app-dark {
     [class*="text-amber-900"],
     [class*="text-amber-800"],
     [class*="text-amber-700"],
+    [class*="text-amber-600"],
+    [class*="text-yellow-700"],
+    [class*="text-yellow-600"],
     [class*="text-[#B45309]"]
   ) {
     color: #fcd34d !important;
@@ -336,7 +351,7 @@ html.app-dark {
   }
 
   /* Garante texto escuro legível em qualquer elemento com fundo amarelo sólido #EEC046 */
-  html.app-dark app-main-layout [class*="bg-[#EEC046]"] {
+  html.app-dark app-main-layout [class*="bg-[#EEC046]"]:not([class*="bg-[#EEC046]/"]) {
     background-color: #EEC046 !important;
     color: #1e1b2e !important;
   }
@@ -462,7 +477,7 @@ html.app-dark {
     color: #ffffff !important;
   }
 
-  html.app-dark .menuitem:hover {
+  html.app-dark .menuitem:not(.botao-nova-transacao):hover {
     background-color: var(--npl-dark-surface-elevated) !important;
     color: #d8bfff !important;
   }
