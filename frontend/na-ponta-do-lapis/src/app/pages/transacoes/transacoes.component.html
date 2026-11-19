@@ -995,8 +995,12 @@
         </ng-template>
     </p-dialog>
 
+    @if (autorizacaoDados; as solicitacao) {
+        <app-autorizacao-dados [solicitacao]="solicitacao" (concluida)="autorizacaoDados = null" />
+    }
+
     <p-dialog header="Fatura em imagem — autorizar envio à IA" [(visible)]="exibirDialogConsentimento" [modal]="true"
-        [closable]="false" [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '560px' }">
+        [closable]="false" [closeOnEscape]="false" [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '560px' }">
         <div class="flex flex-col gap-4 py-2 px-1 sm:px-3">
             <div class="flex items-start gap-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
                 <i class="pi pi-exclamation-triangle text-amber-500 text-xl mt-0.5"></i>
@@ -1066,7 +1070,7 @@
 
         <ng-template pTemplate="footer">
             <div class="flex flex-col sm:flex-row gap-3 w-full justify-end">
-                <p-button label="Cancelar" severity="secondary" [outlined]="true"
+                <p-button label="Recusar" severity="secondary" [outlined]="true"
                     styleClass="rounded-xl! w-full sm:w-auto" [disabled]="carregandoConsentimento"
                     (onClick)="cancelarConsentimento()"></p-button>
                 <p-button label="Autorizar e enviar" icon="pi pi-send"

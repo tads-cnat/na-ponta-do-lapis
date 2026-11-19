@@ -142,6 +142,10 @@ public class FaturaAnaliseService {
             throw FaturaAnaliseException.precisaIa();
         }
 
+        if (!consentimentoLgpd) {
+            throw FaturaAnaliseException.consentimentoObrigatorio();
+        }
+
         String textoSanitizado = sanitizerService.sanitizar(texto);
         if (textoSanitizado.length() > maxCaracteresIa) {
             textoSanitizado = textoSanitizado.substring(0, maxCaracteresIa);
