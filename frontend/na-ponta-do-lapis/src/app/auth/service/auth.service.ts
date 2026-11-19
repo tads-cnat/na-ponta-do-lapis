@@ -265,9 +265,20 @@ export class AuthService {
             onUnavailable?.('Não foi possível obter a credencial do Google.');
           }
         });
-      } catch {
+      } catch (err) {
+        console.error('[Google Native Login]', err);
+        const detalhe =
+          err instanceof Error
+            ? err.message
+            : typeof err === 'object' && err !== null && 'message' in err
+              ? String((err as { message: unknown }).message)
+              : '';
         this.ngZone.run(() => {
-          onUnavailable?.('Login com Google cancelado ou indisponível no dispositivo.');
+          onUnavailable?.(
+            detalhe
+              ? `Erro no login com Google: ${detalhe}`
+              : 'Login com Google cancelado ou indisponível no dispositivo.'
+          );
         });
       } finally {
         btn.disabled = false;
