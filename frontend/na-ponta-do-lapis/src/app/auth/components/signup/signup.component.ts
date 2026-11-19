@@ -65,14 +65,15 @@ export class SignupComponent implements AfterViewInit {
       'continue_with',
       (idToken) => this.autenticarComGoogleToken(idToken),
       () => this.googleButtonState.set('ready'),
-      () => this.googleButtonState.set('unavailable'),
-      (reason) =>
+      (reason) => {
+        this.googleButtonState.set('unavailable');
         this.messageService.add({
           severity: 'error',
           summary: 'Erro no Google',
           detail: reason,
           life: 5000,
-        })
+        });
+      }
     );
   }
 
