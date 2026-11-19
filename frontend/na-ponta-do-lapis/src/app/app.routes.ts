@@ -1,19 +1,7 @@
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
-import { AuthPageComponent } from './auth/components/auth-page/auth-page.component';
-import { TransacoesComponent } from './pages/transacoes/transacoes.component';
-import { ContasComponent } from './pages/contas/contas.component';
-import { MetasComponent } from './pages/metas/metas.component';
-import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
-import { LandingPageComponent } from './pages/landing-page/landing-page.component';
 import { authGuard } from './core/guard/auth.guard';
 import { guestGuard } from './core/guard/guest.guard';
-import { PerfilComponent } from './pages/perfil/perfil.component';
-import { FamiliaComponent } from './pages/familia/familia.component';
-
-import { NotFoundComponent } from './pages/not-found/not-found.component';
-import { PrivacidadeComponent } from './pages/privacidade/privacidade.component';
 
 
 export function authRouteMatcher(segments: UrlSegment[]): UrlMatchResult | null {
@@ -32,7 +20,7 @@ export function authRouteMatcher(segments: UrlSegment[]): UrlMatchResult | null 
 export const routes: Routes = [
     {
         path: '',
-        component: LandingPageComponent,
+        loadComponent: () => import('./pages/landing-page/landing-page.component').then(m => m.LandingPageComponent),
         canMatch: [() => !Capacitor.isNativePlatform()],
         pathMatch: 'full'
     },
@@ -41,23 +29,33 @@ export const routes: Routes = [
         redirectTo: 'app/dashboard',
         pathMatch: 'full'
     },
-    { path: 'privacidade', component: PrivacidadeComponent },
-    { path: 'termos', component: PrivacidadeComponent },
-    { matcher: authRouteMatcher, component: AuthPageComponent, canActivate: [guestGuard] },
+    {
+        path: 'privacidade',
+        loadComponent: () => import('./pages/privacidade/privacidade.component').then(m => m.PrivacidadeComponent)
+    },
+    {
+        path: 'termos',
+        loadComponent: () => import('./pages/privacidade/privacidade.component').then(m => m.PrivacidadeComponent)
+    },
+    {
+        matcher: authRouteMatcher,
+        loadComponent: () => import('./auth/components/auth-page/auth-page.component').then(m => m.AuthPageComponent),
+        canActivate: [guestGuard]
+    },
 
     // Área interna protegida
     {
         path: 'app',
-        component: MainLayoutComponent,
+        loadComponent: () => import('./layout/main-layout/main-layout.component').then(m => m.MainLayoutComponent),
         canActivate: [authGuard],
         canActivateChild: [authGuard],
         children: [
-            { path: 'dashboard', component: DashboardComponent },
-            { path: 'transacoes', component: TransacoesComponent },
-            { path: 'contas', component: ContasComponent },
-            { path: 'metas', component: MetasComponent },
-            { path: 'perfil', component: PerfilComponent},
-            { path: 'familia', component: FamiliaComponent },
+            { path: 'dashboard', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) },
+            { path: 'transacoes', loadComponent: () => import('./pages/transacoes/transacoes.component').then(m => m.TransacoesComponent) },
+            { path: 'contas', loadComponent: () => import('./pages/contas/contas.component').then(m => m.ContasComponent) },
+            { path: 'metas', loadComponent: () => import('./pages/metas/metas.component').then(m => m.MetasComponent) },
+            { path: 'perfil', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent) },
+            { path: 'familia', loadComponent: () => import('./pages/familia/familia.component').then(m => m.FamiliaComponent) },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
     },
@@ -68,5 +66,8 @@ export const routes: Routes = [
     { path: 'contas', redirectTo: 'app/contas' },
     { path: 'metas', redirectTo: 'app/metas' },
     { path: 'familia', redirectTo: 'app/familia' },
-    { path: '**', component: NotFoundComponent }
+    {
+        path: '**',
+        loadComponent: () => import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent)
+    }
 ];
