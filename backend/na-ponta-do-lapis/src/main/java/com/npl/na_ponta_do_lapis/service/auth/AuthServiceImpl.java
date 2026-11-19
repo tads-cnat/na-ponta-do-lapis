@@ -192,11 +192,22 @@ public class AuthServiceImpl implements AuthService{
                 return GoogleAuthResponseDTO.pendenteTermos(nomeExibicao, email, picture);
             }
             usuario = registrarUsuarioGoogle(email, nome, picture);
-        } else if (!usuario.isEmailVerificado()) {
-            usuario.setEmailVerificado(true);
-            usuario.setEmailVerificacaoTokenHash(null);
-            usuario.setEmailVerificacaoExpiraEm(null);
-            usuarioRepository.save(usuario);
+        } else {
+            boolean precisaSalvar = false;
+            if (!usuario.isEmailVerificado()) {
+                usuario.setEmailVerificado(true);
+                usuario.setEmailVerificacaoTokenHash(null);
+                usuario.setEmailVerificacaoExpiraEm(null);
+                precisaSalvar = true;
+            }
+            if ((usuario.getFotoPerfil() == null || usuario.getFotoPerfil().isBlank())
+                    && picture != null && !picture.isBlank()) {
+                usuario.setFotoPerfil(picture);
+                precisaSalvar = true;
+            }
+            if (precisaSalvar) {
+                usuarioRepository.save(usuario);
+            }
         }
 
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
