@@ -38,14 +38,11 @@ import { ConexaoService } from '../../shared/service/conexao.service';
 import { PreferenciaMoedaService } from '../../shared/service/preferencia-moeda.service';
 import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectado } from '../../shared/utils/banco-icon.helper';
 
-import { AutorizacaoDados, AutorizacaoDadosComponent } from '../../shared/components/autorizacao-dados/autorizacao-dados.component';
-
 @Component({
   selector: 'app-Contas',
   standalone: true,
   providers: [MessageService],
   imports: [
-    AutorizacaoDadosComponent,
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
@@ -67,10 +64,6 @@ import { AutorizacaoDados, AutorizacaoDadosComponent } from '../../shared/compon
 
     <!-- TOAST — deve ficar no nível raiz para sobrepor qualquer conteúdo -->
     <p-toast position="top-right" [life]="3000" />
-
-    @if (autorizacaoDados; as solicitacao) {
-      <app-autorizacao-dados [solicitacao]="solicitacao" (concluida)="autorizacaoDados = null" />
-    }
 
     <app-pull-to-refresh (refresh)="recarregarDados()">
     <div class="w-full flex flex-col gap-6 pb-8">
@@ -901,8 +894,6 @@ export class ContasComponent implements OnInit {
     this.exibirDialog = true;
   }
 
-  autorizacaoDados: AutorizacaoDados | null = null;
-
   sincronizarOpenFinance(): void {
     if (!this.openFinanceConectado) {
       this.messageService.add({
@@ -915,13 +906,8 @@ export class ContasComponent implements OnInit {
       return;
     }
 
-    if (this.sincronizandoOpenFinance || this.autorizacaoDados) return;
-
-    this.autorizacaoDados = {
-      titulo: 'Autorizar sincronização bancária',
-      descricao: 'O Na Ponta do Lápis consultará suas contas, saldos e movimentações na Pluggy para atualizar os dados financeiros no sistema.',
-      autorizar: () => this.executarSincronizacaoOpenFinance(),
-    };
+    if (this.sincronizandoOpenFinance) return;
+    this.executarSincronizacaoOpenFinance();
   }
 
   private executarSincronizacaoOpenFinance(): void {
