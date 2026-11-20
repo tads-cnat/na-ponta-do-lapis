@@ -34,6 +34,15 @@ export class StorageService {
     return localStorage.getItem(TOKEN)
   }
 
+  static temTokenValido(): boolean {
+    const payload = this.getUsuarioDecodificado();
+    if (!payload?.exp) {
+      return false;
+    }
+    const agoraSegundos = Math.floor(Date.now() / 1000);
+    return payload.exp > agoraSegundos + 5;
+  }
+
   static getUsuarioDecodificado(): TokenPayload | null {
     const token = this.getToken()
     if (token){
