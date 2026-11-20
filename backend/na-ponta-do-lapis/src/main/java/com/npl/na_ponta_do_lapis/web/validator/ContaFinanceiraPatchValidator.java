@@ -55,7 +55,7 @@ public class ContaFinanceiraPatchValidator {
                 throw new IllegalArgumentException("A cor não pode ser vazia");
             }
             if (cor.length() > 7) {
-                throw new IllegalArgumentException("A não pode ter mais de 7 caracteres");
+                throw new IllegalArgumentException("A cor não pode ter mais de 7 caracteres");
             }
         }
 

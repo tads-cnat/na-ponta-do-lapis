@@ -17,7 +17,7 @@ import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collections;
@@ -60,8 +60,9 @@ public class AuthController {
                     "emailNaoVerificado", true,
                     "email", e.getEmail() != null ? e.getEmail() : ""
             ));
-        } catch (AuthenticationCredentialsNotFoundException e) {
-            return ResponseEntity.ok(Collections.singletonMap("message", "Email ou senha inválido."));
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                    .body(Collections.singletonMap("message", "Email ou senha inválido."));
         }
     }
 
