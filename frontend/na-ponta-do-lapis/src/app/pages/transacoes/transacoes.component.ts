@@ -1085,14 +1085,8 @@ export class TransacoesComponent {
       return;
     }
 
-    this.autorizacaoDados = {
-      titulo: 'Autorizar envio da fatura',
-      descricao: 'O PDF pode conter seu nome, CPF, endereço e movimentações. Autorize o envio ao servidor do Na Ponta do Lápis para verificar se o arquivo é uma fatura.',
-      autorizar: () => {
-        this.arquivoSelecionado = file;
-        this.executarValidacaoPrevia(file);
-      },
-    };
+    this.arquivoSelecionado = file;
+    this.executarValidacaoPrevia(file);
   }
 
   executarValidacaoPrevia(file: File, senha?: string) {
