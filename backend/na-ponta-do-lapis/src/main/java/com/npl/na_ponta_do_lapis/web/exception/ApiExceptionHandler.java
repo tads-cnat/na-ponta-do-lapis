@@ -78,14 +78,12 @@ public class ApiExceptionHandler {
 
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Recurso não encontrado."));
+    public ResponseEntity<String> handleNotFound(NotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex) {
-        return ResponseEntity.badRequest()
-                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Requisição inválida."));
+    public ResponseEntity<String> handleBusiness(BusinessException ex) {
+        return ResponseEntity.badRequest().body(ex.getMessage());
     }
 }
