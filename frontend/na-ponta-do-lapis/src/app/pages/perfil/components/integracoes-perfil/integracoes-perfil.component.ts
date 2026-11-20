@@ -239,13 +239,7 @@ export class IntegracoesPerfilComponent implements OnInit {
   }
 
   public sincronizarAgora(): void {
-    if (!this.openFinanceStatus?.conectado || this.sincronizandoOpenFinance || this.autorizacaoDados) return;
-
-    this.autorizacaoDados = {
-      titulo: 'Autorizar sincronização bancária',
-      descricao: 'O Na Ponta do Lápis consultará suas contas, saldos e movimentações na Pluggy para atualizar os dados financeiros no sistema.',
-      autorizar: () => this.executarSincronizacaoOpenFinance(),
-    };
+    this.executarSincronizacaoOpenFinance();
   }
 
   private executarSincronizacaoOpenFinance(): void {
