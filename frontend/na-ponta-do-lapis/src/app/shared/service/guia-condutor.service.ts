@@ -1,9 +1,10 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/service/auth.service';
-import { MascoteEstado } from '../../auth/components/mascote-login/mascote-login.component';
+import { MascoteEstado, MascoteGracinha } from '../../auth/components/mascote-login/mascote-login.component';
 import { SidebarService } from '../../service/sidebar-service.service';
 import { CapacitorService } from './capacitor.service';
+import { CelebracaoService } from './celebracao.service';
 
 export interface PassoGuiaCondutor {
   id: string;
@@ -12,6 +13,8 @@ export interface PassoGuiaCondutor {
   rota: string;
   target?: string;
   mascoteEstado: MascoteEstado;
+  gracinha?: MascoteGracinha;
+  eager?: boolean;
 }
 
 @Injectable({
@@ -22,17 +25,20 @@ export class GuiaCondutorService {
   private readonly authService = inject(AuthService);
   private readonly sidebarService = inject(SidebarService);
   private readonly capacitorService = inject(CapacitorService);
+  private readonly celebracaoService = inject(CelebracaoService);
 
   private onboardingPersistido = false;
 
   readonly passos: PassoGuiaCondutor[] = [
     {
       id: 'boas-vindas',
-      titulo: 'Olá! Eu sou o Lápis 👋',
+      titulo: 'Olá! Eu sou o Grafith ✏️',
       descricao:
         'Bem-vindo ao Na Ponta do Lápis! Vou fazer um tour rápido para te mostrar onde controlar suas contas, lançamentos, metas e família.',
       rota: '/app/dashboard',
       mascoteEstado: 'success',
+      gracinha: 'joy',
+      eager: true,
     },
     {
       id: 'dashboard',
@@ -42,6 +48,7 @@ export class GuiaCondutorService {
       rota: '/app/dashboard',
       target: 'menu-dashboard',
       mascoteEstado: 'checking',
+      gracinha: 'wink',
     },
     {
       id: 'contas',
@@ -50,7 +57,8 @@ export class GuiaCondutorService {
         'Cadastre suas contas bancárias e cartões de crédito ou conecte pelo Open Finance para importar saldos e extratos.',
       rota: '/app/contas',
       target: 'menu-conta',
-      mascoteEstado: 'idle',
+      mascoteEstado: 'checking',
+      gracinha: 'joy',
     },
     {
       id: 'transacoes',
@@ -60,6 +68,7 @@ export class GuiaCondutorService {
       rota: '/app/transacoes',
       target: 'menu-transacao',
       mascoteEstado: 'checking',
+      gracinha: 'wink',
     },
     {
       id: 'nova-transacao',
@@ -68,7 +77,9 @@ export class GuiaCondutorService {
         'Sempre que quiser registrar um gasto ou recebimento na hora, use este botão de acesso rápido!',
       rota: '/app/transacoes',
       target: 'nova-transacao',
-      mascoteEstado: 'success',
+      mascoteEstado: 'checking',
+      gracinha: 'dance',
+      eager: true,
     },
     {
       id: 'metas',
@@ -77,16 +88,19 @@ export class GuiaCondutorService {
         'Crie objetivos com prazo e valor, faça aportes e receba conquistas conforme avança até bater sua meta.',
       rota: '/app/metas',
       target: 'menu-meta',
-      mascoteEstado: 'success',
+      mascoteEstado: 'checking',
+      gracinha: 'joy',
+      eager: true,
     },
     {
       id: 'perfil-familia',
       titulo: 'Família, Open Finance e Perfil',
       descricao:
-        'Convide familiares em Família para compartilhar o orçamento e configure tema, moeda, Open Finance e IA no Perfil. Você pode rever este guia lá quando quiser!',
+        'Convide familiares em Família para compartilhar o orçamento e configure tema, moeda, Open Finance e IA no Perfil. Você pode me chamar aqui no Perfil quando quiser!',
       rota: '/app/perfil',
       target: 'header-perfil',
-      mascoteEstado: 'idle',
+      mascoteEstado: 'checking',
+      gracinha: 'dance',
     },
   ];
 
@@ -147,10 +161,16 @@ export class GuiaCondutorService {
     this.encerrar(true);
   }
 
+  concluirEIrParaNovaTransacao(): void {
+    this.encerrar(true);
+    void this.router.navigate(['/app/transacoes'], { queryParams: { openDialog: 'escolha' } });
+  }
+
   private encerrar(comSucesso: boolean): void {
     this.ativo.set(false);
     if (comSucesso) {
       this.capacitorService.vibrarSucesso();
+      this.celebracaoService.dispararEfeitoConfetes();
     }
     if (!this.onboardingPersistido) {
       this.onboardingPersistido = true;

@@ -36,6 +36,7 @@ function stepSpring(s: SpringState, stiffness: number, damping: number, dt: numb
 export class MascoteLoginComponent implements AfterViewInit {
   readonly estado = input<MascoteEstado>('idle');
   readonly lookProgress = input<number>(0.5);
+  readonly lookYOverride = input<number | null>(null);
   readonly compact = input<boolean>(false);
   readonly eager = input<boolean>(false);
   readonly emailInvalid = input<boolean>(false);
@@ -140,8 +141,9 @@ export class MascoteLoginComponent implements AfterViewInit {
 
       if (state === 'checking') {
         const dir = (progress - 0.5) * 2;
+        const customY = this.lookYOverride();
         this.lookX.target = dir;
-        this.lookY.target = 0.65;
+        this.lookY.target = customY !== null ? Math.max(-1, Math.min(1, customY)) : 0.65;
         this.headTilt.target = dir * 6;
         this.leftArmUp.target = 0;
         this.rightArmUp.target = 0;
@@ -288,6 +290,24 @@ export class MascoteLoginComponent implements AfterViewInit {
       } else if (chosen === 'wink') {
         this.headTilt.velocity = -60;
       }
+    }
+
+    if (this.gracinhaTimer) {
+      clearTimeout(this.gracinhaTimer);
+    }
+    this.gracinhaTimer = setTimeout(() => {
+      this.gracinha.set('none');
+    }, 1050);
+  }
+
+  public reagir(gracinha: MascoteGracinha = 'joy'): void {
+    this.gracinha.set(gracinha);
+    this.bounceY.velocity = -50;
+    if (gracinha === 'dance') {
+      this.shakeX.velocity = 95;
+      this.headTilt.velocity = 75;
+    } else if (gracinha === 'wink') {
+      this.headTilt.velocity = -55;
     }
 
     if (this.gracinhaTimer) {

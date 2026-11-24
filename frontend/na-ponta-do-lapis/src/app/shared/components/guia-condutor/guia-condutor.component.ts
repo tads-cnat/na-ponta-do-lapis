@@ -6,6 +6,7 @@ import {
   effect,
   inject,
   signal,
+  viewChild,
 } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -30,7 +31,7 @@ interface SpotlightBox {
         class="fixed inset-0 z-[1200]"
         role="dialog"
         aria-modal="true"
-        aria-label="Guia de boas-vindas do sistema">
+        aria-label="Guia de boas-vindas com o Grafith">
 
         <!-- Overlay com recorte spotlight ou backdrop centralizado -->
         @if (spotlight(); as box) {
@@ -51,18 +52,33 @@ interface SpotlightBox {
             (click)="guia.pular()"></div>
         }
 
-        <!-- Card flutuante com Mascote -->
+        <!-- Card flutuante com o Grafith -->
         <div
-          class="fixed z-[1210] w-[min(390px,calc(100vw-24px))] bg-white rounded-3xl border border-purple-100 shadow-2xl p-4 sm:p-5 transition-all duration-300 ease-out"
+          class="fixed z-[1210] w-[min(410px,calc(100vw-24px))] bg-white rounded-3xl border border-purple-100 shadow-2xl p-4 sm:p-5 transition-all duration-300 ease-out"
           [style.top]="cardPos().top"
           [style.left]="cardPos().left"
           [style.transform]="cardPos().transform"
           (click)="$event.stopPropagation()">
 
+          <!-- Seta indicadora apontando para o elemento em destaque -->
+          @if (direcaoSeta(); as seta) {
+            <div
+              aria-hidden="true"
+              class="hidden sm:flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#7843CD] text-white text-[10px] font-bold shadow-md absolute left-1/2 -translate-x-1/2 pointer-events-none animate-bounce"
+              [class.-top-3]="seta === 'cima'"
+              [class.-bottom-3]="seta === 'baixo'">
+              <i class="pi text-[9px]" [class.pi-arrow-up]="seta === 'cima'" [class.pi-arrow-down]="seta === 'baixo'"></i>
+              <span>Olhe aqui</span>
+            </div>
+          }
+
           <div class="flex items-start gap-3">
             <div class="shrink-0 -mt-1 flex items-center justify-center rounded-2xl bg-[#F3E8FF] border border-[#DDD0FB] p-1">
               <app-mascote-login
                 [compact]="true"
+                [eager]="!!guia.passoAtual().eager"
+                [lookProgress]="lookProgress()"
+                [lookYOverride]="lookY()"
                 [estado]="guia.passoAtual().mascoteEstado" />
             </div>
 
@@ -82,20 +98,33 @@ interface SpotlightBox {
 
               <h3 class="text-base font-extrabold text-slate-900 m-0 leading-snug">
                 @if (guia.indiceAtual() === 0 && guia.nomeUsuario()) {
-                  Olá, {{ guia.nomeUsuario() }}! Eu sou o Lápis 👋
+                  Olá, {{ guia.nomeUsuario() }}! Eu sou o Grafith ✏️
                 } @else {
                   {{ guia.passoAtual().titulo }}
                 }
               </h3>
 
-              <p class="text-xs sm:text-[13px] text-slate-600 mt-1.5 mb-0 leading-relaxed">
-                {{ guia.passoAtual().descricao }}
+              <p class="text-xs sm:text-[13px] text-slate-600 mt-1.5 mb-0 leading-relaxed min-h-[3.25rem]">
+                {{ textoDigitado() }}@if (digitando()) {<span class="inline-block w-1.5 h-3.5 ml-0.5 align-middle bg-[#7843CD] animate-pulse"></span>}
               </p>
             </div>
           </div>
 
+          <!-- Ação rápida no último passo -->
+          @if (guia.ehUltimoPasso()) {
+            <div class="mt-3 pt-2.5 border-t border-slate-100 flex justify-end">
+              <button
+                type="button"
+                (click)="guia.concluirEIrParaNovaTransacao()"
+                class="w-full sm:w-auto px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-[#FEF9E7] text-[#B45309] border border-[#F9DB70] hover:bg-[#FEF3C7] cursor-pointer flex items-center justify-center gap-1.5 transition-colors">
+                <i class="pi pi-plus-circle text-xs"></i>
+                <span>Registrar minha 1ª transação agora</span>
+              </button>
+            </div>
+          }
+
           <!-- Indicadores e ações -->
-          <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+          <div class="mt-3 pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
             <div class="flex items-center gap-1.5" aria-label="Progresso do guia">
               @for (passo of guia.passos; track passo.id; let i = $index) {
                 <button
@@ -136,49 +165,105 @@ export class GuiaCondutorComponent {
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
+  private readonly mascoteRef = viewChild(MascoteLoginComponent);
+
   readonly spotlight = signal<SpotlightBox | null>(null);
+  readonly textoDigitado = signal('');
+  readonly digitando = signal(false);
+
   private reposicionarTimer: ReturnType<typeof setTimeout> | null = null;
+  private digitacaoTimer: ReturnType<typeof setInterval> | null = null;
+
+  readonly lookProgress = computed(() => {
+    const box = this.spotlight();
+    const pos = this.cardPos();
+    if (!box || typeof window === 'undefined') {
+      return 0.5;
+    }
+    const grafithX = pos.transform === 'none'
+      ? parseFloat(pos.left) + 56
+      : window.innerWidth / 2 - 120;
+    const targetX = box.left + box.width / 2;
+    const normX = Math.max(-1, Math.min(1, (targetX - grafithX) / 220));
+    return 0.5 + normX * 0.5;
+  });
+
+  readonly lookY = computed(() => {
+    const box = this.spotlight();
+    const pos = this.cardPos();
+    if (!box || typeof window === 'undefined') {
+      return 0.25;
+    }
+    const grafithY = pos.transform === 'none'
+      ? parseFloat(pos.top) + 56
+      : window.innerHeight / 2 - 60;
+    const targetY = box.top + box.height / 2;
+    return Math.max(-0.85, Math.min(0.85, (targetY - grafithY) / 180));
+  });
 
   readonly cardPos = computed(() => {
     const box = this.spotlight();
     if (!box || typeof window === 'undefined') {
-      return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+      return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', direcao: null as 'cima' | 'baixo' | null };
     }
 
     const vw = window.innerWidth;
     const vh = window.innerHeight;
-    const cardW = Math.min(390, vw - 24);
-    const cardH = 228;
-    const gap = 14;
+    const cardW = Math.min(410, vw - 24);
+    const cardH = this.guia.ehUltimoPasso() ? 295 : 245;
+    const gap = 16;
 
     let left = box.left + box.width / 2 - cardW / 2;
     left = Math.max(12, Math.min(vw - cardW - 12, left));
 
-    // Tenta colocar abaixo do alvo; se não couber, acima; se ainda não couber, ao lado ou centralizado
-    let top: number;
     if (box.top + box.height + gap + cardH <= vh - 12) {
-      top = box.top + box.height + gap;
-    } else if (box.top - gap - cardH >= 12) {
-      top = box.top - gap - cardH;
-    } else if (vw >= 768 && box.left + box.width + gap + cardW <= vw - 12) {
-      left = box.left + box.width + gap;
-      top = Math.max(16, Math.min(vh - cardH - 16, box.top));
-    } else {
-      return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+      return {
+        top: `${Math.round(box.top + box.height + gap)}px`,
+        left: `${Math.round(left)}px`,
+        transform: 'none',
+        direcao: 'cima' as const,
+      };
     }
 
-    return { top: `${Math.round(top)}px`, left: `${Math.round(left)}px`, transform: 'none' };
+    if (box.top - gap - cardH >= 12) {
+      return {
+        top: `${Math.round(box.top - gap - cardH)}px`,
+        left: `${Math.round(left)}px`,
+        transform: 'none',
+        direcao: 'baixo' as const,
+      };
+    }
+
+    if (vw >= 768 && box.left + box.width + gap + cardW <= vw - 12) {
+      const sideTop = Math.max(16, Math.min(vh - cardH - 16, box.top));
+      return {
+        top: `${Math.round(sideTop)}px`,
+        left: `${Math.round(box.left + box.width + gap)}px`,
+        transform: 'none',
+        direcao: null,
+      };
+    }
+
+    return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', direcao: null };
   });
+
+  readonly direcaoSeta = computed(() => this.cardPos().direcao);
 
   constructor() {
     effect(() => {
       const ativo = this.guia.ativo();
       const idx = this.guia.indiceAtual();
+      const passo = this.guia.passoAtual();
       if (!ativo) {
         this.spotlight.set(null);
+        this.pararDigitacao();
         return;
       }
       this.agendarReposicionamento(idx);
+      this.iniciarDigitacao(passo.descricao);
+      setTimeout(() => {
+        this.mascoteRef()?.reagir(passo.gracinha ?? 'joy');
+      }, 90);
     });
 
     this.router.events
@@ -194,6 +279,7 @@ export class GuiaCondutorComponent {
 
     this.destroyRef.onDestroy(() => {
       if (this.reposicionarTimer) clearTimeout(this.reposicionarTimer);
+      this.pararDigitacao();
     });
   }
 
@@ -210,6 +296,39 @@ export class GuiaCondutorComponent {
     if (this.guia.ativo()) {
       this.guia.pular();
     }
+  }
+
+  private iniciarDigitacao(textoCompleto: string): void {
+    this.pararDigitacao();
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    ) {
+      this.textoDigitado.set(textoCompleto);
+      this.digitando.set(false);
+      return;
+    }
+
+    let pos = 0;
+    this.textoDigitado.set('');
+    this.digitando.set(true);
+    this.digitacaoTimer = setInterval(() => {
+      pos += 2;
+      if (pos >= textoCompleto.length) {
+        this.textoDigitado.set(textoCompleto);
+        this.pararDigitacao();
+        return;
+      }
+      this.textoDigitado.set(textoCompleto.slice(0, pos));
+    }, 14);
+  }
+
+  private pararDigitacao(): void {
+    if (this.digitacaoTimer) {
+      clearInterval(this.digitacaoTimer);
+      this.digitacaoTimer = null;
+    }
+    this.digitando.set(false);
   }
 
   private agendarReposicionamento(_idx: number): void {
