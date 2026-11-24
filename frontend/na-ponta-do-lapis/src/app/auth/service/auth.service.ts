@@ -113,6 +113,10 @@ export class AuthService {
     return this.http.get<Usuario>(`${this.BASE_URL}/usuario/me`)
   }
 
+  public concluirOnboarding(): Observable<Usuario> {
+    return this.http.patch<Usuario>(`${this.BASE_URL}/usuario/me`, { onboardingConcluido: true });
+  }
+
   public renderizarBotaoGoogle(
     container: HTMLElement,
     textMode: 'continue_with' | 'signup_with',

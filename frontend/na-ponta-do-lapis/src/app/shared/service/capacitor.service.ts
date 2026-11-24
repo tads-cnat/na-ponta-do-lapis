@@ -102,6 +102,11 @@ export class CapacitorService {
 
   private fecharDialogAberto(): boolean {
     if (typeof document === 'undefined') return false;
+    const guiaSkip = document.querySelector<HTMLButtonElement>('[data-tour-skip]');
+    if (guiaSkip) {
+      guiaSkip.click();
+      return true;
+    }
     const dialogs = document.querySelectorAll('.p-dialog-mask');
     if (!dialogs.length) return false;
     const topo = dialogs[dialogs.length - 1];

@@ -12,4 +12,5 @@ export interface Usuario {
     papel:string,
     idFamilia?: number | null,
     moedaPadrao?: string | null,
+    onboardingConcluido?: boolean,
 } 

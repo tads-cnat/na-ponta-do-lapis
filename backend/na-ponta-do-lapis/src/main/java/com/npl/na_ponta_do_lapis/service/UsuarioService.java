@@ -92,6 +92,10 @@ public class UsuarioService {
             usuario.setMoedaPadrao(dto.moedaPadrao());
         }
 
+        if (dto.onboardingConcluido() != null) {
+            usuario.setOnboardingConcluido(dto.onboardingConcluido());
+        }
+
         Usuario salvo = usuarioRepository.save(usuario);
         usuarioAuthCacheService.evict(emailAnterior, usernameAnterior, salvo.getEmail(), salvo.getUsername());
         return salvo;

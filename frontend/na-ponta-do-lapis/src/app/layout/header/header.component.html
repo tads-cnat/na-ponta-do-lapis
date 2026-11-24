@@ -98,6 +98,7 @@
           </p-popover>
 
           <a routerLink="/app/perfil"
+             data-tour="header-perfil"
              title="Ir para o perfil"
              class="flex items-center gap-2.5 cursor-pointer no-underline hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7843CD] rounded-xl min-w-0">
             <img class="h-10 w-10 sm:h-11 sm:w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover shrink-0" [src]="usuarioLogado?.fotoPerfil" referrerpolicy="no-referrer" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}">

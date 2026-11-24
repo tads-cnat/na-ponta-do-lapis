@@ -95,6 +95,9 @@ public class Usuario implements UserDetails {
     @Column(name = "termos_aceitos_em")
     private LocalDateTime termosAceitosEm;
 
+    @Column(name = "onboarding_concluido")
+    private Boolean onboardingConcluido = false;
+
     public String getVersaoTermos() {
         return versaoTermos;
     }
@@ -272,5 +275,13 @@ public class Usuario implements UserDetails {
 
     public void setFamilia(Familia familia) {
         this.familia = familia;
+    }
+
+    public boolean isOnboardingConcluido() {
+        return Boolean.TRUE.equals(onboardingConcluido);
+    }
+
+    public void setOnboardingConcluido(Boolean onboardingConcluido) {
+        this.onboardingConcluido = onboardingConcluido;
     }
 }

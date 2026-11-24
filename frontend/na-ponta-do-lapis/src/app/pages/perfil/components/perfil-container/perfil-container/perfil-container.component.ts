@@ -4,6 +4,7 @@ import { AreaPerfilComponentComponent } from '../../area-perfil-component/area-p
 import { AjustesPerfilComponent } from '../../ajustes-do-perfil/ajustes-do-perfil.component';
 import { StorageService } from '../../../../../auth/service/storage.service';
 import { CapacitorService } from '../../../../../shared/service/capacitor.service';
+import { GuiaCondutorService } from '../../../../../shared/service/guia-condutor.service';
 
 
 @Component({
@@ -14,7 +15,12 @@ import { CapacitorService } from '../../../../../shared/service/capacitor.servic
 })
 export class PerfilContainerComponent {
   private readonly router = inject(Router);
+  private readonly guiaCondutorService = inject(GuiaCondutorService);
   protected readonly capacitorService = inject(CapacitorService);
+
+  reverGuia(): void {
+    this.guiaCondutorService.iniciar();
+  }
 
   sairDaConta(): void {
     StorageService.logout();

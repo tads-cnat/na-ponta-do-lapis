@@ -11,7 +11,8 @@ public record UsuarioResponseDTO(
     String fotoPerfil,
     String papel,
     Long idFamilia,
-    Moeda moedaPadrao
+    Moeda moedaPadrao,
+    boolean onboardingConcluido
 ) {
 
     public UsuarioResponseDTO(Usuario usuario){
@@ -23,7 +24,8 @@ public record UsuarioResponseDTO(
             usuario.getFotoPerfil(),
             usuario.getPapel().toString(),
             usuario.getFamilia() != null ? usuario.getFamilia().getId() : null,
-            usuario.getMoedaPadrao()
+            usuario.getMoedaPadrao(),
+            usuario.isOnboardingConcluido()
         );
     }
 }
