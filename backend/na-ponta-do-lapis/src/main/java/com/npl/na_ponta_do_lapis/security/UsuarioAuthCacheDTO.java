@@ -23,7 +23,8 @@ public record UsuarioAuthCacheDTO(
         Moeda moedaPadrao,
         Long familiaId,
         String familiaNome,
-        String familiaFoto
+        String familiaFoto,
+        boolean onboardingConcluido
 ) implements Serializable {
 
     public static UsuarioAuthCacheDTO from(Usuario usuario) {
@@ -40,7 +41,8 @@ public record UsuarioAuthCacheDTO(
                 usuario.getMoedaPadrao(),
                 familia != null ? familia.getId() : null,
                 familia != null ? familia.getNome() : null,
-                familia != null ? familia.getFotoFamilia() : null
+                familia != null ? familia.getFotoFamilia() : null,
+                usuario.isOnboardingConcluido()
         );
     }
 
@@ -55,6 +57,7 @@ public record UsuarioAuthCacheDTO(
         usuario.setFotoPerfil(fotoPerfil);
         usuario.setPapel(papel);
         usuario.setMoedaPadrao(moedaPadrao);
+        usuario.setOnboardingConcluido(onboardingConcluido);
 
         if (familiaId != null) {
             Familia familia = new Familia();

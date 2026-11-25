@@ -14,9 +14,11 @@ public record UsuarioUpdateDTO (
     @Size(min = 6, message = "A senha deve ter no mínimo 6 caracteres ")
     String senha,
 
-    Moeda moedaPadrao
+    Moeda moedaPadrao,
+
+    Boolean onboardingConcluido
 ) {
     public UsuarioUpdateDTO(String nome, String email, String senha) {
-        this(nome, email, null, senha, null);
+        this(nome, email, null, senha, null, null);
     }
 }
