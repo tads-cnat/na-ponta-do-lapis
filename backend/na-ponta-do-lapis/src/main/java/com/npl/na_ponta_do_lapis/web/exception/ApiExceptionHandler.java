@@ -33,6 +33,12 @@ public class ApiExceptionHandler {
                 .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Parâmetros inválidos."));
     }
 
+    @ExceptionHandler(org.springframework.security.authentication.DisabledException.class)
+    public ResponseEntity<ErrorResponse> handleDisabled(org.springframework.security.authentication.DisabledException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse("Sua conta está suspensa. Entre em contato com o suporte."));
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

@@ -46,6 +46,7 @@ public class securityConfig {
                                 .requestMatchers(DOCUMENTATION_API).permitAll()
                                 .requestMatchers("/error").permitAll()
                                 .requestMatchers("/actuator/health/**").permitAll()
+                                .requestMatchers("/v1/admin/**", "/admin/**").hasRole("ADMIN_SITE")
                                 .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();

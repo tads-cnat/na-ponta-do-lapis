@@ -64,6 +64,8 @@ services:
       # E-mail transacional (Resend — recuperação de senha)
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       RESEND_FROM_EMAIL: ${RESEND_FROM_EMAIL:-Na Ponta do Lapis <onboarding@resend.dev>}
+      # E-mails promovidos automaticamente para ADMIN_SITE (exige e-mail verificado)
+      APP_ADMIN_EMAILS: ${APP_ADMIN_EMAILS:-}
       # Análise de faturas com IA (opcionais com defaults seguros)
       FATURA_COOKIE_SECRET: ${FATURA_COOKIE_SECRET:-}
       FATURA_OCR_ENABLED: ${FATURA_OCR_ENABLED:-true}

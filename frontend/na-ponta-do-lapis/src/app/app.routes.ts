@@ -2,6 +2,7 @@ import { Routes, UrlMatchResult, UrlSegment } from '@angular/router';
 import { Capacitor } from '@capacitor/core';
 import { authGuard } from './core/guard/auth.guard';
 import { guestGuard } from './core/guard/guest.guard';
+import { adminGuard } from './admin/guards/admin.guard';
 
 
 export function authRouteMatcher(segments: UrlSegment[]): UrlMatchResult | null {
@@ -62,6 +63,14 @@ export const routes: Routes = [
             { path: 'familia', title: 'Família — Na Ponta do Lápis', loadComponent: () => import('./pages/familia/familia.component').then(m => m.FamiliaComponent) },
             { path: '', redirectTo: 'dashboard', pathMatch: 'full' }
         ]
+    },
+    // Painel Administrativo da Plataforma (exclusivo web + ADMIN_SITE)
+    {
+        path: 'admin',
+        canMatch: [() => !Capacitor.isNativePlatform()],
+        canActivate: [adminGuard],
+        canActivateChild: [adminGuard],
+        loadChildren: () => import('./admin/admin.routes').then(m => m.ADMIN_ROUTES)
     },
     // Redirecionamentos de conveniência para rotas internas
     { path: 'perfil', redirectTo: 'app/perfil' },

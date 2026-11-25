@@ -48,7 +48,7 @@ public class TipoCategoriaController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<TipoCategoriaDTO> criarCategoria(@RequestBody @Valid TipoCategoriaDTO tipoCategoriaDTO){
         TipoCategoria tipoCategoria = tipoCategoriaDTO.toEntity();
         tipoCategoriaService.criarCategoria(tipoCategoria);

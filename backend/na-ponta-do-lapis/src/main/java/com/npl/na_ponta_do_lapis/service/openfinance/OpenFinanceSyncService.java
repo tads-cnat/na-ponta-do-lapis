@@ -598,6 +598,7 @@ public class OpenFinanceSyncService {
         novaTx.setCategoria(categoria);
         novaTx.setContaFinanceira(conta);
         novaTx.setPluggyTransactionId(pluggyTxId);
+        novaTx.setOrigem(com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao.OPEN_FINANCE);
 
         if (parcelamento != null) {
             novaTx.setNumeroParcela(parcelamento.numeroParcela());
