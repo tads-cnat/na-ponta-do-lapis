@@ -71,6 +71,9 @@ public class AuthServiceImpl implements AuthService{
     private final EmailSenderService emailSenderService;
     private final AuthRateLimitService authRateLimitService;
 
+    @Autowired(required = false)
+    private com.npl.na_ponta_do_lapis.service.admin.AdminBootstrapService adminBootstrapService;
+
     @Value("${google.client-id:}")
     private String googleClientId;
 
@@ -169,6 +172,12 @@ public class AuthServiceImpl implements AuthService{
             );
         }
 
+        if (adminBootstrapService != null) {
+            adminBootstrapService.promoverSeElegivel(usuario);
+        }
+        usuario.setUltimoAcessoEm(LocalDateTime.now());
+        usuarioRepository.save(usuario);
+
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
         return new TokenResponseDTO(token);
     }
@@ -209,6 +218,16 @@ public class AuthServiceImpl implements AuthService{
                 usuarioRepository.save(usuario);
             }
         }
+
+        if (!usuario.isAtivo()) {
+            throw new org.springframework.security.authentication.DisabledException("Sua conta está suspensa. Entre em contato com o suporte.");
+        }
+
+        if (adminBootstrapService != null) {
+            adminBootstrapService.promoverSeElegivel(usuario);
+        }
+        usuario.setUltimoAcessoEm(LocalDateTime.now());
+        usuarioRepository.save(usuario);
 
         String token = jwtUtil.generateToken(usuario, jwtUtil.EXPIRATION_TOKEN(Date.from(Instant.now())), usuario.getEmail());
         return GoogleAuthResponseDTO.comToken(token);
@@ -452,6 +471,9 @@ public class AuthServiceImpl implements AuthService{
         usuario.setEmailVerificacaoTokenHash(null);
         usuario.setEmailVerificacaoExpiraEm(null);
         usuarioRepository.save(usuario);
+        if (adminBootstrapService != null) {
+            adminBootstrapService.promoverSeElegivel(usuario);
+        }
         authRateLimitService.resetEmailSend("verify-email", usuario.getEmail());
         return true;
     }

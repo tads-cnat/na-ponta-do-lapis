@@ -35,7 +35,7 @@ public class TransacaoController {
 
     @Operation(summary = "Criar Transacao (simples ou parcelada)",
             description = "Com parcelado=true, 'valor' é o total e são geradas 'totalParcelas' transações.")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping
     public ResponseEntity<List<TransacoesResponseDTO>> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) throws AccessDeniedException {
         List<Transacao> criadas = transacaoService.criarTransacao(transacao);
@@ -44,7 +44,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Listar Transacoe do Usuário Logado")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping("/me")
     public ResponseEntity<List<TransacoesResponseDTO>> listarTransacoesUsuarioLogado() {
         List<Transacao> transacoes = transacaoService.listarTransacoesUsuarioNaSessao();
@@ -55,7 +55,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Buscar Transacao por Descrição")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping("/buscar")
     public ResponseEntity<List<TransacoesResponseDTO>> buscarPorDescricao(@RequestParam String descricao) {
         List<Transacao> transacao = transacaoService.buscarPorDescricao(descricao);
@@ -68,7 +68,7 @@ public class TransacaoController {
 
 
     @Operation(summary = "Buscar Transacao por ID")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping("/{id}")
     public ResponseEntity<TransacoesResponseDTO> buscarPorId(@PathVariable Long id) {
         Transacao transacao = transacaoService.buscarPorId(id);
@@ -77,7 +77,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Atualizar Transacao")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PutMapping("/{id}")
     public ResponseEntity<TransacoesResponseDTO> atualizarTransacao(
            @PathVariable Long id,
@@ -87,7 +87,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Deletar Transacao")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> remover(@PathVariable Long id) throws AccessDeniedException {
         transacaoService.removerTransacao(id);
@@ -95,7 +95,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Deletar Transações em Lote")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping("/excluir-lote")
     public ResponseEntity<Void> removerEmLote(@Valid @RequestBody TransacoesExclusaoLoteDTO dto)
             throws AccessDeniedException {
@@ -104,7 +104,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Confirmar pagamento de uma transação pendente")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PatchMapping("/{id}/confirmar-pagamento")
     public ResponseEntity<TransacoesResponseDTO> confirmarPagamento(@PathVariable Long id)
             throws AccessDeniedException {
@@ -118,7 +118,7 @@ public class TransacaoController {
         @ApiResponse(responseCode = "400", description = "Dados inválidos ou conta não encontrada", content = @Content(schema = @Schema(example = "{\"error\": \"Conta não encontrada\"}"))),
         @ApiResponse(responseCode = "500", description = "Erro interno ao salvar transações")
     })
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping("/lote")
     public ResponseEntity<?> salvarTransacoesEmLote(
             @RequestBody List<TransacaoFaturaDTO> transacoes,
@@ -141,7 +141,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Listar parcelas de um grupo")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping("/parcelamento/{grupoId}")
     public ResponseEntity<List<TransacoesResponseDTO>> listarParcelamento(
             @PathVariable String grupoId) throws AccessDeniedException {
@@ -150,7 +150,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Gerar as parcelas futuras de um grupo")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping("/parcelamento/{grupoId}/futuras")
     public ResponseEntity<List<TransacoesResponseDTO>> gerarParcelasFuturas(
             @PathVariable String grupoId) throws AccessDeniedException {
@@ -160,7 +160,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Gerar as parcelas anteriores de um grupo para histórico")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping("/parcelamento/{grupoId}/anteriores")
     public ResponseEntity<List<TransacoesResponseDTO>> gerarParcelasAnteriores(
             @PathVariable String grupoId) throws AccessDeniedException {
@@ -170,7 +170,7 @@ public class TransacaoController {
     }
 
     @Operation(summary = "Excluir um grupo de parcelamento")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @DeleteMapping("/parcelamento/{grupoId}")
     public ResponseEntity<Void> excluirParcelamento(
             @PathVariable String grupoId,

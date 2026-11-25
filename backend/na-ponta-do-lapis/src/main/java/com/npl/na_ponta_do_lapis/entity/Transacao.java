@@ -63,6 +63,41 @@ public class Transacao {
     @Column(name = "pluggy_transaction_id", length = 100)
     private String pluggyTransactionId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "origem", length = 20)
+    private com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao origem = com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao.MANUAL;
+
+    @Column(name = "criado_em", updatable = false)
+    private LocalDateTime criadoEm;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.criadoEm == null) {
+            this.criadoEm = LocalDateTime.now();
+        }
+        if (this.origem == null) {
+            this.origem = (this.pluggyTransactionId != null && !this.pluggyTransactionId.isBlank())
+                    ? com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao.OPEN_FINANCE
+                    : com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao.MANUAL;
+        }
+    }
+
+    public com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao getOrigem() {
+        return origem != null ? origem : com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao.MANUAL;
+    }
+
+    public void setOrigem(com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao origem) {
+        this.origem = origem;
+    }
+
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
+    }
+
+    public void setCriadoEm(LocalDateTime criadoEm) {
+        this.criadoEm = criadoEm;
+    }
+
 
     public Marcador getMarcador() {
         return marcador;

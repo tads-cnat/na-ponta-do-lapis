@@ -72,7 +72,7 @@ public class FaturaInteligenteController {
             @ApiResponse(responseCode = "500", description = "Erro interno",
                     content = @Content(schema = @Schema(example = "{\"error\": \"Erro interno\"}")))
     })
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping(value = "/analise", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> analisar(
             @RequestParam("arquivo") MultipartFile arquivo,
@@ -163,7 +163,7 @@ public class FaturaInteligenteController {
     }
 
     @Operation(summary = "Verifica se há chave de IA salva na sessão atual ou perfil")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @GetMapping("/sessao")
     public ResponseEntity<FaturaSessaoDTO> obterSessao(
             HttpServletRequest request,
@@ -182,7 +182,7 @@ public class FaturaInteligenteController {
     }
 
     @Operation(summary = "Esquecer a chave de IA guardada no cookie de sessão")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @DeleteMapping("/sessao")
     public ResponseEntity<Void> esquecerSessao(HttpServletRequest request, HttpServletResponse response) {
         cookieHelper.limpar(response, request);
@@ -191,7 +191,7 @@ public class FaturaInteligenteController {
 
     @Operation(summary = "Validação prévia local do arquivo de fatura",
             description = "Verifica em milissegundos se o PDF possui características de fatura e se tem senha, sem usar IA.")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping(value = "/validar-previa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FaturaValidacaoPreviaDTO> validarPrevia(
             @RequestParam("arquivo") MultipartFile arquivo,

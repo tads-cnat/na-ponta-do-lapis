@@ -98,6 +98,31 @@ public class Usuario implements UserDetails {
     @Column(name = "onboarding_concluido")
     private Boolean onboardingConcluido = false;
 
+    @Column(name = "ativo")
+    private Boolean ativo = true;
+
+    @Column(name = "suspenso_em")
+    private LocalDateTime suspensoEm;
+
+    @Column(name = "motivo_suspensao", length = 300)
+    private String motivoSuspensao;
+
+    @Column(name = "criado_em", updatable = false)
+    private LocalDateTime criadoEm;
+
+    @Column(name = "ultimo_acesso_em")
+    private LocalDateTime ultimoAcessoEm;
+
+    @jakarta.persistence.PrePersist
+    protected void onCreate() {
+        if (this.criadoEm == null) {
+            this.criadoEm = LocalDateTime.now();
+        }
+        if (this.ativo == null) {
+            this.ativo = true;
+        }
+    }
+
     public String getVersaoTermos() {
         return versaoTermos;
     }
@@ -198,7 +223,51 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return isAtivo();
+    }
+
+    public boolean isAtivo() {
+        return !Boolean.FALSE.equals(ativo);
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public LocalDateTime getSuspensoEm() {
+        return suspensoEm;
+    }
+
+    public void setSuspensoEm(LocalDateTime suspensoEm) {
+        this.suspensoEm = suspensoEm;
+    }
+
+    public String getMotivoSuspensao() {
+        return motivoSuspensao;
+    }
+
+    public void setMotivoSuspensao(String motivoSuspensao) {
+        this.motivoSuspensao = motivoSuspensao;
+    }
+
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
+    }
+
+    public void setCriadoEm(LocalDateTime criadoEm) {
+        this.criadoEm = criadoEm;
+    }
+
+    public LocalDateTime getUltimoAcessoEm() {
+        return ultimoAcessoEm;
+    }
+
+    public void setUltimoAcessoEm(LocalDateTime ultimoAcessoEm) {
+        this.ultimoAcessoEm = ultimoAcessoEm;
     }
 
     public void setUsername(String username) {

@@ -110,6 +110,7 @@ public class TransacaoService {
             transacao.setDataHora(dto.data().atStartOfDay());
             transacao.setTipo(dto.tipo() != null ? dto.tipo() : TipoTransacao.DESPESA);
             transacao.setEstado(EstadoTransacao.REALIZADA);
+            transacao.setOrigem(com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao.FATURA_PDF);
             transacao.setContaFinanceira(conta);
             transacao.setCategoria(tipoCategoriaService.buscarPorNomeFlexivel(dto.categoria()));
 

@@ -1,9 +1,11 @@
 import { Component, HostListener, inject, OnInit } from '@angular/core';
+import { Capacitor } from '@capacitor/core';
 import { MenuItem } from 'primeng/api';
 import { RouterLink, RouterLinkActive } from '@angular/router'
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { SidebarService } from '../../service/sidebar-service.service';
 import { ThemeService } from '../../service/theme.service';
+import { StorageService } from '../../auth/service/storage.service';
 
 
 @Component({
@@ -18,6 +20,7 @@ export class SidebarComponent implements OnInit {
   sidebarService: SidebarService = inject(SidebarService);
   themeService: ThemeService = inject(ThemeService);
   isMobile: boolean = false;
+  mostrarPainelAdmin: boolean = false;
 
   ngOnInit(): void {
     this.items = [
@@ -28,6 +31,7 @@ export class SidebarComponent implements OnInit {
       {label: 'Família', icon: 'familia', routerLink:'/app/familia'},
       {label: 'Perfil', icon:'ajuste', routerLink:'/app/perfil'},
     ]
+    this.mostrarPainelAdmin = !Capacitor.isNativePlatform() && StorageService.eAdminSiteLogado();
     this.atualizarModoMobile();
   }
 

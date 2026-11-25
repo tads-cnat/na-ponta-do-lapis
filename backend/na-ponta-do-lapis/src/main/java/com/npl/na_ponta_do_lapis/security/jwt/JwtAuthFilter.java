@@ -25,11 +25,18 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private JwtUtil jwtUtil;
     private UsuarioRepository usuarioRepository;
     private UserDetailsServiceImpl userDetailsService;
+    private com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService usuarioAuthCacheService;
 
-    public JwtAuthFilter(JwtUtil jwtUtil, UsuarioRepository usuarioRepository, UserDetailsServiceImpl userDetailsService) {
+    public JwtAuthFilter(
+            JwtUtil jwtUtil,
+            UsuarioRepository usuarioRepository,
+            UserDetailsServiceImpl userDetailsService,
+            com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService usuarioAuthCacheService
+    ) {
         this.jwtUtil = jwtUtil;
         this.usuarioRepository = usuarioRepository;
         this.userDetailsService = userDetailsService;
+        this.usuarioAuthCacheService = usuarioAuthCacheService;
     }
 
     public static String getEmailUsuarioLogado(){
@@ -55,14 +62,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         return null;
     }
 
-    private void toAuthentication(HttpServletRequest req, String email) throws ServletException, IOException {
+    private boolean toAuthentication(HttpServletRequest req, HttpServletResponse res, String email) throws ServletException, IOException {
         UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+
+        if (!userDetails.isEnabled()) {
+            SecurityContextHolder.clearContext();
+            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            res.setContentType("application/json;charset=UTF-8");
+            res.getWriter().write("{\"message\":\"Sua conta está suspensa. Entre em contato com o suporte.\"}");
+            return false;
+        }
 
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
         authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
 
         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+        if (usuarioAuthCacheService != null && userDetails instanceof Usuario usuario && usuario.getId() != null) {
+            usuarioAuthCacheService.registrarAcessoComThrottle(usuario.getId());
+        }
+        return true;
     }
 
     @Override
@@ -95,7 +114,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String email = jwtUtil.extractEmail(token);
 
-        toAuthentication(request, email);
+        if (!toAuthentication(request, response, email)) {
+            return;
+        }
         filterChain.doFilter(request, response);
     }
 }

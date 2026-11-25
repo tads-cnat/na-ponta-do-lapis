@@ -30,4 +30,14 @@
         </a>
 
     }
+    @if (mostrarPainelAdmin) {
+        <div class="mt-auto pt-3 border-t border-slate-200/70">
+            <a [routerLink]="['/admin/dashboard']"
+               (click)="isMobile ? sidebarService.fecharSidebar() : null"
+               class="menuitem flex items-center text-[#7843CD] gap-2.5">
+                <i class="pi pi-shield text-base w-5.5 text-center"></i>
+                <span class="menulabel font-semibold">Painel Admin</span>
+            </a>
+        </div>
+    }
 </aside>
