@@ -35,7 +35,7 @@
             <a [routerLink]="['/admin/dashboard']"
                (click)="isMobile ? sidebarService.fecharSidebar() : null"
                class="menuitem flex items-center text-[#7843CD] gap-2.5">
-                <i class="pi pi-shield text-base w-5.5 text-center"></i>
+                <app-icon name="admin" class="w-5.5" />
                 <span class="menulabel font-semibold">Painel Admin</span>
             </a>
         </div>

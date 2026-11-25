@@ -43,10 +43,11 @@ public class AdminController {
             @RequestParam(required = false) Boolean ativo,
             @RequestParam(required = false) Boolean emailVerificado,
             @RequestParam(required = false) Boolean onboardingConcluido,
+            @RequestParam(required = false) Boolean riscoChurn,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size
     ) {
-        return ResponseEntity.ok(adminPainelService.listarUsuarios(q, papel, ativo, emailVerificado, onboardingConcluido, page, size));
+        return ResponseEntity.ok(adminPainelService.listarUsuarios(q, papel, ativo, emailVerificado, onboardingConcluido, riscoChurn, page, size));
     }
 
     @GetMapping("/usuarios/{id}")

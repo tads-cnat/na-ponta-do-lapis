@@ -354,6 +354,7 @@ public class AdminPainelService {
             Boolean ativo,
             Boolean emailVerificado,
             Boolean onboardingConcluido,
+            Boolean riscoChurn,
             int page,
             int size
     ) {
@@ -396,6 +397,41 @@ public class AdminPainelService {
                 } else {
                     predicates.add(cb.or(cb.isNull(root.get("onboardingConcluido")), cb.isFalse(root.get("onboardingConcluido"))));
                 }
+            }
+            if (Boolean.TRUE.equals(riscoChurn)) {
+                LocalDateTime ha14Dias = LocalDateTime.now().minusDays(14);
+                predicates.add(cb.or(cb.isNull(root.get("ativo")), cb.isTrue(root.get("ativo"))));
+                predicates.add(cb.or(cb.isNull(root.get("ultimoAcessoEm")), cb.lessThan(root.get("ultimoAcessoEm"), ha14Dias)));
+
+                var sqTemTx = query.subquery(Long.class);
+                var t1 = sqTemTx.from(Transacao.class);
+                sqTemTx.select(cb.literal(1L))
+                        .where(cb.equal(t1.get("contaFinanceira").get("usuario").get("id"), root.get("id")));
+
+                var sqTemMeta = query.subquery(Long.class);
+                var m1 = sqTemMeta.from(Meta.class);
+                sqTemMeta.select(cb.literal(1L))
+                        .where(cb.equal(m1.get("usuario").get("id"), root.get("id")));
+
+                predicates.add(cb.or(cb.exists(sqTemTx), cb.exists(sqTemMeta)));
+
+                var sqTxRecente = query.subquery(Long.class);
+                var t2 = sqTxRecente.from(Transacao.class);
+                sqTxRecente.select(cb.literal(1L))
+                        .where(
+                                cb.equal(t2.get("contaFinanceira").get("usuario").get("id"), root.get("id")),
+                                cb.greaterThanOrEqualTo(cb.coalesce(t2.get("criadoEm"), t2.get("dataHora")), ha14Dias)
+                        );
+                predicates.add(cb.not(cb.exists(sqTxRecente)));
+
+                var sqAporteRecente = query.subquery(Long.class);
+                var a2 = sqAporteRecente.from(AporteMeta.class);
+                sqAporteRecente.select(cb.literal(1L))
+                        .where(
+                                cb.equal(a2.get("usuario").get("id"), root.get("id")),
+                                cb.greaterThanOrEqualTo(a2.get("dataAporte"), ha14Dias)
+                        );
+                predicates.add(cb.not(cb.exists(sqAporteRecente)));
             }
             return cb.and(predicates.toArray(new jakarta.persistence.criteria.Predicate[0]));
         };
@@ -843,6 +879,41 @@ public class AdminPainelService {
                     ip
             );
             return new AdminNotificacaoResultadoDTO(1, false);
+        }
+
+        if ("RISCO_CHURN".equalsIgnoreCase(req.segmento())) {
+            LocalDateTime ha14Dias = LocalDateTime.now().minusDays(14);
+            @SuppressWarnings("unchecked")
+            List<Usuario> emRisco = entityManager.createQuery(
+                            """
+                            SELECT u FROM Usuario u
+                            WHERE (u.ativo IS NULL OR u.ativo = true)
+                              AND (EXISTS (SELECT 1 FROM Transacao t WHERE t.contaFinanceira.usuario.id = u.id)
+                                   OR EXISTS (SELECT 1 FROM Meta m WHERE m.usuario.id = u.id))
+                              AND (u.ultimoAcessoEm IS NULL OR u.ultimoAcessoEm < :d14)
+                              AND NOT EXISTS (SELECT 1 FROM Transacao t2 WHERE t2.contaFinanceira.usuario.id = u.id AND COALESCE(t2.criadoEm, t2.dataHora) >= :d14)
+                              AND NOT EXISTS (SELECT 1 FROM AporteMeta a2 WHERE a2.usuario.id = u.id AND a2.dataAporte >= :d14)
+                            """)
+                    .setParameter("d14", ha14Dias)
+                    .getResultList();
+
+            List<Notificacao> lote = new ArrayList<>(emRisco.size());
+            for (Usuario u : emRisco) {
+                lote.add(new Notificacao(u, titulo, mensagem, TipoNotificacao.SISTEMA, link));
+            }
+            notificacaoRepository.saveAll(lote);
+
+            registrarAuditoria(
+                    admin,
+                    "ENVIAR_NOTIFICACAO_RISCO_CHURN",
+                    "NOTIFICACAO",
+                    "RISCO_CHURN",
+                    "Usuários em risco de churn (" + emRisco.size() + ")",
+                    null,
+                    Map.of("titulo", titulo, "destinatarios", emRisco.size()),
+                    ip
+            );
+            return new AdminNotificacaoResultadoDTO(emRisco.size(), false);
         }
 
         List<Usuario> ativos = usuarioRepository.listarAtivos();
