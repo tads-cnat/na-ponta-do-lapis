@@ -66,6 +66,12 @@ import {
             </button>
           }
         </div>
+        <div class="md:col-span-6 flex items-center justify-between pt-1 border-t border-slate-100">
+          <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 cursor-pointer select-none">
+            <input type="checkbox" [(ngModel)]="filtroRiscoChurn" (change)="buscar(0)" class="rounded border-slate-300 accent-[#7843CD]" />
+            <span>Somente em risco de churn (ativados há 14+ dias sem atividade)</span>
+          </label>
+        </div>
       </div>
 
       @if (feedback()) {
@@ -315,6 +321,7 @@ export class AdminUsuariosComponent implements OnInit {
   filtroPapel = '';
   filtroAtivo = '';
   filtroEmail = '';
+  filtroRiscoChurn = false;
 
   readonly pagina = signal<AdminPageResponse<AdminUsuarioResumo> | null>(null);
   readonly carregando = signal(false);
@@ -331,11 +338,12 @@ export class AdminUsuariosComponent implements OnInit {
     this.filtroPapel = qp.get('papel') ?? '';
     this.filtroAtivo = qp.get('ativo') ?? '';
     this.filtroEmail = qp.get('emailVerificado') ?? '';
+    this.filtroRiscoChurn = qp.get('riscoChurn') === 'true';
     this.buscar(0);
   }
 
   temFiltrosAtivos(): boolean {
-    return !!(this.filtroQ.trim() || this.filtroPapel || this.filtroAtivo || this.filtroEmail);
+    return !!(this.filtroQ.trim() || this.filtroPapel || this.filtroAtivo || this.filtroEmail || this.filtroRiscoChurn);
   }
 
   limparFiltros(): void {
@@ -343,6 +351,7 @@ export class AdminUsuariosComponent implements OnInit {
     this.filtroPapel = '';
     this.filtroAtivo = '';
     this.filtroEmail = '';
+    this.filtroRiscoChurn = false;
     this.router.navigate([], { relativeTo: this.route, queryParams: {} });
     this.buscar(0);
   }
@@ -362,6 +371,7 @@ export class AdminUsuariosComponent implements OnInit {
         papel: this.filtroPapel || undefined,
         ativo: this.filtroAtivo || undefined,
         emailVerificado: this.filtroEmail || undefined,
+        riscoChurn: this.filtroRiscoChurn || undefined,
         page,
         size: 20,
       })

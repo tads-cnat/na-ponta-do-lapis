@@ -41,6 +41,7 @@ import { AdminApiService, AdminDashboardResumo, extrairMensagemErroAdmin } from 
             @if (r.usuariosRiscoChurn > 0) {
               <a
                 [routerLink]="['/admin/comunicacao']"
+                [queryParams]="{ segmento: 'RISCO_CHURN' }"
                 class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-purple-50 hover:bg-purple-100 border border-purple-200 text-[#7843CD] text-xs font-semibold transition-colors no-underline"
                 title="Usuários já ativados sem acesso, transação ou aporte nos últimos 14 dias">
                 <i class="pi pi-exclamation-triangle text-xs"></i>

@@ -1,13 +1,13 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { AdminApiService, AdminUsuarioResumo, extrairMensagemErroAdmin } from '../../services/admin-api.service';
 
 @Component({
   selector: 'app-admin-comunicacao',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, RouterLink],
   template: `
     <div class="flex flex-col gap-5 max-w-3xl">
       <div>
@@ -29,27 +29,64 @@ import { AdminApiService, AdminUsuarioResumo, extrairMensagemErroAdmin } from '.
       }
 
       <div class="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col gap-4 shadow-xs">
-        <div class="flex gap-3">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
           <button
             type="button"
             (click)="modo = 'global'"
-            class="flex-1 py-2.5 px-4 rounded-xl border text-xs font-semibold cursor-pointer"
+            class="py-2.5 px-3 rounded-xl border text-xs font-semibold cursor-pointer"
             [class.border-[#7843CD]]="modo === 'global'"
             [class.bg-purple-50]="modo === 'global'"
             [class.text-[#7843CD]]="modo === 'global'"
             [class.border-slate-200]="modo !== 'global'">
-            <i class="pi pi-globe mr-1.5"></i> Todos os usuários ativos
+            <i class="pi pi-globe mr-1.5"></i> Todos os ativos
+          </button>
+          <button
+            type="button"
+            (click)="modo = 'churn'"
+            class="py-2.5 px-3 rounded-xl border text-xs font-semibold cursor-pointer"
+            [class.border-[#7843CD]]="modo === 'churn'"
+            [class.bg-purple-50]="modo === 'churn'"
+            [class.text-[#7843CD]]="modo === 'churn'"
+            [class.border-slate-200]="modo !== 'churn'">
+            <i class="pi pi-exclamation-triangle mr-1.5"></i> Em risco de churn (14+ dias)
           </button>
           <button
             type="button"
             (click)="modo = 'individual'"
-            class="flex-1 py-2.5 px-4 rounded-xl border text-xs font-semibold cursor-pointer"
+            class="py-2.5 px-3 rounded-xl border text-xs font-semibold cursor-pointer"
             [class.border-[#7843CD]]="modo === 'individual'"
             [class.bg-purple-50]="modo === 'individual'"
             [class.text-[#7843CD]]="modo === 'individual'"
             [class.border-slate-200]="modo !== 'individual'">
             <i class="pi pi-user mr-1.5"></i> Usuário específico
           </button>
+        </div>
+
+        @if (modo === 'churn') {
+          <div class="p-3 rounded-xl bg-purple-50/70 border border-purple-200 text-xs text-slate-700 flex flex-wrap items-center justify-between gap-2">
+            <span>
+              <strong>Público-alvo:</strong> apenas usuários já ativados que não acessam nem lançam transações/aportes há <strong>14 dias ou mais</strong>.
+            </span>
+            <a
+              [routerLink]="['/admin/usuarios']"
+              [queryParams]="{ riscoChurn: 'true' }"
+              class="font-semibold text-[#7843CD] hover:underline whitespace-nowrap">
+              Ver quem são &rarr;
+            </a>
+          </div>
+        }
+
+        <!-- Templates Rápidos -->
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mr-1">Templates:</span>
+          @for (tpl of templates; track tpl.rotulo) {
+            <button
+              type="button"
+              (click)="aplicarTemplate(tpl)"
+              class="px-2.5 py-1 rounded-lg border border-slate-200 hover:border-[#7843CD]/50 hover:bg-purple-50/50 text-xs font-medium text-slate-700 cursor-pointer transition-colors">
+              {{ tpl.rotulo }}
+            </button>
+          }
         </div>
 
         @if (modo === 'individual') {
@@ -105,8 +142,16 @@ import { AdminApiService, AdminUsuarioResumo, extrairMensagemErroAdmin } from '.
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-600 mb-1">Link interno opcional</label>
-          <input type="text" [(ngModel)]="linkRedirecionamento" maxlength="200" placeholder="Ex.: /app/metas ou /app/perfil" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm" />
+          <label class="block text-xs font-semibold text-slate-600 mb-1">Abrir tela ao clicar (opcional)</label>
+          <select [(ngModel)]="linkRedirecionamento" class="w-full px-3.5 py-2 rounded-xl border border-slate-200 text-sm bg-white">
+            <option value="">Nenhuma (apenas marcar como lida)</option>
+            <option value="/app/dashboard">Dashboard (/app/dashboard)</option>
+            <option value="/app/transacoes">Transações (/app/transacoes)</option>
+            <option value="/app/contas">Contas e Cartões (/app/contas)</option>
+            <option value="/app/metas">Metas (/app/metas)</option>
+            <option value="/app/familia">Família (/app/familia)</option>
+            <option value="/app/perfil">Meu Perfil (/app/perfil)</option>
+          </select>
         </div>
 
         <!-- Preview -->
@@ -135,7 +180,7 @@ export class AdminComunicacaoComponent implements OnInit {
   private readonly adminApi = inject(AdminApiService);
   private readonly route = inject(ActivatedRoute);
 
-  modo: 'global' | 'individual' = 'global';
+  modo: 'global' | 'churn' | 'individual' = 'global';
   termoBuscaUsuario = '';
   titulo = '';
   mensagem = '';
@@ -146,10 +191,38 @@ export class AdminComunicacaoComponent implements OnInit {
   readonly enviando = signal(false);
   readonly feedback = signal<{ tipo: 'ok' | 'erro'; texto: string } | null>(null);
 
+  readonly templates = [
+    {
+      rotulo: 'Reengajar inativos',
+      titulo: 'Sentimos sua falta no Na Ponta do Lápis!',
+      mensagem: 'Faz alguns dias que você não registra seus lançamentos. Importe sua fatura PDF ou atualize suas metas em 1 minuto!',
+      link: '/app/transacoes',
+    },
+    {
+      rotulo: 'Lembrete de fatura PDF',
+      titulo: 'Sua fatura do cartão já fechou?',
+      mensagem: 'Importe o PDF da sua fatura e deixe o Na Ponta do Lápis categorizar seus gastos automaticamente.',
+      link: '/app/transacoes',
+    },
+    {
+      rotulo: 'Novidade no app',
+      titulo: 'Temos novidades para você!',
+      mensagem: 'Confira as últimas melhorias no app para acompanhar suas contas, metas e finanças da família com mais facilidade.',
+      link: '/app/dashboard',
+    },
+  ];
+
   private buscaTimer: ReturnType<typeof setTimeout> | null = null;
+
+  aplicarTemplate(tpl: { titulo: string; mensagem: string; link: string }): void {
+    this.titulo = tpl.titulo;
+    this.mensagem = tpl.mensagem;
+    this.linkRedirecionamento = tpl.link;
+  }
 
   ngOnInit(): void {
     const qp = this.route.snapshot.queryParamMap;
+    const segmento = qp.get('segmento');
     const uid = Number(qp.get('usuarioId'));
     if (uid > 0) {
       this.modo = 'individual';
@@ -158,6 +231,8 @@ export class AdminComunicacaoComponent implements OnInit {
         nome: qp.get('nome') ?? `Usuário #${uid}`,
         email: qp.get('email') ?? '',
       });
+    } else if (segmento === 'RISCO_CHURN') {
+      this.modo = 'churn';
     }
   }
 
@@ -205,6 +280,7 @@ export class AdminComunicacaoComponent implements OnInit {
         mensagem: this.mensagem.trim(),
         linkRedirecionamento: this.linkRedirecionamento.trim() || undefined,
         usuarioId: this.modo === 'individual' ? dest!.id : null,
+        segmento: this.modo === 'churn' ? 'RISCO_CHURN' : this.modo === 'individual' ? 'INDIVIDUAL' : 'TODOS',
       })
       .subscribe({
         next: (res) => {
@@ -212,9 +288,11 @@ export class AdminComunicacaoComponent implements OnInit {
           this.titulo = '';
           this.mensagem = '';
           this.linkRedirecionamento = '';
+          const tipoLabel =
+            this.modo === 'churn' ? 'em risco de churn' : res.global ? 'envio global' : 'envio individual';
           this.feedback.set({
             tipo: 'ok',
-            texto: `Notificação entregue para ${res.destinatarios} usuário(s) (${res.global ? 'envio global' : 'envio individual'}).`,
+            texto: `Notificação entregue para ${res.destinatarios} usuário(s) (${tipoLabel}).`,
           });
         },
         error: (err) => {

@@ -164,7 +164,8 @@ public final class AdminDTOs {
             @NotBlank @Size(max = 120) String titulo,
             @NotBlank @Size(max = 500) String mensagem,
             @Size(max = 200) String linkRedirecionamento,
-            Long usuarioId
+            Long usuarioId,
+            String segmento
     ) {}
 
     public record AdminNotificacaoResultadoDTO(

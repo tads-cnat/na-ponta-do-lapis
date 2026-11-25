@@ -184,6 +184,7 @@ export class AdminApiService {
     ativo?: string;
     emailVerificado?: string;
     onboardingConcluido?: string;
+    riscoChurn?: boolean;
     page?: number;
     size?: number;
   }): Observable<AdminPageResponse<AdminUsuarioResumo>> {
@@ -198,6 +199,9 @@ export class AdminApiService {
     }
     if (filtros.onboardingConcluido === 'true' || filtros.onboardingConcluido === 'false') {
       params = params.set('onboardingConcluido', filtros.onboardingConcluido);
+    }
+    if (filtros.riscoChurn) {
+      params = params.set('riscoChurn', 'true');
     }
     return this.http.get<AdminPageResponse<AdminUsuarioResumo>>(`${this.baseUrl}/usuarios`, { params });
   }
@@ -266,6 +270,7 @@ export class AdminApiService {
     mensagem: string;
     linkRedirecionamento?: string;
     usuarioId?: number | null;
+    segmento?: 'TODOS' | 'RISCO_CHURN' | 'INDIVIDUAL';
   }): Observable<{ destinatarios: number; global: boolean }> {
     return this.http.post<{ destinatarios: number; global: boolean }>(`${this.baseUrl}/notificacoes/enviar`, payload);
   }

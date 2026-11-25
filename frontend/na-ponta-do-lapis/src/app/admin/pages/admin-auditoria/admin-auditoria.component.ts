@@ -36,6 +36,7 @@ import { AdminApiService, AdminAuditLog, AdminPageResponse, extrairMensagemErroA
           <option value="CRIAR_CONQUISTA">CRIAR_CONQUISTA</option>
           <option value="EDITAR_CONQUISTA">EDITAR_CONQUISTA</option>
           <option value="ENVIAR_NOTIFICACAO_GLOBAL">ENVIAR_NOTIFICACAO_GLOBAL</option>
+          <option value="ENVIAR_NOTIFICACAO_RISCO_CHURN">ENVIAR_NOTIFICACAO_RISCO_CHURN</option>
           <option value="ENVIAR_NOTIFICACAO_INDIVIDUAL">ENVIAR_NOTIFICACAO_INDIVIDUAL</option>
         </select>
 
@@ -178,6 +179,7 @@ export class AdminAuditoriaComponent implements OnInit {
       CRIAR_CONQUISTA: 'Nova conquista',
       EDITAR_CONQUISTA: 'Edição de conquista',
       ENVIAR_NOTIFICACAO_GLOBAL: 'Aviso global',
+      ENVIAR_NOTIFICACAO_RISCO_CHURN: 'Aviso risco de churn',
       ENVIAR_NOTIFICACAO_INDIVIDUAL: 'Aviso individual',
     };
     return mapa[acao] ?? acao;

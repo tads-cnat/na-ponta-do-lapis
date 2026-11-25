@@ -13,7 +13,7 @@ import { StorageService } from '../../../auth/service/storage.service';
         class="fixed inset-y-0 left-0 z-40 w-64 h-dvh bg-slate-950 text-slate-100 flex flex-col transition-transform duration-200 lg:sticky lg:top-0 lg:h-screen lg:shrink-0 lg:translate-x-0"
         [class.-translate-x-full]="!menuAberto()"
         [class.translate-x-0]="menuAberto()">
-        <div class="h-20 px-5 flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div class="h-20 px-5 flex items-center justify-between lg:justify-center border-b border-slate-800 shrink-0">
           <a routerLink="/admin/dashboard" class="flex items-center no-underline">
             <img src="logo.svg" alt="Na Ponta do Lápis" class="h-12 w-auto" />
           </a>
