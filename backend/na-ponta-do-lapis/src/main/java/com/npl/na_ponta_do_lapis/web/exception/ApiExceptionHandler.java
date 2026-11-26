@@ -13,6 +13,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
@@ -86,14 +87,32 @@ public class ApiExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponse(resumo, erros));
     }
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex) {
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<ErrorResponse> handleResponseStatus(ResponseStatusException ex) {
+        String msg = ex.getReason() != null ? ex.getReason() : "Erro na requisição.";
+        return ResponseEntity.status(ex.getStatusCode()).body(new ErrorResponse(msg));
+    }
+
+    @ExceptionHandler({NotFoundException.class, ContaIdNaoExisteException.class, UsuarioIdNaoExisteException.class})
+    public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Recurso não encontrado."));
     }
 
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex) {
+    @ExceptionHandler({NaoEAdminFamiliaException.class, NaoEdaMesmaFamiliaException.class})
+    public ResponseEntity<ErrorResponse> handleFamiliaForbidden(RuntimeException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Acesso negado."));
+    }
+
+    @ExceptionHandler(EmailJaCadastradoException.class)
+    public ResponseEntity<ErrorResponse> handleEmailConflict(EmailJaCadastradoException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "E-mail já cadastrado."));
+    }
+
+    @ExceptionHandler({BusinessException.class, SaldoInsuficienteException.class})
+    public ResponseEntity<ErrorResponse> handleBusiness(RuntimeException ex) {
         return ResponseEntity.badRequest()
                 .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Requisição inválida."));
     }

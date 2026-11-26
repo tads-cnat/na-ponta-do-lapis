@@ -49,7 +49,7 @@ public class ContaFinanceiraController {
 
     @Operation(summary = "Listar contas")
     @GetMapping
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('ADMIN_SITE')")
     public ResponseEntity<List<ContaFinanceiraResponseDTO>> listarTodos(){
         return ResponseEntity.status(HttpStatus.OK).body(contaService.listarContas());
     }

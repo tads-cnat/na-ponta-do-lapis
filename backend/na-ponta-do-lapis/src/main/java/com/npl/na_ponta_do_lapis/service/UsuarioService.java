@@ -75,7 +75,15 @@ public class UsuarioService {
         }
 
         if (dto.email() != null && !dto.email().trim().isEmpty()) {
-            usuario.setEmail(dto.email().trim());
+            String novoEmail = dto.email().trim();
+            if (!novoEmail.equalsIgnoreCase(emailAnterior)) {
+                usuarioRepository.findByEmailIgnoreCase(novoEmail)
+                        .filter(existente -> !existente.getId().equals(usuario.getId()))
+                        .ifPresent(existente -> {
+                            throw new com.npl.na_ponta_do_lapis.web.exception.EmailJaCadastradoException("Este e-mail já está em uso por outra conta.");
+                        });
+                usuario.setEmail(novoEmail);
+            }
         }
 
         if (dto.senha() != null && !dto.senha().trim().isEmpty()) {
@@ -132,6 +140,12 @@ public class UsuarioService {
             entityManager.createQuery("DELETE FROM Meta m WHERE m.usuario.id = :uid")
                     .setParameter("uid", uid)
                     .executeUpdate();
+            entityManager.createQuery("DELETE FROM AssinaturaRecorrente a WHERE a.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
+            entityManager.createQuery("DELETE FROM ConsultorFeedback f WHERE f.usuario.id = :uid")
+                    .setParameter("uid", uid)
+                    .executeUpdate();
             entityManager.createQuery("DELETE FROM ContaFinanceira c WHERE c.usuario.id = :uid")
                     .setParameter("uid", uid)
                     .executeUpdate();
@@ -158,7 +172,9 @@ public class UsuarioService {
                     .executeUpdate();
 
             if (familiaId != null) {
+                boolean eraAdminFamilia = usuario.isAdminFamilia();
                 usuario.setFamilia(null);
+                usuario.setAdminFamilia(false);
                 usuarioRepository.saveAndFlush(usuario);
                 Long restantes = entityManager.createQuery(
                         "SELECT COUNT(u) FROM Usuario u WHERE u.familia.id = :fid", Long.class)
@@ -171,6 +187,24 @@ public class UsuarioService {
                     entityManager.createQuery("DELETE FROM Familia f WHERE f.id = :fid")
                             .setParameter("fid", familiaId)
                             .executeUpdate();
+                } else if (eraAdminFamilia) {
+                    Long adminsRestantes = entityManager.createQuery(
+                            "SELECT COUNT(u) FROM Usuario u WHERE u.familia.id = :fid AND u.adminFamilia = true", Long.class)
+                            .setParameter("fid", familiaId)
+                            .getSingleResult();
+                    if (adminsRestantes == null || adminsRestantes == 0L) {
+                        List<Usuario> membrosRestantes = entityManager.createQuery(
+                                "SELECT u FROM Usuario u WHERE u.familia.id = :fid ORDER BY u.id ASC", Usuario.class)
+                                .setParameter("fid", familiaId)
+                                .setMaxResults(1)
+                                .getResultList();
+                        if (!membrosRestantes.isEmpty()) {
+                            Usuario sucessor = membrosRestantes.get(0);
+                            sucessor.setAdminFamilia(true);
+                            usuarioRepository.save(sucessor);
+                            usuarioAuthCacheService.evictPorUsuario(sucessor);
+                        }
+                    }
                 }
             }
 

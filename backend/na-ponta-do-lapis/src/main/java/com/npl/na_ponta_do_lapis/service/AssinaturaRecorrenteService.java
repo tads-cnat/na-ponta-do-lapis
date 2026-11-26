@@ -9,14 +9,16 @@ import com.npl.na_ponta_do_lapis.web.dto.AssinaturaRecorrenteResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.AssinaturasResumoDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ParcelamentoResumoDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacoesResponseDTO;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -33,6 +35,9 @@ public class AssinaturaRecorrenteService {
     private static final int MAX_CICLOS_POR_EXECUCAO = 12;
 
     private final AssinaturaRecorrenteRepository assinaturaRepository;
+
+    @Autowired(required = false)
+    private MetaService metaService;
     private final ContaFinanceiraService contaFinanceiraService;
     private final TipoCategoriaRepository categoriaRepository;
     private final MarcadorRepository marcadorRepository;
@@ -163,6 +168,7 @@ public class AssinaturaRecorrenteService {
      * Executa diariamente às 06:15 (America/Sao_Paulo) para lançar transações de assinaturas ativas vencidas.
      */
     @Scheduled(cron = "0 15 6 * * *", zone = "America/Sao_Paulo")
+    @SchedulerLock(name = "assinaturasProcessarVencidas", lockAtLeastFor = "PT2M", lockAtMostFor = "PT20M")
     @Transactional
     public void processarVencidasHoje() {
         LocalDate hoje = LocalDate.now();
@@ -342,13 +348,13 @@ public class AssinaturaRecorrenteService {
         tx.setOrigem(OrigemTransacao.MANUAL);
 
         if (tx.getEstado() == EstadoTransacao.REALIZADA) {
-            if (tx.getTipo() == TipoTransacao.DESPESA) {
-                conta.setSaldo(conta.getSaldo().subtract(tx.getValor()));
-            } else {
-                conta.setSaldo(conta.getSaldo().add(tx.getValor()));
-            }
+            ContaFinanceiraService.aplicarMovimentacaoSaldo(conta, tx.getTipo(), tx.getValor(), false);
         }
 
-        return transacaoRepository.save(tx);
+        Transacao salva = transacaoRepository.save(tx);
+        if (salva.getEstado() == EstadoTransacao.REALIZADA && metaService != null && assinatura.getUsuario() != null) {
+            metaService.verificarTetosDeGasto(assinatura.getUsuario());
+        }
+        return salva;
     }
 }

@@ -37,7 +37,7 @@ public class FamiliaController {
     }
 
     @Operation(summary = "Listar Famílias")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('ADMIN_SITE')")
     @GetMapping
     public ResponseEntity<List<FamiliaResponseDTO>> listarFamilias() {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.listarFamilias());
@@ -110,7 +110,7 @@ public class FamiliaController {
     }
 
     @Operation(summary = "Adicionar usuário na família")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("authentication.principal.adminFamilia or hasRole('ADMIN_SITE')")
     @PostMapping("/{familiaId}/membros")
     public ResponseEntity<FamiliaResponseDTO> adicionarUsuarioNaFamilia(@PathVariable Long familiaId, @RequestParam String username) {
         return ResponseEntity.status(HttpStatus.OK).body(familiaService.adicionarUsuarioNaFamilia(username, familiaId));

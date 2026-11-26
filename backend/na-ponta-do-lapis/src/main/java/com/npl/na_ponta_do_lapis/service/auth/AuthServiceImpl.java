@@ -308,11 +308,12 @@ public class AuthServiceImpl implements AuthService{
             if (!"true".equalsIgnoreCase(json.path("email_verified").asText(""))) {
                 throw new AuthenticationCredentialsNotFoundException("E-mail do Google não verificado.");
             }
-            if (googleClientId != null && !googleClientId.isBlank()) {
-                String aud = json.path("aud").asText("");
-                if (!googleClientId.equals(aud)) {
-                    throw new AuthenticationCredentialsNotFoundException("Token do Google não pertence a este aplicativo.");
-                }
+            if (googleClientId == null || googleClientId.isBlank()) {
+                throw new AuthenticationCredentialsNotFoundException("Login com Google não está configurado no servidor.");
+            }
+            String aud = json.path("aud").asText("");
+            if (!googleClientId.equals(aud)) {
+                throw new AuthenticationCredentialsNotFoundException("Token do Google não pertence a este aplicativo.");
             }
             return json;
         } catch (AuthenticationCredentialsNotFoundException e) {

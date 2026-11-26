@@ -5,6 +5,7 @@ import com.npl.na_ponta_do_lapis.service.UsuarioService;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
+import com.npl.na_ponta_do_lapis.web.exception.NotFoundException;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,10 +26,12 @@ public class UsuarioController {
 
     private UsuarioService usuarioService;
     private JwtUtil jwtUtil;
+    private PasswordEncoder passwordEncoder;
 
-    public UsuarioController(UsuarioService usuarioService, JwtUtil jwtUtil){
+    public UsuarioController(UsuarioService usuarioService, JwtUtil jwtUtil, PasswordEncoder passwordEncoder){
         this.usuarioService = usuarioService;
         this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Operation(summary = "Listar Usuários")
@@ -62,6 +66,9 @@ public class UsuarioController {
     @GetMapping("/username/{username}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorUsername(@PathVariable String username) {
         Usuario usuario = usuarioService.buscarUsuarioPorUsername(username);
+        if (usuario == null) {
+            throw new NotFoundException("Usuário não encontrado.");
+        }
         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO(usuario);
         return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
     }
@@ -71,8 +78,7 @@ public class UsuarioController {
     @PostMapping()
     public ResponseEntity<UsuarioResponseDTO> criarUsuario(@RequestBody @Valid UsuarioDTO usuarioDTO){
         Usuario usuarioNovo = usuarioDTO.toEntity();
-//      usuarioNovo.setSenha(passwordEncoder.encode(usuarioNovo.getSenha()));
-        usuarioNovo.setSenha(usuarioDTO.senha());
+        usuarioNovo.setSenha(passwordEncoder.encode(usuarioDTO.senha()));
         Usuario salvo = usuarioService.cadastrarUsuario(usuarioNovo);
 
         UsuarioResponseDTO response = new UsuarioResponseDTO(salvo);

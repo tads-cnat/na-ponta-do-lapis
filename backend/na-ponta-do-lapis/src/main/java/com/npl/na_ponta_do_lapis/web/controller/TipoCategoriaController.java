@@ -48,7 +48,7 @@ public class TipoCategoriaController {
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('ADMIN_SITE')")
     public ResponseEntity<TipoCategoriaDTO> criarCategoria(@RequestBody @Valid TipoCategoriaDTO tipoCategoriaDTO){
         TipoCategoria tipoCategoria = tipoCategoriaDTO.toEntity();
         tipoCategoriaService.criarCategoria(tipoCategoria);
@@ -56,7 +56,7 @@ public class TipoCategoriaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('ADMIN_SITE')")
     public ResponseEntity<Void> deletarCategoria(@PathVariable Long id){
         tipoCategoriaService.deletarCategoria(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

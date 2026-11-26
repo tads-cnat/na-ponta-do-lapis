@@ -190,9 +190,14 @@ public class MetaService {
 
         validarAcessoMeta(meta, usuarioAutenticado);
 
+        if (meta.getTipoMeta() == com.npl.na_ponta_do_lapis.entity.enums.TipoMeta.GASTO) {
+            throw new com.npl.na_ponta_do_lapis.web.exception.BusinessException(
+                    "Metas de teto de gasto são acompanhadas automaticamente pelas suas despesas e não aceitam aportes manuais.");
+        }
+
         ContaFinanceira contaOrigem = null;
         if (dto.contaOrigemId() != null) {
-            contaOrigem = contaFinanceiraRepository.findById(dto.contaOrigemId())
+            contaOrigem = contaFinanceiraRepository.findByIdForUpdate(dto.contaOrigemId())
                     .orElseThrow(() -> new ContaIdNaoExisteException("Conta de origem não encontrada"));
 
             if (!contaOrigem.getUsuario().getId().equals(usuarioAutenticado.getId())) {
@@ -223,7 +228,8 @@ public class MetaService {
 
                 // 4. Se a Meta possui uma conta destino vinculada diferente da origem, credita nela (Transferência)
                 if (meta.getConta() != null) {
-                    ContaFinanceira contaDestino = meta.getConta();
+                    ContaFinanceira contaDestino = contaFinanceiraRepository.findByIdForUpdate(meta.getConta().getId())
+                            .orElse(meta.getConta());
                     contaDestino.setSaldo(contaDestino.getSaldo().add(dto.valor()));
                     contaFinanceiraRepository.save(contaDestino);
 
