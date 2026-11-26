@@ -14,18 +14,18 @@
       [pTooltip]="isMobile ? 'Fechar menu' : (sidebarService.aberto() ? 'Recolher menu' : 'Expandir menu')"
       tooltipPosition="right"
       (click)="sidebarService.toggleSidebar()"
-      class="menu-btn w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-[#7843CD] hover:bg-purple-50/80 border-0 bg-transparent transition-colors cursor-pointer shrink-0">
+      class="menu-btn w-11 h-11 md:w-10 md:h-10 flex items-center justify-center rounded-xl text-slate-500 hover:text-[#7843CD] hover:bg-purple-50/80 border-0 bg-transparent transition-colors cursor-pointer shrink-0">
       @if (isMobile) {
-        <app-icon name="close" class="w-4.5 h-4.5" />
+        <app-icon name="close" class="w-5 h-5" />
       } @else if (sidebarService.aberto()) {
         <app-icon name="recolher" class="w-5 h-5" />
       } @else {
-        <app-icon name="menu" class="w-4.5 h-4.5" />
+        <app-icon name="expandir" class="w-5 h-5" />
       }
     </button>
   </div>
 
-  <div class="flex flex-col flex-1 gap-2.5 pt-4 overflow-y-auto overflow-x-hidden">
+  <div class="flex flex-col flex-1 gap-2.5 pt-6 overflow-y-auto overflow-x-hidden">
     <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }"
        data-tour="nova-transacao"
        (click)="isMobile ? sidebarService.fecharSidebar() : null"

@@ -24,7 +24,7 @@ interface ProximaCobrancaItem {
   standalone: true,
   imports: [CommonModule, RouterLink, AppMoedaPipe],
   template: `
-    <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-5 flex flex-col gap-4">
+    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm p-4 sm:p-6 h-full flex flex-col gap-4">
       <div class="flex items-start justify-between gap-3">
         <div>
           <h2 class="text-base font-bold text-slate-900 m-0">Fixos e Parcelas do Mês</h2>
@@ -50,7 +50,7 @@ interface ProximaCobrancaItem {
       </div>
 
       <!-- Resumo numérico -->
-      <div class="grid grid-cols-3 gap-2.5">
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
         <div class="rounded-xl bg-purple-50/70 border border-purple-200/60 p-3">
           <span class="text-[11px] font-semibold text-purple-900 block">Comprometido/mês</span>
           <strong class="text-sm sm:text-base font-extrabold text-[#7843CD] block mt-0.5">

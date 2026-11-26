@@ -36,7 +36,7 @@ public class ConviteService {
 
     @Transactional
     public ConviteResponseDTO enviarConvite(ConviteDTO conviteDTO, Usuario solicitante) {
-        if (solicitante.getPapel() != Papel.ADMIN_FAMILIA) {
+        if (!solicitante.isAdminFamilia()) {
             throw new RuntimeException("Apenas admins podem enviar convite");
         }
 

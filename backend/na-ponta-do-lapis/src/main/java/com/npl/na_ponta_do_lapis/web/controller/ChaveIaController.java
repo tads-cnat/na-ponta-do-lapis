@@ -28,14 +28,14 @@ public class ChaveIaController {
 
     @Operation(summary = "Listar chaves de IA cadastradas do usuário logado")
     @GetMapping
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<List<ChaveIaResponseDTO>> listarChaves(@AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(chaveIaService.listarChaves(usuario));
     }
 
     @Operation(summary = "Cadastrar nova chave de IA criptografada")
     @PostMapping
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<ChaveIaResponseDTO> cadastrarChave(
             @AuthenticationPrincipal Usuario usuario,
             @Valid @RequestBody ChaveIaRequestDTO dto) {
@@ -45,7 +45,7 @@ public class ChaveIaController {
 
     @Operation(summary = "Definir uma chave de IA como padrão")
     @PatchMapping("/{id}/padrao")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<Void> definirComoPadrao(
             @AuthenticationPrincipal Usuario usuario,
             @PathVariable Long id) {
@@ -55,7 +55,7 @@ public class ChaveIaController {
 
     @Operation(summary = "Excluir uma chave de IA")
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<Void> deletarChave(
             @AuthenticationPrincipal Usuario usuario,
             @PathVariable Long id) {

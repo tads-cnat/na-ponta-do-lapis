@@ -43,7 +43,7 @@ public class UsuarioController {
 
     @Operation(summary = "Usuário logado")
     @GetMapping("/me")
-    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO')")
     public ResponseEntity<UsuarioResponseDTO> me(){
         return ResponseEntity.ok(new UsuarioResponseDTO(usuarioService.buscarUsuarioLogado()));
     }
@@ -57,7 +57,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
     }
 
-    @PreAuthorize("hasRole('ADMIN_SITE') or hasRole('USUARIO') or hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('ADMIN_SITE') or hasRole('USUARIO')")
     @Operation(summary = "Buscar por Username")
     @GetMapping("/username/{username}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorUsername(@PathVariable String username) {
@@ -80,7 +80,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Atualizar Usuário Logado (Passe apenas os campos que for atualizar)")
-    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO')")
     @PatchMapping("/me")
     public ResponseEntity<?> atualizarUsuarioLogado(@RequestBody @Valid UsuarioUpdateDTO usuarioDTO) {
         Usuario usuarioAtualizado = usuarioService.atualizarUsuarioLogado(usuarioDTO);
@@ -103,7 +103,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Excluir definitivamente a conta do usuário autenticado (LGPD)")
-    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO')")
     @DeleteMapping("/me")
     public ResponseEntity<Void> excluirMinhaConta() {
         usuarioService.excluirContaLogada();

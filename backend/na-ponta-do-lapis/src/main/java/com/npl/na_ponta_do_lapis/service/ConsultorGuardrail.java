@@ -19,9 +19,9 @@ public class ConsultorGuardrail {
 
     public static final String RESPOSTA_FORA_ESCOPO =
             "Oi! Eu sou o **Grafith**, seu consultor financeiro aqui no Na Ponta do Lápis. "
-            + "Só consigo ajudar com assuntos ligados às suas **finanças pessoais e à sua conta** "
-            + "(transações, saldos, gastos por categoria, metas, assinaturas e parcelamentos).\n\n"
-            + "Que tal me perguntar algo como: *\"Onde gastei mais este mês?\"* ou *\"Como estão minhas metas?\"*";
+            + "Só consigo ajudar com assuntos ligados às suas **finanças pessoais, à sua conta e a como usar o aplicativo** "
+            + "(transações, contas, metas, assinaturas, parcelamentos, família, Open Finance e configurações).\n\n"
+            + "Que tal me perguntar algo como: *\"Onde gastei mais este mês?\"* ou *\"Como criar uma meta?\"*";
 
     public static final String RESPOSTA_INJECTION =
             "Como consultor financeiro do Na Ponta do Lápis, sigo regras fixas de segurança e privacidade "
@@ -48,7 +48,8 @@ public class ConsultorGuardrail {
     private static final Pattern TERMOS_FINANCEIROS = Pattern.compile(
             "\\b(gasto|gastos|gastei|despesa|despesas|receita|receitas|saldo|saldos|conta|contas|transacao|transacoes|"
             + "meta|metas|assinatura|assinaturas|parcela|parcelas|parcelamento|parcelamentos|fatura|faturas|cartao|cartoes|"
-            + "categoria|categorias|orcamento|dinheiro|economizar|economia|poupanca|divida|dividas|aporte|aportes|pagar|paguei|renda|salario|financeiro|financeira|financas)\\b"
+            + "categoria|categorias|orcamento|dinheiro|economizar|economia|poupanca|divida|dividas|aporte|aportes|pagar|paguei|renda|salario|financeiro|financeira|financas|"
+            + "open\\s*finance|pluggy|familia|perfil|integracoes|chave|chaves|ia|pdf|importar|exportar|relatorio|conquista|conquistas|moeda|grafith|na\\s+ponta\\s+do\\s+lapis)\\b"
     );
 
     /**

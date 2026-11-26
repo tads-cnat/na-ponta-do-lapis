@@ -5,7 +5,9 @@ import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } 
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { IntegracoesService } from '../../../../service/integracoes.service';
+import { ConsultorService } from '../../../../shared/service/consultor.service';
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 import { mapearNomeBanco } from '../../../../shared/utils/banco-icon.helper';
 import {
@@ -22,7 +24,7 @@ import { AutorizacaoDados, AutorizacaoDadosComponent } from '../../../../shared/
 @Component({
   selector: 'app-integracoes-perfil',
   standalone: true,
-  imports: [AutorizacaoDadosComponent, CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, DialogModule, ButtonModule, IconeBancoComponent],
+  imports: [AutorizacaoDadosComponent, CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, DialogModule, ButtonModule, ToggleSwitchModule, IconeBancoComponent],
   templateUrl: './integracoes-perfil.component.html',
   styleUrl: './integracoes-perfil.component.css'
 })
@@ -65,7 +67,8 @@ export class IntegracoesPerfilComponent implements OnInit {
     private integracoesService: IntegracoesService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public consultorService: ConsultorService
   ) {}
 
   ngOnInit(): void {

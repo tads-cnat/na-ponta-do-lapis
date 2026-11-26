@@ -38,21 +38,21 @@ public class AssinaturaRecorrenteController {
     }
 
     @Operation(summary = "Listar assinaturas e resumo de gastos fixos")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @GetMapping
     public ResponseEntity<AssinaturasResumoDTO> listar() {
         return ResponseEntity.ok(assinaturaService.listarMinhas());
     }
 
     @Operation(summary = "Listar parcelamentos em aberto do usuário")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @GetMapping("/parcelamentos")
     public ResponseEntity<List<ParcelamentoResumoDTO>> listarParcelamentosEmAberto() {
         return ResponseEntity.ok(assinaturaService.listarParcelamentosEmAberto());
     }
 
     @Operation(summary = "Criar nova assinatura/compra recorrente")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PostMapping
     public ResponseEntity<AssinaturaRecorrenteResponseDTO> criar(
             @Valid @RequestBody AssinaturaRecorrenteRequestDTO dto,
@@ -67,7 +67,7 @@ public class AssinaturaRecorrenteController {
     }
 
     @Operation(summary = "Atualizar assinatura existente")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PutMapping("/{id}")
     public ResponseEntity<AssinaturaRecorrenteResponseDTO> atualizar(
             @PathVariable Long id,
@@ -76,7 +76,7 @@ public class AssinaturaRecorrenteController {
     }
 
     @Operation(summary = "Alterar status da assinatura (ATIVA, PAUSADA, CANCELADA)")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PatchMapping("/{id}/status")
     public ResponseEntity<AssinaturaRecorrenteResponseDTO> alterarStatus(
             @PathVariable Long id,
@@ -85,7 +85,7 @@ public class AssinaturaRecorrenteController {
     }
 
     @Operation(summary = "Gerar manualmente a transação do ciclo atual")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PostMapping("/{id}/lancar")
     public ResponseEntity<TransacoesResponseDTO> lancarAgora(
             @PathVariable Long id,
@@ -100,7 +100,7 @@ public class AssinaturaRecorrenteController {
     }
 
     @Operation(summary = "Excluir assinatura")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluir(@PathVariable Long id) throws AccessDeniedException {
         assinaturaService.excluir(id);

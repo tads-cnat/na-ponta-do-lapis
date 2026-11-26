@@ -98,17 +98,24 @@ html.app-dark {
 
 @layer utilities {
   html.app-dark body,
-  html.app-dark app-main-layout,
-  html.app-dark app-main-layout .layout-body,
-  html.app-dark app-main-layout main,
-  html.app-dark app-main-layout nav {
+  html.app-dark :is(app-main-layout, app-admin-layout),
+  html.app-dark :is(app-main-layout, app-admin-layout) .layout-body,
+  html.app-dark :is(app-main-layout, app-admin-layout) main,
+  html.app-dark app-main-layout nav,
+  html.app-dark app-admin-layout .admin-shell {
     background-color: var(--npl-dark-background);
     color: var(--npl-dark-text);
   }
 
+  html.app-dark app-admin-layout header {
+    background-color: var(--npl-dark-surface) !important;
+    border-color: var(--npl-dark-border) !important;
+    color: var(--npl-dark-text) !important;
+  }
+
   /* Superfícies principais (cards, sidebar, fundo branco com ou sem !) */
-  html.app-dark app-main-layout .sidebar,
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) .sidebar,
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="bg-white"],
     [class*="bg-[#F8FAFC]"]
   ) {
@@ -116,7 +123,7 @@ html.app-dark {
   }
 
   /* Superfícies secundárias/elevadas (caixas internas, cabeçalho da tabela, badges neutros) */
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="bg-slate-50"],
     [class*="bg-slate-100"],
     [class*="bg-gray-50"],
@@ -127,7 +134,7 @@ html.app-dark {
   }
 
   /* Badges e fundos suaves coloridos mantendo identidade e contraste */
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="bg-purple-50"],
     [class*="bg-purple-100"],
     [class*="bg-[#F3E8FF]"],
@@ -140,7 +147,7 @@ html.app-dark {
     color: var(--npl-dark-accent-text) !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class^="bg-emerald-50"], [class*=" bg-emerald-50"],
     [class^="bg-emerald-100"], [class*=" bg-emerald-100"]
   ) {
@@ -149,7 +156,7 @@ html.app-dark {
     color: #6ee7b7 !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class^="bg-amber-50"], [class*=" bg-amber-50"],
     [class^="bg-amber-100"], [class*=" bg-amber-100"],
     [class^="bg-yellow-50"], [class*=" bg-yellow-50"],
@@ -161,7 +168,7 @@ html.app-dark {
     color: #fcd34d !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class^="bg-rose-50"], [class*=" bg-rose-50"],
     [class^="bg-rose-100"], [class*=" bg-rose-100"],
     [class^="bg-[#FDF4F4]"], [class*=" bg-[#FDF4F4]"],
@@ -172,13 +179,13 @@ html.app-dark {
     color: #fda4af !important;
   }
 
-  html.app-dark app-main-layout [class*="hover:bg-emerald-50"]:hover {
+  html.app-dark :is(app-main-layout, app-admin-layout) [class*="hover:bg-emerald-50"]:hover {
     background-color: #163329 !important;
     border-color: #255c47 !important;
     color: #6ee7b7 !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="bg-blue-50"],
     [class*="bg-blue-100"]
   ) {
@@ -187,7 +194,7 @@ html.app-dark {
     color: #93c5fd !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="bg-indigo-50"],
     [class*="bg-indigo-100"]
   ) {
@@ -196,7 +203,7 @@ html.app-dark {
     color: #a5b4fc !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="bg-orange-50"],
     [class*="bg-orange-100"]
   ) {
@@ -262,7 +269,7 @@ html.app-dark {
   }
 
   /* Hierarquia de textos no tema escuro */
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="text-slate-900"],
     [class*="text-slate-800"],
     [class*="text-slate-700"],
@@ -275,7 +282,7 @@ html.app-dark {
     color: var(--npl-dark-text) !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="text-slate-500"],
     [class*="text-slate-400"],
     [class*="text-slate-300"],
@@ -287,7 +294,7 @@ html.app-dark {
   }
 
   /* Mantém roxo da marca e textos semânticos legíveis sobre fundo escuro */
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="text-[#7843cd]"],
     [class*="text-[#7843CD]"],
     [class*="text-[#6214CC]"],
@@ -301,7 +308,7 @@ html.app-dark {
     color: #c4b5fd !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="text-purple-950"],
     [class*="text-purple-900"],
     [class*="text-purple-800"],
@@ -312,7 +319,7 @@ html.app-dark {
     color: #e9d5ff !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="text-amber-950"],
     [class*="text-amber-900"],
     [class*="text-amber-800"],
@@ -325,7 +332,7 @@ html.app-dark {
     color: #fcd34d !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class^="text-emerald-950"], [class*=" text-emerald-950"],
     [class^="text-emerald-900"], [class*=" text-emerald-900"],
     [class^="text-emerald-800"], [class*=" text-emerald-800"],
@@ -334,11 +341,11 @@ html.app-dark {
     color: #6ee7b7 !important;
   }
 
-  html.app-dark app-main-layout [class*="hover:text-emerald-700"]:hover {
+  html.app-dark :is(app-main-layout, app-admin-layout) [class*="hover:text-emerald-700"]:hover {
     color: #6ee7b7 !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="text-rose-950"],
     [class*="text-rose-900"],
     [class*="text-rose-800"],
@@ -351,13 +358,13 @@ html.app-dark {
   }
 
   /* Garante texto escuro legível em qualquer elemento com fundo amarelo sólido #EEC046 */
-  html.app-dark app-main-layout [class*="bg-[#EEC046]"]:not([class*="bg-[#EEC046]/"]) {
+  html.app-dark :is(app-main-layout, app-admin-layout) [class*="bg-[#EEC046]"]:not([class*="bg-[#EEC046]/"]) {
     background-color: #EEC046 !important;
     color: #1e1b2e !important;
   }
 
   /* Contadores/badges neutros (ex: abas não selecionadas em Metas) */
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="bg-slate-200"],
     [class*="bg-gray-200"]
   ) {
@@ -365,15 +372,15 @@ html.app-dark {
     color: #e4e4e7 !important;
   }
 
-  html.app-dark app-main-layout :is(.page-title-npl, .section-title-npl) {
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(.page-title-npl, .section-title-npl) {
     color: var(--npl-dark-text) !important;
   }
 
-  html.app-dark app-main-layout .page-subtitle-npl {
+  html.app-dark :is(app-main-layout, app-admin-layout) .page-subtitle-npl {
     color: var(--npl-dark-muted) !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="border-slate-100"],
     [class*="border-slate-200"],
     [class*="border-slate-300"],
@@ -384,7 +391,7 @@ html.app-dark {
     border-color: var(--npl-dark-border) !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="border-purple-100"],
     [class*="border-purple-200"],
     [class*="border-purple-300"]
@@ -392,7 +399,7 @@ html.app-dark {
     border-color: #4c3575 !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="border-amber-100"],
     [class*="border-amber-200"],
     [class*="border-amber-300"],
@@ -401,7 +408,7 @@ html.app-dark {
     border-color: #6b501f !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class^="border-emerald-100"], [class*=" border-emerald-100"],
     [class^="border-emerald-200"], [class*=" border-emerald-200"],
     [class^="border-emerald-300"], [class*=" border-emerald-300"]
@@ -409,11 +416,11 @@ html.app-dark {
     border-color: #255c47 !important;
   }
 
-  html.app-dark app-main-layout [class*="hover:border-emerald-300"]:hover {
+  html.app-dark :is(app-main-layout, app-admin-layout) [class*="hover:border-emerald-300"]:hover {
     border-color: #255c47 !important;
   }
 
-  html.app-dark app-main-layout :is(
+  html.app-dark :is(app-main-layout, app-admin-layout) :is(
     [class*="border-rose-100"],
     [class*="border-rose-200"],
     [class*="border-rose-300"],
@@ -434,8 +441,8 @@ html.app-dark {
     color: var(--npl-dark-muted) !important;
   }
 
-  html.app-dark app-main-layout button[class*="border-slate-"],
-  html.app-dark app-main-layout button[class*="border-gray-"] {
+  html.app-dark :is(app-main-layout, app-admin-layout) button[class*="border-slate-"],
+  html.app-dark :is(app-main-layout, app-admin-layout) button[class*="border-gray-"] {
     background-color: var(--npl-dark-surface-elevated) !important;
     border-color: var(--npl-dark-border) !important;
     color: var(--npl-dark-text) !important;
@@ -540,7 +547,7 @@ html.app-dark {
   }
 
   /* Barra de ações em lote (exclusão em massa) no modo escuro */
-  html.app-dark app-main-layout .barra-acoes-lote {
+  html.app-dark :is(app-main-layout, app-admin-layout) .barra-acoes-lote {
     background-image: none !important;
     background-color: #2b213b !important;
     border-color: #5b3a8c !important;

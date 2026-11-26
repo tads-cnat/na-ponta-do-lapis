@@ -736,9 +736,8 @@ public class AdminPainelService {
         Map<Long, Usuario> adminPorFamilia = new HashMap<>();
         @SuppressWarnings("unchecked")
         List<Usuario> admins = entityManager.createQuery(
-                        "SELECT u FROM Usuario u WHERE u.familia.id IN :fids AND u.papel = :papel")
+                        "SELECT u FROM Usuario u WHERE u.familia.id IN :fids AND u.adminFamilia = true")
                 .setParameter("fids", familiaIds)
-                .setParameter("papel", Papel.ADMIN_FAMILIA)
                 .getResultList();
         for (Usuario adm : admins) {
             if (adm.getFamilia() != null) {

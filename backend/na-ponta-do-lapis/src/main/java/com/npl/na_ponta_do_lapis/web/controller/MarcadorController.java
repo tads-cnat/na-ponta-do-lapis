@@ -26,7 +26,7 @@ public class MarcadorController {
         this.marcadorService = marcadorService;
     }
 
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @Operation(summary = "Criar marcador do usuário Logado")
     @PostMapping
     public ResponseEntity<MarcadorResponseDTO> criarMarcador(@Valid @RequestBody MarcadorDTO dto) {
@@ -34,7 +34,7 @@ public class MarcadorController {
                 .body(marcadorService.criarMarcador(dto));
     }
 
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @Operation(summary = "Listar marcadores do usuário Logado")
     @GetMapping("/me")
     public ResponseEntity<List<MarcadorResponseDTO>> listarMarcadores() {
@@ -42,7 +42,7 @@ public class MarcadorController {
                 .body(marcadorService.listarMarcadores());
     }
 
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @Operation(summary = "Editar marcador do usuário Logado")
     @PutMapping("/{id}")
     public ResponseEntity<MarcadorResponseDTO> editarMarcador(
@@ -52,7 +52,7 @@ public class MarcadorController {
                 .body(marcadorService.editarMarcador(id ,dto));
     }
 
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @Operation(summary = "Excluir marcador do usuário Logado")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirMarcador(

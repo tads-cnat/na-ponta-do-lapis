@@ -1,6 +1,5 @@
 package com.npl.na_ponta_do_lapis.web.exception;
 
-import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,7 +23,7 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleGeneric(Exception ex) {
         log.error("Erro interno não tratado: ", ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Erro interno do servidor. Tente novamente mais tarde."));
+                .body(new ErrorResponse("Erro interno do servidor. Tente novamente mais tarde."));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -43,12 +42,6 @@ public class ApiExceptionHandler {
     public ResponseEntity<ErrorResponse> handleAuthentication(AuthenticationException ex) {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Não autorizado."));
-    }
-
-    @ExceptionHandler(AccessDeniedException.class)
-    public ResponseEntity<ErrorResponse> handleAccessDenied(AccessDeniedException ex) {
-        return ResponseEntity.status(HttpStatus.FORBIDDEN)
-                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Acesso negado."));
     }
 
     @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
@@ -80,22 +73,28 @@ public class ApiExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+    public ResponseEntity<ErrorResponse> handleValidationErrors(MethodArgumentNotValidException ex) {
         Map<String, String> erros = new HashMap<>();
 
         ex.getBindingResult().getFieldErrors().forEach(error -> erros.put(error.getField(), error.getDefaultMessage()));
 
-        return ResponseEntity.badRequest().body(erros);
+        String resumo = erros.values().stream()
+                .filter(msg -> msg != null && !msg.isBlank())
+                .findFirst()
+                .orElse("Dados inválidos.");
+
+        return ResponseEntity.badRequest().body(new ErrorResponse(resumo, erros));
     }
 
-
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> handleNotFound(NotFoundException ex) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleNotFound(NotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Recurso não encontrado."));
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<String> handleBusiness(BusinessException ex) {
-        return ResponseEntity.badRequest().body(ex.getMessage());
+    public ResponseEntity<ErrorResponse> handleBusiness(BusinessException ex) {
+        return ResponseEntity.badRequest()
+                .body(new ErrorResponse(ex.getMessage() != null ? ex.getMessage() : "Requisição inválida."));
     }
 }

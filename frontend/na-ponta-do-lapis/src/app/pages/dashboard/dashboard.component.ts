@@ -92,35 +92,30 @@ import { Categoria } from '../../model/ITransacoes.model';
       >
       </app-relatorio>
 
-      <!-- Seção 3: Gastos por categoria + Metas (grid 2 colunas)
-           FIX 3: Removido h-[320px] — a altura fixa era insuficiente para 5 metas
-           com gap-5 (~440px necessários vs 320px disponíveis). Conteúdo auto-dimensiona. -->
-      <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- Seção 3: Análise imediata — Últimas movimentações + Gastos por categoria -->
+      <section class="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
+        <app-ultimas-movimentacoes
+          class="block h-full"
+          [transacoes]="transacoes"
+          (onIrParaTransacoes)="irParaTransacoes()">
+        </app-ultimas-movimentacoes>
 
-        <div class="flex flex-col gap-4 h-full">
-          <app-gastos-categoria
-            class="block"
-            [transacoes]="transacoes"
-            [categorias_disponiveis]="categorias">
-          </app-gastos-categoria>
+        <app-gastos-categoria
+          class="block h-full"
+          [transacoes]="transacoes"
+          [categorias_disponiveis]="categorias">
+        </app-gastos-categoria>
+      </section>
 
-          <app-ultimas-movimentacoes
-            class="block flex-1"
-            [transacoes]="transacoes"
-            (onIrParaTransacoes)="irParaTransacoes()">
-          </app-ultimas-movimentacoes>
-        </div>
+      <!-- Seção 4: Planejamento — Fixos e Parcelas + Metas -->
+      <section class="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
+        <app-fixos-parcelas-dashboard class="block h-full"></app-fixos-parcelas-dashboard>
 
-        <div class="flex flex-col gap-4 h-full">
-          <app-metas-dashboard
-            class="block"
-            [metas]="metas"
-            (onIrParaMetas)="irParaMetas()">
-          </app-metas-dashboard>
-
-          <app-fixos-parcelas-dashboard class="block"></app-fixos-parcelas-dashboard>
-        </div>
-
+        <app-metas-dashboard
+          class="block h-full"
+          [metas]="metas"
+          (onIrParaMetas)="irParaMetas()">
+        </app-metas-dashboard>
       </section>
 
     </div>

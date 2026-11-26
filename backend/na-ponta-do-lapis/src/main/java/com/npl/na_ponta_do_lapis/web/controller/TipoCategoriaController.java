@@ -35,20 +35,20 @@ public class TipoCategoriaController {
 
     @Operation(summary = "Listar TipoCategoria do Usuário Logado")
     @GetMapping
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<List<CategoriaDTO>> listarCategorias(){
         return ResponseEntity.status(HttpStatus.OK).body(tipoCategoriaService.listarCategorias());
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<TipoCategoria> buscarPorId(@PathVariable Long id){
         TipoCategoria categoria = tipoCategoriaService.buscarPorId(id);
         return ResponseEntity.status(HttpStatus.OK).body(categoria);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<TipoCategoriaDTO> criarCategoria(@RequestBody @Valid TipoCategoriaDTO tipoCategoriaDTO){
         TipoCategoria tipoCategoria = tipoCategoriaDTO.toEntity();
         tipoCategoriaService.criarCategoria(tipoCategoria);
@@ -56,7 +56,7 @@ public class TipoCategoriaController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<Void> deletarCategoria(@PathVariable Long id){
         tipoCategoriaService.deletarCategoria(id);
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();

@@ -33,7 +33,6 @@ import {
         <select [(ngModel)]="filtroPapel" (change)="buscar(0)" class="px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white">
           <option value="">Todos os papéis</option>
           <option value="USUARIO">USUARIO</option>
-          <option value="ADMIN_FAMILIA">ADMIN_FAMILIA</option>
           <option value="ADMIN_SITE">ADMIN_SITE</option>
         </select>
 
@@ -116,8 +115,6 @@ import {
                       class="px-2 py-0.5 rounded-full text-[11px] font-bold"
                       [class.bg-purple-100]="u.papel === 'ADMIN_SITE'"
                       [class.text-[#7843CD]]="u.papel === 'ADMIN_SITE'"
-                      [class.bg-sky-100]="u.papel === 'ADMIN_FAMILIA'"
-                      [class.text-sky-700]="u.papel === 'ADMIN_FAMILIA'"
                       [class.bg-slate-100]="u.papel === 'USUARIO'"
                       [class.text-slate-600]="u.papel === 'USUARIO'">
                       {{ u.papel }}

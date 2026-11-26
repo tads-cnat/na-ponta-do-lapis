@@ -13,11 +13,13 @@ import {
   untracked,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { PrimeNGModuleModule } from '../../primeNg.module';
 import { MascoteEstado, MascoteLoginComponent } from '../../../auth/components/mascote-login/mascote-login.component';
 import { IntegracoesService } from '../../../service/integracoes.service';
 import { IChaveIaResponse } from '../../../model/IIntegracoes.models';
 import { ConsultorService, ConsultorStatus, MensagemConsultor } from '../../service/consultor.service';
+import { GuiaCondutorService } from '../../service/guia-condutor.service';
 
 const CHAT_STORAGE_KEY = 'npl_grafith_consultor_chat_v1';
 
@@ -33,7 +35,7 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
   imports: [CommonModule, FormsModule, PrimeNGModuleModule, MascoteLoginComponent],
   template: `
     <!-- Mini foto circular do Grafith flutuando embaixo com destaque leve da marca -->
-    @if (consultorService.exibirBotaoFlutuante()) {
+    @if (consultorService.exibirBotaoFlutuante() && !guiaCondutor.ativo()) {
     <button
       #fabGrafith
       type="button"
@@ -93,19 +95,17 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
             </div>
 
             <div class="flex items-center gap-1 shrink-0">
-              @if (chavesSalvas().length > 1 || pedirChave()) {
-                <button
-                  type="button"
-                  pTooltip="Configurar chave de IA"
-                  tooltipPosition="bottom"
-                  aria-label="Configurar chave de IA"
-                  (click)="mostrarConfigChave.set(!mostrarConfigChave())"
-                  [class]="mostrarConfigChave()
-                    ? 'w-8 h-8 rounded-lg flex items-center justify-center text-[#7843CD] bg-purple-50 border-0 cursor-pointer'
-                    : 'w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 border-0 bg-transparent cursor-pointer'">
-                  <i class="pi pi-cog text-xs"></i>
-                </button>
-              }
+              <button
+                type="button"
+                pTooltip="Configurações de IA"
+                tooltipPosition="bottom"
+                aria-label="Configurações de IA"
+                (click)="mostrarConfigChave.set(!mostrarConfigChave())"
+                [class]="mostrarConfigChave()
+                  ? 'w-8 h-8 rounded-lg flex items-center justify-center text-[#7843CD] bg-purple-50 border-0 cursor-pointer'
+                  : 'w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 border-0 bg-transparent cursor-pointer'">
+                <i class="pi pi-cog text-xs"></i>
+              </button>
 
               @if (mensagens().length > 1) {
                 <button
@@ -129,20 +129,37 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
             </div>
           </div>
 
-          <!-- Seletor de chave salva do Perfil (oculto por padrão; aparece só ao clicar na engrenagem) -->
-          @if (mostrarConfigChave() && chavesSalvas().length > 0) {
-            <div class="mx-4 mt-2.5 flex items-center justify-between gap-2 px-3 py-2 rounded-xl bg-slate-50 border border-slate-200/80 text-xs shrink-0">
-              <span class="text-slate-500 font-medium shrink-0">Trocar chave IA:</span>
-              <p-select
-                [(ngModel)]="chaveSelecionadaId"
-                [options]="chavesSalvas()"
-                optionLabel="apelido"
-                optionValue="id"
-                placeholder="Automática (padrão)"
-                [showClear]="true"
-                appendTo="body"
-                [overlayOptions]="{ baseZIndex: 1250 }"
-                styleClass="flex-1 text-xs" />
+          <!-- Painel de configuração de chave de IA (visível ao clicar na engrenagem) -->
+          @if (mostrarConfigChave()) {
+            <div class="mx-4 mt-2.5 flex flex-col gap-2 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs shrink-0">
+              @if (chavesSalvas().length > 0) {
+                <div class="flex items-center justify-between gap-2">
+                  <span class="text-slate-600 font-semibold shrink-0">Chave IA ativa:</span>
+                  <p-select
+                    [(ngModel)]="chaveSelecionadaId"
+                    [options]="chavesSalvas()"
+                    optionLabel="apelido"
+                    optionValue="id"
+                    placeholder="Automática (padrão)"
+                    [showClear]="true"
+                    appendTo="body"
+                    [overlayOptions]="{ baseZIndex: 1250 }"
+                    styleClass="flex-1 text-xs" />
+                </div>
+              } @else {
+                <div class="text-slate-600">
+                  Nenhuma chave de IA salva ainda. Cadastre uma no seu perfil ou informe uma chave temporária abaixo.
+                </div>
+              }
+              <div class="flex items-center justify-end">
+                <button
+                  type="button"
+                  (click)="irParaConfiguracoesIa()"
+                  class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7843CD] hover:text-[#6214CC] hover:underline bg-transparent border-0 p-0 cursor-pointer">
+                  <i class="pi pi-sliders-h text-[11px]"></i>
+                  Gerenciar chaves em Perfil &gt; IA
+                </button>
+              </div>
             </div>
           }
 
@@ -197,8 +214,11 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
                   </div>
                 } @else {
                   <div class="max-w-[92%] rounded-2xl rounded-bl-sm px-3.5 py-2.5 text-sm bg-slate-100 text-slate-800 leading-relaxed">
-                    <div class="grafith-md" [innerHTML]="formatarMarkdown(msg.content)"></div>
-                    @if ($index > 0) {
+                    <div class="grafith-md" [innerHTML]="formatarMarkdown(indiceDigitando() === $index ? textoDigitadoChat() : msg.content)"></div>
+                    @if (indiceDigitando() === $index) {
+                      <span class="inline-block w-1.5 h-3.5 mt-0.5 align-middle bg-[#7843CD] animate-pulse"></span>
+                    }
+                    @if ($index > 0 && indiceDigitando() !== $index) {
                       <div class="flex items-center justify-between gap-3 mt-2 pt-1.5 border-t border-slate-200/70">
                         <span class="text-[10px] text-slate-400">
                           {{ msg.provedorUsado ? 'Grafith via ' + msg.provedorUsado : 'Grafith IA' }}
@@ -321,7 +341,9 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
 export class ConsultorIaComponent implements OnDestroy {
   public consultorService = inject(ConsultorService);
   private integracoesService = inject(IntegracoesService);
+  readonly guiaCondutor = inject(GuiaCondutorService);
   private injector = inject(Injector);
+  private router = inject(Router);
 
   @ViewChild('scrollContainer') private scrollContainer?: ElementRef<HTMLDivElement>;
   @ViewChild('fabGrafith') private fabGrafith?: ElementRef<HTMLButtonElement>;
@@ -331,6 +353,7 @@ export class ConsultorIaComponent implements OnDestroy {
 
   private animacoesAtivas: Animation[] = [];
   private cicloAnimacao = 0;
+  private digitacaoTimer: ReturnType<typeof setInterval> | null = null;
 
   perguntaAtual = '';
   provedorAvulso = 'GEMINI';
@@ -349,6 +372,8 @@ export class ConsultorIaComponent implements OnDestroy {
   status = signal<ConsultorStatus | null>(null);
   chavesSalvas = signal<IChaveIaResponse[]>([]);
   mensagens = signal<MensagemConsultor[]>(this.carregarMensagensSalvas());
+  indiceDigitando = signal<number | null>(null);
+  textoDigitadoChat = signal('');
 
   readonly sugestoes = [
     'Onde gastei mais este mês?',
@@ -388,6 +413,7 @@ export class ConsultorIaComponent implements OnDestroy {
   ngOnDestroy(): void {
     this.cicloAnimacao++;
     this.cancelarAnimacoes();
+    this.pararDigitacao();
   }
 
   private iniciarAbertura(): void {
@@ -660,6 +686,7 @@ export class ConsultorIaComponent implements OnDestroy {
   }
 
   limparConversa(): void {
+    this.pararDigitacao();
     this.mensagens.set([MENSAGEM_BOAS_VINDAS]);
     this.salvarMensagens([MENSAGEM_BOAS_VINDAS]);
     this.estadoGrafith.set('idle');
@@ -704,7 +731,7 @@ export class ConsultorIaComponent implements OnDestroy {
             provedorUsado: res.provedorUsado,
             perguntaOrigem: pergunta,
           });
-          this.rolarParaFim();
+          this.iniciarDigitacaoResposta(this.mensagens().length - 1, res.resposta);
           setTimeout(() => {
             if (!this.carregando()) this.estadoGrafith.set('idle');
           }, 2200);
@@ -827,6 +854,12 @@ export class ConsultorIaComponent implements OnDestroy {
     });
   }
 
+  irParaConfiguracoesIa(): void {
+    this.mostrarConfigChave.set(false);
+    this.consultorService.fechar();
+    this.router.navigate(['/app/perfil'], { queryParams: { aba: 'ia' } });
+  }
+
   private carregarMensagensSalvas(): MensagemConsultor[] {
     try {
       const raw = sessionStorage.getItem(CHAT_STORAGE_KEY);
@@ -853,5 +886,46 @@ export class ConsultorIaComponent implements OnDestroy {
         el.scrollTop = el.scrollHeight;
       }
     }, 60);
+  }
+
+  private iniciarDigitacaoResposta(indice: number, textoCompleto: string): void {
+    this.pararDigitacao();
+    if (
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches
+    ) {
+      this.rolarParaFim();
+      return;
+    }
+
+    let pos = 0;
+    let ticks = 0;
+    this.indiceDigitando.set(indice);
+    this.textoDigitadoChat.set('');
+    this.rolarParaFim();
+
+    this.digitacaoTimer = setInterval(() => {
+      pos += 2;
+      ticks += 1;
+      if (pos >= textoCompleto.length) {
+        this.textoDigitadoChat.set(textoCompleto);
+        this.pararDigitacao();
+        this.rolarParaFim();
+        return;
+      }
+      this.textoDigitadoChat.set(textoCompleto.slice(0, pos));
+      if (ticks % 10 === 0) {
+        this.rolarParaFim();
+      }
+    }, 14);
+  }
+
+  private pararDigitacao(): void {
+    if (this.digitacaoTimer) {
+      clearInterval(this.digitacaoTimer);
+      this.digitacaoTimer = null;
+    }
+    this.indiceDigitando.set(null);
+    this.textoDigitadoChat.set('');
   }
 }

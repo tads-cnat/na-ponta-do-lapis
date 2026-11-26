@@ -66,7 +66,7 @@ public class ConsultorFinanceiroController {
     }
 
     @Operation(summary = "Verificar disponibilidade de chave de IA para o consultor")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @GetMapping("/status")
     public ResponseEntity<Map<String, Object>> status(
             @AuthenticationPrincipal Usuario usuario,
@@ -85,7 +85,7 @@ public class ConsultorFinanceiroController {
     }
 
     @Operation(summary = "Enviar pergunta ao consultor financeiro IA")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PostMapping("/perguntar")
     public ResponseEntity<?> perguntar(
             @Valid @RequestBody ConsultorRequestDTO body,
@@ -125,7 +125,7 @@ public class ConsultorFinanceiroController {
     }
 
     @Operation(summary = "Registrar avaliação (like/dislike) de uma resposta do Grafith IA")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PostMapping("/feedback")
     public ResponseEntity<Map<String, Object>> registrarFeedback(
             @Valid @RequestBody ConsultorFeedbackRequestDTO body,

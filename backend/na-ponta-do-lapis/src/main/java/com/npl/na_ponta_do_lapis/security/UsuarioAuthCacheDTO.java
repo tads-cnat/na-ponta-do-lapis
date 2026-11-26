@@ -20,6 +20,7 @@ public record UsuarioAuthCacheDTO(
         String telefone,
         String fotoPerfil,
         Papel papel,
+        boolean adminFamilia,
         Moeda moedaPadrao,
         Long familiaId,
         String familiaNome,
@@ -39,6 +40,7 @@ public record UsuarioAuthCacheDTO(
                 usuario.getTelefone(),
                 usuario.getFotoPerfil(),
                 usuario.getPapel(),
+                usuario.isAdminFamilia(),
                 usuario.getMoedaPadrao(),
                 familia != null ? familia.getId() : null,
                 familia != null ? familia.getNome() : null,
@@ -58,6 +60,7 @@ public record UsuarioAuthCacheDTO(
         usuario.setTelefone(telefone);
         usuario.setFotoPerfil(fotoPerfil);
         usuario.setPapel(papel);
+        usuario.setAdminFamilia(adminFamilia);
         usuario.setMoedaPadrao(moedaPadrao);
         usuario.setOnboardingConcluido(onboardingConcluido);
         usuario.setAtivo(ativo);

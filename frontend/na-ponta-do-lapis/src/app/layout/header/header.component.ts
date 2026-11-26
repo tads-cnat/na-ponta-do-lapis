@@ -1,8 +1,7 @@
 import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { NavigationEnd, Router, RouterLink } from '@angular/router';
-import { filter } from 'rxjs';
+import { Router, RouterLink } from '@angular/router';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { AuthService } from '../../auth/service/auth.service';
 import { StorageService } from '../../auth/service/storage.service';
@@ -13,15 +12,6 @@ import { IconComponent } from '../../shared/components/icon/icon.component';
 import { NotificacaoService } from '../../shared/service/notificacao.service';
 import { Notificacao } from '../../model/INotificacao.model';
 import { MedalhaConquistaComponent } from '../../shared/components/medalha-conquista/medalha-conquista.component';
-
-const TITULOS_ROTAS: Array<{ prefixo: string; titulo: string }> = [
-  { prefixo: '/app/dashboard', titulo: 'Dashboard' },
-  { prefixo: '/app/transacoes', titulo: 'Transações' },
-  { prefixo: '/app/contas', titulo: 'Contas' },
-  { prefixo: '/app/metas', titulo: 'Metas' },
-  { prefixo: '/app/familia', titulo: 'Família' },
-  { prefixo: '/app/perfil', titulo: 'Perfil' },
-];
 
 @Component({
   selector: 'app-header',
@@ -36,7 +26,6 @@ export class HeaderComponent implements OnInit {
 
   nomeUsuario: string | undefined = undefined;
   usuarioLogado: Usuario | null = null;
-  tituloPagina = 'Dashboard';
 
   notificacoes: Notificacao[] = [];
   totalNaoLidas: number = 0;
@@ -50,16 +39,6 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarDadosUsuario();
-    this.atualizarTituloPagina(this.router.url);
-
-    this.router.events
-      .pipe(
-        filter((e): e is NavigationEnd => e instanceof NavigationEnd),
-        takeUntilDestroyed(this.destroyRef)
-      )
-      .subscribe((e) => {
-        this.atualizarTituloPagina(e.urlAfterRedirects);
-      });
 
     this.notificacaoService.notificacoes$
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -76,12 +55,6 @@ export class HeaderComponent implements OnInit {
       });
 
     this.notificacaoService.carregarNotificacoes();
-  }
-
-  private atualizarTituloPagina(url: string): void {
-    const limpa = (url || '').split('?')[0];
-    const encontrada = TITULOS_ROTAS.find((r) => limpa.startsWith(r.prefixo));
-    this.tituloPagina = encontrada?.titulo ?? 'Na Ponta do Lápis';
   }
 
   public abrirNotificacoes(event: Event, popover: any): void {

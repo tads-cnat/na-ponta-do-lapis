@@ -58,7 +58,7 @@ public class FamiliaService {
 
         Usuario criador = usuarioService.buscarUsuarioLogado();
         criador.setFamilia(familia);
-        criador.setPapel(Papel.ADMIN_FAMILIA);
+        criador.setAdminFamilia(true);
         usuarioRepository.save(criador);
         usuarioAuthCacheService.evictPorUsuario(criador);
 
@@ -71,6 +71,7 @@ public class FamiliaService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Família não foi encontrada."));
         for (Usuario membro : familia.getMembros()) {
             membro.setFamilia(null);
+            membro.setAdminFamilia(false);
             usuarioRepository.save(membro);
             usuarioAuthCacheService.evictPorUsuario(membro);
         }
@@ -126,6 +127,7 @@ public class FamiliaService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuário não pertence a essa família.");
         }
         usuario.setFamilia(null);
+        usuario.setAdminFamilia(false);
         usuarioRepository.save(usuario);
         usuarioAuthCacheService.evictPorUsuario(usuario);
         return new FamiliaResponseDTO(familia);
@@ -139,7 +141,7 @@ public class FamiliaService {
         Usuario solicitante = usuarioRepository.findById(solicitanteId)
                 .orElseThrow(() -> new UsuarioIdNaoExisteException("Solicitante não encontrado"));
 
-        if (solicitante.getPapel() != Papel.ADMIN_FAMILIA){
+        if (!solicitante.isAdminFamilia()){
             throw new NaoEAdminFamiliaException("Apenas administradores da família podem promover outros membros.");
         }
 
@@ -147,7 +149,7 @@ public class FamiliaService {
             throw new NaoEdaMesmaFamiliaException("Você só pode promover membros da sua própria família.");
         }
 
-        novoAdmin.setPapel(Papel.ADMIN_FAMILIA);
+        novoAdmin.setAdminFamilia(true);
         usuarioRepository.save(novoAdmin);
         usuarioAuthCacheService.evictPorUsuario(novoAdmin);
         return new UsuarioResponseDTO(novoAdmin);
