@@ -130,6 +130,11 @@ public class ContaFinanceiraService {
 
     // Método para o Service transacao utilizar pois o outro retorna "ContaFinanceiraResponseDTO" (Não deve ser exposto ao controller)
     public ContaFinanceira buscarContaPorIdObject(Long id) {
+        if (org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()
+                && !org.springframework.transaction.support.TransactionSynchronizationManager.isCurrentTransactionReadOnly()) {
+            return contaFinanceiraRepository.findByIdForUpdate(id)
+                    .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
+        }
         return contaFinanceiraRepository.findById(id)
                 .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + id + " não existe"));
     }

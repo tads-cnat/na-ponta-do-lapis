@@ -1,7 +1,9 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.entity.Transacao;
+import com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter;
 import com.npl.na_ponta_do_lapis.service.TransacaoService;
+import com.npl.na_ponta_do_lapis.service.security.ApiRateLimitService;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoFaturaDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacaoRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.TransacoesExclusaoLoteDTO;
@@ -12,6 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.file.AccessDeniedException;
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 
@@ -27,17 +31,29 @@ import java.util.Map;
 @Tag(name = "Transacoes", description = "Gerenciamento de Transacoes")
 public class TransacaoController {
 
-    private final TransacaoService transacaoService;
+    private static final int MAX_TRANSACOES_LOTE = 300;
 
-    public TransacaoController(TransacaoService transacaoService) {
+    private final TransacaoService transacaoService;
+    private final ApiRateLimitService apiRateLimitService;
+
+    public TransacaoController(TransacaoService transacaoService, ApiRateLimitService apiRateLimitService) {
         this.transacaoService = transacaoService;
+        this.apiRateLimitService = apiRateLimitService;
     }
 
     @Operation(summary = "Criar Transacao (simples ou parcelada)",
             description = "Com parcelado=true, 'valor' é o total e são geradas 'totalParcelas' transações.")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping
-    public ResponseEntity<List<TransacoesResponseDTO>> criarTransacao(@Valid @RequestBody TransacaoRequestDTO transacao) throws AccessDeniedException {
+    public ResponseEntity<List<TransacoesResponseDTO>> criarTransacao(
+            @Valid @RequestBody TransacaoRequestDTO transacao,
+            HttpServletRequest request) throws AccessDeniedException {
+        apiRateLimitService.enforce(
+                "transacoes:criar",
+                JwtAuthFilter.getEmailUsuarioLogado(),
+                apiRateLimitService.resolveClientIp(request),
+                30,
+                Duration.ofMinutes(1));
         List<Transacao> criadas = transacaoService.criarTransacao(transacao);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(criadas.stream().map(TransacoesResponseDTO::new).toList());
@@ -97,8 +113,16 @@ public class TransacaoController {
     @Operation(summary = "Deletar Transações em Lote")
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping("/excluir-lote")
-    public ResponseEntity<Void> removerEmLote(@Valid @RequestBody TransacoesExclusaoLoteDTO dto)
+    public ResponseEntity<Void> removerEmLote(
+            @Valid @RequestBody TransacoesExclusaoLoteDTO dto,
+            HttpServletRequest request)
             throws AccessDeniedException {
+        apiRateLimitService.enforce(
+                "transacoes:excluir-lote",
+                JwtAuthFilter.getEmailUsuarioLogado(),
+                apiRateLimitService.resolveClientIp(request),
+                10,
+                Duration.ofMinutes(1));
         transacaoService.removerTransacoesEmLote(dto.ids());
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
@@ -122,10 +146,23 @@ public class TransacaoController {
     @PostMapping("/lote")
     public ResponseEntity<?> salvarTransacoesEmLote(
             @RequestBody List<TransacaoFaturaDTO> transacoes,
-            @RequestParam("contaId") Long contaId) {
+            @RequestParam("contaId") Long contaId,
+            HttpServletRequest request) {
+
+        apiRateLimitService.enforce(
+                "transacoes:lote",
+                JwtAuthFilter.getEmailUsuarioLogado(),
+                apiRateLimitService.resolveClientIp(request),
+                5,
+                Duration.ofMinutes(1));
 
         if (transacoes == null || transacoes.isEmpty()) {
             return ResponseEntity.badRequest().body(Map.of("error", "Lista de transações vazia."));
+        }
+
+        if (transacoes.size() > MAX_TRANSACOES_LOTE) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("error", "Limite máximo de " + MAX_TRANSACOES_LOTE + " transações por lote excedido."));
         }
         try {
             List<Transacao> salvas = transacaoService.salvarFaturaEmLote(transacoes, contaId);
@@ -153,7 +190,14 @@ public class TransacaoController {
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping("/parcelamento/{grupoId}/futuras")
     public ResponseEntity<List<TransacoesResponseDTO>> gerarParcelasFuturas(
-            @PathVariable String grupoId) throws AccessDeniedException {
+            @PathVariable String grupoId,
+            HttpServletRequest request) throws AccessDeniedException {
+        apiRateLimitService.enforce(
+                "transacoes:parcelas",
+                JwtAuthFilter.getEmailUsuarioLogado(),
+                apiRateLimitService.resolveClientIp(request),
+                10,
+                Duration.ofMinutes(1));
         List<Transacao> parcelas = transacaoService.gerarParcelasFuturas(grupoId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(parcelas.stream().map(TransacoesResponseDTO::new).toList());
@@ -163,7 +207,14 @@ public class TransacaoController {
     @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
     @PostMapping("/parcelamento/{grupoId}/anteriores")
     public ResponseEntity<List<TransacoesResponseDTO>> gerarParcelasAnteriores(
-            @PathVariable String grupoId) throws AccessDeniedException {
+            @PathVariable String grupoId,
+            HttpServletRequest request) throws AccessDeniedException {
+        apiRateLimitService.enforce(
+                "transacoes:parcelas",
+                JwtAuthFilter.getEmailUsuarioLogado(),
+                apiRateLimitService.resolveClientIp(request),
+                10,
+                Duration.ofMinutes(1));
         List<Transacao> parcelas = transacaoService.gerarParcelasAnteriores(grupoId);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(parcelas.stream().map(TransacoesResponseDTO::new).toList());

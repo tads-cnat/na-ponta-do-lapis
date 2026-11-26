@@ -1,16 +1,19 @@
 import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
+import { MessageService } from 'primeng/api';
 import { catchError, throwError } from 'rxjs';
 import { StorageService } from '../../auth/service/storage.service';
 import { environment } from '../../../environments/environment';
 import { ConexaoService } from '../../shared/service/conexao.service';
 
 let redirecionandoSessaoExpirada = false;
+let ultimoAvisoRateLimitMs = 0;
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const conexaoService = inject(ConexaoService);
   const router = inject(Router);
+  const messageService = inject(MessageService);
   const authToken = StorageService.getToken();
   const headers: Record<string, string> = {};
 
@@ -45,6 +48,21 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
             redirecionandoSessaoExpirada = true;
             router.navigateByUrl('/login').finally(() => {
               redirecionandoSessaoExpirada = false;
+            });
+          }
+        } else if (err.status === 429 && req.url.startsWith(environment.apiBaseUrl)) {
+          const agora = Date.now();
+          if (agora - ultimoAvisoRateLimitMs > 4000) {
+            ultimoAvisoRateLimitMs = agora;
+            const mensagem =
+              (typeof err.error?.error === 'string' && err.error.error.trim()) ||
+              (typeof err.error?.message === 'string' && err.error.message.trim()) ||
+              'Muitas requisições em sequência. Aguarde alguns segundos e tente novamente.';
+            messageService.add({
+              severity: 'warn',
+              summary: 'Limite de requisições atingido',
+              detail: mensagem,
+              life: 5000,
             });
           }
         }
