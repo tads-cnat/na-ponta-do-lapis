@@ -1,5 +1,6 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
+import java.time.Duration;
 import java.util.Locale;
 import java.util.Optional;
 
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.npl.na_ponta_do_lapis.entity.ChaveIaUsuario;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.service.ChaveIaService;
+import com.npl.na_ponta_do_lapis.service.security.ApiRateLimitService;
 import com.npl.na_ponta_do_lapis.service.fatura.CredencialIa;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseService;
@@ -46,13 +48,16 @@ public class FaturaInteligenteController {
     private final FaturaAnaliseService faturaAnaliseService;
     private final FaturaSessionCookieHelper cookieHelper;
     private final ChaveIaService chaveIaService;
+    private final ApiRateLimitService apiRateLimitService;
 
     public FaturaInteligenteController(FaturaAnaliseService faturaAnaliseService,
                                        FaturaSessionCookieHelper cookieHelper,
-                                       ChaveIaService chaveIaService) {
+                                       ChaveIaService chaveIaService,
+                                       ApiRateLimitService apiRateLimitService) {
         this.faturaAnaliseService = faturaAnaliseService;
         this.cookieHelper = cookieHelper;
         this.chaveIaService = chaveIaService;
+        this.apiRateLimitService = apiRateLimitService;
     }
 
     @Operation(summary = "Extrair transações de uma fatura PDF",
@@ -89,6 +94,13 @@ public class FaturaInteligenteController {
             @AuthenticationPrincipal Usuario usuario,
             HttpServletRequest request,
             HttpServletResponse response) {
+
+        apiRateLimitService.enforce(
+                "faturas:analise",
+                usuario != null ? usuario.getEmail() : "anon",
+                apiRateLimitService.resolveClientIp(request),
+                10,
+                Duration.ofMinutes(1));
 
         Optional<CredencialIa> credencial = cookieHelper.ler(request);
 
