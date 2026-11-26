@@ -33,8 +33,35 @@ public class GeminiProviderClient implements IaProviderClient {
                 "contents", List.of(Map.of(
                         "parts", List.of(Map.of("text", prompt))
                 )),
-                "generationConfig", configuracaoGeracao()
+                "generationConfig", configuracaoGeracao(true)
         );
+        JsonNode resposta = httpClient.post(url(), headers(apiKey), corpo);
+        return extrairTexto(resposta);
+    }
+
+    @Override
+    public String completarTexto(ProvedorIa provedor, String apiKey, String prompt) {
+        Map<String, Object> corpo = Map.of(
+                "contents", List.of(Map.of(
+                        "parts", List.of(Map.of("text", prompt))
+                )),
+                "generationConfig", configuracaoGeracao(false, 8192)
+        );
+        JsonNode resposta = httpClient.post(url(), headers(apiKey), corpo);
+        return extrairTexto(resposta);
+    }
+
+    @Override
+    public String completarChat(ProvedorIa provedor, String apiKey, String systemPrompt, String userMessage) {
+        Map<String, Object> corpo = new java.util.LinkedHashMap<>();
+        corpo.put("systemInstruction", Map.of(
+                "parts", List.of(Map.of("text", systemPrompt))
+        ));
+        corpo.put("contents", List.of(Map.of(
+                "role", "user",
+                "parts", List.of(Map.of("text", userMessage))
+        )));
+        corpo.put("generationConfig", configuracaoGeracao(false, 1200));
         JsonNode resposta = httpClient.post(url(), headers(apiKey), corpo);
         return extrairTexto(resposta);
     }
@@ -52,21 +79,29 @@ public class GeminiProviderClient implements IaProviderClient {
                                 Map.of("text", prompt)
                         )
                 )),
-                "generationConfig", configuracaoGeracao()
+                "generationConfig", configuracaoGeracao(true, 8192)
         );
         JsonNode resposta = httpClient.post(url(), headers(apiKey), corpo);
         return extrairTexto(resposta);
+    }
+
+    private Map<String, Object> configuracaoGeracao(boolean exigirJson) {
+        return configuracaoGeracao(exigirJson, 8192);
     }
 
     /**
      * Extração não precisa de criatividade. Desligar o "thinking" evita gastar
      * o limite de saída e truncar o JSON em faturas grandes.
      */
-    private Map<String, Object> configuracaoGeracao() {
+    private Map<String, Object> configuracaoGeracao(boolean exigirJson, int maxTokens) {
         Map<String, Object> configuracao = new java.util.LinkedHashMap<>();
-        configuracao.put("responseMimeType", "application/json");
-        configuracao.put("temperature", 0);
-        configuracao.put("maxOutputTokens", 8192);
+        if (exigirJson) {
+            configuracao.put("responseMimeType", "application/json");
+            configuracao.put("temperature", 0);
+        } else {
+            configuracao.put("temperature", 0.3);
+        }
+        configuracao.put("maxOutputTokens", maxTokens);
         // O orçamento zero de "thinking" só é aceito pelos modelos Flash.
         if (modelo != null && modelo.toLowerCase(java.util.Locale.ROOT).contains("flash")) {
             configuracao.put("thinkingConfig", Map.of("thinkingBudget", 0));

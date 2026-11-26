@@ -4,10 +4,39 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
             <h1 class="page-title-npl m-0">Movimentações</h1>
-            <p class="page-subtitle-npl">Gerencie todas as suas receitas, despesas e faturas em um só lugar</p>
+            <p class="page-subtitle-npl">Gerencie seus lançamentos, assinaturas recorrentes e parcelamentos em um só lugar</p>
         </div>
     </div>
 
+    <!-- Abas de Navegação: Lançamentos | Assinaturas | Parcelamentos -->
+    <div class="flex items-center gap-2 border-b border-slate-200 pb-2.5 overflow-x-auto">
+        <button
+            type="button"
+            (click)="abaMovimentacoes = 'lancamentos'"
+            [class]="abaMovimentacoes === 'lancamentos'
+                ? 'px-4 py-2 rounded-xl text-sm font-bold bg-[#7843CD] text-white border-0 cursor-pointer whitespace-nowrap transition-colors'
+                : 'px-4 py-2 rounded-xl text-sm font-semibold bg-white text-slate-600 border border-slate-200 cursor-pointer hover:bg-slate-50 whitespace-nowrap'">
+            <i class="pi pi-list mr-1.5 text-xs"></i>Lançamentos
+        </button>
+        <button
+            type="button"
+            (click)="abaMovimentacoes = 'assinaturas'"
+            [class]="abaMovimentacoes === 'assinaturas'
+                ? 'px-4 py-2 rounded-xl text-sm font-bold bg-[#7843CD] text-white border-0 cursor-pointer whitespace-nowrap transition-colors'
+                : 'px-4 py-2 rounded-xl text-sm font-semibold bg-white text-slate-600 border border-slate-200 cursor-pointer hover:bg-slate-50 whitespace-nowrap'">
+            <i class="pi pi-sync mr-1.5 text-xs"></i>Assinaturas
+        </button>
+        <button
+            type="button"
+            (click)="abaMovimentacoes = 'parcelamentos'"
+            [class]="abaMovimentacoes === 'parcelamentos'
+                ? 'px-4 py-2 rounded-xl text-sm font-bold bg-[#7843CD] text-white border-0 cursor-pointer whitespace-nowrap transition-colors'
+                : 'px-4 py-2 rounded-xl text-sm font-semibold bg-white text-slate-600 border border-slate-200 cursor-pointer hover:bg-slate-50 whitespace-nowrap'">
+            <i class="pi pi-credit-card mr-1.5 text-xs"></i>Parcelamentos
+        </button>
+    </div>
+
+    @if (abaMovimentacoes === 'lancamentos') {
     <app-card-saldo
         class="block w-full"
         [dataRange]="filtroDataRange"
@@ -511,6 +540,9 @@
             </p-card>
         </div>
     </div>
+    } @else {
+        <app-assinaturas [embutido]="true" [abaInicial]="abaMovimentacoes" />
+    }
 </div>
 
     <form [formGroup]="formTransacao">
@@ -649,6 +681,26 @@
                         <p-checkbox formControlName="parcelado" [binary]="true" inputId="parcelado"></p-checkbox>
                         <label for="parcelado" class="font-bold text-sm cursor-pointer text-slate-700">Compra parcelada</label>
                     </div>
+
+                    @if (!id && !formTransacao.get('parcelado')?.value) {
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-2">
+                            <p-checkbox formControlName="recorrente" [binary]="true" inputId="recorrente"></p-checkbox>
+                            <label for="recorrente" class="font-bold text-sm cursor-pointer text-slate-700">Compra recorrente / Assinatura</label>
+                        </div>
+                        @if (formTransacao.get('recorrente')?.value) {
+                        <div class="flex flex-col gap-1 pl-6">
+                            <label class="font-bold text-xs text-slate-600">Frequência da renovação</label>
+                            <p-select
+                                formControlName="frequenciaRecorrencia"
+                                [options]="frequenciasRecorrencia"
+                                optionLabel="label"
+                                optionValue="value"
+                                styleClass="w-full sm:w-56" />
+                        </div>
+                        }
+                    </div>
+                    }
 
                     @if (formTransacao.get('parcelado')?.value) {
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">

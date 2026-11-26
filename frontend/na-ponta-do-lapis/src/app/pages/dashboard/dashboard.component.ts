@@ -12,6 +12,7 @@ import { GastosCategoriaComponent } from './components/gastos-categoria/gastos.c
 import { MetasDashboardComponent } from './components/metas/metas.component';
 import { UltimasMovimentacoesComponent } from './components/ultimas-movimentacoes/ultimas-movimentacoes.component';
 import { ExportarRelatorioModalComponent } from './components/exportar-relatorio/exportar-relatorio-modal.component';
+import { FixosParcelasDashboardComponent } from './components/fixos-parcelas/fixos-parcelas-dashboard.component';
 import { IContas, ehCartaoCredito } from '../../model/IContas.models';
 import { ITransacoes } from '../../model/ITransacoes.model';
 import { MetaRequest, MetaResponse } from '../../model/IMetas.models';
@@ -32,7 +33,8 @@ import { Categoria } from '../../model/ITransacoes.model';
     GastosCategoriaComponent,
     MetasDashboardComponent,
     UltimasMovimentacoesComponent,
-    ExportarRelatorioModalComponent
+    ExportarRelatorioModalComponent,
+    FixosParcelasDashboardComponent
   ],
   /*
    * FIX 1: <main> substituído por <div class="flex flex-col gap-6">.
@@ -109,11 +111,15 @@ import { Categoria } from '../../model/ITransacoes.model';
           </app-ultimas-movimentacoes>
         </div>
 
-        <app-metas-dashboard
-          class="block h-full"
-          [metas]="metas"
-          (onIrParaMetas)="irParaMetas()">
-        </app-metas-dashboard>
+        <div class="flex flex-col gap-4 h-full">
+          <app-metas-dashboard
+            class="block"
+            [metas]="metas"
+            (onIrParaMetas)="irParaMetas()">
+          </app-metas-dashboard>
+
+          <app-fixos-parcelas-dashboard class="block"></app-fixos-parcelas-dashboard>
+        </div>
 
       </section>
 

@@ -198,6 +198,35 @@
         </div>
       </div>
 
+      <!-- 3.5. Assistente Grafith IA -->
+      <div class="p-6 rounded-2xl bg-white border border-slate-100/90 shadow-2xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-xl bg-[#6214CC]/10 text-[#6214CC] flex items-center justify-center shrink-0">
+            <i class="pi pi-sparkles text-sm"></i>
+          </div>
+          <div>
+            <h2 class="text-slate-900 font-bold text-base sm:text-lg tracking-tight m-0">Consultor Grafith IA</h2>
+            <p class="text-xs text-slate-400 font-normal m-0">
+              Exibir o botão flutuante do Grafith no canto inferior direito das telas.
+            </p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3 self-start sm:self-auto">
+          <button
+            type="button"
+            (click)="consultorService.abrir()"
+            class="px-3 py-1.5 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 text-[#6214CC] text-xs font-semibold cursor-pointer transition-colors">
+            Abrir chat
+          </button>
+          <p-toggleswitch
+            [ngModel]="consultorService.exibirBotaoFlutuante()"
+            [ngModelOptions]="{ standalone: true }"
+            (ngModelChange)="consultorService.definirExibirBotaoFlutuante($event)"
+            ariaLabel="Exibir botão flutuante do Grafith IA">
+          </p-toggleswitch>
+        </div>
+      </div>
+
       <!-- 4. Privacidade e Conta (LGPD) -->
       <div class="p-6 rounded-2xl bg-white border border-slate-100/90 shadow-2xs flex flex-col gap-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">

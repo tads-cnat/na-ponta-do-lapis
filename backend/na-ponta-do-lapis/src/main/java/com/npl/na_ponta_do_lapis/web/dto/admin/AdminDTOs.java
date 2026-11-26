@@ -17,6 +17,16 @@ public final class AdminDTOs {
 
     public record SerieDiariaDTO(String data, long total) {}
 
+    public record ConsultorDislikeDTO(
+            Long id,
+            String usuarioNome,
+            String usuarioEmail,
+            String provedor,
+            String perguntaResumo,
+            String respostaResumo,
+            LocalDateTime criadoEm
+    ) {}
+
     public record AdminDashboardResumoDTO(
             long totalUsuarios,
             long usuariosAtivos,
@@ -61,7 +71,14 @@ public final class AdminDTOs {
             int periodoDias,
             long novosNoPeriodo,
             long novosPeriodoAnterior,
-            List<SerieDiariaDTO> serieCadastros
+            List<SerieDiariaDTO> serieCadastros,
+            // Satisfação e adoção dos novos recursos
+            long consultorLikes,
+            long consultorDislikes,
+            double consultorTaxaAprovacao,
+            long usuariosComAssinaturas,
+            long usuariosUsaramConsultor,
+            List<ConsultorDislikeDTO> ultimosDislikesConsultor
     ) {}
 
     public record AdminUsuarioResumoDTO(

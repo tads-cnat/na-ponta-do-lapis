@@ -354,6 +354,109 @@ import { AdminApiService, AdminDashboardResumo, extrairMensagemErroAdmin } from 
             </div>
           </div>
         </div>
+
+        <!-- SEÇÃO 6: SATISFAÇÃO DO CONSULTOR GRAFITH IA -->
+        <section class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+            <div>
+              <h2 class="text-base font-bold text-slate-900 m-0 flex items-center gap-2">
+                <i class="pi pi-sparkles text-[#7843CD]"></i>
+                <span>Satisfação do Consultor Grafith IA</span>
+              </h2>
+              <p class="text-xs text-slate-500 mt-0.5 mb-0">
+                Avaliações (Like / Dislike) enviadas pelos usuários nas respostas do chat financeiro
+              </p>
+            </div>
+            <span class="text-xs font-bold px-3 py-1 rounded-full bg-purple-50 text-[#7843CD] self-start sm:self-auto">
+              {{ (r.consultorLikes || 0) + (r.consultorDislikes || 0) }} avaliação(ões)
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+            <div class="rounded-xl bg-emerald-50/70 border border-emerald-200/70 p-3.5 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-emerald-800 block">Respostas úteis (Likes)</span>
+                <strong class="text-2xl font-extrabold text-emerald-700">{{ r.consultorLikes || 0 }}</strong>
+              </div>
+              <span class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center">
+                <i class="pi pi-thumbs-up-fill text-base"></i>
+              </span>
+            </div>
+
+            <div class="rounded-xl bg-rose-50/70 border border-rose-200/70 p-3.5 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-rose-800 block">Não ajudaram (Dislikes)</span>
+                <strong class="text-2xl font-extrabold text-rose-700">{{ r.consultorDislikes || 0 }}</strong>
+              </div>
+              <span class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
+                <i class="pi pi-thumbs-down-fill text-base"></i>
+              </span>
+            </div>
+
+            <div class="rounded-xl bg-purple-50/70 border border-purple-200/70 p-3.5 flex items-center justify-between">
+              <div>
+                <span class="text-xs font-semibold text-purple-900 block">Taxa de Aprovação</span>
+                <strong class="text-2xl font-extrabold text-[#7843CD]">{{ r.consultorTaxaAprovacao || 0 }}%</strong>
+              </div>
+              <span class="w-10 h-10 rounded-xl bg-purple-100 text-[#7843CD] flex items-center justify-center">
+                <i class="pi pi-chart-line text-base"></i>
+              </span>
+            </div>
+          </div>
+
+          @if (((r.consultorLikes || 0) + (r.consultorDislikes || 0)) > 0) {
+            <div class="w-full h-2.5 bg-rose-200 rounded-full overflow-hidden">
+              <div
+                class="h-full bg-emerald-500 transition-all duration-300"
+                [style.width.%]="r.consultorTaxaAprovacao"></div>
+            </div>
+          } @else {
+            <p class="text-xs text-slate-400 m-0">Nenhuma resposta do Grafith foi avaliada ainda.</p>
+          }
+
+          @if (r.ultimosDislikesConsultor && r.ultimosDislikesConsultor.length > 0) {
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-rose-700 mb-3 flex items-center gap-1.5">
+                <i class="pi pi-thumbs-down-fill text-[11px]"></i>
+                <span>Últimas respostas com Dislike ({{ r.ultimosDislikesConsultor.length }})</span>
+              </h3>
+              <div class="flex flex-col gap-2.5 max-h-72 overflow-y-auto pr-1">
+                @for (item of r.ultimosDislikesConsultor; track item.id) {
+                  <div class="rounded-xl bg-rose-50/40 border border-rose-200/60 p-3 text-xs flex flex-col gap-1.5">
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500">
+                      <span class="font-bold text-slate-700">
+                        {{ item.usuarioNome }}
+                        @if (item.usuarioEmail) {
+                          <span class="font-normal text-slate-400">({{ item.usuarioEmail }})</span>
+                        }
+                      </span>
+                      <div class="flex items-center gap-2">
+                        @if (item.provedor) {
+                          <span class="px-2 py-0.5 rounded-full bg-white border border-slate-200 text-slate-600 font-semibold">
+                            {{ item.provedor }}
+                          </span>
+                        }
+                        @if (item.criadoEm) {
+                          <span>{{ item.criadoEm | date:'dd/MM/yyyy HH:mm' }}</span>
+                        }
+                      </div>
+                    </div>
+                    @if (item.perguntaResumo) {
+                      <div class="text-slate-700">
+                        <strong class="text-slate-900">Pergunta:</strong> {{ item.perguntaResumo }}
+                      </div>
+                    }
+                    @if (item.respostaResumo) {
+                      <div class="text-slate-600 line-clamp-3">
+                        <strong class="text-slate-800">Resposta:</strong> {{ item.respostaResumo }}
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          }
+        </section>
       } @else if (carregando()) {
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
           @for (i of [1,2,3,4]; track i) {
@@ -450,12 +553,19 @@ export class AdminDashboardComponent implements OnInit {
     const r = this.resumo();
     if (!r) return {};
     return {
-      labels: ['Ativados', 'Em Família', 'Chave IA', 'Open Finance'],
+      labels: ['Ativados', 'Em Família', 'Assinaturas', 'Grafith IA', 'Chave IA', 'Open Finance'],
       datasets: [
         {
           label: 'Usuários',
-          data: [r.usuariosAtivados, r.usuariosEmFamilia, r.usuariosComIa, r.usuariosComOpenFinance],
-          backgroundColor: ['#F59E0B', '#7843CD', '#8B5CF6', '#10B981'],
+          data: [
+            r.usuariosAtivados,
+            r.usuariosEmFamilia,
+            r.usuariosComAssinaturas || 0,
+            r.usuariosUsaramConsultor || 0,
+            r.usuariosComIa,
+            r.usuariosComOpenFinance,
+          ],
+          backgroundColor: ['#F59E0B', '#7843CD', '#0EA5E9', '#EC4899', '#8B5CF6', '#10B981'],
           borderRadius: 8,
         },
       ],

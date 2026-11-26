@@ -1,51 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
-
-* {
-    font-family: 'Poppins', sans-serif;
-}
-
 .sidebar {
-    gap: 14px;
+    font-family: 'Poppins', sans-serif;
     width: 74px;
-    transition: width 0.3s ease, padding 0.3s ease;
-    padding: 28px 12px;
+    transition: width 0.25s cubic-bezier(0.22, 1, 0.36, 1), padding 0.25s ease;
+    padding: 0 12px 20px;
 }
 
-.menu-header{
-    align-items: center;
-    justify-content: space-around;
-    margin-bottom: 64px;
-    height: 35px;
-}
-.menu-btn{
-    height: 20px;
-    cursor: pointer;
-}
-.sidebar .logo{
-    display: none;
+.menu-header {
+    height: 64px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.7);
 }
 
-.sidebar.aberta .logo{
-    display: block;
-    height: 55px;
-}
-
-.adicionar {
-    border-radius: 9px;
-    padding: 14px 0;
-    justify-content: center;
-    align-items: center;
-    height: 52px;
-    width: 100%;
+.sidebar.aberta {
+    width: 236px;
+    padding: 0 14px 20px;
 }
 
 .menuitem {
     border-radius: 12px;
-    padding: 14px 0;
+    padding: 12px 0;
     justify-content: center;
     align-items: center;
-    height: 52px;
-    transition: all 0.2s ease;
+    height: 46px;
+    transition: background-color 0.18s ease, color 0.18s ease;
+    text-decoration: none;
 }
 
 .menuitem:not(.botao-nova-transacao):hover {
@@ -58,38 +35,23 @@
     background-color: #f3e8ff;
     font-weight: 600;
 }
-.menulabel{
+
+.menulabel {
     display: none;
 }
 
-.sidebar.aberta .menulabel{
+.sidebar.aberta .menulabel {
     display: flex;
 }
 
-.sidebar.aberta {
-    width: 230px;
-}
-
 .sidebar.aberta .menuitem {
-    padding: 14px 36px;
-    justify-content: start;
+    padding: 12px 16px;
+    justify-content: flex-start;
 }
 
 .sidebar.aberta .menuitem.botao-nova-transacao {
-    padding: 12px 16px;
+    padding: 11px 16px;
     justify-content: center;
-}
-
-.botao-adicionar {
-    width: 44px;
-    height: 44px;
-    transition: width 0.3s ease, padding 0.3s ease;
-}
-
-.sidebar.aberta .botao-adicionar {
-    width: 100%;
-    height: auto;
-    padding: 10px 16px;
 }
 
 @media (max-width: 768px) {
@@ -100,17 +62,18 @@
         bottom: 0;
         left: 0;
         z-index: 1100;
-        padding: 24px 0;
+        padding: 0;
         overflow: hidden;
+        border-right: none;
     }
     .sidebar.aberta {
-        width: min(240px, 75dvw);
+        width: min(250px, 78dvw);
         position: fixed;
         top: 0;
         bottom: 0;
         left: 0;
         z-index: 1100;
-        padding: calc(20px + var(--npl-safe-top)) 14px calc(20px + var(--npl-safe-bottom));
+        padding: var(--npl-safe-top) 14px calc(20px + var(--npl-safe-bottom));
         overflow-y: auto;
         box-shadow: 0 20px 50px rgba(15, 23, 42, 0.28);
     }

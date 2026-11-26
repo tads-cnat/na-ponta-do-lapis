@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -29,11 +30,17 @@ public class ApiRateLimitService {
     private final ObjectProvider<StringRedisTemplate> redisTemplateProvider;
     private final Map<String, WindowCounter> localCounters = new ConcurrentHashMap<>();
 
+    @Value("${app.rate-limit.enabled:true}")
+    private boolean enabled = true;
+
     public ApiRateLimitService(ObjectProvider<StringRedisTemplate> redisTemplateProvider) {
         this.redisTemplateProvider = redisTemplateProvider;
     }
 
     public void enforce(String bucket, String userKey, String ip, int maxRequestsPerUser, Duration window) {
+        if (!enabled) {
+            return;
+        }
         String normalizedUser = (userKey == null || userKey.isBlank()) ? "anon" : userKey.trim().toLowerCase();
         String normalizedIp = (ip == null || ip.isBlank()) ? "unknown" : ip.trim();
 

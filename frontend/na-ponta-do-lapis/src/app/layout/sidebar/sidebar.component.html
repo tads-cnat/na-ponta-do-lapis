@@ -1,43 +1,69 @@
-<aside class="sidebar flex flex-col h-full bg-white" [class.aberta]="sidebarService.aberto()">
-        <div class="flex menu-header">
-            <img src="logo.svg" alt="logomarca" class="logo">
-            <button
-                type="button"
-                aria-label="Alternar menu lateral"
-                (click)="sidebarService.toggleSidebar()"
-                class="menu-btn w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100/80 transition-colors"
-                [class.text-white]="themeService.escuro()"
-                [class.text-black]="!themeService.escuro()">
-                <app-icon [name]="sidebarService.aberto() ? 'close' : 'menu'" class="w-5 h-5"/>
-            </button>
-        </div>
+<aside class="sidebar flex flex-col h-full bg-white border-r border-slate-200/80" [class.aberta]="sidebarService.aberto()">
+  <!-- Topo alinhado exatamente com os 64px (h-16) do header -->
+  <div class="menu-header flex items-center shrink-0"
+       [class.justify-between]="sidebarService.aberto()"
+       [class.justify-center]="!sidebarService.aberto()">
+    @if (sidebarService.aberto()) {
+      <a routerLink="/app/dashboard" class="flex items-center min-w-0">
+        <img src="logo.svg" alt="Na Ponta do Lápis" class="logo h-11 w-auto object-contain" />
+      </a>
+    }
+    <button
+      type="button"
+      aria-label="Alternar menu lateral"
+      [pTooltip]="isMobile ? 'Fechar menu' : (sidebarService.aberto() ? 'Recolher menu' : 'Expandir menu')"
+      tooltipPosition="right"
+      (click)="sidebarService.toggleSidebar()"
+      class="menu-btn w-9 h-9 flex items-center justify-center rounded-xl text-slate-500 hover:text-[#7843CD] hover:bg-purple-50/80 border-0 bg-transparent transition-colors cursor-pointer shrink-0">
+      @if (isMobile) {
+        <app-icon name="close" class="w-4.5 h-4.5" />
+      } @else if (sidebarService.aberto()) {
+        <app-icon name="recolher" class="w-5 h-5" />
+      } @else {
+        <app-icon name="menu" class="w-4.5 h-4.5" />
+      }
+    </button>
+  </div>
+
+  <div class="flex flex-col flex-1 gap-2.5 pt-4 overflow-y-auto overflow-x-hidden">
     <a [routerLink]="['/app/transacoes']" [queryParams]="{ openDialog: 'escolha' }"
        data-tour="nova-transacao"
        (click)="isMobile ? sidebarService.fecharSidebar() : null"
        routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }"
        class="menuitem botao-nova-transacao flex items-center justify-center gap-2 text-white! btn-npl-primary whitespace-nowrap shrink-0">
-        <app-icon name="plus" class="w-5 h-5 shrink-0" />
-        <span class="menulabel text-sm font-semibold">
-            Nova Transação
-        </span>
+      <app-icon name="plus" class="w-5 h-5 shrink-0" />
+      <span class="menulabel text-sm font-semibold">
+        Nova Transação
+      </span>
     </a>
-    @for (item of items; track item.label){
-        <a [routerLink]="item.routerLink" [attr.data-tour]="'menu-' + item.icon" routerLinkActive="ativo" [routerLinkActiveOptions]="{ exact: true }" (click)="isMobile ? sidebarService.fecharSidebar() : null" class="menuitem flex  text-gray-900 gap-2.5 ">
-            <app-icon [name]="item.icon" class="w-5.5" /> 
-            <span class="menulabel">
-                {{ item.label }}
-            </span>
-        </a>
 
+    @for (item of items; track item.label) {
+      <a [routerLink]="item.routerLink"
+         [attr.data-tour]="'menu-' + item.icon"
+         [pTooltip]="!sidebarService.aberto() && !isMobile ? item.label : ''"
+         tooltipPosition="right"
+         routerLinkActive="ativo"
+         [routerLinkActiveOptions]="{ exact: true }"
+         (click)="isMobile ? sidebarService.fecharSidebar() : null"
+         class="menuitem flex text-slate-700 gap-3">
+        <app-icon [name]="item.icon" class="w-5 h-5 shrink-0" />
+        <span class="menulabel text-sm">
+          {{ item.label }}
+        </span>
+      </a>
     }
+
     @if (mostrarPainelAdmin) {
-        <div class="mt-auto pt-3 border-t border-slate-200/70">
-            <a [routerLink]="['/admin/dashboard']"
-               (click)="isMobile ? sidebarService.fecharSidebar() : null"
-               class="menuitem flex items-center text-[#7843CD] gap-2.5">
-                <app-icon name="admin" class="w-5.5" />
-                <span class="menulabel font-semibold">Painel Admin</span>
-            </a>
-        </div>
+      <div class="mt-auto pt-3 border-t border-slate-200/70">
+        <a [routerLink]="['/admin/dashboard']"
+           [pTooltip]="!sidebarService.aberto() && !isMobile ? 'Painel Admin' : ''"
+           tooltipPosition="right"
+           (click)="isMobile ? sidebarService.fecharSidebar() : null"
+           class="menuitem flex items-center text-[#7843CD] gap-3">
+          <app-icon name="admin" class="w-5 h-5 shrink-0" />
+          <span class="menulabel text-sm font-semibold">Painel Admin</span>
+        </a>
+      </div>
     }
+  </div>
 </aside>

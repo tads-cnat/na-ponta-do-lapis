@@ -57,6 +57,7 @@ export const routes: Routes = [
         children: [
             { path: 'dashboard', title: 'Dashboard — Na Ponta do Lápis', loadComponent: () => import('./pages/dashboard/dashboard.component').then(m => m.DashboardComponent) },
             { path: 'transacoes', title: 'Transações — Na Ponta do Lápis', loadComponent: () => import('./pages/transacoes/transacoes.component').then(m => m.TransacoesComponent) },
+            { path: 'assinaturas', title: 'Compromissos — Na Ponta do Lápis', loadComponent: () => import('./pages/assinaturas/assinaturas.component').then(m => m.AssinaturasComponent) },
             { path: 'contas', title: 'Contas e Cartões — Na Ponta do Lápis', loadComponent: () => import('./pages/contas/contas.component').then(m => m.ContasComponent) },
             { path: 'metas', title: 'Metas — Na Ponta do Lápis', loadComponent: () => import('./pages/metas/metas.component').then(m => m.MetasComponent) },
             { path: 'perfil', title: 'Perfil — Na Ponta do Lápis', loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent) },
@@ -76,6 +77,7 @@ export const routes: Routes = [
     { path: 'perfil', redirectTo: 'app/perfil' },
     { path: 'dashboard', redirectTo: 'app/dashboard' },
     { path: 'transacoes', redirectTo: 'app/transacoes' },
+    { path: 'assinaturas', redirectTo: 'app/assinaturas' },
     { path: 'contas', redirectTo: 'app/contas' },
     { path: 'metas', redirectTo: 'app/metas' },
     { path: 'familia', redirectTo: 'app/familia' },

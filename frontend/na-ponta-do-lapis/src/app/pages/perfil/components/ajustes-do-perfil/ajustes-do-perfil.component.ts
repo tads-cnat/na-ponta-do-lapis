@@ -13,6 +13,7 @@ import { ChangeDetectorRef } from '@angular/core';
 import { StorageService } from '../../../../auth/service/storage.service';
 import { MessageService } from 'primeng/api';
 import { PreferenciaMoedaService, OpcaoMoeda } from '../../../../shared/service/preferencia-moeda.service';
+import { ConsultorService } from '../../../../shared/service/consultor.service';
 import { Usuario } from '../../../../model/IUsuario.models';
 
 @Component({
@@ -84,7 +85,8 @@ export class AjustesPerfilComponent implements OnInit {
     private router: Router,
     private cdr: ChangeDetectorRef,
     private messageService: MessageService,
-    private preferenciaMoedaService: PreferenciaMoedaService
+    private preferenciaMoedaService: PreferenciaMoedaService,
+    public consultorService: ConsultorService
   ) {
     this.inicializarFormulario();
   }

@@ -73,8 +73,6 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        popularConquistasPadrao();
-
         if (usuarioRepository.count() > 0) {
             corrigirContasLegadasSemTipo();
             log.info("[DatabaseSeeder] Banco de dados já possui registros cadastrados. Pulando carga inicial.");
