@@ -35,6 +35,7 @@ services:
       REDIS_PORT: ${REDIS_PORT:-6379}
       APP_SEED_ENABLED: ${APP_SEED_ENABLED:-true}
       APP_ADMIN_EMAILS: ${APP_ADMIN_EMAILS:-}
+      RATE_LIMIT_ENABLED: ${RATE_LIMIT_ENABLED:-true}
     depends_on:
       db: { condition: service_healthy }
       redis: { condition: service_healthy }
