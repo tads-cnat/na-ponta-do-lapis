@@ -62,7 +62,16 @@ public class FaturaAnaliseException extends RuntimeException {
                 .map(Enum::name)
                 .toList();
         return new FaturaAnaliseException(HttpStatus.PRECONDITION_REQUIRED, "IA_NECESSARIA",
-                "Não conseguimos ler esta fatura automaticamente. Informe uma chave de acesso de IA para continuar.",
+                "Cadastre uma chave de IA em Perfil > IA para analisar esta fatura.",
+                false, provedores);
+    }
+
+    public static FaturaAnaliseException chaveIaConsultorNecessaria() {
+        List<String> provedores = Arrays.stream(ProvedorIa.values())
+                .map(Enum::name)
+                .toList();
+        return new FaturaAnaliseException(HttpStatus.PRECONDITION_REQUIRED, "IA_NECESSARIA",
+                "Cadastre uma chave de IA em Perfil > IA para conversar com o Grafith.",
                 false, provedores);
     }
 

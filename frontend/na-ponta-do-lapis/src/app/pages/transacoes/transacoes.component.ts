@@ -110,10 +110,7 @@ export class TransacoesComponent {
     if (this.codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA' || !this.faturaPreviaValida) {
       return false;
     }
-    if (this.modoChaveIa === 'salva') {
-      return !!this.chaveIaSelecionadaId || this.temChaveSalva || !!this.apiKeyIa?.trim();
-    }
-    return !!this.apiKeyIa?.trim();
+    return this.chavesIaSalvas.length > 0 && !!this.chaveIaSelecionadaId;
   }
 
   projetarParcelasFuturas: boolean = true;
@@ -207,6 +204,7 @@ export class TransacoesComponent {
   private preferenciaMoedaService = inject(PreferenciaMoedaService);
   id: number | null = null;
   @ViewChild(CardSaldoComponent) cardSaldo?: CardSaldoComponent;
+  @ViewChild(AssinaturasComponent) assinaturasComponent?: AssinaturasComponent;
   formTransacao: FormGroup;
   constructor(
     private fb: FormBuilder,
@@ -325,6 +323,23 @@ export class TransacoesComponent {
         const aba = params.get('aba');
         if (aba === 'assinaturas' || aba === 'parcelamentos' || aba === 'lancamentos') {
           this.abaMovimentacoes = aba;
+        }
+        const grupoParcelamento = params.get('grupoParcelamento');
+        const busca = params.get('busca');
+        const parcelado = params.get('parcelado');
+        if (grupoParcelamento) {
+          this.abrirGrupoPorId(grupoParcelamento);
+        }
+        if (busca || parcelado === 'true') {
+          this.abaMovimentacoes = 'lancamentos';
+          if (parcelado === 'true') {
+            this.filtroParcelamento = 'PARCELADAS';
+          }
+          if (busca) {
+            this.buscarPorDescricao(busca);
+          } else {
+            this.aplicarFiltros();
+          }
         }
         const openDialog = params.get('openDialog');
         if (openDialog) {
@@ -1186,11 +1201,9 @@ export class TransacoesComponent {
   private opcoesAnaliseFatura(extras: FaturaAnaliseOpcoes): FaturaAnaliseOpcoes {
     return {
       provedor: this.provedorSelecionado,
-      apiKey: this.modoChaveIa === 'avulsa' ? (this.apiKeyIa?.trim() || undefined) : undefined,
-      chaveIaId: this.modoChaveIa === 'salva' ? (this.chaveIaSelecionadaId ?? undefined) : undefined,
-      salvarChave: this.modoChaveIa === 'avulsa' ? this.salvarChaveTemporaria : false,
+      chaveIaId: this.chaveIaSelecionadaId ?? undefined,
       senha: this.senhaPdf?.trim() || undefined,
-      manterNaSessao: this.manterNaSessao,
+      manterNaSessao: false,
       usarIa: this.usarIa,
       ...extras,
     };
@@ -1614,11 +1627,24 @@ export class TransacoesComponent {
 
   abrirGrupoParcelamento(transacao: ITransacoes) {
     if (!transacao.grupoParcelamento) return;
+    this.abrirGrupoPorId(transacao.grupoParcelamento);
+  }
 
-    this.grupoSelecionado = transacao.grupoParcelamento;
+  abrirGrupoPorId(grupoId: string) {
+    if (!grupoId) return;
+
+    this.grupoSelecionado = grupoId;
     this.parcelasGrupo = [];
     this.exibirDialogGrupo = true;
     this.carregarGrupo();
+  }
+
+  verLancamentosDoParcelamento(descricao: string) {
+    this.abaMovimentacoes = 'lancamentos';
+    this.filtroParcelamento = 'PARCELADAS';
+    this.filtroPeriodoRapido = 'TODOS';
+    this.filtroDataRange = null;
+    this.buscarPorDescricao(descricao);
   }
 
   private carregarGrupo() {
@@ -1658,6 +1684,7 @@ export class TransacoesComponent {
         this.carregarGrupo();
         this.listarTransacoes();
         this.atualizarSaldo();
+        this.assinaturasComponent?.carregarParcelamentos();
       },
       error: () => {
         this.messageService.add({
@@ -1683,6 +1710,7 @@ export class TransacoesComponent {
         });
         this.carregarGrupo();
         this.listarTransacoes();
+        this.assinaturasComponent?.carregarParcelamentos();
       },
       error: () => {
         this.messageService.add({
@@ -1731,6 +1759,7 @@ export class TransacoesComponent {
 
         this.listarTransacoes();
         this.atualizarSaldo();
+        this.assinaturasComponent?.carregarParcelamentos();
         this.cdr.detectChanges();
       },
       error: () => {
@@ -1769,6 +1798,7 @@ export class TransacoesComponent {
         this.parcelasGrupo = [];
         this.listarTransacoes();
         this.atualizarSaldo();
+        this.assinaturasComponent?.carregarParcelamentos();
         this.cdr.detectChanges();
       },
       error: () => {
@@ -1970,6 +2000,23 @@ export class TransacoesComponent {
     const mes = String(d.getMonth() + 1).padStart(2, '0');
     const dia = String(d.getDate()).padStart(2, '0');
     return `${ano}-${mes}-${dia}`;
+  }
+
+  public elementoDescricaoTruncada: HTMLElement | null = null;
+
+  public verificarDescricaoTruncada(el: HTMLElement): void {
+    const truncado = el.scrollWidth > el.clientWidth + 1;
+    const proximo = truncado ? el : null;
+    if (this.elementoDescricaoTruncada !== proximo) {
+      this.elementoDescricaoTruncada = proximo;
+      this.cdr.detectChanges();
+    }
+  }
+
+  public limparDescricaoTruncada(el: HTMLElement): void {
+    if (this.elementoDescricaoTruncada === el) {
+      this.elementoDescricaoTruncada = null;
+    }
   }
 
   getSeverity(status: string) {

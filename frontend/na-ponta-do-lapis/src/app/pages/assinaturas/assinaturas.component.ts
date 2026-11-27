@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, OnInit, inject, signal } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, Output, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MessageService } from 'primeng/api';
 import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { AppMoedaPipe } from '../../shared/pipes/app-moeda.pipe';
@@ -285,9 +286,16 @@ import {
           <div class="bg-white rounded-2xl border border-slate-200/80 p-10 text-center">
             <i class="pi pi-credit-card text-3xl text-slate-300 mb-3 block"></i>
             <h3 class="text-base font-bold text-slate-800 m-0">Nenhum parcelamento em aberto</h3>
-            <p class="text-sm text-slate-500 mt-1 mb-0">
+            <p class="text-sm text-slate-500 mt-1 mb-4">
               Quando você registrar uma compra parcelada em Transações, ela aparecerá aqui com o progresso de pagamento.
             </p>
+            <button
+              type="button"
+              (click)="clicarIrParaLancamentos()"
+              class="btn-npl-primary text-white font-semibold text-xs sm:text-sm px-4 py-2 rounded-xl inline-flex items-center gap-2 border-0 cursor-pointer">
+              <i class="pi pi-list text-xs"></i>
+              Ir para Lançamentos
+            </button>
           </div>
         } @else {
           <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -336,6 +344,25 @@ import {
                       <strong class="text-slate-800">{{ p.ultimaParcelaData | date:'MM/yyyy' }}</strong>
                     </div>
                   }
+                </div>
+
+                <div class="flex items-center justify-between gap-2 pt-2 mt-auto border-t border-slate-100">
+                  <button
+                    type="button"
+                    (click)="clicarVerParcelas(p)"
+                    class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-purple-50 text-[#7843CD] hover:bg-purple-100 border-0 cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                    <i class="pi pi-list text-[11px]"></i>
+                    Ver parcelas
+                  </button>
+                  <button
+                    type="button"
+                    (click)="clicarVerLancamentos(p)"
+                    pTooltip="Filtrar esta compra na lista de lançamentos"
+                    tooltipPosition="top"
+                    class="px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-100 border-0 bg-transparent cursor-pointer inline-flex items-center gap-1.5 transition-colors">
+                    <i class="pi pi-external-link text-[11px]"></i>
+                    Ver lançamentos
+                  </button>
                 </div>
               </div>
             }
@@ -468,6 +495,8 @@ export class AssinaturasComponent implements OnInit {
   private transacoesService = inject(TransacoesService);
   private preferenciaMoedaService = inject(PreferenciaMoedaService);
   private messageService = inject(MessageService);
+  private router = inject(Router);
+  private route = inject(ActivatedRoute);
 
   @Input() embutido = false;
   @Input() set abaInicial(valor: 'assinaturas' | 'parcelamentos') {
@@ -475,6 +504,10 @@ export class AssinaturasComponent implements OnInit {
       this.abaAtiva.set(valor);
     }
   }
+
+  @Output() verParcelas = new EventEmitter<ParcelamentoResumo>();
+  @Output() verTransacoesParcelamento = new EventEmitter<ParcelamentoResumo>();
+  @Output() irParaLancamentos = new EventEmitter<void>();
 
   abaAtiva = signal<'assinaturas' | 'parcelamentos'>('assinaturas');
   resumo = signal<AssinaturasResumo | null>(null);
@@ -535,11 +568,45 @@ export class AssinaturasComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    if (!this.embutido) {
+      const aba = this.route.snapshot.queryParamMap.get('aba');
+      if (aba === 'parcelamentos' || aba === 'assinaturas') {
+        this.abaAtiva.set(aba);
+      }
+    }
     this.carregarDados();
     this.carregarParcelamentos();
     this.transacoesService.listarContasUsuarioLogado().subscribe({ next: (c: any[]) => this.contas.set(c || []) });
     this.transacoesService.listarCategorias().subscribe({ next: (c: any[]) => this.categorias.set(c || []) });
     this.transacoesService.listarMarcadores().subscribe({ next: (m: any[]) => this.marcadores.set(m || []) });
+  }
+
+  clicarVerParcelas(parcelamento: ParcelamentoResumo): void {
+    if (this.embutido) {
+      this.verParcelas.emit(parcelamento);
+    } else {
+      void this.router.navigate(['/app/transacoes'], {
+        queryParams: { aba: 'lancamentos', grupoParcelamento: parcelamento.grupoId },
+      });
+    }
+  }
+
+  clicarVerLancamentos(parcelamento: ParcelamentoResumo): void {
+    if (this.embutido) {
+      this.verTransacoesParcelamento.emit(parcelamento);
+    } else {
+      void this.router.navigate(['/app/transacoes'], {
+        queryParams: { aba: 'lancamentos', busca: parcelamento.descricao, parcelado: 'true' },
+      });
+    }
+  }
+
+  clicarIrParaLancamentos(): void {
+    if (this.embutido) {
+      this.irParaLancamentos.emit();
+    } else {
+      void this.router.navigate(['/app/transacoes']);
+    }
   }
 
   carregarParcelamentos(): void {

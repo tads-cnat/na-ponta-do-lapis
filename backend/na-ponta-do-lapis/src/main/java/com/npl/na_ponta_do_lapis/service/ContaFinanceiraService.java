@@ -14,6 +14,10 @@ import com.npl.na_ponta_do_lapis.security.jwt.JwtAuthFilter;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraPatchDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.PagarFaturaDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TransferenciaContasDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TransferenciaContasResponseDTO;
+import com.npl.na_ponta_do_lapis.web.exception.BusinessException;
 import com.npl.na_ponta_do_lapis.web.exception.ContaIdNaoExisteException;
 
 import jakarta.transaction.Transactional;
@@ -121,6 +125,81 @@ public class ContaFinanceiraService {
         validarDonoOuAdmin(conta);
         contaFinanceiraRepository.delete(conta);
     }
+    @Transactional
+    public TransferenciaContasResponseDTO transferirEntreContas(TransferenciaContasDTO dto) {
+        if (java.util.Objects.equals(dto.contaOrigemId(), dto.contaDestinoId())) {
+            throw new BusinessException("Escolha contas diferentes para realizar a transferência.");
+        }
+
+        Long primeiroId = Math.min(dto.contaOrigemId(), dto.contaDestinoId());
+        Long segundoId = Math.max(dto.contaOrigemId(), dto.contaDestinoId());
+        ContaFinanceira primeira = contaFinanceiraRepository.findByIdForUpdate(primeiroId)
+                .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + primeiroId + " não existe"));
+        ContaFinanceira segunda = contaFinanceiraRepository.findByIdForUpdate(segundoId)
+                .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + segundoId + " não existe"));
+
+        ContaFinanceira origem = java.util.Objects.equals(primeira.getId(), dto.contaOrigemId()) ? primeira : segunda;
+        ContaFinanceira destino = java.util.Objects.equals(primeira.getId(), dto.contaDestinoId()) ? primeira : segunda;
+
+        validarDonoOuAdmin(origem);
+        validarDonoOuAdmin(destino);
+
+        if (origem.getTipoConta() == com.npl.na_ponta_do_lapis.entity.enums.TipoConta.CARTAO_CREDITO) {
+            throw new BusinessException("A conta de origem não pode ser um cartão de crédito.");
+        }
+
+        aplicarMovimentacaoSaldo(origem, com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao.DESPESA, dto.valor(), false);
+        aplicarMovimentacaoSaldo(destino, com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao.RECEITA, dto.valor(), false);
+
+        contaFinanceiraRepository.save(origem);
+        contaFinanceiraRepository.save(destino);
+
+        return new TransferenciaContasResponseDTO(
+                new ContaFinanceiraResponseDTO(origem),
+                new ContaFinanceiraResponseDTO(destino),
+                dto.valor()
+        );
+    }
+
+    @Transactional
+    public TransferenciaContasResponseDTO pagarFatura(Long cartaoId, PagarFaturaDTO dto) {
+        if (java.util.Objects.equals(cartaoId, dto.contaOrigemId())) {
+            throw new BusinessException("A conta de origem deve ser diferente do cartão de crédito.");
+        }
+
+        Long primeiroId = Math.min(cartaoId, dto.contaOrigemId());
+        Long segundoId = Math.max(cartaoId, dto.contaOrigemId());
+        ContaFinanceira primeira = contaFinanceiraRepository.findByIdForUpdate(primeiroId)
+                .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + primeiroId + " não existe"));
+        ContaFinanceira segunda = contaFinanceiraRepository.findByIdForUpdate(segundoId)
+                .orElseThrow(() -> new ContaIdNaoExisteException("Conta de ID: " + segundoId + " não existe"));
+
+        ContaFinanceira cartao = java.util.Objects.equals(primeira.getId(), cartaoId) ? primeira : segunda;
+        ContaFinanceira origem = java.util.Objects.equals(primeira.getId(), dto.contaOrigemId()) ? primeira : segunda;
+
+        validarDonoOuAdmin(cartao);
+        validarDonoOuAdmin(origem);
+
+        if (cartao.getTipoConta() != com.npl.na_ponta_do_lapis.entity.enums.TipoConta.CARTAO_CREDITO) {
+            throw new BusinessException("A conta selecionada não é um cartão de crédito.");
+        }
+        if (origem.getTipoConta() == com.npl.na_ponta_do_lapis.entity.enums.TipoConta.CARTAO_CREDITO) {
+            throw new BusinessException("Escolha uma conta corrente ou carteira para pagar a fatura.");
+        }
+
+        aplicarMovimentacaoSaldo(origem, com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao.DESPESA, dto.valor(), false);
+        aplicarMovimentacaoSaldo(cartao, com.npl.na_ponta_do_lapis.entity.enums.TipoTransacao.RECEITA, dto.valor(), false);
+
+        contaFinanceiraRepository.save(origem);
+        contaFinanceiraRepository.save(cartao);
+
+        return new TransferenciaContasResponseDTO(
+                new ContaFinanceiraResponseDTO(origem),
+                new ContaFinanceiraResponseDTO(cartao),
+                dto.valor()
+        );
+    }
+
     public List<ContaFinanceira> listarContaFinanceiraUsuarioLogado(){
         String email = JwtAuthFilter.getEmailUsuarioLogado();
         return contaFinanceiraRepository.buscarContaFinanceiraUsuarioLogado(email);

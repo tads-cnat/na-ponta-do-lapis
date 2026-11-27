@@ -65,7 +65,7 @@ public class ConsultorFinanceiroService {
         IaProviderClient cliente = clientesIa.stream()
                 .filter(c -> c.suporta(provedor))
                 .findFirst()
-                .orElseThrow(FaturaAnaliseException::precisaIa);
+                .orElseThrow(FaturaAnaliseException::chaveIaConsultorNecessaria);
 
         String contextoJson = montarContextoJson(usuario);
         String systemPrompt = montarSystemPrompt(usuario, contextoJson);
@@ -211,8 +211,8 @@ public class ConsultorFinanceiroService {
         sb.append("- **Contas e Cartões:** No menu lateral, acesse **Contas** para cadastrar contas bancárias, carteiras ou cartões de crédito e acompanhar saldos/faturas.\n");
         sb.append("- **Criar e Acompanhar Metas:** No menu lateral, acesse **Metas**, clique em **Nova Meta**, defina nome, valor alvo e prazo, e registre aportes para acompanhar o progresso.\n");
         sb.append("- **Família (finanças compartilhadas):** No menu lateral, acesse **Família** para criar um grupo familiar ou convidar membros por e-mail.\n");
-        sb.append("- **Configurar Open Finance (Pluggy):** Clique no seu avatar no canto superior direito > **Perfil** > aba **Integrações** > subaba **Bancos** (Open Finance). Informe seu **Client ID** e **Client Secret** (ou adicione um **Item ID** do Meu Pluggy) para conectar e sincronizar.\n");
-        sb.append("- **Configurar Chaves de IA e Botão do Grafith:** Clique no seu avatar > **Perfil** > aba **Integrações** > subaba **IA** (ou clique na engrenagem no topo deste chat > **Gerenciar chaves em Perfil > IA**). Lá você cadastra chaves (Gemini, Claude, OpenAI, DeepSeek, Groq) e pode exibir ou ocultar o botão flutuante do Grafith.\n");
+        sb.append("- **Configurar Open Finance (Pluggy):** Clique no seu avatar no canto superior direito > **Perfil** > aba **Open Finance**. Informe seu **Client ID** e **Client Secret** (ou adicione um **Item ID** do Meu Pluggy) para conectar e sincronizar.\n");
+        sb.append("- **Configurar Chaves de IA e Botão do Grafith:** Clique no seu avatar > **Perfil** > aba **IA** (ou clique na engrenagem no topo deste chat > **Gerenciar chaves em Perfil > IA**). Lá você cadastra chaves (Gemini, Claude, OpenAI, DeepSeek, Groq) e pode exibir ou ocultar o botão flutuante do Grafith.\n");
         sb.append("- **Exportar Relatório:** No **Dashboard**, clique em **Exportar Relatório** no canto superior direito.\n");
         sb.append("- **Ajustes de Perfil e Moeda:** Clique no seu avatar > **Perfil** para editar dados pessoais, alterar moeda de exibição, senha e visualizar conquistas.\n");
         sb.append("</guia_do_sistema>\n\n");

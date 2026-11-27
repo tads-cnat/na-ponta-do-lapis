@@ -77,7 +77,9 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
         aria-modal="true"
         aria-label="Grafith - Consultor Financeiro"
         [class.opacity-0]="modalPreparando()"
-        style="width: min(92vw, 760px); height: min(85dvh, 680px); border-radius: 22px;"
+        [style.width]="modoCompactoSemChave() ? 'min(92vw, 480px)' : 'min(92vw, 760px)'"
+        [style.height]="modoCompactoSemChave() ? 'auto' : 'min(85dvh, 680px)'"
+        style="border-radius: 22px;"
         class="grafith-modal relative z-10 flex flex-col bg-white border border-slate-200/80 shadow-[0_24px_64px_rgba(15,23,42,0.28)] overflow-hidden">
         <div #conteudoGrafith class="flex flex-col flex-1 min-h-0 h-full w-full">
           <!-- Cabeçalho -->
@@ -95,17 +97,19 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
             </div>
 
             <div class="flex items-center gap-1 shrink-0">
-              <button
-                type="button"
-                pTooltip="Configurações de IA"
-                tooltipPosition="bottom"
-                aria-label="Configurações de IA"
-                (click)="mostrarConfigChave.set(!mostrarConfigChave())"
-                [class]="mostrarConfigChave()
-                  ? 'w-8 h-8 rounded-lg flex items-center justify-center text-[#7843CD] bg-purple-50 border-0 cursor-pointer'
-                  : 'w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 border-0 bg-transparent cursor-pointer'">
-                <i class="pi pi-cog text-xs"></i>
-              </button>
+              @if (!modoCompactoSemChave()) {
+                <button
+                  type="button"
+                  pTooltip="Configurações de IA"
+                  tooltipPosition="bottom"
+                  aria-label="Configurações de IA"
+                  (click)="aoClicarConfiguracoesIa()"
+                  [class]="mostrarConfigChave()
+                    ? 'w-8 h-8 rounded-lg flex items-center justify-center text-[#7843CD] bg-purple-50 border-0 cursor-pointer'
+                    : 'w-8 h-8 rounded-lg flex items-center justify-center text-slate-400 hover:text-slate-700 hover:bg-slate-100 border-0 bg-transparent cursor-pointer'">
+                  <i class="pi pi-cog text-xs"></i>
+                </button>
+              }
 
               @if (mensagens().length > 1) {
                 <button
@@ -129,28 +133,48 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
             </div>
           </div>
 
-          <!-- Painel de configuração de chave de IA (visível ao clicar na engrenagem) -->
-          @if (mostrarConfigChave()) {
+          @if (modoCompactoSemChave()) {
+            <!-- Estado compacto quando não há chave de IA configurada nem histórico -->
+            <div class="px-5 py-5 flex flex-col gap-4">
+              <div class="rounded-2xl bg-slate-50 border border-slate-200/80 p-4 text-sm text-slate-700 leading-relaxed">
+                <p class="m-0 font-bold text-slate-900">Ative o Grafith para começar</p>
+                <p class="m-0 mt-1.5 text-xs text-slate-600 leading-relaxed">
+                  Posso analisar seus gastos, metas, assinaturas e parcelamentos em aberto com base nos seus dados reais.
+                  Para conversar comigo, cadastre uma chave de IA em <strong>Perfil &gt; IA</strong>.
+                </p>
+              </div>
+
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <span class="text-[11px] text-slate-400 flex items-center gap-1.5">
+                  <i class="pi pi-lock text-emerald-600 text-xs"></i>
+                  Chave salva com criptografia AES-256
+                </span>
+                <button
+                  type="button"
+                  (click)="irParaConfiguracoesIa()"
+                  class="inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl btn-npl-primary text-xs font-semibold border-0 whitespace-nowrap cursor-pointer shrink-0">
+                  <i class="pi pi-key text-[11px]"></i>
+                  Configurar em Perfil &gt; IA
+                </button>
+              </div>
+            </div>
+          } @else {
+          <!-- Painel de configuração de chave de IA (visível ao clicar na engrenagem quando há chaves) -->
+          @if (mostrarConfigChave() && chavesSalvas().length > 0) {
             <div class="mx-4 mt-2.5 flex flex-col gap-2 px-3 py-2.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs shrink-0">
-              @if (chavesSalvas().length > 0) {
-                <div class="flex items-center justify-between gap-2">
-                  <span class="text-slate-600 font-semibold shrink-0">Chave IA ativa:</span>
-                  <p-select
-                    [(ngModel)]="chaveSelecionadaId"
-                    [options]="chavesSalvas()"
-                    optionLabel="apelido"
-                    optionValue="id"
-                    placeholder="Automática (padrão)"
-                    [showClear]="true"
-                    appendTo="body"
-                    [overlayOptions]="{ baseZIndex: 1250 }"
-                    styleClass="flex-1 text-xs" />
-                </div>
-              } @else {
-                <div class="text-slate-600">
-                  Nenhuma chave de IA salva ainda. Cadastre uma no seu perfil ou informe uma chave temporária abaixo.
-                </div>
-              }
+              <div class="flex items-center justify-between gap-2">
+                <span class="text-slate-600 font-semibold shrink-0">Chave IA ativa:</span>
+                <p-select
+                  [(ngModel)]="chaveSelecionadaId"
+                  [options]="chavesSalvas()"
+                  optionLabel="apelido"
+                  optionValue="id"
+                  placeholder="Automática (padrão)"
+                  [showClear]="true"
+                  appendTo="body"
+                  [overlayOptions]="{ baseZIndex: 1250 }"
+                  styleClass="flex-1 text-xs" />
+              </div>
               <div class="flex items-center justify-end">
                 <button
                   type="button"
@@ -163,41 +187,34 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
             </div>
           }
 
-          <!-- Configuração rápida de chave avulsa somente quando não há nenhuma chave configurada -->
+          <!-- Aviso quando não há nenhuma chave cadastrada no Perfil -->
           @if (pedirChave()) {
-            <div class="mx-4 mt-2.5 rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-950 flex flex-col gap-2 shrink-0">
-              <div class="font-bold">Informe uma chave de IA para conversar com o Grafith</div>
-              <p class="m-0 text-amber-800">
-                Você pode cadastrar suas chaves no Perfil ou informar uma temporária abaixo para esta sessão.
-              </p>
-              <div class="flex gap-2">
-                <p-select
-                  [(ngModel)]="provedorAvulso"
-                  [options]="provedores"
-                  optionLabel="label"
-                  optionValue="value"
-                  appendTo="body"
-                  [overlayOptions]="{ baseZIndex: 1250 }"
-                  styleClass="w-32" />
-                <input
-                  type="password"
-                  pInputText
-                  [(ngModel)]="apiKeyAvulsa"
-                  placeholder="Cole sua API Key"
-                  class="flex-1 text-xs" />
+            <div class="mx-4 mt-2.5 rounded-xl bg-amber-50 border border-amber-200 p-3 text-xs text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 shrink-0">
+              <div>
+                <div class="font-bold">Cadastre uma chave de IA para conversar com o Grafith</div>
+                <p class="m-0 text-amber-800 mt-0.5">
+                  Configure sua chave em Perfil &gt; IA para começar.
+                </p>
               </div>
+              <button
+                type="button"
+                (click)="irParaConfiguracoesIa()"
+                class="shrink-0 inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#7843CD] hover:bg-[#6214CC] text-white text-xs font-semibold border-0 cursor-pointer transition-colors">
+                <i class="pi pi-key text-[11px]"></i>
+                Configurar em Perfil &gt; IA
+              </button>
             </div>
           }
 
           <!-- Sugestões rápidas -->
-          @if (mensagens().length <= 1) {
+          @if (mensagens().length <= 1 && !pedirChave()) {
             <div class="px-4 pt-2.5 pb-1 flex flex-wrap gap-1.5 shrink-0">
               @for (sug of sugestoes; track sug) {
                 <button
                   type="button"
                   (click)="enviarSugestao(sug)"
-                  [disabled]="carregando()"
-                  class="text-left text-xs px-3 py-1.5 rounded-full bg-purple-50 text-[#7843CD] hover:bg-purple-100 border border-purple-200/70 cursor-pointer font-medium transition-colors">
+                  [disabled]="carregando() || pedirChave()"
+                  class="text-left text-xs px-3 py-1.5 rounded-full bg-purple-50 text-[#7843CD] hover:bg-purple-100 border border-purple-200/70 cursor-pointer font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
                   {{ sug }}
                 </button>
               }
@@ -264,24 +281,27 @@ const MENSAGEM_BOAS_VINDAS: MensagemConsultor = {
           </div>
 
           <!-- Input de pergunta -->
-          <form (ngSubmit)="enviar()" class="flex items-center gap-2 px-4 py-3 border-t border-slate-100 bg-white shrink-0">
-            <input
-              type="text"
-              pInputText
-              [(ngModel)]="perguntaAtual"
-              name="perguntaAtual"
-              [disabled]="carregando()"
-              maxlength="1000"
-              placeholder="Pergunte sobre gastos, metas, assinaturas ou parcelas..."
-              class="flex-1 text-sm" />
-            <button
-              type="submit"
-              aria-label="Enviar pergunta"
-              [disabled]="!perguntaAtual.trim() || carregando()"
-              class="btn-npl-primary text-white w-10 h-10 rounded-xl flex items-center justify-center border-0 cursor-pointer disabled:opacity-50 shrink-0">
-              <i class="pi pi-send text-sm"></i>
-            </button>
-          </form>
+          @if (!pedirChave()) {
+            <form (ngSubmit)="enviar()" class="flex items-center gap-2 px-4 py-3 border-t border-slate-100 bg-white shrink-0">
+              <input
+                type="text"
+                pInputText
+                [(ngModel)]="perguntaAtual"
+                name="perguntaAtual"
+                [disabled]="carregando()"
+                maxlength="1000"
+                placeholder="Pergunte sobre gastos, metas, assinaturas ou parcelas..."
+                class="flex-1 text-sm" />
+              <button
+                type="submit"
+                aria-label="Enviar pergunta"
+                [disabled]="!perguntaAtual.trim() || carregando()"
+                class="btn-npl-primary text-white w-10 h-10 rounded-xl flex items-center justify-center border-0 cursor-pointer disabled:opacity-50 shrink-0">
+                <i class="pi pi-send text-sm"></i>
+              </button>
+            </form>
+          }
+          }
         </div>
       </div>
     </div>
@@ -356,8 +376,6 @@ export class ConsultorIaComponent implements OnDestroy {
   private digitacaoTimer: ReturnType<typeof setInterval> | null = null;
 
   perguntaAtual = '';
-  provedorAvulso = 'GEMINI';
-  apiKeyAvulsa = '';
   chaveSelecionadaId: number | null = null;
 
   renderizarModal = signal(false);
@@ -367,6 +385,10 @@ export class ConsultorIaComponent implements OnDestroy {
   carregando = signal(false);
   pedirChave = signal(false);
   mostrarConfigChave = signal(false);
+
+  modoCompactoSemChave(): boolean {
+    return this.pedirChave() && this.mensagens().length <= 1;
+  }
   saudando = signal(false);
   estadoGrafith = signal<MascoteEstado>('idle');
   status = signal<ConsultorStatus | null>(null);
@@ -716,9 +738,6 @@ export class ConsultorIaComponent implements OnDestroy {
         pergunta,
         historico,
         chaveIaId: this.chaveSelecionadaId ?? undefined,
-        provedor: !this.chaveSelecionadaId && this.apiKeyAvulsa.trim() ? this.provedorAvulso : undefined,
-        apiKey: !this.chaveSelecionadaId && this.apiKeyAvulsa.trim() ? this.apiKeyAvulsa.trim() : undefined,
-        manterNaSessao: !this.chaveSelecionadaId && !!this.apiKeyAvulsa.trim(),
       })
       .subscribe({
         next: (res) => {
@@ -852,6 +871,14 @@ export class ConsultorIaComponent implements OnDestroy {
       this.salvarMensagens(nova);
       return nova;
     });
+  }
+
+  aoClicarConfiguracoesIa(): void {
+    if (this.chavesSalvas().length === 0) {
+      this.irParaConfiguracoesIa();
+      return;
+    }
+    this.mostrarConfigChave.set(!this.mostrarConfigChave());
   }
 
   irParaConfiguracoesIa(): void {

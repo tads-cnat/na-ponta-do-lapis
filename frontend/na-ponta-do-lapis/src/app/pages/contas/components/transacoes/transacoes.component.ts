@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { ChangeDetectorRef, Component, Input, Output, EventEmitter, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PrimeNGModuleModule } from '../../../../shared/primeNg.module';
 import { ITransacoes } from '../../../../model/ITransacoes.model';
@@ -56,7 +56,12 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
 
                 <!-- INFO -->
                 <div class="min-w-0 flex flex-col">
-                  <span class="font-semibold text-base truncate">
+                  <span #descConta class="font-semibold text-base truncate"
+                    [pTooltip]="elementoDescricaoTruncada === descConta ? transacao.descricao : ''"
+                    tooltipPosition="top"
+                    [showDelay]="150"
+                    (pointerenter)="verificarDescricaoTruncada(descConta)"
+                    (pointerleave)="limparDescricaoTruncada(descConta)">
                     {{ transacao.descricao }}
                   </span>
                   <span class="text-slate-400 text-xs truncate">
@@ -118,6 +123,23 @@ import { AppMoedaPipe } from '../../../../shared/pipes/app-moeda.pipe';
   `
 })
 export class TransacoesComponent {
+  private readonly cdr = inject(ChangeDetectorRef);
+  elementoDescricaoTruncada: HTMLElement | null = null;
+
+  verificarDescricaoTruncada(el: HTMLElement): void {
+    const truncado = el.scrollWidth > el.clientWidth + 1;
+    const proximo = truncado ? el : null;
+    if (this.elementoDescricaoTruncada !== proximo) {
+      this.elementoDescricaoTruncada = proximo;
+      this.cdr.detectChanges();
+    }
+  }
+
+  limparDescricaoTruncada(el: HTMLElement): void {
+    if (this.elementoDescricaoTruncada === el) {
+      this.elementoDescricaoTruncada = null;
+    }
+  }
 
   // =========================================
   // INPUTS

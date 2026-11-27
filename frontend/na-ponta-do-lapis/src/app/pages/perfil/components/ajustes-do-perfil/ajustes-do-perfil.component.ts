@@ -23,7 +23,7 @@ import { Usuario } from '../../../../model/IUsuario.models';
 })
 export class AjustesPerfilComponent implements OnInit {
   public perfilForm!: FormGroup;
-  public abaAtiva: 'dados' | 'conquistas' | 'integracoes' = 'dados';
+  public abaAtiva: 'dados' | 'conquistas' | 'open-finance' | 'ia' = 'dados';
   public moedaOriginalUsuario: string = 'BRL';
   public usuarioLogado: Usuario | null = null;
 
@@ -95,8 +95,11 @@ export class AjustesPerfilComponent implements OnInit {
       if (params['aba'] === 'conquistas' || params['tab'] === 'conquistas') {
         this.abaAtiva = 'conquistas';
         this.cdr.detectChanges();
-      } else if (params['aba'] === 'integracoes' || params['tab'] === 'integracoes' || params['aba'] === 'ia' || params['secao'] === 'ia') {
-        this.abaAtiva = 'integracoes';
+      } else if (params['aba'] === 'ia' || params['secao'] === 'ia' || params['subaba'] === 'ia') {
+        this.abaAtiva = 'ia';
+        this.cdr.detectChanges();
+      } else if (params['aba'] === 'open-finance' || params['aba'] === 'integracoes' || params['tab'] === 'integracoes' || params['secao'] === 'bancos' || params['secao'] === 'openfinance') {
+        this.abaAtiva = 'open-finance';
         this.cdr.detectChanges();
       }
     });
@@ -249,6 +252,13 @@ export class AjustesPerfilComponent implements OnInit {
     });
   }
 
+  public emailFoiAlterado(): boolean {
+    if (!this.editandoDados) return false;
+    const emailAtual = (this.perfilForm?.get('email')?.value || '').trim().toLowerCase();
+    const emailOriginal = (this.usuarioLogado?.email || '').trim().toLowerCase();
+    return emailAtual.length > 0 && emailAtual !== emailOriginal;
+  }
+
   public salvarMudancas(): void {
     const valoresFormulario = this.perfilForm.value;
     const dadosParciaisPatch: any = {};
@@ -260,10 +270,20 @@ export class AjustesPerfilComponent implements OnInit {
       }
     }
 
-    // 2. Verifica se o e-mail foi alterado
+    // 2. Verifica se o e-mail foi alterado (exige senha atual)
     if (this.editandoDados && valoresFormulario.email && valoresFormulario.email.trim() !== '') {
       if (valoresFormulario.email.trim() !== this.usuarioLogado?.email) {
+        if (!this.temTexto(valoresFormulario.senhaAtual)) {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Senha obrigatória',
+            detail: 'Informe sua senha atual para alterar o e-mail.',
+            life: 3500
+          });
+          return;
+        }
         dadosParciaisPatch.email = valoresFormulario.email.trim();
+        dadosParciaisPatch.senhaAtual = valoresFormulario.senhaAtual;
       }
     }
 

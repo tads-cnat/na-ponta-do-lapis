@@ -71,14 +71,13 @@ public class ConsultorFinanceiroController {
     public ResponseEntity<Map<String, Object>> status(
             @AuthenticationPrincipal Usuario usuario,
             HttpServletRequest request) {
-        boolean temSessao = cookieHelper.ler(request).isPresent();
         Optional<ChaveIaUsuario> padrao = usuario != null ? chaveIaService.obterChavePadrao(usuario) : Optional.empty();
         boolean temChavePlataforma = fallbackApiKey != null && !fallbackApiKey.isBlank();
 
         return ResponseEntity.ok(Map.of(
-                "pronto", temSessao || padrao.isPresent() || temChavePlataforma,
+                "pronto", padrao.isPresent() || temChavePlataforma,
                 "temChaveUsuario", padrao.isPresent(),
-                "temSessao", temSessao,
+                "temSessao", false,
                 "temChavePlataforma", temChavePlataforma,
                 "provedorPadrao", padrao.map(c -> c.getProvedor().name()).orElse(fallbackProvedor)
         ));
@@ -105,12 +104,8 @@ public class ConsultorFinanceiroController {
                 Duration.ofMinutes(1));
 
         try {
-            CredencialResolvida credencial = resolverCredencial(body, usuario, request);
+            CredencialResolvida credencial = resolverCredencial(body, usuario);
             String resposta = consultorService.responder(usuario, credencial.provedor(), credencial.apiKey(), body);
-
-            if (body.manterNaSessao() && !credencial.usouPlataforma() && body.apiKey() != null && !body.apiKey().isBlank()) {
-                cookieHelper.gravar(response, request, credencial.provedor(), credencial.apiKey());
-            }
 
             conquistaService.desbloquear(usuario, "GRAFITH_CONSULTOR");
 
@@ -173,21 +168,11 @@ public class ConsultorFinanceiroController {
         return t.length() <= max ? t : t.substring(0, max);
     }
 
-    private CredencialResolvida resolverCredencial(ConsultorRequestDTO body, Usuario usuario, HttpServletRequest request) {
+    private CredencialResolvida resolverCredencial(ConsultorRequestDTO body, Usuario usuario) {
         if (body.chaveIaId() != null) {
             ChaveIaUsuario entidade = chaveIaService.obterEntidade(usuario, body.chaveIaId());
             String decifrada = chaveIaService.obterChaveDecifrada(usuario, body.chaveIaId());
             return new CredencialResolvida(entidade.getProvedor(), decifrada, false);
-        }
-
-        if (body.apiKey() != null && !body.apiKey().isBlank()) {
-            ProvedorIa provedor = parseProvedor(body.provedor(), ProvedorIa.GEMINI);
-            return new CredencialResolvida(provedor, body.apiKey().trim(), false);
-        }
-
-        Optional<CredencialIa> daSessao = cookieHelper.ler(request);
-        if (daSessao.isPresent()) {
-            return new CredencialResolvida(daSessao.get().provedor(), daSessao.get().apiKey(), false);
         }
 
         Optional<ChaveIaUsuario> padrao = chaveIaService.obterChavePadrao(usuario);
@@ -201,7 +186,7 @@ public class ConsultorFinanceiroController {
             return new CredencialResolvida(provedor, fallbackApiKey.trim(), true);
         }
 
-        throw FaturaAnaliseException.precisaIa();
+        throw FaturaAnaliseException.chaveIaConsultorNecessaria();
     }
 
     private ProvedorIa parseProvedor(String valor, ProvedorIa defaultValue) {

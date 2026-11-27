@@ -32,12 +32,6 @@ export class FamiliaService {
       catchError(() => of(false))
     );
   }
-  buscarFamiliaPorNome(nomeFamilia: string): Observable<Familia> {
-    const familias = this.http.get<Familia[]>(`${this.BASE_URL}/familias`);
-    return familias.pipe(
-      map(familias => familias.find(familia => familia.nome === nomeFamilia)!)
-    ); 
-  }
   vincularUsuarioAFamilia(nickname: string, familiaId: number): Observable<Usuario> {
     return this.http.post<any>(
       `${this.BASE_URL}/familias/${familiaId}/membros`,

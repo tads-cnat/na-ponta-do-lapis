@@ -77,6 +77,10 @@ public class UsuarioService {
         if (dto.email() != null && !dto.email().trim().isEmpty()) {
             String novoEmail = dto.email().trim();
             if (!novoEmail.equalsIgnoreCase(emailAnterior)) {
+                if (dto.senhaAtual() == null || dto.senhaAtual().trim().isEmpty()
+                        || !passwordEncoder.matches(dto.senhaAtual(), usuario.getPassword())) {
+                    throw new BusinessException("Informe sua senha atual correta para alterar o e-mail.");
+                }
                 usuarioRepository.findByEmailIgnoreCase(novoEmail)
                         .filter(existente -> !existente.getId().equals(usuario.getId()))
                         .ifPresent(existente -> {
