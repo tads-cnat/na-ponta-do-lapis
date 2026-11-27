@@ -9,11 +9,12 @@ import { ThemeService } from '../../service/theme.service';
 import { SidebarService } from '../../service/sidebar-service.service';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { GuiaCondutorComponent } from '../../shared/components/guia-condutor/guia-condutor.component';
+import { ConsultorIaComponent } from '../../shared/components/consultor-ia/consultor-ia.component';
 import { GuiaCondutorService } from '../../shared/service/guia-condutor.service';
 
 @Component({
   selector: 'app-main-layout',
-  imports: [HeaderComponent, SidebarComponent, RouterOutlet, RouterLink, RouterLinkActive, PrimeNGModuleModule, IconComponent, GuiaCondutorComponent],
+  imports: [HeaderComponent, SidebarComponent, RouterOutlet, RouterLink, RouterLinkActive, PrimeNGModuleModule, IconComponent, GuiaCondutorComponent, ConsultorIaComponent],
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css',
 })

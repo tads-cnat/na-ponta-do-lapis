@@ -9,8 +9,10 @@ import com.npl.na_ponta_do_lapis.repository.UsuarioRepository;
 import com.npl.na_ponta_do_lapis.security.UsuarioAuthCacheService;
 import com.npl.na_ponta_do_lapis.web.dto.ConviteDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ConviteResponseDTO;
-import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
+import com.npl.na_ponta_do_lapis.web.exception.BusinessException;
+import com.npl.na_ponta_do_lapis.web.exception.NotFoundException;
 import jakarta.transaction.Transactional;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,30 +38,37 @@ public class ConviteService {
 
     @Transactional
     public ConviteResponseDTO enviarConvite(ConviteDTO conviteDTO, Usuario solicitante) {
-        if (solicitante.getPapel() != Papel.ADMIN_FAMILIA) {
-            throw new RuntimeException("Apenas admins podem enviar convite");
+        if (!solicitante.isAdminFamilia()) {
+            throw new AccessDeniedException("Apenas administradores da família podem enviar convites.");
         }
 
         if (solicitante.getFamilia() == null) {
-            throw new RuntimeException("Admin sem família?");
+            throw new BusinessException("Você precisa pertencer a uma família para enviar convites.");
         }
 
         if (conviteDTO == null || conviteDTO.destinatarioUsername() == null || conviteDTO.destinatarioUsername().isBlank()) {
-            throw new RuntimeException("Username do destinatário é obrigatório");
+            throw new BusinessException("Username do destinatário é obrigatório.");
         }
 
         if (conviteDTO.familiaId() != null && !Objects.equals(conviteDTO.familiaId(), solicitante.getFamilia().getId())) {
-            throw new RuntimeException("Família do convite não corresponde à família do solicitante");
+            throw new AccessDeniedException("Família do convite não corresponde à família do solicitante.");
         }
 
         Usuario destinatario = usuarioRepository.findByUsername(conviteDTO.destinatarioUsername());
+        if (destinatario == null) {
+            throw new NotFoundException("Usuário destinatário não encontrado.");
+        }
 
         if (destinatario.equals(solicitante)) {
-            throw new RuntimeException("Não pode convidar a si mesmo");
+            throw new BusinessException("Não é possível convidar a si mesmo.");
         }
 
         if (destinatario.getFamilia() != null) {
-            throw new RuntimeException("Usuário já está em uma família");
+            throw new BusinessException("Este usuário já pertence a uma família.");
+        }
+
+        if (conviteRepository.existsByDestinatarioAndFamiliaAndStatus(destinatario, solicitante.getFamilia(), StatusConvite.PENDENTE)) {
+            throw new BusinessException("Já existe um convite pendente para este usuário nesta família.");
         }
 
         Convite convite = new Convite();
@@ -74,18 +83,18 @@ public class ConviteService {
     @Transactional
     public ConviteResponseDTO aceitarConvite(Long conviteId, Usuario usuario) {
         Convite convite = conviteRepository.findById(conviteId)
-                .orElseThrow(() -> new RuntimeException("Convite não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Convite não encontrado."));
 
         if (!convite.getDestinatario().equals(usuario)) {
-            throw new RuntimeException("Não autorizado");
+            throw new AccessDeniedException("Você não tem permissão para responder a este convite.");
         }
 
         if (usuario.getFamilia() != null) {
-            throw new RuntimeException("Já está em uma família");
+            throw new BusinessException("Você já pertence a uma família.");
         }
 
         if (convite.getStatus() != StatusConvite.PENDENTE) {
-            throw new RuntimeException("Convite não está mais pendente");
+            throw new BusinessException("Este convite não está mais pendente.");
         }
         usuario.setFamilia(convite.getFamilia());
 
@@ -99,14 +108,14 @@ public class ConviteService {
 
     @Transactional
     public ConviteResponseDTO recusarConvite(Long conviteId, Usuario usuario) {
-        if (usuario.getFamilia() != null) {
-            throw new RuntimeException("Já está em uma família");
-        }
         Convite convite = conviteRepository.findById(conviteId)
-                .orElseThrow(() -> new RuntimeException("Convite não encontrado"));
+                .orElseThrow(() -> new NotFoundException("Convite não encontrado."));
 
         if (!usuario.equals(convite.getDestinatario())) {
-            throw new RuntimeException("Não autorizado");
+            throw new AccessDeniedException("Você não tem permissão para responder a este convite.");
+        }
+        if (convite.getStatus() != StatusConvite.PENDENTE) {
+            throw new BusinessException("Este convite não está mais pendente.");
         }
         convite.setStatus(StatusConvite.RECUSADO);
         conviteRepository.save(convite);

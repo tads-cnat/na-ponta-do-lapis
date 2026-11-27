@@ -36,14 +36,40 @@ public class OpenAiCompatibleProviderClient implements IaProviderClient {
 
     @Override
     public String completar(ProvedorIa provedor, String apiKey, String prompt) {
+        return executar(provedor, apiKey, prompt, true);
+    }
+
+    @Override
+    public String completarTexto(ProvedorIa provedor, String apiKey, String prompt) {
+        return executar(provedor, apiKey, null, prompt, false, 8192);
+    }
+
+    @Override
+    public String completarChat(ProvedorIa provedor, String apiKey, String systemPrompt, String userMessage) {
+        return executar(provedor, apiKey, systemPrompt, userMessage, false, 1200);
+    }
+
+    private String executar(ProvedorIa provedor, String apiKey, String prompt, boolean exigirJson) {
+        return executar(provedor, apiKey, null, prompt, exigirJson, 8192);
+    }
+
+    private String executar(ProvedorIa provedor, String apiKey, String systemPrompt, String userMessage,
+                            boolean exigirJson, int maxTokens) {
         Map<String, Object> corpo = new java.util.LinkedHashMap<>();
         corpo.put("model", modelo(provedor));
-        corpo.put("temperature", 0);
-        corpo.put("max_tokens", 8192);
-        if (provedor == ProvedorIa.OPENAI || provedor == ProvedorIa.DEEPSEEK) {
+        corpo.put("temperature", exigirJson ? 0 : 0.3);
+        corpo.put("max_tokens", maxTokens);
+        if (exigirJson && (provedor == ProvedorIa.OPENAI || provedor == ProvedorIa.DEEPSEEK)) {
             corpo.put("response_format", Map.of("type", "json_object"));
         }
-        corpo.put("messages", List.of(Map.of("role", "user", "content", prompt)));
+        if (systemPrompt != null && !systemPrompt.isBlank()) {
+            corpo.put("messages", List.of(
+                    Map.of("role", "system", "content", systemPrompt),
+                    Map.of("role", "user", "content", userMessage)
+            ));
+        } else {
+            corpo.put("messages", List.of(Map.of("role", "user", "content", userMessage)));
+        }
         Map<String, String> headers = Map.of("Authorization", "Bearer " + apiKey);
         JsonNode resposta = httpClient.post(url(provedor), headers, corpo);
         return extrairTexto(resposta);

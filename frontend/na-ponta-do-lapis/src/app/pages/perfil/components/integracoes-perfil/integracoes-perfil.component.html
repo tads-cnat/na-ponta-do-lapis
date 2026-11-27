@@ -1,34 +1,5 @@
 <div class="w-full flex flex-col gap-6">
 
-  <!-- SELETOR DE SUB-ABAS (Open Finance vs Assistente de IA) -->
-  <div class="flex flex-wrap sm:flex-nowrap items-center gap-2 p-1.5 bg-slate-100 rounded-2xl w-full sm:w-fit border border-slate-200/80">
-    <button type="button"
-            (click)="subabaAtiva = 'bancos'"
-            [ngClass]="subabaAtiva === 'bancos' ? 'bg-white text-purple-950 font-bold shadow-xs' : 'text-slate-600 font-medium hover:text-slate-900'"
-            class="flex-1 sm:flex-initial justify-center px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap">
-      <svg class="w-4 h-4 text-[#7843CD] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M3 21h18M3 10h18M5 10v11M9 10v11M15 10v11M19 10v11M12 3l9 5H3l9-5z" />
-      </svg>
-      <span>Open Finance (Bancos)</span>
-      <span *ngIf="openFinanceStatus?.conectado" class="w-2 h-2 rounded-full bg-emerald-500 shrink-0" title="Conectado"></span>
-    </button>
-
-    <button type="button"
-            (click)="subabaAtiva = 'ia'"
-            [ngClass]="subabaAtiva === 'ia' ? 'bg-white text-purple-950 font-bold shadow-xs' : 'text-slate-600 font-medium hover:text-slate-900'"
-            class="flex-1 sm:flex-initial justify-center px-3 sm:px-4 py-2 text-xs sm:text-sm rounded-xl transition-all cursor-pointer flex items-center gap-2 whitespace-nowrap">
-      <svg class="w-4 h-4 text-[#7843CD] shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-        <path stroke-linecap="round" stroke-linejoin="round"
-          d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-      </svg>
-      <span>Assistente de IA (Chaves)</span>
-      <span *ngIf="chavesIa.length > 0" class="badge-npl-amarelo text-[10px]! py-0.5! px-1.5!">
-        {{ chavesIa.length }}
-      </span>
-    </button>
-  </div>
-
   <!-- ================= SEÇÃO CONEXÃO BANCÁRIA (OPEN FINANCE) ================= -->
   <div *ngIf="subabaAtiva === 'bancos'" class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 md:p-8 shadow-sm">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-100">
@@ -440,29 +411,54 @@
 
 
   <!-- ================= SEÇÃO ASSISTENTE DE IA ================= -->
-  <div *ngIf="subabaAtiva === 'ia'" id="secao-ia" class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 md:p-8 shadow-sm">
+  <div *ngIf="subabaAtiva === 'ia'" id="secao-ia" class="flex flex-col gap-5">
+    <!-- Card: Consultor Grafith IA -->
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div class="flex items-center gap-3.5 min-w-0">
+        <div class="w-12 h-12 min-w-12 min-h-12 shrink-0 rounded-full bg-gradient-to-br from-[#F6EEFF] to-white border-2 border-[#7843CD]/35 flex items-center justify-center overflow-hidden shadow-xs">
+          <span class="scale-[0.74] translate-y-0.5 origin-center pointer-events-none">
+            <app-mascote-login [compact]="true" estado="idle" />
+          </span>
+        </div>
+        <div>
+          <h2 class="text-slate-900 font-bold text-base sm:text-lg tracking-tight m-0">Consultor Grafith IA</h2>
+          <p class="text-xs text-slate-500 m-0">
+            Exibir o botão flutuante do Grafith no canto inferior direito das telas.
+          </p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3 self-start sm:self-auto shrink-0">
+        <button
+          type="button"
+          (click)="consultorService.abrir()"
+          class="px-3.5 py-2 rounded-xl border border-purple-200 bg-purple-50/70 hover:bg-purple-100 text-[#6214CC] text-xs font-semibold cursor-pointer transition-colors whitespace-nowrap">
+          Abrir chat
+        </button>
+        <p-toggleswitch
+          [ngModel]="consultorService.exibirBotaoFlutuante()"
+          [ngModelOptions]="{ standalone: true }"
+          (ngModelChange)="consultorService.definirExibirBotaoFlutuante($event)"
+          ariaLabel="Exibir botão flutuante do Grafith IA">
+        </p-toggleswitch>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 p-4 sm:p-6 md:p-8 shadow-sm">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-100">
       <div class="flex items-center gap-3 min-w-0">
         <div
-          class="w-10 h-10 min-w-10 min-h-10 shrink-0 aspect-square rounded-xl bg-purple-50 text-purple-600 flex items-center justify-center font-bold">
-          <!-- Ícone SVG profissional de IA / Faíscas Inteligentes -->
-          <svg class="w-5 h-5 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round"
-              d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
-          </svg>
+          class="w-10 h-10 min-w-10 min-h-10 shrink-0 aspect-square rounded-xl bg-purple-50 text-[#7843CD] flex items-center justify-center font-bold">
+          <i class="pi pi-key text-base"></i>
         </div>
-        <div>
-          <h2 class="text-xl font-bold text-slate-900">Assistente Inteligente de Faturas (IA)</h2>
-          <p class="text-xs text-slate-500">Configure modelos de inteligência artificial para ler faturas em PDF e
-            organizar seus lançamentos automaticamente.</p>
+        <div class="min-w-0">
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900 m-0">Chaves de API de IA</h2>
+          <p class="text-xs text-slate-500 m-0 mt-0.5">Configure sua chave de inteligência artificial para usar o Consultor Grafith e ler faturas em PDF automaticamente.</p>
         </div>
       </div>
 
       <button (click)="abrirModalNovaChave()" type="button"
-        class="inline-flex items-center gap-2 px-4 py-2 text-xs btn-npl-primary self-start sm:self-auto cursor-pointer">
-        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
+        class="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold btn-npl-primary border-0 whitespace-nowrap shrink-0 self-start sm:self-auto cursor-pointer">
+        <i class="pi pi-plus text-[11px] shrink-0"></i>
         <span>Nova Chave de IA</span>
       </button>
     </div>
@@ -485,22 +481,12 @@
     <!-- Lista Vazia -->
     <div *ngIf="!carregandoChavesIa && chavesIa.length === 0" class="py-8 text-center flex flex-col items-center">
       <div class="w-12 h-12 mx-auto mb-3 rounded-full bg-slate-100 flex items-center justify-center text-slate-400">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
-        </svg>
+        <i class="pi pi-key text-lg"></i>
       </div>
-      <p class="text-sm font-semibold text-slate-700">Nenhum assistente de IA configurado</p>
-      <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto">
-        Cadastre uma chave para que o sistema consiga ler faturas em PDF e cadastrar os lançamentos automaticamente.
+      <p class="text-sm font-semibold text-slate-700 m-0">Nenhuma chave de IA cadastrada</p>
+      <p class="text-xs text-slate-400 mt-1 max-w-md mx-auto m-0">
+        Clique em <strong>Nova Chave de IA</strong> acima para habilitar o Consultor Grafith e a leitura automática de faturas em PDF.
       </p>
-      <button (click)="abrirModalNovaChave()" type="button"
-        class="mt-4 inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-purple-700 bg-purple-50 hover:bg-purple-100 rounded-xl transition-colors cursor-pointer">
-        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-        </svg>
-        <span>Nova Chave de IA</span>
-      </button>
     </div>
 
     <!-- Tabela de Chaves Cadastradas -->
@@ -565,6 +551,7 @@
         </tbody>
       </table>
     </div>
+  </div>
   </div>
 
 

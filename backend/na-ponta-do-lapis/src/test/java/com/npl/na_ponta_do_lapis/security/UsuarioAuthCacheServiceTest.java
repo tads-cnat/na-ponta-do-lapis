@@ -49,7 +49,8 @@ class UsuarioAuthCacheServiceTest {
         Optional<Usuario> segundaBusca = service.buscarPorIdentificador("ana@email.com");
         assertTrue(segundaBusca.isPresent());
         assertEquals(10L, segundaBusca.get().getId());
-        assertEquals(Papel.ADMIN_FAMILIA, segundaBusca.get().getPapel());
+        assertEquals(Papel.USUARIO, segundaBusca.get().getPapel());
+        assertTrue(segundaBusca.get().isAdminFamilia());
         assertEquals(Moeda.BRL, segundaBusca.get().getMoedaPadrao());
         assertEquals(20L, segundaBusca.get().getFamilia().getId());
 
@@ -112,7 +113,8 @@ class UsuarioAuthCacheServiceTest {
         usuario.setSenha("hash-seguro");
         usuario.setTelefone("11999999999");
         usuario.setFotoPerfil("avatar.png");
-        usuario.setPapel(Papel.ADMIN_FAMILIA);
+        usuario.setPapel(Papel.USUARIO);
+        usuario.setAdminFamilia(true);
         usuario.setMoedaPadrao(Moeda.BRL);
         usuario.setFamilia(familia);
         return usuario;

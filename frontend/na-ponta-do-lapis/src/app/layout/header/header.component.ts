@@ -1,10 +1,10 @@
-import { ChangeDetectorRef, Component, HostListener, inject, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
-import { PrimeNGModuleModule } from '../../shared/primeNg.module';
+import { ChangeDetectorRef, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
+import { PrimeNGModuleModule } from '../../shared/primeNg.module';
 import { AuthService } from '../../auth/service/auth.service';
 import { StorageService } from '../../auth/service/storage.service';
-import { TokenPayload } from '../../model/IToken.models';
 import { Usuario } from '../../model/IUsuario.models';
 import { MessageService } from 'primeng/api';
 import { SidebarService } from '../../service/sidebar-service.service';
@@ -15,14 +15,15 @@ import { MedalhaConquistaComponent } from '../../shared/components/medalha-conqu
 
 @Component({
   selector: 'app-header',
-  imports: [CommonModule, PrimeNGModuleModule, RouterLink, IconComponent, MedalhaConquistaComponent], 
+  imports: [CommonModule, PrimeNGModuleModule, RouterLink, IconComponent, MedalhaConquistaComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.css',
 })
 export class HeaderComponent implements OnInit {
-  isMobile: boolean = false;
   sidebarService: SidebarService = inject(SidebarService);
   public notificacaoService: NotificacaoService = inject(NotificacaoService);
+  private destroyRef = inject(DestroyRef);
+
   nomeUsuario: string | undefined = undefined;
   usuarioLogado: Usuario | null = null;
 
@@ -38,24 +39,22 @@ export class HeaderComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarDadosUsuario();
-    this.atualizarModoMobile();
 
-    this.notificacaoService.notificacoes$.subscribe((lista) => {
-      this.notificacoes = lista;
-      this.cdr.detectChanges();
-    });
+    this.notificacaoService.notificacoes$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((lista) => {
+        this.notificacoes = lista;
+        this.cdr.detectChanges();
+      });
 
-    this.notificacaoService.totalNaoLidas$.subscribe((total) => {
-      this.totalNaoLidas = total;
-      this.cdr.detectChanges();
-    });
+    this.notificacaoService.totalNaoLidas$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((total) => {
+        this.totalNaoLidas = total;
+        this.cdr.detectChanges();
+      });
 
     this.notificacaoService.carregarNotificacoes();
-  }
-
-  @HostListener('window:resize')
-  public atualizarModoMobile(): void {
-    this.isMobile = window.innerWidth < 769;
   }
 
   public abrirNotificacoes(event: Event, popover: any): void {
@@ -130,34 +129,30 @@ export class HeaderComponent implements OnInit {
     return 'PRIMEIRA_META';
   }
 
-  public carregarDadosUsuario(){
-   const usuario:TokenPayload | null = StorageService.getUsuarioDecodificado()
-   this.authService.meusDados().subscribe({
-    next: (res:Usuario) => {
-      this.usuarioLogado = res;
-      this.nomeUsuario = this.usuarioLogado?.nome?.split(' ')[0]
-      this.cdr.detectChanges();
-      console.log(res)
-    },
-    error: (res:Error) => {
+  public carregarDadosUsuario(): void {
+    this.authService.meusDados().subscribe({
+      next: (res: Usuario) => {
+        this.usuarioLogado = res;
+        this.nomeUsuario = this.usuarioLogado?.nome?.split(' ')[0];
+        this.cdr.detectChanges();
+      },
+      error: () => {
         this.messageService.add({
-            severity: 'error',
-            summary: 'Erro',
-            detail: 'Erro ao se conectar ao servidor.',
-            life: 3000
-          })
-    }
-   })
+          severity: 'error',
+          summary: 'Erro',
+          detail: 'Erro ao se conectar ao servidor.',
+          life: 3000,
+        });
+      },
+    });
   }
 
-  logout(){
-    StorageService.logout()
-    this.router.navigateByUrl("/login", { replaceUrl: true })
+  logout(): void {
+    StorageService.logout();
+    this.router.navigateByUrl('/login', { replaceUrl: true });
   }
 
-  usarFotoPadrao(event:any) {
-    event.target.src = 'user_anonimo.png'
+  usarFotoPadrao(event: any): void {
+    event.target.src = 'user_anonimo.png';
   }
-
-
 }

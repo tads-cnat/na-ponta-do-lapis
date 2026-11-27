@@ -20,6 +20,9 @@ import com.npl.na_ponta_do_lapis.service.ContaFinanceiraService;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraPatchDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ContaFinanceiraResponseDTO;
+import com.npl.na_ponta_do_lapis.web.dto.PagarFaturaDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TransferenciaContasDTO;
+import com.npl.na_ponta_do_lapis.web.dto.TransferenciaContasResponseDTO;
 import com.npl.na_ponta_do_lapis.web.validator.ContaFinanceiraPatchValidator;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -41,7 +44,7 @@ public class ContaFinanceiraController {
     }
 
     @Operation(summary = "Criar conta")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PostMapping
     public ResponseEntity<ContaFinanceiraResponseDTO> criarConta(@Valid @RequestBody ContaFinanceiraDTO contaDTO){
         return ResponseEntity.status(HttpStatus.CREATED).body(contaService.criarConta(contaDTO));
@@ -49,20 +52,20 @@ public class ContaFinanceiraController {
 
     @Operation(summary = "Listar contas")
     @GetMapping
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('ADMIN_SITE')")
     public ResponseEntity<List<ContaFinanceiraResponseDTO>> listarTodos(){
         return ResponseEntity.status(HttpStatus.OK).body(contaService.listarContas());
     }
 
     @Operation(summary = "Buscar conta por ID")
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     public ResponseEntity<ContaFinanceiraResponseDTO> buscarPorId(@PathVariable Long id){
         return ResponseEntity.status(HttpStatus.OK).body(contaService.buscarContaPorId(id));
     }
 
     @Operation(summary = "Atualizar conta")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PutMapping("/{id}")
     public ResponseEntity<ContaFinanceiraResponseDTO> atualizarConta(@PathVariable Long id, @Valid @RequestBody ContaFinanceiraDTO contaDTO){
         return ResponseEntity.status(HttpStatus.OK).body(contaService.atualizarConta(id, contaDTO));
@@ -79,15 +82,32 @@ public class ContaFinanceiraController {
     }
 
     @Operation(summary = "Atualizar parte da conta")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PatchMapping("/{id}")
     public ResponseEntity<ContaFinanceiraResponseDTO> atualizarParteDaConta(@PathVariable Long id, @RequestBody ContaFinanceiraPatchDTO contaPatchDTO){
         patchValidator.validate(contaPatchDTO);
         return ResponseEntity.status(HttpStatus.OK).body(contaService.atualizarContaParcial(id, contaPatchDTO));
     }
 
+    @Operation(summary = "Transferir saldo entre contas próprias (sem inflar receitas/despesas)")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
+    @PostMapping("/transferencias")
+    public ResponseEntity<TransferenciaContasResponseDTO> transferirEntreContas(@Valid @RequestBody TransferenciaContasDTO dto) {
+        return ResponseEntity.status(HttpStatus.OK).body(contaService.transferirEntreContas(dto));
+    }
+
+    @Operation(summary = "Pagar fatura de cartão de crédito usando saldo de uma conta")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
+    @PostMapping("/{cartaoId}/pagar-fatura")
+    public ResponseEntity<TransferenciaContasResponseDTO> pagarFatura(
+            @PathVariable Long cartaoId,
+            @Valid @RequestBody PagarFaturaDTO dto
+    ) {
+        return ResponseEntity.status(HttpStatus.OK).body(contaService.pagarFatura(cartaoId, dto));
+    }
+
     @Operation(summary = "Apagar conta")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> excluirConta(@PathVariable Long id){
         contaService.excluirConta(id);

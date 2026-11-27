@@ -24,7 +24,6 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -81,7 +80,8 @@ class TipoCategoriaControllerTest {
 
         mockMvc.perform(get("/categorias/{id}", 99L))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Categoria de ID:99 não encontrado!"));
+                .andExpect(jsonPath("$.error").value("Categoria de ID:99 não encontrado!"))
+                .andExpect(jsonPath("$.message").value("Categoria de ID:99 não encontrado!"));
     }
 
     @Test
@@ -102,7 +102,8 @@ class TipoCategoriaControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"nome\":\"  \"}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.nome").value("O nome da categoria é obrigatório"));
+                .andExpect(jsonPath("$.error").value("O nome da categoria é obrigatório"))
+                .andExpect(jsonPath("$.errors.nome").value("O nome da categoria é obrigatório"));
     }
 
     @Test
@@ -121,6 +122,7 @@ class TipoCategoriaControllerTest {
 
         mockMvc.perform(delete("/categorias/{id}", 99L))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string("Categoria de ID: 99 não existe!"));
+                .andExpect(jsonPath("$.error").value("Categoria de ID: 99 não existe!"))
+                .andExpect(jsonPath("$.message").value("Categoria de ID: 99 não existe!"));
     }
 }

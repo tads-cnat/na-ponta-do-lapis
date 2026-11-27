@@ -40,7 +40,7 @@ public class ConviteController {
     }
 
     @Operation(summary = "Listar convites pendentes para o usuário autenticado")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @GetMapping("/me")
     public ResponseEntity<List<ConviteResponseDTO>> listarPendentes(
             Principal principal,
@@ -51,7 +51,7 @@ public class ConviteController {
     }
 
     @Operation(summary = "Enviar convite para usuário")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PostMapping
     public ResponseEntity<ConviteResponseDTO> enviarConvite(
             @RequestBody ConviteDTO conviteDTO,
@@ -63,7 +63,7 @@ public class ConviteController {
     }
 
     @Operation(summary = "Atualizar status do convite")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PatchMapping("/{conviteId}")
     public ResponseEntity<ConviteResponseDTO> atualizarStatusConvite(
             @PathVariable Long conviteId,

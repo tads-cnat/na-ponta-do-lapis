@@ -10,6 +10,7 @@ public record UsuarioResponseDTO(
     String username,
     String fotoPerfil,
     String papel,
+    boolean adminFamilia,
     Long idFamilia,
     Moeda moedaPadrao,
     boolean onboardingConcluido
@@ -23,6 +24,7 @@ public record UsuarioResponseDTO(
             usuario.getUsername(),
             usuario.getFotoPerfil(),
             usuario.getPapel().toString(),
+            usuario.isAdminFamilia(),
             usuario.getFamilia() != null ? usuario.getFamilia().getId() : null,
             usuario.getMoedaPadrao(),
             usuario.isOnboardingConcluido()

@@ -8,6 +8,16 @@ export interface SerieDiariaDTO {
   total: number;
 }
 
+export interface ConsultorDislikeDTO {
+  id: number;
+  usuarioNome: string;
+  usuarioEmail: string | null;
+  provedor: string | null;
+  perguntaResumo: string | null;
+  respostaResumo: string | null;
+  criadoEm: string | null;
+}
+
 export interface AdminDashboardResumo {
   totalUsuarios: number;
   usuariosAtivos: number;
@@ -50,6 +60,12 @@ export interface AdminDashboardResumo {
   novosNoPeriodo: number;
   novosPeriodoAnterior: number;
   serieCadastros: SerieDiariaDTO[];
+  consultorLikes: number;
+  consultorDislikes: number;
+  consultorTaxaAprovacao: number;
+  usuariosComAssinaturas: number;
+  usuariosUsaramConsultor: number;
+  ultimosDislikesConsultor: ConsultorDislikeDTO[];
 }
 
 export interface AdminUsuarioResumo {
@@ -57,7 +73,7 @@ export interface AdminUsuarioResumo {
   nome: string;
   email: string;
   username: string;
-  papel: 'USUARIO' | 'ADMIN_FAMILIA' | 'ADMIN_SITE';
+  papel: 'USUARIO' | 'ADMIN_SITE';
   ativo: boolean;
   emailVerificado: boolean;
   onboardingConcluido: boolean;
@@ -74,7 +90,7 @@ export interface AdminUsuarioDetalhe {
   username: string;
   telefone: string | null;
   fotoPerfil: string | null;
-  papel: 'USUARIO' | 'ADMIN_FAMILIA' | 'ADMIN_SITE';
+  papel: 'USUARIO' | 'ADMIN_SITE';
   ativo: boolean;
   suspensoEm: string | null;
   motivoSuspensao: string | null;

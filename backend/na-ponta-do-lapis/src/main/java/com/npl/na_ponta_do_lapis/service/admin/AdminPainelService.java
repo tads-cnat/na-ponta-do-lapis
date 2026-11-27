@@ -256,6 +256,40 @@ public class AdminPainelService {
 
         List<SerieDiariaDTO> serieCadastros = montarSerieCadastros(periodoDias);
 
+        long consultorLikes = queryCount("SELECT COUNT(f) FROM ConsultorFeedback f WHERE f.util = true", Map.of());
+        long consultorDislikes = queryCount("SELECT COUNT(f) FROM ConsultorFeedback f WHERE f.util = false", Map.of());
+        double consultorTaxaAprovacao = calcularPercentual(consultorLikes, consultorLikes + consultorDislikes);
+
+        long usuariosComAssinaturas = queryCount(
+                "SELECT COUNT(DISTINCT a.usuario.id) FROM AssinaturaRecorrente a WHERE a.status = :st",
+                Map.of("st", com.npl.na_ponta_do_lapis.entity.enums.StatusRecorrencia.ATIVA)
+        );
+        long usuariosUsaramConsultor = queryCount(
+                """
+                SELECT COUNT(DISTINCT u.id) FROM Usuario u
+                WHERE EXISTS (SELECT 1 FROM UsuarioConquista uc WHERE uc.usuario.id = u.id AND uc.conquista.id = 'GRAFITH_CONSULTOR')
+                   OR EXISTS (SELECT 1 FROM ConsultorFeedback f WHERE f.usuario.id = u.id)
+                """,
+                Map.of()
+        );
+
+        List<ConsultorDislikeDTO> ultimosDislikesConsultor = entityManager.createQuery(
+                        "SELECT f FROM ConsultorFeedback f JOIN FETCH f.usuario WHERE f.util = false ORDER BY f.criadoEm DESC",
+                        ConsultorFeedback.class)
+                .setMaxResults(10)
+                .getResultList()
+                .stream()
+                .map(f -> new ConsultorDislikeDTO(
+                        f.getId(),
+                        f.getUsuario() != null ? f.getUsuario().getNome() : "Usuário",
+                        f.getUsuario() != null ? f.getUsuario().getEmail() : null,
+                        f.getProvedor(),
+                        f.getPerguntaResumo(),
+                        f.getRespostaResumo(),
+                        f.getCriadoEm()
+                ))
+                .toList();
+
         return new AdminDashboardResumoDTO(
                 totalUsuarios,
                 usuariosAtivos,
@@ -297,7 +331,13 @@ public class AdminPainelService {
                 periodoDias,
                 novosNoPeriodo,
                 novosPeriodoAnterior,
-                serieCadastros
+                serieCadastros,
+                consultorLikes,
+                consultorDislikes,
+                consultorTaxaAprovacao,
+                usuariosComAssinaturas,
+                usuariosUsaramConsultor,
+                ultimosDislikesConsultor
         );
     }
 
@@ -696,9 +736,8 @@ public class AdminPainelService {
         Map<Long, Usuario> adminPorFamilia = new HashMap<>();
         @SuppressWarnings("unchecked")
         List<Usuario> admins = entityManager.createQuery(
-                        "SELECT u FROM Usuario u WHERE u.familia.id IN :fids AND u.papel = :papel")
+                        "SELECT u FROM Usuario u WHERE u.familia.id IN :fids AND u.adminFamilia = true")
                 .setParameter("fids", familiaIds)
-                .setParameter("papel", Papel.ADMIN_FAMILIA)
                 .getResultList();
         for (Usuario adm : admins) {
             if (adm.getFamilia() != null) {

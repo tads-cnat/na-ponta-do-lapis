@@ -14,10 +14,10 @@ import com.npl.na_ponta_do_lapis.web.exception.NotFoundException;
 import com.npl.na_ponta_do_lapis.web.exception.TransacaoNaoExisteException;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -150,8 +150,13 @@ public class TransacaoService {
     }
 
     public Transacao buscarPorId(Long id) {
-        return transacaoRepository.findById(id)
+        Transacao transacao = transacaoRepository.findById(id)
                 .orElseThrow(() -> new TransacaoNaoExisteException("Transação com ID:" + id + " não encontrada"));
+        String email = getEmailUsuarioLogado();
+        if (email != null && !email.isBlank() && transacao.getContaFinanceira() != null) {
+            validarDono(transacao.getContaFinanceira(), email);
+        }
+        return transacao;
     }
 
     @Transactional
@@ -261,6 +266,7 @@ public class TransacaoService {
             parcela.setNumeroParcela(numero);
             parcela.setTotalParcelas(atual.getTotalParcelas());
             parcela.setValorTotalCompra(atual.getValorTotalCompra());
+            parcela.setImpactaSaldo(false);
             anteriores.add(parcela);
         }
         transacaoRepository.saveAll(anteriores);
@@ -529,32 +535,34 @@ public class TransacaoService {
 
     private void aplicarImpactoSaldo(Transacao transacao) {
         if (transacao.getEstado() != EstadoTransacao.REALIZADA
+                || !transacao.isImpactaSaldo()
                 || transacao.getContaFinanceira() == null
                 || transacao.getValor() == null) {
             return;
         }
 
-        ContaFinanceira conta = transacao.getContaFinanceira();
-        if (transacao.getTipo() == TipoTransacao.DESPESA) {
-            conta.setSaldo(conta.getSaldo().subtract(transacao.getValor()));
-        } else {
-            conta.setSaldo(conta.getSaldo().add(transacao.getValor()));
-        }
+        ContaFinanceiraService.aplicarMovimentacaoSaldo(
+                transacao.getContaFinanceira(),
+                transacao.getTipo(),
+                transacao.getValor(),
+                false
+        );
     }
 
     private void estornarImpactoSaldo(Transacao transacao) {
         if (transacao.getEstado() != EstadoTransacao.REALIZADA
+                || !transacao.isImpactaSaldo()
                 || transacao.getContaFinanceira() == null
                 || transacao.getValor() == null) {
             return;
         }
 
-        ContaFinanceira conta = transacao.getContaFinanceira();
-        if (transacao.getTipo() == TipoTransacao.DESPESA) {
-            conta.setSaldo(conta.getSaldo().add(transacao.getValor()));
-        } else {
-            conta.setSaldo(conta.getSaldo().subtract(transacao.getValor()));
-        }
+        ContaFinanceiraService.aplicarMovimentacaoSaldo(
+                transacao.getContaFinanceira(),
+                transacao.getTipo(),
+                transacao.getValor(),
+                true
+        );
     }
 
     private void validarDono(ContaFinanceira conta, String email) throws AccessDeniedException {

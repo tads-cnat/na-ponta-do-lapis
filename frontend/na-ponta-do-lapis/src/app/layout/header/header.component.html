@@ -1,114 +1,134 @@
-<nav class="sticky top-0 z-50 w-full border-b border-gray-300" style="padding-top: var(--npl-safe-top);">
-  <div class=" mx-auto px-4 sm:px-6 lg:px-8">
-    <div class="flex justify-between h-16">
+<nav class="sticky top-0 z-50 w-full bg-white/85 backdrop-blur-md border-b border-slate-200/80" style="padding-top: var(--npl-safe-top);">
+  <div class="mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16 gap-3">
+      <!-- Esquerda: botão do menu mobile -->
+      <div class="flex items-center gap-2.5 min-w-0">
+        <button
+          type="button"
+          aria-label="Abrir menu lateral"
+          (click)="sidebarService.toggleSidebar()"
+          class="md:hidden w-10 h-10 flex items-center justify-center rounded-xl text-slate-700 hover:text-[#7843CD] hover:bg-purple-50/80 border-0 bg-transparent transition-colors cursor-pointer shrink-0">
+          <app-icon name="menu" class="w-5 h-5" />
+        </button>
+      </div>
 
-        <div class="flex items-center gap-2 sm:gap-5">
-            @if(isMobile) {
-                <div class="flex gap-2.5">
-                    <button type="button"
-                            aria-label="Abrir menu lateral"
-                            (click)="sidebarService.toggleSidebar()"
-                            class="menu-btn w-10 h-10 flex items-center justify-center rounded-xl hover:bg-slate-100/80 transition-colors cursor-pointer">
-                        <app-icon name="menu" class="w-5 h-5 text-slate-800"/>
-                    </button>
-                </div>
-            }
-        </div>
-        <div class="flex justify-end items-center gap-2 sm:gap-4 min-w-0">
+      <!-- Direita: notificações, perfil e sair -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 min-w-0 shrink-0">
+        <!-- Sino com Popover de Notificações -->
+        <button
+          type="button"
+          aria-label="Notificações"
+          pTooltip="Notificações"
+          tooltipPosition="bottom"
+          class="relative w-10 h-10 flex items-center justify-center rounded-xl cursor-pointer text-slate-600 hover:text-[#7843CD] hover:bg-purple-50/70 transition-colors bg-transparent border-0"
+          (click)="abrirNotificacoes($event, opNotificacoes)">
+          <i class="pi pi-bell text-base" aria-hidden="true"></i>
+          @if (totalNaoLidas > 0) {
+            <span class="absolute top-1 right-1 min-w-[18px] h-[18px] px-1 bg-gradient-to-r from-[#EEC046] to-[#F59E0B] text-slate-950 font-black text-[10px] rounded-full ring-2 ring-white flex items-center justify-center shadow-sm">
+              {{ totalNaoLidas > 99 ? '99+' : totalNaoLidas }}
+            </span>
+          }
+        </button>
 
-          <!-- Sino com Popover de Notificações -->
-          <button type="button"
-                  aria-label="Notificações"
-                  title="Notificações"
-                  class="relative w-11 h-11 flex items-center justify-center rounded-xl cursor-pointer text-slate-600 hover:text-[#7843CD] transition-colors bg-transparent border-0"
-                  (click)="abrirNotificacoes($event, opNotificacoes)">
-            <i class="pi pi-bell text-lg" aria-hidden="true"></i>
-            @if (totalNaoLidas > 0) {
-              <span class="absolute top-1 right-1 min-w-[20px] h-[20px] px-1 bg-gradient-to-r from-[#EEC046] to-[#F59E0B] text-slate-950 font-black text-[10px] rounded-full ring-2 ring-white flex items-center justify-center shadow-sm animate-pulse">
-                {{ totalNaoLidas > 99 ? '99+' : totalNaoLidas }}
-              </span>
-            }
-          </button>
-
-          <p-popover #opNotificacoes styleClass="w-[calc(100vw-2rem)] max-w-80 sm:max-w-96 shadow-xl rounded-2xl border border-slate-100 overflow-hidden">
-            <div class="p-4 flex flex-col gap-3">
-              <div class="flex items-center justify-between border-b border-slate-100 pb-2">
-                <div class="flex items-center gap-2">
-                  <span class="font-bold text-slate-900 text-sm">Notificações</span>
-                  @if (totalNaoLidas > 0) {
-                    <span class="badge-npl-amarelo text-[10px] py-0.5 px-2">{{ totalNaoLidas }} nova(s)</span>
-                  }
-                </div>
-                @if (notificacoes.length > 0) {
-                  <button type="button"
-                          (click)="marcarTodasComoLidas()"
-                          class="text-xs text-[#7843CD] hover:text-[#6214CC] font-semibold cursor-pointer">
-                    Marcar lidas
-                  </button>
+        <p-popover #opNotificacoes styleClass="w-[calc(100vw-2rem)] max-w-80 sm:max-w-96 shadow-xl rounded-2xl border border-slate-100 overflow-hidden">
+          <div class="p-4 flex flex-col gap-3">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-2">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-900 text-sm">Notificações</span>
+                @if (totalNaoLidas > 0) {
+                  <span class="badge-npl-amarelo text-[10px] py-0.5 px-2">{{ totalNaoLidas }} nova(s)</span>
                 }
               </div>
-
-              <div class="max-h-80 overflow-y-auto flex flex-col divide-y divide-slate-100">
-                @if (notificacoes.length === 0) {
-                  <div class="py-8 text-center text-slate-500 flex flex-col items-center gap-2">
-                    <i class="pi pi-inbox text-3xl text-slate-400"></i>
-                    <p class="text-xs">Nenhuma notificação por enquanto.</p>
-                  </div>
-                } @else {
-                  @for (n of notificacoes; track n.id) {
-                    <div class="py-2.5 px-2 flex items-start gap-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group relative"
-                         [class.bg-[#FEF9E7]/40]="!n.lida"
-                         (click)="marcarComoLida(n)">
-                      @if (n.tipo === 'CONQUISTA_DESBLOQUEADA') {
-                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
-                          <app-medalha-conquista [id]="extrairIdConquista(n.mensagem)" [desbloqueada]="true" tamanho="sm"></app-medalha-conquista>
-                        </div>
-                      } @else if (n.tipo === 'META_ATINGIDA') {
-                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
-                          <app-medalha-conquista id="META_BATIDA_1" [desbloqueada]="true" tamanho="sm"></app-medalha-conquista>
-                        </div>
-                      } @else {
-                        <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
-                             [ngClass]="obterBgIcone(n.tipo)">
-                          <i class="pi text-sm" [ngClass]="obterIcone(n.tipo)"></i>
-                        </div>
-                      }
-                      <div class="flex-1 min-w-0">
-                        <div class="flex items-center justify-between gap-1">
-                          <p class="text-xs font-bold text-slate-900 truncate" [class.text-[#7843CD]]="!n.lida">{{ n.titulo }}</p>
-                          @if (!n.lida) {
-                            <span class="w-2 h-2 rounded-full bg-[#EEC046] shrink-0"></span>
-                          }
-                        </div>
-                        <p class="text-xs text-slate-600 line-clamp-2 mt-0.5 leading-snug">{{ n.mensagem }}</p>
-                        <span class="text-[10px] text-slate-500 mt-1 block">{{ n.dataCriacao | date:'short' }}</span>
-                      </div>
-                      <button type="button"
-                              (click)="excluirNotificacao($event, n.id)"
-                              class="opacity-75 sm:opacity-0 sm:group-hover:opacity-100 text-slate-500 hover:text-rose-500 transition-opacity p-2 cursor-pointer"
-                              aria-label="Remover notificação"
-                              title="Remover">
-                        <i class="pi pi-times text-xs"></i>
-                      </button>
-                    </div>
-                  }
-                }
-              </div>
+              @if (notificacoes.length > 0) {
+                <button
+                  type="button"
+                  (click)="marcarTodasComoLidas()"
+                  class="text-xs text-[#7843CD] hover:text-[#6214CC] font-semibold cursor-pointer bg-transparent border-0">
+                  Marcar lidas
+                </button>
+              }
             </div>
-          </p-popover>
 
-          <a routerLink="/app/perfil"
-             data-tour="header-perfil"
-             title="Ir para o perfil"
-             class="flex items-center gap-2.5 cursor-pointer no-underline hover:opacity-80 transition-opacity focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7843CD] rounded-xl min-w-0">
-            <img class="h-10 w-10 sm:h-11 sm:w-11 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover shrink-0" [src]="usuarioLogado?.fotoPerfil" referrerpolicy="no-referrer" (error)="usarFotoPadrao($event)" alt="{{usuarioLogado?.nome}}">
-            <p class="nomeUser hidden sm:block max-w-[130px] md:max-w-[180px] truncate font-medium text-slate-800 m-0">{{ nomeUsuario }}</p>
-          </a>
-          <div class="hidden md:block">
-              <p-button variant="text" class="sair font-bold" styleClass="text-red-500! hover:bg-[#fef2f2]! text-xs rounded-xl" (onClick)="logout()">Sair<i class="pi pi-sign-out "></i></p-button>
+            <div class="max-h-80 overflow-y-auto flex flex-col divide-y divide-slate-100">
+              @if (notificacoes.length === 0) {
+                <div class="py-8 text-center text-slate-500 flex flex-col items-center gap-2">
+                  <i class="pi pi-inbox text-3xl text-slate-400"></i>
+                  <p class="text-xs">Nenhuma notificação por enquanto.</p>
+                </div>
+              } @else {
+                @for (n of notificacoes; track n.id) {
+                  <div
+                    class="py-2.5 px-2 flex items-start gap-3 hover:bg-slate-50 rounded-xl transition-colors cursor-pointer group relative"
+                    [class.bg-[#FEF9E7]/40]="!n.lida"
+                    (click)="marcarComoLida(n)">
+                    @if (n.tipo === 'CONQUISTA_DESBLOQUEADA') {
+                      <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                        <app-medalha-conquista [id]="extrairIdConquista(n.mensagem)" [desbloqueada]="true" tamanho="sm"></app-medalha-conquista>
+                      </div>
+                    } @else if (n.tipo === 'META_ATINGIDA') {
+                      <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0">
+                        <app-medalha-conquista id="META_BATIDA_1" [desbloqueada]="true" tamanho="sm"></app-medalha-conquista>
+                      </div>
+                    } @else {
+                      <div class="w-9 h-9 rounded-xl flex items-center justify-center shrink-0" [ngClass]="obterBgIcone(n.tipo)">
+                        <i class="pi text-sm" [ngClass]="obterIcone(n.tipo)"></i>
+                      </div>
+                    }
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between gap-1">
+                        <p class="text-xs font-bold text-slate-900 truncate" [class.text-[#7843CD]]="!n.lida">{{ n.titulo }}</p>
+                        @if (!n.lida) {
+                          <span class="w-2 h-2 rounded-full bg-[#EEC046] shrink-0"></span>
+                        }
+                      </div>
+                      <p class="text-xs text-slate-600 line-clamp-2 mt-0.5 leading-snug">{{ n.mensagem }}</p>
+                      <span class="text-[10px] text-slate-500 mt-1 block">{{ n.dataCriacao | date:'short' }}</span>
+                    </div>
+                    <button
+                      type="button"
+                      (click)="excluirNotificacao($event, n.id)"
+                      class="opacity-75 sm:opacity-0 sm:group-hover:opacity-100 text-slate-500 hover:text-rose-500 transition-opacity p-2 cursor-pointer bg-transparent border-0"
+                      aria-label="Remover notificação"
+                      title="Remover">
+                      <i class="pi pi-times text-xs"></i>
+                    </button>
+                  </div>
+                }
+              }
+            </div>
           </div>
-        </div>
+        </p-popover>
 
+        <span class="hidden sm:block w-px h-5 bg-slate-200/90" aria-hidden="true"></span>
+
+        <!-- Perfil -->
+        <a
+          routerLink="/app/perfil"
+          data-tour="header-perfil"
+          title="Ir para o perfil"
+          class="flex items-center gap-2.5 px-1.5 sm:px-2.5 py-1 rounded-xl cursor-pointer no-underline hover:bg-slate-100/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7843CD] min-w-0">
+          <img
+            class="h-9 w-9 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover shrink-0"
+            [src]="usuarioLogado?.fotoPerfil"
+            referrerpolicy="no-referrer"
+            (error)="usarFotoPadrao($event)"
+            alt="{{ usuarioLogado?.nome }}" />
+          <p class="nomeUser hidden sm:block max-w-[140px] md:max-w-[180px] truncate text-sm font-semibold text-slate-800 m-0">
+            {{ nomeUsuario }}
+          </p>
+        </a>
+
+        <!-- Sair discreto -->
+        <button
+          type="button"
+          aria-label="Sair da conta"
+          pTooltip="Sair da conta"
+          tooltipPosition="bottom"
+          (click)="logout()"
+          class="hidden md:flex w-9 h-9 items-center justify-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 border-0 bg-transparent transition-colors cursor-pointer shrink-0">
+          <i class="pi pi-sign-out text-sm"></i>
+        </button>
+      </div>
     </div>
   </div>
 </nav>

@@ -30,4 +30,20 @@ export class ContaFinanceiraService {
   public listarContasUsuarioLogado(): Observable<any>{
     return this.http.get<any>(`${this.BASE_URL}/contas/me`)
   }
+
+  public transferirEntreContas(payload: {
+    contaOrigemId: number;
+    contaDestinoId: number;
+    valor: number;
+    descricao?: string;
+  }): Observable<any> {
+    return this.http.post<any>(`${this.BASE_URL}/contas/transferencias`, payload);
+  }
+
+  public pagarFatura(cartaoId: number, payload: {
+    contaOrigemId: number;
+    valor: number;
+  }): Observable<any> {
+    return this.http.post<any>(`${this.BASE_URL}/contas/${cartaoId}/pagar-fatura`, payload);
+  }
 }

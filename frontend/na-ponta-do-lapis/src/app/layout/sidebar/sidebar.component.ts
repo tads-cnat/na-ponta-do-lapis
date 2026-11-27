@@ -1,36 +1,33 @@
 import { Component, HostListener, inject, OnInit } from '@angular/core';
 import { Capacitor } from '@capacitor/core';
 import { MenuItem } from 'primeng/api';
-import { RouterLink, RouterLinkActive } from '@angular/router'
+import { TooltipModule } from 'primeng/tooltip';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 import { IconComponent } from '../../shared/components/icon/icon.component';
 import { SidebarService } from '../../service/sidebar-service.service';
-import { ThemeService } from '../../service/theme.service';
 import { StorageService } from '../../auth/service/storage.service';
-
 
 @Component({
   selector: 'app-sidebar',
-  imports: [RouterLink, IconComponent, RouterLinkActive],
+  imports: [RouterLink, IconComponent, RouterLinkActive, TooltipModule],
   templateUrl: './sidebar.component.html',
   styleUrl: './sidebar.component.css',
 })
 export class SidebarComponent implements OnInit {
-  aberto: boolean = true;
-  items: MenuItem[] | undefined ;
+  items: MenuItem[] | undefined;
   sidebarService: SidebarService = inject(SidebarService);
-  themeService: ThemeService = inject(ThemeService);
   isMobile: boolean = false;
   mostrarPainelAdmin: boolean = false;
 
   ngOnInit(): void {
     this.items = [
-      {label: 'Dashboard', icon:'dashboard', routerLink:'/app/dashboard'},
-      {label: 'Transações', icon: 'transacao', routerLink:'/app/transacoes'},
-      {label: 'Contas', icon: 'conta', routerLink:'/app/contas'},
-      {label: 'Metas', icon: 'meta', routerLink:'/app/metas'},
-      {label: 'Família', icon: 'familia', routerLink:'/app/familia'},
-      {label: 'Perfil', icon:'ajuste', routerLink:'/app/perfil'},
-    ]
+      { label: 'Dashboard', icon: 'dashboard', routerLink: '/app/dashboard' },
+      { label: 'Transações', icon: 'transacao', routerLink: '/app/transacoes' },
+      { label: 'Contas', icon: 'conta', routerLink: '/app/contas' },
+      { label: 'Metas', icon: 'meta', routerLink: '/app/metas' },
+      { label: 'Família', icon: 'familia', routerLink: '/app/familia' },
+      { label: 'Perfil', icon: 'ajuste', routerLink: '/app/perfil' },
+    ];
     this.mostrarPainelAdmin = !Capacitor.isNativePlatform() && StorageService.eAdminSiteLogado();
     this.atualizarModoMobile();
   }
@@ -39,9 +36,4 @@ export class SidebarComponent implements OnInit {
   atualizarModoMobile(): void {
     this.isMobile = window.innerWidth < 769;
   }
-
-  toggleSidebar(){
-    this.aberto = !this.aberto;
-  }
-
 }

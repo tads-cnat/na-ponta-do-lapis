@@ -10,6 +10,7 @@ export interface Usuario {
     username:string,
     fotoPerfil:string,
     papel:string,
+    adminFamilia?: boolean,
     idFamilia?: number | null,
     moedaPadrao?: string | null,
     onboardingConcluido?: boolean,

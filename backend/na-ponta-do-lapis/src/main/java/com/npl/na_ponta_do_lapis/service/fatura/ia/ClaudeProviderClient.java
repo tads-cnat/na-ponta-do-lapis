@@ -43,6 +43,22 @@ public class ClaudeProviderClient implements IaProviderClient {
     }
 
     @Override
+    public String completarChat(ProvedorIa provedor, String apiKey, String systemPrompt, String userMessage) {
+        Map<String, Object> corpo = Map.of(
+                "model", modelo,
+                "max_tokens", 1200,
+                "temperature", 0.3,
+                "system", systemPrompt,
+                "messages", List.of(Map.of(
+                        "role", "user",
+                        "content", List.of(Map.of("type", "text", "text", userMessage))
+                ))
+        );
+        JsonNode resposta = httpClient.post(url(), headers(apiKey), corpo);
+        return extrairTexto(resposta);
+    }
+
+    @Override
     public String completarComPdf(ProvedorIa provedor, String apiKey, String prompt, byte[] pdf) {
         String base64 = Base64.getEncoder().encodeToString(pdf);
         Map<String, Object> corpo = Map.of(

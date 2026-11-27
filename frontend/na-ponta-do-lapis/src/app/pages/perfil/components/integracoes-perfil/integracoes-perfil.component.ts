@@ -1,11 +1,13 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { TooltipModule } from 'primeng/tooltip';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { IntegracoesService } from '../../../../service/integracoes.service';
+import { ConsultorService } from '../../../../shared/service/consultor.service';
 import { IconeBancoComponent } from '../../../../shared/components/icone-banco/icone-banco.component';
 import { mapearNomeBanco } from '../../../../shared/utils/banco-icon.helper';
 import {
@@ -18,11 +20,12 @@ import {
 } from '../../../../model/IIntegracoes.models';
 
 import { AutorizacaoDados, AutorizacaoDadosComponent } from '../../../../shared/components/autorizacao-dados/autorizacao-dados.component';
+import { MascoteLoginComponent } from '../../../../auth/components/mascote-login/mascote-login.component';
 
 @Component({
   selector: 'app-integracoes-perfil',
   standalone: true,
-  imports: [AutorizacaoDadosComponent, CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, DialogModule, ButtonModule, IconeBancoComponent],
+  imports: [AutorizacaoDadosComponent, CommonModule, FormsModule, ReactiveFormsModule, TooltipModule, DialogModule, ButtonModule, ToggleSwitchModule, IconeBancoComponent, MascoteLoginComponent],
   templateUrl: './integracoes-perfil.component.html',
   styleUrl: './integracoes-perfil.component.css'
 })
@@ -50,8 +53,8 @@ export class IntegracoesPerfilComponent implements OnInit {
   public salvandoChaveIa = false;
   public chaveIaMensagem: { tipo: 'sucesso' | 'erro'; texto: string } | null = null;
 
-  // Sub-aba ativa (Open Finance vs IA)
-  public subabaAtiva: 'bancos' | 'ia' = 'bancos';
+  // Seção exibida (controlada pelas abas principais do Perfil)
+  @Input() public subabaAtiva: 'bancos' | 'ia' = 'bancos';
 
   public provedoresDisponiveis: { valor: ProvedorIa; label: string }[] = [
     { valor: 'GEMINI', label: 'Google Gemini' },
@@ -65,23 +68,17 @@ export class IntegracoesPerfilComponent implements OnInit {
     private integracoesService: IntegracoesService,
     private fb: FormBuilder,
     private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    public consultorService: ConsultorService
   ) {}
 
   ngOnInit(): void {
-    this.route.queryParams.subscribe((params) => {
-      if (params['secao'] === 'ia' || params['aba'] === 'ia' || params['subaba'] === 'ia') {
-        this.subabaAtiva = 'ia';
-        this.cdr.detectChanges();
-      } else if (params['secao'] === 'bancos' || params['secao'] === 'openfinance') {
-        this.subabaAtiva = 'bancos';
-        this.cdr.detectChanges();
-      }
-    });
-
     this.inicializarFormularios();
-    this.carregarOpenFinance();
-    this.carregarChavesIa();
+    if (this.subabaAtiva === 'bancos') {
+      this.carregarOpenFinance();
+    } else {
+      this.carregarChavesIa();
+    }
   }
 
   private inicializarFormularios(): void {

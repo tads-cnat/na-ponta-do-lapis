@@ -64,7 +64,8 @@ interface SpotlightBox {
           @if (direcaoSeta(); as seta) {
             <div
               aria-hidden="true"
-              class="hidden sm:flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#7843CD] text-white text-[10px] font-bold shadow-md absolute left-1/2 -translate-x-1/2 pointer-events-none animate-bounce"
+              class="hidden sm:flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#7843CD] text-white text-[10px] font-bold shadow-md absolute -translate-x-1/2 pointer-events-none animate-bounce whitespace-nowrap"
+              [style.left]="cardPos().setaLeft"
               [class.-top-3]="seta === 'cima'"
               [class.-bottom-3]="seta === 'baixo'">
               <i class="pi text-[9px]" [class.pi-arrow-up]="seta === 'cima'" [class.pi-arrow-down]="seta === 'baixo'"></i>
@@ -204,7 +205,7 @@ export class GuiaCondutorComponent {
   readonly cardPos = computed(() => {
     const box = this.spotlight();
     if (!box || typeof window === 'undefined') {
-      return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', direcao: null as 'cima' | 'baixo' | null };
+      return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', direcao: null as 'cima' | 'baixo' | null, setaLeft: '50%' };
     }
 
     const vw = window.innerWidth;
@@ -213,8 +214,10 @@ export class GuiaCondutorComponent {
     const cardH = this.guia.ehUltimoPasso() ? 295 : 245;
     const gap = 16;
 
-    let left = box.left + box.width / 2 - cardW / 2;
+    const targetCenterX = box.left + box.width / 2;
+    let left = targetCenterX - cardW / 2;
     left = Math.max(12, Math.min(vw - cardW - 12, left));
+    const setaLeftPx = Math.round(Math.max(54, Math.min(cardW - 54, targetCenterX - left)));
 
     if (box.top + box.height + gap + cardH <= vh - 12) {
       return {
@@ -222,6 +225,7 @@ export class GuiaCondutorComponent {
         left: `${Math.round(left)}px`,
         transform: 'none',
         direcao: 'cima' as const,
+        setaLeft: `${setaLeftPx}px`,
       };
     }
 
@@ -231,6 +235,7 @@ export class GuiaCondutorComponent {
         left: `${Math.round(left)}px`,
         transform: 'none',
         direcao: 'baixo' as const,
+        setaLeft: `${setaLeftPx}px`,
       };
     }
 
@@ -241,10 +246,11 @@ export class GuiaCondutorComponent {
         left: `${Math.round(box.left + box.width + gap)}px`,
         transform: 'none',
         direcao: null,
+        setaLeft: '50%',
       };
     }
 
-    return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', direcao: null };
+    return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', direcao: null, setaLeft: '50%' };
   });
 
   readonly direcaoSeta = computed(() => this.cardPos().direcao);

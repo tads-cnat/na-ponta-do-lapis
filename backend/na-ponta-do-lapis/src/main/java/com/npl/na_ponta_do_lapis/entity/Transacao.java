@@ -60,6 +60,9 @@ public class Transacao {
     @Column(name = "valor_total_compra", precision = 19, scale = 2)
     private BigDecimal valorTotalCompra;
 
+    @Column(name = "impacta_saldo")
+    private Boolean impactaSaldo = true;
+
     @Column(name = "pluggy_transaction_id", length = 100)
     private String pluggyTransactionId;
 
@@ -80,6 +83,14 @@ public class Transacao {
                     ? com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao.OPEN_FINANCE
                     : com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao.MANUAL;
         }
+    }
+
+    public boolean isImpactaSaldo() {
+        return !Boolean.FALSE.equals(this.impactaSaldo);
+    }
+
+    public void setImpactaSaldo(Boolean impactaSaldo) {
+        this.impactaSaldo = impactaSaldo;
     }
 
     public com.npl.na_ponta_do_lapis.entity.enums.OrigemTransacao getOrigem() {

@@ -4,10 +4,39 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
             <h1 class="page-title-npl m-0">Movimentações</h1>
-            <p class="page-subtitle-npl">Gerencie todas as suas receitas, despesas e faturas em um só lugar</p>
+            <p class="page-subtitle-npl">Gerencie seus lançamentos, assinaturas recorrentes e parcelamentos em um só lugar</p>
         </div>
     </div>
 
+    <!-- Abas de Navegação: Lançamentos | Assinaturas | Parcelamentos -->
+    <div class="flex items-center gap-2 border-b border-slate-200 pb-2.5 overflow-x-auto">
+        <button
+            type="button"
+            (click)="abaMovimentacoes = 'lancamentos'"
+            [class]="abaMovimentacoes === 'lancamentos'
+                ? 'px-4 py-2 rounded-xl text-sm font-bold bg-[#7843CD] text-white border-0 cursor-pointer whitespace-nowrap transition-colors'
+                : 'px-4 py-2 rounded-xl text-sm font-semibold bg-white text-slate-600 border border-slate-200 cursor-pointer hover:bg-slate-50 whitespace-nowrap'">
+            <i class="pi pi-list mr-1.5 text-xs"></i>Lançamentos
+        </button>
+        <button
+            type="button"
+            (click)="abaMovimentacoes = 'assinaturas'"
+            [class]="abaMovimentacoes === 'assinaturas'
+                ? 'px-4 py-2 rounded-xl text-sm font-bold bg-[#7843CD] text-white border-0 cursor-pointer whitespace-nowrap transition-colors'
+                : 'px-4 py-2 rounded-xl text-sm font-semibold bg-white text-slate-600 border border-slate-200 cursor-pointer hover:bg-slate-50 whitespace-nowrap'">
+            <i class="pi pi-sync mr-1.5 text-xs"></i>Assinaturas
+        </button>
+        <button
+            type="button"
+            (click)="abaMovimentacoes = 'parcelamentos'"
+            [class]="abaMovimentacoes === 'parcelamentos'
+                ? 'px-4 py-2 rounded-xl text-sm font-bold bg-[#7843CD] text-white border-0 cursor-pointer whitespace-nowrap transition-colors'
+                : 'px-4 py-2 rounded-xl text-sm font-semibold bg-white text-slate-600 border border-slate-200 cursor-pointer hover:bg-slate-50 whitespace-nowrap'">
+            <i class="pi pi-credit-card mr-1.5 text-xs"></i>Parcelamentos
+        </button>
+    </div>
+
+    @if (abaMovimentacoes === 'lancamentos') {
     <app-card-saldo
         class="block w-full"
         [dataRange]="filtroDataRange"
@@ -347,7 +376,11 @@
                                                 <p-tableCheckbox [value]="t" />
                                             </div>
                                             <div class="min-w-0 flex-1">
-                                                <p class="font-bold text-slate-800 text-sm truncate m-0 leading-snug">
+                                                <p #descMobile class="font-bold text-slate-800 text-sm truncate m-0 leading-snug"
+                                                    [pTooltip]="elementoDescricaoTruncada === descMobile ? t.descricao : ''"
+                                                    tooltipPosition="top" [showDelay]="150"
+                                                    (pointerenter)="verificarDescricaoTruncada(descMobile)"
+                                                    (pointerleave)="limparDescricaoTruncada(descMobile)">
                                                     {{ t.descricao }}
                                                 </p>
                                                 <div class="flex items-center flex-wrap gap-1.5 text-[11px] text-slate-500 mt-0.5">
@@ -420,9 +453,12 @@
                                 <span class="text-slate-600 text-xs font-medium whitespace-nowrap">{{ t.dataHora | date:'dd/MM/yyyy' }}</span>
                             </td>
                             <td class="hidden! md:table-cell! max-w-[240px] lg:max-w-[320px]">
-                                <div class="flex items-center gap-1.5 py-0.5">
-                                    <span class="font-semibold text-slate-800 text-sm truncate"
-                                        [pTooltip]="t.descricao && t.descricao.length > 25 ? t.descricao : ''" tooltipPosition="top" [showDelay]="300">
+                                <div class="flex items-center gap-1.5 py-0.5 min-w-0">
+                                    <span #descDesktop class="font-semibold text-slate-800 text-sm truncate"
+                                        [pTooltip]="elementoDescricaoTruncada === descDesktop ? t.descricao : ''"
+                                        tooltipPosition="top" [showDelay]="150"
+                                        (pointerenter)="verificarDescricaoTruncada(descDesktop)"
+                                        (pointerleave)="limparDescricaoTruncada(descDesktop)">
                                         {{ t.descricao }}
                                     </span>
                                     @if (t.numeroParcela && t.totalParcelas) {
@@ -511,6 +547,14 @@
             </p-card>
         </div>
     </div>
+    } @else {
+        <app-assinaturas
+            [embutido]="true"
+            [abaInicial]="abaMovimentacoes"
+            (verParcelas)="abrirGrupoPorId($event.grupoId)"
+            (verTransacoesParcelamento)="verLancamentosDoParcelamento($event.descricao)"
+            (irParaLancamentos)="abaMovimentacoes = 'lancamentos'" />
+    }
 </div>
 
     <form [formGroup]="formTransacao">
@@ -650,6 +694,26 @@
                         <label for="parcelado" class="font-bold text-sm cursor-pointer text-slate-700">Compra parcelada</label>
                     </div>
 
+                    @if (!id && !formTransacao.get('parcelado')?.value) {
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center gap-2">
+                            <p-checkbox formControlName="recorrente" [binary]="true" inputId="recorrente"></p-checkbox>
+                            <label for="recorrente" class="font-bold text-sm cursor-pointer text-slate-700">Compra recorrente / Assinatura</label>
+                        </div>
+                        @if (formTransacao.get('recorrente')?.value) {
+                        <div class="flex flex-col gap-1 pl-6">
+                            <label class="font-bold text-xs text-slate-600">Frequência da renovação</label>
+                            <p-select
+                                formControlName="frequenciaRecorrencia"
+                                [options]="frequenciasRecorrencia"
+                                optionLabel="label"
+                                optionValue="value"
+                                styleClass="w-full sm:w-56" />
+                        </div>
+                        }
+                    </div>
+                    }
+
                     @if (formTransacao.get('parcelado')?.value) {
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div class="flex flex-col gap-1">
@@ -779,6 +843,7 @@
         [breakpoints]="{ '640px': '90vw' }" [style]="{ width: '520px' }">
         <div class="flex flex-col items-center gap-4 py-2 px-1 sm:px-3">
 
+            @if (chavesIaSalvas.length > 0) {
             <label for="fileUpload"
                 class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all"
                 [ngClass]="{
@@ -817,6 +882,7 @@
                 }
                 <input #fileUploadInput id="fileUpload" type="file" accept=".pdf,application/pdf" class="hidden" (change)="selecionarArquivo($event)" />
             </label>
+            }
 
             <div class="w-full border border-slate-200 rounded-xl p-4 bg-slate-50 flex flex-col gap-3.5">
                 <div class="flex items-center justify-between">
@@ -834,24 +900,8 @@
                     Extração inteligente de transações com privacidade e mascaramento de dados pessoais.
                 </p>
 
-                <!-- Alternador de Modo de Chave se houver chaves salvas -->
+                <!-- CHAVES SALVAS NO PERFIL -->
                 @if (chavesIaSalvas.length > 0) {
-                    <div class="flex items-center gap-3 border-b border-slate-200 pb-2">
-                        <label class="text-xs font-semibold cursor-pointer flex items-center gap-1.5"
-                               [ngClass]="modoChaveIa === 'salva' ? 'text-[#7843cd]' : 'text-slate-500'">
-                            <input type="radio" name="modoChaveIa" value="salva" [(ngModel)]="modoChaveIa" />
-                            <span>Usar chave salva</span>
-                        </label>
-                        <label class="text-xs font-semibold cursor-pointer flex items-center gap-1.5"
-                               [ngClass]="modoChaveIa === 'avulsa' ? 'text-[#7843cd]' : 'text-slate-500'">
-                            <input type="radio" name="modoChaveIa" value="avulsa" [(ngModel)]="modoChaveIa" />
-                            <span>Usar outra chave avulsa</span>
-                        </label>
-                    </div>
-                }
-
-                <!-- MODO CHAVE SALVA -->
-                @if (modoChaveIa === 'salva' && chavesIaSalvas.length > 0) {
                     <div class="flex flex-col gap-2">
                         <label class="text-xs font-semibold text-slate-700">Selecione a Chave de IA</label>
                         <select [(ngModel)]="chaveIaSelecionadaId"
@@ -864,76 +914,17 @@
                             Chave descriptografada com segurança diretamente no servidor no momento do processamento.
                         </span>
                     </div>
-                }
-
-                <!-- MODO CHAVE AVULSA OU SEM CHAVES SALVAS -->
-                @if (modoChaveIa === 'avulsa' || chavesIaSalvas.length === 0) {
-                    <div class="flex flex-col gap-3">
-                        <div class="flex flex-col gap-1.5">
-                            <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                                <span>Serviço de IA</span>
-                                <i class="pi pi-question-circle text-slate-400 cursor-help text-[11px]"
-                                    pTooltip="Escolha o provedor da sua chave de API (Gemini, Claude, OpenAI, DeepSeek ou Groq) para ler a fatura."
-                                    tooltipPosition="top"></i>
-                            </label>
-                            <p-select [options]="opcoesProvedorIa" optionLabel="label" optionValue="value"
-                                [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
-                        </div>
-
-                        <div class="flex flex-col gap-1.5 w-full">
-                            <div class="flex items-center justify-between flex-wrap gap-2">
-                                <div class="flex items-center gap-2">
-                                    <label class="text-xs font-semibold text-slate-700">Chave de acesso (API Key)</label>
-                                    @if (temChaveSalva) {
-                                        <span class="text-[10px] font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                                            ✓ Salva na sessão
-                                        </span>
-                                    }
-                                </div>
-                                <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
-                                   class="text-xs font-medium text-[#7843cd] hover:text-[#5d2fa8] hover:underline flex items-center gap-1 transition-colors"
-                                   [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top" tooltipStyleClass="whitespace-pre-line text-xs">
-                                    <span>{{ linkApiKeyProvedor.label }}</span>
-                                    <i class="pi pi-external-link text-[10px]"></i>
-                                </a>
-                            </div>
-                            <div class="w-full">
-                                <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                                    (onBlur)="apiKeyIaTocada = true"
-                                    [placeholder]="temChaveSalva ? 'Usando chave salva (' + (provedorSalvo || provedorSelecionado) + ') — digite para trocar' : 'Cole sua chave de API aqui...'"
-                                    styleClass="w-full" inputStyleClass="w-full text-xs"></p-password>
-                            </div>
-                            @if (apiKeyIaTocada && !temChaveSalva && !apiKeyIa.trim()) {
-                                <span class="text-[11px] text-amber-600 flex items-center gap-1 mt-0.5">
-                                    <i class="pi pi-exclamation-circle text-[10px]"></i>
-                                    <span>Informe uma chave de API para habilitar a análise da fatura.</span>
-                                </span>
-                            }
-                        </div>
-
-                        <!-- Checkbox para salvar chave no perfil permanentemente -->
-                        <div class="flex items-center gap-2 pt-1">
-                            <p-checkbox [(ngModel)]="salvarChaveTemporaria" [binary]="true" inputId="salvarChavePerfil"></p-checkbox>
-                            <label for="salvarChavePerfil" class="text-xs text-slate-700 cursor-pointer select-none">
-                                Salvar esta chave permanentemente no meu perfil
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="flex items-center justify-between gap-2 pt-2 border-t border-slate-200">
-                        <div class="flex items-center gap-2">
-                            <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessao"></p-checkbox>
-                            <label for="manterSessao" class="text-xs text-slate-600 cursor-pointer select-none">
-                                Lembrar chave nesta sessão
-                            </label>
-                        </div>
-                        @if (temChaveSalva) {
-                            <button type="button" (click)="esquecerChaveIa()"
-                                class="text-xs text-slate-400 hover:text-red-600 flex items-center gap-1 cursor-pointer bg-transparent border-none p-0 transition-colors">
-                                <i class="pi pi-trash text-[11px]"></i>
-                                <span>Apagar chave salva</span>
-                            </button>
-                        }
+                } @else {
+                    <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 flex flex-col gap-2 text-xs text-amber-950">
+                        <div class="font-bold">Nenhuma chave de IA cadastrada</div>
+                        <p class="m-0 text-amber-800">
+                            Cadastre uma chave de IA (Gemini, Claude, OpenAI, DeepSeek ou Groq) no seu perfil para analisar faturas com IA.
+                        </p>
+                        <a routerLink="/app/perfil" [queryParams]="{ aba: 'ia' }" (click)="exibirDialogUpload = false"
+                           class="inline-flex items-center gap-1.5 text-xs font-semibold text-[#7843cd] hover:underline no-underline">
+                            <i class="pi pi-key text-[11px]"></i>
+                            <span>Configurar chave em Perfil &gt; IA</span>
+                        </a>
                     </div>
                 }
             </div>
@@ -1017,39 +1008,28 @@
                 </div>
             </div>
 
-            <div class="flex flex-col gap-3">
-                <div class="flex flex-col gap-1.5">
+            <div class="flex flex-col gap-2">
+                @if (chavesIaSalvas.length > 0) {
                     <label class="text-xs font-semibold text-slate-700 flex items-center gap-1.5">
-                        <span>Serviço de IA (Multimodal)</span>
+                        <span>Chave de IA cadastrada (Gemini ou Claude)</span>
                         <i class="pi pi-question-circle text-slate-400 cursor-help text-[11px]"
-                            pTooltip="Para faturas em imagem, apenas Gemini e Claude possuem visão multimodal para leitura direta do PDF."
+                            pTooltip="Para faturas em imagem, utilize uma chave Gemini ou Claude cadastrada no seu perfil."
                             tooltipPosition="top"></i>
                     </label>
-                    <p-select [options]="opcoesProvedorPdf" optionLabel="label" optionValue="value"
-                        [(ngModel)]="provedorSelecionado" [appendTo]="'body'" styleClass="w-full"></p-select>
-                </div>
-
-                <div class="flex flex-col gap-1.5">
-                    <div class="flex items-center justify-between">
-                        <label class="text-xs font-semibold text-slate-700">Chave de acesso (API Key)</label>
-                        <a [href]="linkApiKeyProvedor.url" target="_blank" rel="noopener noreferrer"
-                           class="text-xs font-medium text-[#7843cd] hover:text-[#5d2fa8] hover:underline flex items-center gap-1 transition-colors"
-                           [pTooltip]="linkApiKeyProvedor.dicaLink" tooltipPosition="top" tooltipStyleClass="whitespace-pre-line text-xs">
-                            <span>{{ linkApiKeyProvedor.label }}</span>
-                            <i class="pi pi-external-link text-[10px]"></i>
-                        </a>
+                    <select [(ngModel)]="chaveIaSelecionadaId"
+                            class="w-full px-3 py-2 text-xs bg-white border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7843cd] text-slate-800">
+                        <option *ngFor="let c of chavesIaSalvas" [value]="c.id">
+                            {{ c.apelido }} ({{ c.provedor }}) - {{ c.chaveMascarada }}{{ c.padrao ? ' (Padrão)' : '' }}
+                        </option>
+                    </select>
+                } @else {
+                    <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-xs text-amber-900">
+                        Cadastre uma chave <strong>Gemini</strong> ou <strong>Claude</strong> em
+                        <a routerLink="/app/perfil" [queryParams]="{ aba: 'ia' }" (click)="exibirDialogConsentimento = false"
+                           class="text-[#7843cd] font-semibold hover:underline">Perfil &gt; IA</a>
+                        para continuar.
                     </div>
-                    <p-password [(ngModel)]="apiKeyIa" [feedback]="false" [toggleMask]="true"
-                        placeholder="Deixe vazio para usar a chave salva"
-                        styleClass="w-full" inputStyleClass="w-full"></p-password>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2">
-                <p-checkbox [(ngModel)]="manterNaSessao" [binary]="true" inputId="manterSessaoPdf"></p-checkbox>
-                <label for="manterSessaoPdf" class="text-xs text-slate-600 cursor-pointer">
-                    Lembrar minha chave por um tempo
-                </label>
+                }
             </div>
 
             <div class="flex items-start gap-2 p-3 rounded-xl bg-slate-50 border border-slate-200">
@@ -1450,8 +1430,15 @@
                         size="small" styleClass="text-rose-600 hover:bg-rose-50 rounded-xl! text-xs font-semibold w-full sm:w-auto"
                         (onClick)="excluirGrupoParcelamento(false)"></p-button>
                 </div>
-                <p-button label="Fechar" severity="secondary" [outlined]="true" size="small"
-                    styleClass="rounded-xl! text-xs px-4 w-full sm:w-auto" (onClick)="exibirDialogGrupo = false"></p-button>
+                <div class="flex items-center gap-2 w-full sm:w-auto justify-end">
+                    @if (abaMovimentacoes !== 'parcelamentos') {
+                        <p-button label="Ver parcelamentos" icon="pi pi-credit-card" severity="secondary" [text]="true" size="small"
+                            styleClass="rounded-xl! text-xs px-3 text-[#7843cd]!"
+                            (onClick)="exibirDialogGrupo = false; abaMovimentacoes = 'parcelamentos'"></p-button>
+                    }
+                    <p-button label="Fechar" severity="secondary" [outlined]="true" size="small"
+                        styleClass="rounded-xl! text-xs px-4 w-full sm:w-auto" (onClick)="exibirDialogGrupo = false"></p-button>
+                </div>
             </div>
         </ng-template>
     </p-dialog>

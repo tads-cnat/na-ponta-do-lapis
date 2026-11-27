@@ -5,6 +5,7 @@ import com.npl.na_ponta_do_lapis.service.UsuarioService;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioResponseDTO;
 import com.npl.na_ponta_do_lapis.web.dto.UsuarioUpdateDTO;
+import com.npl.na_ponta_do_lapis.web.exception.NotFoundException;
 import com.npl.na_ponta_do_lapis.security.jwt.JwtUtil;
 import java.util.Date;
 import java.util.List;
@@ -15,6 +16,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,10 +26,12 @@ public class UsuarioController {
 
     private UsuarioService usuarioService;
     private JwtUtil jwtUtil;
+    private PasswordEncoder passwordEncoder;
 
-    public UsuarioController(UsuarioService usuarioService, JwtUtil jwtUtil){
+    public UsuarioController(UsuarioService usuarioService, JwtUtil jwtUtil, PasswordEncoder passwordEncoder){
         this.usuarioService = usuarioService;
         this.jwtUtil = jwtUtil;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Operation(summary = "Listar Usuários")
@@ -43,7 +47,7 @@ public class UsuarioController {
 
     @Operation(summary = "Usuário logado")
     @GetMapping("/me")
-    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO')")
     public ResponseEntity<UsuarioResponseDTO> me(){
         return ResponseEntity.ok(new UsuarioResponseDTO(usuarioService.buscarUsuarioLogado()));
     }
@@ -57,11 +61,14 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
     }
 
-    @PreAuthorize("hasRole('ADMIN_SITE') or hasRole('USUARIO') or hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('ADMIN_SITE') or hasRole('USUARIO')")
     @Operation(summary = "Buscar por Username")
     @GetMapping("/username/{username}")
     public ResponseEntity<UsuarioResponseDTO> buscarPorUsername(@PathVariable String username) {
         Usuario usuario = usuarioService.buscarUsuarioPorUsername(username);
+        if (usuario == null) {
+            throw new NotFoundException("Usuário não encontrado.");
+        }
         UsuarioResponseDTO usuarioResponseDTO = new UsuarioResponseDTO(usuario);
         return ResponseEntity.status(HttpStatus.OK).body(usuarioResponseDTO);
     }
@@ -71,8 +78,7 @@ public class UsuarioController {
     @PostMapping()
     public ResponseEntity<UsuarioResponseDTO> criarUsuario(@RequestBody @Valid UsuarioDTO usuarioDTO){
         Usuario usuarioNovo = usuarioDTO.toEntity();
-//      usuarioNovo.setSenha(passwordEncoder.encode(usuarioNovo.getSenha()));
-        usuarioNovo.setSenha(usuarioDTO.senha());
+        usuarioNovo.setSenha(passwordEncoder.encode(usuarioDTO.senha()));
         Usuario salvo = usuarioService.cadastrarUsuario(usuarioNovo);
 
         UsuarioResponseDTO response = new UsuarioResponseDTO(salvo);
@@ -80,7 +86,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Atualizar Usuário Logado (Passe apenas os campos que for atualizar)")
-    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO')")
     @PatchMapping("/me")
     public ResponseEntity<?> atualizarUsuarioLogado(@RequestBody @Valid UsuarioUpdateDTO usuarioDTO) {
         Usuario usuarioAtualizado = usuarioService.atualizarUsuarioLogado(usuarioDTO);
@@ -103,7 +109,7 @@ public class UsuarioController {
     }
 
     @Operation(summary = "Excluir definitivamente a conta do usuário autenticado (LGPD)")
-    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA')")
+    @PreAuthorize("hasRole('ADMIN_SITE') OR hasRole('USUARIO')")
     @DeleteMapping("/me")
     public ResponseEntity<Void> excluirMinhaConta() {
         usuarioService.excluirContaLogada();

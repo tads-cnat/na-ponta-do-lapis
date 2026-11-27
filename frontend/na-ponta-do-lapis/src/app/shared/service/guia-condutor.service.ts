@@ -54,7 +54,7 @@ export class GuiaCondutorService {
       id: 'contas',
       titulo: 'Contas e Cartões',
       descricao:
-        'Cadastre suas contas bancárias e cartões de crédito ou conecte pelo Open Finance para importar saldos e extratos.',
+        'Cadastre contas e cartões, faça transferências, pague faturas ou conecte bancos via Open Finance para importar saldos e extratos.',
       rota: '/app/contas',
       target: 'menu-conta',
       mascoteEstado: 'checking',
@@ -62,9 +62,9 @@ export class GuiaCondutorService {
     },
     {
       id: 'transacoes',
-      titulo: 'Movimentações e IA',
+      titulo: 'Movimentações, Assinaturas e IA',
       descricao:
-        'Gerencie receitas, despesas e parcelamentos, filtre por marcadores e importe faturas em PDF com ajuda da Inteligência Artificial.',
+        'Gerencie receitas, despesas, assinaturas recorrentes e parcelamentos, ou importe faturas em PDF com ajuda da Inteligência Artificial.',
       rota: '/app/transacoes',
       target: 'menu-transacao',
       mascoteEstado: 'checking',
@@ -94,9 +94,9 @@ export class GuiaCondutorService {
     },
     {
       id: 'perfil-familia',
-      titulo: 'Família, Open Finance e Perfil',
+      titulo: 'Perfil e Consultor Grafith IA',
       descricao:
-        'Convide familiares em Família para compartilhar o orçamento e configure tema, moeda, Open Finance e IA no Perfil. Você pode me chamar aqui no Perfil quando quiser!',
+        'No Perfil você configura ajustes, conquistas, Open Finance e sua chave de IA. Ao encerrar o tour, eu fico no canto inferior direito para analisar seus gastos, metas, parcelas e tirar dúvidas sobre o app!',
       rota: '/app/perfil',
       target: 'header-perfil',
       mascoteEstado: 'checking',
@@ -159,6 +159,7 @@ export class GuiaCondutorService {
 
   concluir(): void {
     this.encerrar(true);
+    void this.router.navigateByUrl('/app/dashboard');
   }
 
   concluirEIrParaNovaTransacao(): void {

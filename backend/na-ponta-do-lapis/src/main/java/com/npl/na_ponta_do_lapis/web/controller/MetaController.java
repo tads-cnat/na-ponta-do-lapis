@@ -44,7 +44,7 @@ public class MetaController {
     @ApiResponses({
         @ApiResponse(responseCode = "200", description = "Lista de metas retornada com sucesso")
     })
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA') or hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_SITE')")
     @GetMapping
     public ResponseEntity<List<MetaResponseDTO>> listar(@AuthenticationPrincipal Usuario usuario) {
         return ResponseEntity.ok(metaService.listarTodas(usuario));
@@ -55,7 +55,7 @@ public class MetaController {
         @ApiResponse(responseCode = "200", description = "Meta encontrada"),
         @ApiResponse(responseCode = "404", description = "Meta não encontrada"),
     })
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA') or hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_SITE')")
     @GetMapping("/{id}")
     public ResponseEntity<MetaResponseDTO> buscarPorId(
             @PathVariable Long id,
@@ -68,7 +68,7 @@ public class MetaController {
         @ApiResponse(responseCode = "201", description = "Meta criada com sucesso"),
         @ApiResponse(responseCode = "400", description = "Erro de validação")
     })
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA') or hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_SITE')")
     @PostMapping
     public ResponseEntity<MetaResponseDTO> criar(
             @RequestBody @Valid MetaDTO dto,
@@ -82,7 +82,7 @@ public class MetaController {
         @ApiResponse(responseCode = "400", description = "Erro de validação"),
         @ApiResponse(responseCode = "404", description = "Meta não encontrada")
     })
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA') or hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_SITE')")
     @PutMapping("/{id}")
     public ResponseEntity<MetaResponseDTO> atualizar(
             @PathVariable Long id,
@@ -96,7 +96,7 @@ public class MetaController {
         @ApiResponse(responseCode = "204", description = "Meta deletada com sucesso"),
         @ApiResponse(responseCode = "404", description = "Meta não encontrada"),
     })
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA') or hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_SITE')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletar(
             @PathVariable Long id,
@@ -106,7 +106,7 @@ public class MetaController {
     }
 
     @Operation(summary = "Listar tipos de meta disponíveis")
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA') or hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_SITE')")
     @GetMapping("/tipos")
     public ResponseEntity<List<TipoMetaResponseDTO>> listarTipos() {
         return ResponseEntity.ok(
@@ -117,7 +117,7 @@ public class MetaController {
     }
 
     @Operation(summary = "Registrar um aporte em uma meta")
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA') or hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_SITE')")
     @PostMapping("/{id}/aportes")
     public ResponseEntity<com.npl.na_ponta_do_lapis.web.dto.AporteMetaResponseDTO> registrarAporte(
             @PathVariable Long id,
@@ -127,7 +127,7 @@ public class MetaController {
     }
 
     @Operation(summary = "Listar aportes realizados em uma meta")
-    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_FAMILIA') or hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') or hasRole('ADMIN_SITE')")
     @GetMapping("/{id}/aportes")
     public ResponseEntity<List<com.npl.na_ponta_do_lapis.web.dto.AporteMetaResponseDTO>> listarAportes(
             @PathVariable Long id,

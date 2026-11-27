@@ -12,6 +12,7 @@ import { GastosCategoriaComponent } from './components/gastos-categoria/gastos.c
 import { MetasDashboardComponent } from './components/metas/metas.component';
 import { UltimasMovimentacoesComponent } from './components/ultimas-movimentacoes/ultimas-movimentacoes.component';
 import { ExportarRelatorioModalComponent } from './components/exportar-relatorio/exportar-relatorio-modal.component';
+import { FixosParcelasDashboardComponent } from './components/fixos-parcelas/fixos-parcelas-dashboard.component';
 import { IContas, ehCartaoCredito } from '../../model/IContas.models';
 import { ITransacoes } from '../../model/ITransacoes.model';
 import { MetaRequest, MetaResponse } from '../../model/IMetas.models';
@@ -32,7 +33,8 @@ import { Categoria } from '../../model/ITransacoes.model';
     GastosCategoriaComponent,
     MetasDashboardComponent,
     UltimasMovimentacoesComponent,
-    ExportarRelatorioModalComponent
+    ExportarRelatorioModalComponent,
+    FixosParcelasDashboardComponent
   ],
   /*
    * FIX 1: <main> substituído por <div class="flex flex-col gap-6">.
@@ -90,31 +92,30 @@ import { Categoria } from '../../model/ITransacoes.model';
       >
       </app-relatorio>
 
-      <!-- Seção 3: Gastos por categoria + Metas (grid 2 colunas)
-           FIX 3: Removido h-[320px] — a altura fixa era insuficiente para 5 metas
-           com gap-5 (~440px necessários vs 320px disponíveis). Conteúdo auto-dimensiona. -->
-      <section class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <!-- Seção 3: Análise imediata — Últimas movimentações + Gastos por categoria -->
+      <section class="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
+        <app-ultimas-movimentacoes
+          class="block h-full"
+          [transacoes]="transacoes"
+          (onIrParaTransacoes)="irParaTransacoes()">
+        </app-ultimas-movimentacoes>
 
-        <div class="flex flex-col gap-4 h-full">
-          <app-gastos-categoria
-            class="block"
-            [transacoes]="transacoes"
-            [categorias_disponiveis]="categorias">
-          </app-gastos-categoria>
+        <app-gastos-categoria
+          class="block h-full"
+          [transacoes]="transacoes"
+          [categorias_disponiveis]="categorias">
+        </app-gastos-categoria>
+      </section>
 
-          <app-ultimas-movimentacoes
-            class="block flex-1"
-            [transacoes]="transacoes"
-            (onIrParaTransacoes)="irParaTransacoes()">
-          </app-ultimas-movimentacoes>
-        </div>
+      <!-- Seção 4: Planejamento — Fixos e Parcelas + Metas -->
+      <section class="grid grid-cols-1 xl:grid-cols-2 gap-4 items-stretch">
+        <app-fixos-parcelas-dashboard class="block h-full"></app-fixos-parcelas-dashboard>
 
         <app-metas-dashboard
           class="block h-full"
           [metas]="metas"
           (onIrParaMetas)="irParaMetas()">
         </app-metas-dashboard>
-
       </section>
 
     </div>

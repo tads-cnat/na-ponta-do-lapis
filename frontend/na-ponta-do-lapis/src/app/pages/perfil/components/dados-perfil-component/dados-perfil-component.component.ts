@@ -54,9 +54,12 @@ export class DadosPerfilComponent implements OnInit {
 
   public obterPapel(): string {
     const p = this.usuarioLogado?.papel?.toUpperCase();
-    if (p === 'ADMIN_FAMILIA' || p === 'ADMIN') return 'Administrador da Família';
-    if (p === 'ADMIN_SITE') return 'Administrador do Sistema';
-    if (p === 'RESPONSAVEL') return 'Responsável';
+    if (p === 'ADMIN_SITE') {
+      return this.usuarioLogado?.adminFamilia
+        ? 'Administrador do Sistema • Admin da Família'
+        : 'Administrador do Sistema';
+    }
+    if (this.usuarioLogado?.adminFamilia) return 'Administrador da Família';
     return this.usuarioLogado?.idFamilia ? 'Membro' : 'Usuário';
   }
 

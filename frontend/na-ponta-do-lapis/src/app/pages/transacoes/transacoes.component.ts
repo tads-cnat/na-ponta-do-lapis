@@ -6,6 +6,8 @@ import { CommonModule } from '@angular/common';
 import { forkJoin } from 'rxjs';
 import { AbstractControl, FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { TransacoesService } from './service/transacoes.service';
+import { AssinaturasService } from '../assinaturas/service/assinaturas.service';
+import { AssinaturasComponent } from '../assinaturas/assinaturas.component';
 import {
   Categoria,
   FaturaAnaliseOpcoes,
@@ -45,13 +47,14 @@ interface GrupoParcelamentoResumo {
 
 @Component({
   selector: 'app-transacoes',
-  imports: [AutorizacaoDadosComponent, CardSaldoComponent, PullToRefreshComponent, MarcadorDlgComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
+  imports: [AutorizacaoDadosComponent, CardSaldoComponent, PullToRefreshComponent, MarcadorDlgComponent, AssinaturasComponent, PrimeNGModuleModule, CommonModule, ReactiveFormsModule, FormsModule, RouterModule, InputMoedaComponent, AppMoedaPipe],
   templateUrl: './transacoes.component.html',
   providers: [MessageService],
   styleUrl: './transacoes.component.css',
 })
 export class TransacoesComponent {
   exibirDialog: boolean = false;
+  abaMovimentacoes: 'lancamentos' | 'assinaturas' | 'parcelamentos' = 'lancamentos';
   salvandoTransacao: boolean = false;
   exibirDialogMarcador: boolean = false;
   exibirDialogEscolha: boolean = false;
@@ -90,6 +93,12 @@ export class TransacoesComponent {
   chaveIaSelecionadaId: number | null = null;
   modoChaveIa: 'salva' | 'avulsa' = 'salva';
   salvarChaveTemporaria: boolean = false;
+  readonly frequenciasRecorrencia = [
+    { label: 'Semanal', value: 'SEMANAL' },
+    { label: 'Mensal', value: 'MENSAL' },
+    { label: 'Trimestral', value: 'TRIMESTRAL' },
+    { label: 'Anual', value: 'ANUAL' },
+  ];
   erroConsentimento: string | null = null;
   arquivoSelecionado: File | null = null;
   autorizacaoDados: AutorizacaoDados | null = null;
@@ -101,10 +110,7 @@ export class TransacoesComponent {
     if (this.codigoErroUpload === 'DOCUMENTO_NAO_EH_FATURA' || !this.faturaPreviaValida) {
       return false;
     }
-    if (this.modoChaveIa === 'salva') {
-      return !!this.chaveIaSelecionadaId || this.temChaveSalva || !!this.apiKeyIa?.trim();
-    }
-    return !!this.apiKeyIa?.trim();
+    return this.chavesIaSalvas.length > 0 && !!this.chaveIaSelecionadaId;
   }
 
   projetarParcelasFuturas: boolean = true;
@@ -198,6 +204,7 @@ export class TransacoesComponent {
   private preferenciaMoedaService = inject(PreferenciaMoedaService);
   id: number | null = null;
   @ViewChild(CardSaldoComponent) cardSaldo?: CardSaldoComponent;
+  @ViewChild(AssinaturasComponent) assinaturasComponent?: AssinaturasComponent;
   formTransacao: FormGroup;
   constructor(
     private fb: FormBuilder,
@@ -205,7 +212,8 @@ export class TransacoesComponent {
     private integracoesService: IntegracoesService,
     private cdr: ChangeDetectorRef,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private assinaturasService: AssinaturasService
   ) {
     this.formTransacao = this.fb.group({
       descricao: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -217,6 +225,8 @@ export class TransacoesComponent {
       tipo: ['', [Validators.required]],
       marcadorId: [''],
       parcelado: [false],
+      recorrente: [false],
+      frequenciaRecorrencia: ['MENSAL'],
       totalParcelas: [2],
       numeroParcela: [1],
       valorTotalCompra: [null],
@@ -310,6 +320,27 @@ export class TransacoesComponent {
     this.route.queryParamMap
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((params) => {
+        const aba = params.get('aba');
+        if (aba === 'assinaturas' || aba === 'parcelamentos' || aba === 'lancamentos') {
+          this.abaMovimentacoes = aba;
+        }
+        const grupoParcelamento = params.get('grupoParcelamento');
+        const busca = params.get('busca');
+        const parcelado = params.get('parcelado');
+        if (grupoParcelamento) {
+          this.abrirGrupoPorId(grupoParcelamento);
+        }
+        if (busca || parcelado === 'true') {
+          this.abaMovimentacoes = 'lancamentos';
+          if (parcelado === 'true') {
+            this.filtroParcelamento = 'PARCELADAS';
+          }
+          if (busca) {
+            this.buscarPorDescricao(busca);
+          } else {
+            this.aplicarFiltros();
+          }
+        }
         const openDialog = params.get('openDialog');
         if (openDialog) {
           void this.router.navigate([], {
@@ -973,6 +1004,8 @@ export class TransacoesComponent {
       tipo: 'DESPESA',
       marcadorId: null,
       parcelado: false,
+      recorrente: false,
+      frequenciaRecorrencia: 'MENSAL',
       totalParcelas: 2,
       numeroParcela: 1,
       valorTotalCompra: null,
@@ -1168,11 +1201,9 @@ export class TransacoesComponent {
   private opcoesAnaliseFatura(extras: FaturaAnaliseOpcoes): FaturaAnaliseOpcoes {
     return {
       provedor: this.provedorSelecionado,
-      apiKey: this.modoChaveIa === 'avulsa' ? (this.apiKeyIa?.trim() || undefined) : undefined,
-      chaveIaId: this.modoChaveIa === 'salva' ? (this.chaveIaSelecionadaId ?? undefined) : undefined,
-      salvarChave: this.modoChaveIa === 'avulsa' ? this.salvarChaveTemporaria : false,
+      chaveIaId: this.chaveIaSelecionadaId ?? undefined,
       senha: this.senhaPdf?.trim() || undefined,
-      manterNaSessao: this.manterNaSessao,
+      manterNaSessao: false,
       usarIa: this.usarIa,
       ...extras,
     };
@@ -1596,11 +1627,24 @@ export class TransacoesComponent {
 
   abrirGrupoParcelamento(transacao: ITransacoes) {
     if (!transacao.grupoParcelamento) return;
+    this.abrirGrupoPorId(transacao.grupoParcelamento);
+  }
 
-    this.grupoSelecionado = transacao.grupoParcelamento;
+  abrirGrupoPorId(grupoId: string) {
+    if (!grupoId) return;
+
+    this.grupoSelecionado = grupoId;
     this.parcelasGrupo = [];
     this.exibirDialogGrupo = true;
     this.carregarGrupo();
+  }
+
+  verLancamentosDoParcelamento(descricao: string) {
+    this.abaMovimentacoes = 'lancamentos';
+    this.filtroParcelamento = 'PARCELADAS';
+    this.filtroPeriodoRapido = 'TODOS';
+    this.filtroDataRange = null;
+    this.buscarPorDescricao(descricao);
   }
 
   private carregarGrupo() {
@@ -1640,6 +1684,7 @@ export class TransacoesComponent {
         this.carregarGrupo();
         this.listarTransacoes();
         this.atualizarSaldo();
+        this.assinaturasComponent?.carregarParcelamentos();
       },
       error: () => {
         this.messageService.add({
@@ -1665,6 +1710,7 @@ export class TransacoesComponent {
         });
         this.carregarGrupo();
         this.listarTransacoes();
+        this.assinaturasComponent?.carregarParcelamentos();
       },
       error: () => {
         this.messageService.add({
@@ -1713,6 +1759,7 @@ export class TransacoesComponent {
 
         this.listarTransacoes();
         this.atualizarSaldo();
+        this.assinaturasComponent?.carregarParcelamentos();
         this.cdr.detectChanges();
       },
       error: () => {
@@ -1751,6 +1798,7 @@ export class TransacoesComponent {
         this.parcelasGrupo = [];
         this.listarTransacoes();
         this.atualizarSaldo();
+        this.assinaturasComponent?.carregarParcelamentos();
         this.cdr.detectChanges();
       },
       error: () => {
@@ -1814,6 +1862,8 @@ export class TransacoesComponent {
     this.salvandoTransacao = true;
 
     // Transação já parcelada: edição altera só esta parcela. Avulsa: pode virar parcelada.
+    delete dadosParaEnviar.recorrente;
+    delete dadosParaEnviar.frequenciaRecorrencia;
     if (this.editandoParcelada || !dadosParaEnviar.parcelado) {
       delete dadosParaEnviar.parcelado;
       delete dadosParaEnviar.totalParcelas;
@@ -1850,6 +1900,42 @@ export class TransacoesComponent {
     this.salvandoTransacao = true;
 
     const parcelado = !!dadosParaEnviar.parcelado;
+    const recorrente = !parcelado && !!dadosParaEnviar.recorrente;
+    const frequenciaRecorrencia = dadosParaEnviar.frequenciaRecorrencia || 'MENSAL';
+    delete dadosParaEnviar.recorrente;
+    delete dadosParaEnviar.frequenciaRecorrencia;
+
+    if (recorrente) {
+      const dataBase = dadosParaEnviar.dataHora ? new Date(dadosParaEnviar.dataHora) : new Date();
+      const pad = (n: number) => String(n).padStart(2, '0');
+      const proximaCobranca = `${dataBase.getFullYear()}-${pad(dataBase.getMonth() + 1)}-${pad(dataBase.getDate())}`;
+
+      this.assinaturasService.criar({
+        descricao: dadosParaEnviar.descricao,
+        valor: Number(dadosParaEnviar.valor),
+        tipo: dadosParaEnviar.tipo,
+        frequencia: frequenciaRecorrencia,
+        estadoGeracao: dadosParaEnviar.estado === 'REALIZADA' ? 'REALIZADA' : 'PENDENTE',
+        proximaCobranca,
+        contaId: Number(dadosParaEnviar.idContaFinanceira),
+        categoriaId: Number(dadosParaEnviar.idCategoria),
+        marcadorId: dadosParaEnviar.marcadorId ? Number(dadosParaEnviar.marcadorId) : null,
+        lancarPrimeiraAgora: true,
+      }).subscribe({
+        next: () => {
+          this.salvandoTransacao = false;
+          this.exibirDialog = false;
+          this.sucessoAoSalvar('Assinatura criada e primeira transação lançada!');
+        },
+        error: (error: HttpErrorResponse) => {
+          this.salvandoTransacao = false;
+          const corpo = error.error as FaturaErro | null;
+          this.erroAoSalvar(corpo?.error || 'Erro ao criar assinatura', error);
+        }
+      });
+      return;
+    }
+
     dadosParaEnviar.parcelado = parcelado;
     delete dadosParaEnviar.valorTotalCompra;
     if (parcelado) {
@@ -1914,6 +2000,23 @@ export class TransacoesComponent {
     const mes = String(d.getMonth() + 1).padStart(2, '0');
     const dia = String(d.getDate()).padStart(2, '0');
     return `${ano}-${mes}-${dia}`;
+  }
+
+  public elementoDescricaoTruncada: HTMLElement | null = null;
+
+  public verificarDescricaoTruncada(el: HTMLElement): void {
+    const truncado = el.scrollWidth > el.clientWidth + 1;
+    const proximo = truncado ? el : null;
+    if (this.elementoDescricaoTruncada !== proximo) {
+      this.elementoDescricaoTruncada = proximo;
+      this.cdr.detectChanges();
+    }
+  }
+
+  public limparDescricaoTruncada(el: HTMLElement): void {
+    if (this.elementoDescricaoTruncada === el) {
+      this.elementoDescricaoTruncada = null;
+    }
   }
 
   getSeverity(status: string) {

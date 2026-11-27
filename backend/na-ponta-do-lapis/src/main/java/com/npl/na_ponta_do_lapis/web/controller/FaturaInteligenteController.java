@@ -77,7 +77,7 @@ public class FaturaInteligenteController {
             @ApiResponse(responseCode = "500", description = "Erro interno",
                     content = @Content(schema = @Schema(example = "{\"error\": \"Erro interno\"}")))
     })
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PostMapping(value = "/analise", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> analisar(
             @RequestParam("arquivo") MultipartFile arquivo,
@@ -102,48 +102,20 @@ public class FaturaInteligenteController {
                 10,
                 Duration.ofMinutes(1));
 
-        Optional<CredencialIa> credencial = cookieHelper.ler(request);
-
         try {
             ProvedorIa provedorRequisicao = parseProvedor(provedor);
-            boolean chaveInformada = apiKey != null && !apiKey.isBlank();
-
-            // Para envio multimodal, a chave da sessão só serve se for do mesmo provedor
-            // selecionado; caso contrário o usuário precisa informar uma chave compatível.
-            boolean podeUsarCredencialDaSessao = credencial.isPresent()
-                    && (!enviarPdfParaIa
-                        || provedorRequisicao == null
-                        || credencial.get().provedor() == provedorRequisicao);
-
             ProvedorIa provedorEfetivo;
             String chaveEfetiva;
-            boolean chaveVeioDoCookie = false;
 
             if (chaveIaId != null && usuario != null) {
                 ChaveIaUsuario chaveSalva = chaveIaService.obterEntidade(usuario, chaveIaId);
                 provedorEfetivo = chaveSalva.getProvedor();
                 chaveEfetiva = chaveIaService.obterChaveDecifrada(usuario, chaveIaId);
-            } else if (chaveInformada) {
-                provedorEfetivo = provedorRequisicao != null
-                        ? provedorRequisicao
-                        : credencial.map(CredencialIa::provedor).orElse(ProvedorIa.GEMINI);
-                chaveEfetiva = apiKey;
-
-                if (salvarChave && usuario != null) {
-                    String apelido = (apelidoChave != null && !apelidoChave.isBlank())
-                            ? apelidoChave.trim()
-                            : "Chave " + provedorEfetivo.getNomeExibicao();
-                    chaveIaService.cadastrarChave(usuario, new ChaveIaRequestDTO(apelido, provedorEfetivo, apiKey, false));
-                }
             } else {
                 Optional<ChaveIaUsuario> chavePadrao = usuario != null ? chaveIaService.obterChavePadrao(usuario) : Optional.empty();
                 if (chavePadrao.isPresent()) {
                     provedorEfetivo = chavePadrao.get().getProvedor();
                     chaveEfetiva = chaveIaService.obterChaveDecifrada(usuario, chavePadrao.get().getId());
-                } else if (podeUsarCredencialDaSessao) {
-                    provedorEfetivo = credencial.get().provedor();
-                    chaveEfetiva = credencial.get().apiKey();
-                    chaveVeioDoCookie = true;
                 } else {
                     provedorEfetivo = provedorRequisicao != null ? provedorRequisicao : ProvedorIa.GEMINI;
                     chaveEfetiva = null;
@@ -160,22 +132,15 @@ public class FaturaInteligenteController {
                     consentimentoLgpd
             );
 
-            if (chaveEfetiva != null && !chaveEfetiva.isBlank() && (manterNaSessao || chaveVeioDoCookie)) {
-                cookieHelper.gravar(response, request, provedorEfetivo, chaveEfetiva);
-            }
-
             return ResponseEntity.ok(resposta);
         } catch (FaturaAnaliseException e) {
-            if (e.isChaveInvalida()) {
-                cookieHelper.limpar(response, request);
-            }
             return ResponseEntity.status(e.getStatus())
                     .body(new FaturaErroDTO(e.getMessage(), e.getCodigo(), e.getProvedores()));
         }
     }
 
-    @Operation(summary = "Verifica se há chave de IA salva na sessão atual ou perfil")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @Operation(summary = "Verifica se há chave de IA cadastrada no perfil")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @GetMapping("/sessao")
     public ResponseEntity<FaturaSessaoDTO> obterSessao(
             HttpServletRequest request,
@@ -186,15 +151,11 @@ public class FaturaInteligenteController {
                 return ResponseEntity.ok(new FaturaSessaoDTO(true, chavePadrao.get().getProvedor().name()));
             }
         }
-        Optional<CredencialIa> credencial = cookieHelper.ler(request);
-        return ResponseEntity.ok(new FaturaSessaoDTO(
-                credencial.isPresent(),
-                credencial.map(CredencialIa::provedor).map(Enum::name).orElse(null)
-        ));
+        return ResponseEntity.ok(new FaturaSessaoDTO(false, null));
     }
 
     @Operation(summary = "Esquecer a chave de IA guardada no cookie de sessão")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @DeleteMapping("/sessao")
     public ResponseEntity<Void> esquecerSessao(HttpServletRequest request, HttpServletResponse response) {
         cookieHelper.limpar(response, request);
@@ -203,7 +164,7 @@ public class FaturaInteligenteController {
 
     @Operation(summary = "Validação prévia local do arquivo de fatura",
             description = "Verifica em milissegundos se o PDF possui características de fatura e se tem senha, sem usar IA.")
-    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_FAMILIA') OR hasRole('ADMIN_SITE')")
+    @PreAuthorize("hasRole('USUARIO') OR hasRole('ADMIN_SITE')")
     @PostMapping(value = "/validar-previa", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<FaturaValidacaoPreviaDTO> validarPrevia(
             @RequestParam("arquivo") MultipartFile arquivo,

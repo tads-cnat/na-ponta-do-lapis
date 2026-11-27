@@ -84,10 +84,14 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
           class="shrink-0"
           [sincronizandoOpenFinance]="sincronizandoOpenFinance"
           [openFinanceConectado]="openFinanceConectado"
+          [contaSelecionadaEhCartao]="contaSelecionada?.tipoConta === 'CARTAO_CREDITO'"
+          [podeTransferir]="contasNaoCartao.length > 0 && contaFinanceiraDados.length >= 2"
           (onAdicionar)="abrirDialog()"
           (onEditar)="editarConta(contaSelecionada)"
           (onExcluir)="abrirDialogExcluir(contaSelecionada)"
-          (onSincronizarOpenFinance)="sincronizarOpenFinance()">
+          (onSincronizarOpenFinance)="sincronizarOpenFinance()"
+          (onTransferir)="abrirDialogTransferencia()"
+          (onPagarFatura)="abrirDialogPagarFatura()">
         </app-acoes-cartoes>
       </div>
 
@@ -482,6 +486,135 @@ import { mapearNomeBanco, BancoResolvido, obterCorOficialBanco, temBancoDetectad
 
       </form>
 
+      <!-- DIALOG: TRANSFERÊNCIA ENTRE CONTAS -->
+      <p-dialog
+        header="Transferir entre Contas"
+        [(visible)]="exibirDialogTransferencia"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [style]="{ width: '28rem', maxWidth: '94vw' }">
+        <div class="flex flex-col gap-4 pt-2">
+          <p class="text-xs text-slate-500 m-0">
+            Move saldo entre suas contas próprias sem alterar os gráficos de receitas e despesas do mês.
+          </p>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-slate-700">Conta de origem</label>
+            <p-select
+              [(ngModel)]="transferenciaOrigemId"
+              [options]="contasNaoCartao"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione a conta de origem"
+              appendTo="body"
+              styleClass="w-full" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-slate-700">Conta de destino</label>
+            <p-select
+              [(ngModel)]="transferenciaDestinoId"
+              [options]="contasDestinoDisponiveis"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione a conta de destino"
+              appendTo="body"
+              styleClass="w-full" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-slate-700">Valor</label>
+            <app-input-moeda
+              [(ngModel)]="transferenciaValor"
+              [moeda]="preferenciaMoedaService.obterMoedaAtiva()"
+              placeholder="0,00"
+              tamanho="md" />
+          </div>
+        </div>
+
+        <ng-template #footer>
+          <div class="flex justify-end gap-2 pt-2">
+            <p-button
+              label="Cancelar"
+              severity="secondary"
+              [text]="true"
+              size="small"
+              (click)="exibirDialogTransferencia = false">
+            </p-button>
+            <p-button
+              label="Confirmar Transferência"
+              icon="pi pi-arrow-right-arrow-left"
+              size="small"
+              [loading]="processandoMovimentacao"
+              styleClass="btn-npl-primary rounded-xl! text-xs px-4 font-semibold"
+              (click)="confirmarTransferencia()">
+            </p-button>
+          </div>
+        </ng-template>
+      </p-dialog>
+
+      <!-- DIALOG: PAGAR FATURA DO CARTÃO -->
+      <p-dialog
+        header="Pagar Fatura do Cartão"
+        [(visible)]="exibirDialogPagarFatura"
+        [modal]="true"
+        [draggable]="false"
+        [resizable]="false"
+        [style]="{ width: '28rem', maxWidth: '94vw' }">
+        <div class="flex flex-col gap-4 pt-2">
+          @if (contaSelecionada) {
+            <div class="p-3 rounded-xl bg-purple-50/70 border border-purple-100 flex items-center justify-between text-xs">
+              <span class="font-semibold text-slate-700">{{ contaSelecionada.nome }}</span>
+              <span class="font-extrabold text-[#7843CD]">
+                Fatura atual: {{ contaSelecionada.saldo | appMoeda }}
+              </span>
+            </div>
+          }
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-slate-700">Pagar usando a conta</label>
+            <p-select
+              [(ngModel)]="pagamentoContaOrigemId"
+              [options]="contasNaoCartao"
+              optionLabel="nome"
+              optionValue="id"
+              placeholder="Selecione a conta corrente/carteira"
+              appendTo="body"
+              styleClass="w-full" />
+          </div>
+
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-semibold text-slate-700">Valor do pagamento</label>
+            <app-input-moeda
+              [(ngModel)]="pagamentoValor"
+              [moeda]="preferenciaMoedaService.obterMoedaAtiva()"
+              placeholder="0,00"
+              tamanho="md" />
+          </div>
+        </div>
+
+        <ng-template #footer>
+          <div class="flex justify-end gap-2 pt-2">
+            <p-button
+              label="Cancelar"
+              severity="secondary"
+              [text]="true"
+              size="small"
+              (click)="exibirDialogPagarFatura = false">
+            </p-button>
+            <p-button
+              label="Confirmar Pagamento"
+              icon="pi pi-check"
+              size="small"
+              [loading]="processandoMovimentacao"
+              styleClass="bg-emerald-600! hover:bg-emerald-700! text-white! border-emerald-600! rounded-xl! text-xs px-4 font-semibold"
+              (click)="confirmarPagamentoFatura()">
+            </p-button>
+          </div>
+        </ng-template>
+      </p-dialog>
+
     </div>
     </app-pull-to-refresh>
 
@@ -498,6 +631,14 @@ export class ContasComponent implements OnInit {
   idContaEdicao: number | null = null;
   excluirDialog: boolean = false;
   contaExcluir: IContas | null = null;
+  exibirDialogTransferencia: boolean = false;
+  exibirDialogPagarFatura: boolean = false;
+  processandoMovimentacao: boolean = false;
+  transferenciaOrigemId: number | null = null;
+  transferenciaDestinoId: number | null = null;
+  transferenciaValor: number | null = null;
+  pagamentoContaOrigemId: number | null = null;
+  pagamentoValor: number | null = null;
   bancoDetectado: BancoResolvido | null = null;
   corCustomizadaManualmente: boolean = false;
 
@@ -571,7 +712,7 @@ export class ContasComponent implements OnInit {
     private transacoesService: TransacoesService,
     private router: Router,
     private messageService: MessageService,
-    private preferenciaMoedaService: PreferenciaMoedaService
+    public preferenciaMoedaService: PreferenciaMoedaService
   ) {
     this.formContaFinanceira = this.fb.group({
       nome:        ['', [Validators.required, Validators.minLength(3)]],
@@ -1372,6 +1513,123 @@ export class ContasComponent implements OnInit {
         }
       }
     };
+  }
+
+  get contasNaoCartao(): IContas[] {
+    return this.contaFinanceiraDados.filter((c: IContas) => c.tipoConta !== 'CARTAO_CREDITO');
+  }
+
+  get contasDestinoDisponiveis(): IContas[] {
+    return this.contaFinanceiraDados.filter((c: IContas) => c.id !== this.transferenciaOrigemId);
+  }
+
+  abrirDialogTransferencia(): void {
+    const origens = this.contasNaoCartao;
+    if (origens.length === 0 || this.contaFinanceiraDados.length < 2) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Contas insuficientes',
+        detail: 'Cadastre pelo menos duas contas (sendo uma conta corrente ou carteira) para transferir.',
+      });
+      return;
+    }
+    const origemPadrao = this.contaSelecionada && this.contaSelecionada.tipoConta !== 'CARTAO_CREDITO'
+      ? this.contaSelecionada.id
+      : origens[0].id;
+    this.transferenciaOrigemId = origemPadrao;
+    this.transferenciaDestinoId = this.contaFinanceiraDados.find((c: IContas) => c.id !== origemPadrao)?.id ?? null;
+    this.transferenciaValor = null;
+    this.exibirDialogTransferencia = true;
+  }
+
+  confirmarTransferencia(): void {
+    if (!this.transferenciaOrigemId || !this.transferenciaDestinoId || !this.transferenciaValor || this.transferenciaValor <= 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Dados incompletos',
+        detail: 'Informe conta de origem, destino e valor maior que zero.',
+      });
+      return;
+    }
+    this.processandoMovimentacao = true;
+    this.contaFinanceiraService.transferirEntreContas({
+      contaOrigemId: this.transferenciaOrigemId,
+      contaDestinoId: this.transferenciaDestinoId,
+      valor: this.transferenciaValor,
+    }).subscribe({
+      next: () => {
+        this.processandoMovimentacao = false;
+        this.exibirDialogTransferencia = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Transferência realizada',
+          detail: 'Os saldos das contas foram atualizados.',
+        });
+        this.recarregarDados();
+      },
+      error: (err: any) => {
+        this.processandoMovimentacao = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro na transferência',
+          detail: err?.error?.message || err?.error?.error || 'Não foi possível concluir a transferência.',
+        });
+      },
+    });
+  }
+
+  abrirDialogPagarFatura(): void {
+    if (!this.contaSelecionada || this.contaSelecionada.tipoConta !== 'CARTAO_CREDITO') {
+      return;
+    }
+    if (this.contasNaoCartao.length === 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Nenhuma conta disponível',
+        detail: 'Cadastre uma conta corrente ou carteira para pagar a fatura.',
+      });
+      return;
+    }
+    this.pagamentoContaOrigemId = this.contasNaoCartao[0].id;
+    const faturaAtual = Number(this.contaSelecionada.saldo || 0);
+    this.pagamentoValor = faturaAtual > 0 ? faturaAtual : null;
+    this.exibirDialogPagarFatura = true;
+  }
+
+  confirmarPagamentoFatura(): void {
+    const cartaoId = this.contaSelecionada?.id;
+    if (!cartaoId || !this.pagamentoContaOrigemId || !this.pagamentoValor || this.pagamentoValor <= 0) {
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'Dados incompletos',
+        detail: 'Selecione a conta de pagamento e informe um valor maior que zero.',
+      });
+      return;
+    }
+    this.processandoMovimentacao = true;
+    this.contaFinanceiraService.pagarFatura(cartaoId, {
+      contaOrigemId: this.pagamentoContaOrigemId,
+      valor: this.pagamentoValor,
+    }).subscribe({
+      next: () => {
+        this.processandoMovimentacao = false;
+        this.exibirDialogPagarFatura = false;
+        this.messageService.add({
+          severity: 'success',
+          summary: 'Fatura paga',
+          detail: 'O pagamento foi descontado da conta e o limite do cartão foi atualizado.',
+        });
+        this.recarregarDados();
+      },
+      error: (err: any) => {
+        this.processandoMovimentacao = false;
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Erro ao pagar fatura',
+          detail: err?.error?.message || err?.error?.error || 'Não foi possível registrar o pagamento da fatura.',
+        });
+      },
+    });
   }
 
 }

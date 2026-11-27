@@ -46,10 +46,10 @@ const PALETA_ESCURA: PaletaGrafico = {
 @Injectable({ providedIn: 'root' })
 export class ThemeService {
   private readonly preferencia = signal<TemaApp>(this.lerPreferencia());
-  private readonly areaInternaAtiva = signal(false);
+  private readonly areasInternasAtivas = signal(0);
 
   /** true quando o tema escuro está efetivamente aplicado. */
-  readonly escuro = computed(() => this.areaInternaAtiva() && this.preferencia() === 'escuro');
+  readonly escuro = computed(() => this.areasInternasAtivas() > 0 && this.preferencia() === 'escuro');
 
   /** Preferência do usuário, independente de a área interna estar ativa. */
   readonly tema = this.preferencia.asReadonly();
@@ -77,14 +77,14 @@ export class ThemeService {
     }
   }
 
-  /** Chamado pelo MainLayout ao entrar na área interna. */
+  /** Chamado pelo MainLayout / AdminLayout ao entrar na área interna. */
   ativarAreaInterna(): void {
-    this.areaInternaAtiva.set(true);
+    this.areasInternasAtivas.update((n) => n + 1);
   }
 
-  /** Chamado pelo MainLayout ao sair da área interna. */
+  /** Chamado pelo MainLayout / AdminLayout ao sair da área interna. */
   desativarAreaInterna(): void {
-    this.areaInternaAtiva.set(false);
+    this.areasInternasAtivas.update((n) => Math.max(0, n - 1));
   }
 
   private lerPreferencia(): TemaApp {

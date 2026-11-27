@@ -85,6 +85,9 @@ public class Usuario implements UserDetails {
     @Column(name = "papel")
     private Papel papel;
 
+    @Column(name = "admin_familia")
+    private Boolean adminFamilia = false;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "moeda_padrao", length = 3, nullable = false, columnDefinition = "varchar(3) default 'BRL'")
     private Moeda moedaPadrao = Moeda.BRL;
@@ -191,9 +194,17 @@ public class Usuario implements UserDetails {
         this.nome = nome;
     }
 
+    public boolean isAdminFamilia() {
+        return Boolean.TRUE.equals(this.adminFamilia);
+    }
+
+    public void setAdminFamilia(Boolean adminFamilia) {
+        this.adminFamilia = Boolean.TRUE.equals(adminFamilia);
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(papel);
+        return papel != null ? List.of(papel) : List.of();
     }
 
     @Override

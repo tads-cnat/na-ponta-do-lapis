@@ -4,7 +4,6 @@ import org.springframework.security.core.GrantedAuthority;
 
 public enum Papel implements GrantedAuthority {
     USUARIO,
-    ADMIN_FAMILIA,
     ADMIN_SITE;
 
     private String autoridade;
