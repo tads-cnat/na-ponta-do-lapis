@@ -2,6 +2,7 @@ package com.npl.na_ponta_do_lapis.web.controller;
 
 import com.npl.na_ponta_do_lapis.entity.ChaveIaUsuario;
 import com.npl.na_ponta_do_lapis.entity.ConsultorFeedback;
+import com.npl.na_ponta_do_lapis.entity.ExecucaoIaLog;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.ConsultorFeedbackRepository;
 import com.npl.na_ponta_do_lapis.service.ChaveIaService;
@@ -10,6 +11,7 @@ import com.npl.na_ponta_do_lapis.service.ConsultorFinanceiroService;
 import com.npl.na_ponta_do_lapis.service.fatura.CredencialIa;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 import com.npl.na_ponta_do_lapis.service.fatura.FaturaSessionCookieHelper;
+import com.npl.na_ponta_do_lapis.service.fatura.ia.ConfiguracaoIaService;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.ProvedorIa;
 import com.npl.na_ponta_do_lapis.service.security.ApiRateLimitService;
 import com.npl.na_ponta_do_lapis.web.dto.ConsultorFeedbackRequestDTO;
@@ -43,6 +45,7 @@ public class ConsultorFinanceiroController {
     private final ApiRateLimitService apiRateLimitService;
     private final ConquistaService conquistaService;
     private final ConsultorFeedbackRepository feedbackRepository;
+    private final ConfiguracaoIaService configuracaoIaService;
 
     @Value("${app.consultor.ia.provedor:GEMINI}")
     private String fallbackProvedor;
@@ -56,13 +59,15 @@ public class ConsultorFinanceiroController {
             FaturaSessionCookieHelper cookieHelper,
             ApiRateLimitService apiRateLimitService,
             ConquistaService conquistaService,
-            ConsultorFeedbackRepository feedbackRepository) {
+            ConsultorFeedbackRepository feedbackRepository,
+            ConfiguracaoIaService configuracaoIaService) {
         this.consultorService = consultorService;
         this.chaveIaService = chaveIaService;
         this.cookieHelper = cookieHelper;
         this.apiRateLimitService = apiRateLimitService;
         this.conquistaService = conquistaService;
         this.feedbackRepository = feedbackRepository;
+        this.configuracaoIaService = configuracaoIaService;
     }
 
     @Operation(summary = "Verificar disponibilidade de chave de IA para o consultor")
@@ -103,17 +108,42 @@ public class ConsultorFinanceiroController {
                 15,
                 Duration.ofMinutes(1));
 
+        long inicio = System.currentTimeMillis();
+        ProvedorIa provedorUsado = null;
         try {
             CredencialResolvida credencial = resolverCredencial(body, usuario);
+            provedorUsado = credencial.provedor();
             String resposta = consultorService.responder(usuario, credencial.provedor(), credencial.apiKey(), body);
+
+            configuracaoIaService.registrarExecucao(
+                    ExecucaoIaLog.TipoExecucao.GRAFITH,
+                    provedorUsado,
+                    true,
+                    200,
+                    null,
+                    null,
+                    System.currentTimeMillis() - inicio
+            );
 
             conquistaService.desbloquear(usuario, "GRAFITH_CONSULTOR");
 
+            String modeloAtivo = configuracaoIaService.obterModeloAtivo(credencial.provedor());
             return ResponseEntity.ok(new ConsultorResponseDTO(
                     resposta,
-                    credencial.provedor().getNomeExibicao(),
+                    credencial.provedor().getNomeExibicao() + " (" + modeloAtivo + ")",
                     credencial.usouPlataforma()));
         } catch (FaturaAnaliseException ex) {
+            if (provedorUsado != null) {
+                configuracaoIaService.registrarExecucao(
+                        ExecucaoIaLog.TipoExecucao.GRAFITH,
+                        provedorUsado,
+                        false,
+                        ex.getStatus() != null ? ex.getStatus().value() : null,
+                        ex.getCodigo(),
+                        ex.getMessage(),
+                        System.currentTimeMillis() - inicio
+                );
+            }
             return ResponseEntity.status(ex.getStatus())
                     .body(new FaturaErroDTO(ex.getMessage(), ex.getCodigo(), ex.getProvedores()));
         }

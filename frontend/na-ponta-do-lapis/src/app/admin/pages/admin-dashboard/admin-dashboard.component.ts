@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, computed, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { ChartModule } from 'primeng/chart';
-import { AdminApiService, AdminDashboardResumo, extrairMensagemErroAdmin } from '../../services/admin-api.service';
+import { AdminApiService, AdminDashboardResumo, AdminIaPainel, extrairMensagemErroAdmin } from '../../services/admin-api.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -36,8 +36,18 @@ import { AdminApiService, AdminDashboardResumo, extrairMensagemErroAdmin } from 
 
       @if (resumo(); as r) {
         <!-- Alertas Operacionais -->
-        @if (r.ativosNaoVerificados > 0 || r.usuariosSuspensos > 0 || r.usuariosRiscoChurn > 0) {
+        @if (r.ativosNaoVerificados > 0 || r.usuariosSuspensos > 0 || r.usuariosRiscoChurn > 0 || (painelIa()?.alertasAtivos ?? 0) > 0) {
           <div class="flex flex-wrap items-center gap-2.5">
+            @if ((painelIa()?.alertasAtivos ?? 0) > 0) {
+              <a
+                [routerLink]="['/admin/catalogos']"
+                [queryParams]="{ aba: 'ia' }"
+                class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-rose-50 hover:bg-rose-100 border border-rose-300 text-rose-800 text-xs font-bold transition-colors no-underline">
+                <i class="pi pi-exclamation-circle text-xs"></i>
+                <span>{{ painelIa()!.alertasAtivos }} modelo(s) de IA descontinuado(s) — atualizar</span>
+                <i class="pi pi-arrow-right text-[10px]"></i>
+              </a>
+            }
             @if (r.usuariosRiscoChurn > 0) {
               <a
                 [routerLink]="['/admin/comunicacao']"
@@ -355,22 +365,69 @@ import { AdminApiService, AdminDashboardResumo, extrairMensagemErroAdmin } from 
           </div>
         </div>
 
-        <!-- SEÇÃO 6: SATISFAÇÃO DO CONSULTOR GRAFITH IA -->
+        <!-- SEÇÃO 6: SAÚDE E SATISFAÇÃO DA IA (FATURAS + CONSULTOR GRAFITH) -->
         <section class="bg-white rounded-2xl border border-slate-200 p-5 shadow-xs">
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
             <div>
               <h2 class="text-base font-bold text-slate-900 m-0 flex items-center gap-2">
                 <i class="pi pi-sparkles text-[#7843CD]"></i>
-                <span>Satisfação do Consultor Grafith IA</span>
+                <span>Inteligência Artificial (Faturas &amp; Grafith)</span>
               </h2>
               <p class="text-xs text-slate-500 mt-0.5 mb-0">
-                Avaliações (Like / Dislike) enviadas pelos usuários nas respostas do chat financeiro
+                Taxa de sucesso operacional ({{ periodoDias() }}d) e avaliações dos usuários nas respostas do consultor
               </p>
             </div>
-            <span class="text-xs font-bold px-3 py-1 rounded-full bg-purple-50 text-[#7843CD] self-start sm:self-auto">
-              {{ (r.consultorLikes || 0) + (r.consultorDislikes || 0) }} avaliação(ões)
-            </span>
+            <div class="flex items-center gap-2 self-start sm:self-auto">
+              <span class="text-xs font-bold px-3 py-1 rounded-full bg-purple-50 text-[#7843CD]">
+                {{ (r.consultorLikes || 0) + (r.consultorDislikes || 0) }} avaliação(ões)
+              </span>
+              <a
+                [routerLink]="['/admin/catalogos']"
+                [queryParams]="{ aba: 'ia' }"
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-slate-200 hover:bg-slate-50 text-xs font-semibold text-slate-700 no-underline transition-colors">
+                <span>Configurar modelos</span>
+                <i class="pi pi-arrow-right text-[10px]"></i>
+              </a>
+            </div>
           </div>
+
+          @if (painelIa(); as ia) {
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+              <div class="rounded-xl bg-slate-50 border border-slate-200/80 p-3.5 flex items-center justify-between gap-3">
+                <div>
+                  <span class="text-xs font-semibold text-slate-600 block">Leitura de Faturas PDF ({{ ia.periodoDias }}d)</span>
+                  <div class="flex items-baseline gap-2 mt-0.5">
+                    <strong class="text-2xl font-extrabold text-slate-900">
+                      {{ ia.faturas.total > 0 ? (ia.faturas.taxaSucesso | number:'1.0-1') + '%' : '—' }}
+                    </strong>
+                    <span class="text-[11px] text-slate-500">
+                      {{ ia.faturas.sucessos }} ok / {{ ia.faturas.falhas }} falha(s) • {{ ia.faturas.tempoMedioMs }}ms
+                    </span>
+                  </div>
+                </div>
+                <span class="w-10 h-10 rounded-xl bg-purple-50 text-[#7843CD] flex items-center justify-center shrink-0">
+                  <i class="pi pi-file-pdf text-base"></i>
+                </span>
+              </div>
+
+              <div class="rounded-xl bg-slate-50 border border-slate-200/80 p-3.5 flex items-center justify-between gap-3">
+                <div>
+                  <span class="text-xs font-semibold text-slate-600 block">Execuções do Consultor Grafith ({{ ia.periodoDias }}d)</span>
+                  <div class="flex items-baseline gap-2 mt-0.5">
+                    <strong class="text-2xl font-extrabold text-slate-900">
+                      {{ ia.grafith.total > 0 ? (ia.grafith.taxaSucesso | number:'1.0-1') + '%' : '—' }}
+                    </strong>
+                    <span class="text-[11px] text-slate-500">
+                      {{ ia.grafith.sucessos }} ok / {{ ia.grafith.falhas }} falha(s) • {{ ia.grafith.tempoMedioMs }}ms
+                    </span>
+                  </div>
+                </div>
+                <span class="w-10 h-10 rounded-xl bg-purple-50 text-[#7843CD] flex items-center justify-center shrink-0">
+                  <i class="pi pi-comments text-base"></i>
+                </span>
+              </div>
+            </div>
+          }
 
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
             <div class="rounded-xl bg-emerald-50/70 border border-emerald-200/70 p-3.5 flex items-center justify-between">
@@ -471,6 +528,7 @@ export class AdminDashboardComponent implements OnInit {
   private readonly adminApi = inject(AdminApiService);
 
   readonly resumo = signal<AdminDashboardResumo | null>(null);
+  readonly painelIa = signal<AdminIaPainel | null>(null);
   readonly periodoDias = signal<number>(30);
   readonly carregando = signal(false);
   readonly erro = signal<string | null>(null);
@@ -638,6 +696,10 @@ export class AdminDashboardComponent implements OnInit {
   carregar(): void {
     this.carregando.set(true);
     this.erro.set(null);
+    this.adminApi.obterConfiguracoesIa(this.periodoDias()).subscribe({
+      next: (ia) => this.painelIa.set(ia),
+      error: () => {},
+    });
     this.adminApi.obterResumoDashboard(this.periodoDias()).subscribe({
       next: (data) => {
         this.resumo.set(data);

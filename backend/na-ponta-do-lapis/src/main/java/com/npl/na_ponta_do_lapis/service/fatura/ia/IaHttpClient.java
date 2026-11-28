@@ -73,7 +73,12 @@ public class IaHttpClient {
                 if (status >= 500) {
                     throw FaturaAnaliseException.provedorIndisponivel();
                 }
-                log.warn("Provedor de IA respondeu HTTP {}: {}", status, resumo(e.getResponseBodyAsString()));
+                if (status == 404 || ConfiguracaoIaService.ehErroModeloDescontinuado(status, null, corpoErro)) {
+                    String resumoErro = resumo(corpoErro);
+                    log.warn("Modelo de IA indisponível/descontinuado (HTTP {}): {}", status, resumoErro);
+                    throw FaturaAnaliseException.modeloDescontinuado(resumoErro);
+                }
+                log.warn("Provedor de IA respondeu HTTP {}: {}", status, resumo(corpoErro));
                 throw FaturaAnaliseException.respostaIaInvalida("HTTP " + status + ".");
             } catch (ResourceAccessException e) {
                 if (tentativa < MAX_TENTATIVAS) {
@@ -90,6 +95,42 @@ public class IaHttpClient {
             }
         }
         throw FaturaAnaliseException.provedorIndisponivel();
+    }
+
+    public JsonNode get(String url, Map<String, String> headers) {
+        try {
+            String resposta = restClient.get()
+                    .uri(url)
+                    .headers(h -> headers.forEach(h::set))
+                    .retrieve()
+                    .body(String.class);
+
+            if (resposta == null || resposta.isBlank()) {
+                throw FaturaAnaliseException.respostaIaInvalida("Resposta vazia.");
+            }
+            return objectMapper.readTree(resposta);
+        } catch (RestClientResponseException e) {
+            int status = e.getStatusCode().value();
+            String corpoErro = e.getResponseBodyAsString();
+            if (status == 401 || status == 403 ||
+                    (status == 400 && (corpoErro.contains("API_KEY_INVALID") || corpoErro.contains("API key not valid")))) {
+                log.warn("Chave recusada no GET provedor de IA (HTTP {}): {}", status, resumo(corpoErro));
+                throw FaturaAnaliseException.chaveInvalida();
+            }
+            if (status == 429) {
+                throw FaturaAnaliseException.limiteIa();
+            }
+            log.warn("Erro GET provedor de IA (HTTP {}): {}", status, resumo(corpoErro));
+            throw FaturaAnaliseException.respostaIaInvalida("HTTP " + status + ".");
+        } catch (ResourceAccessException e) {
+            log.warn("Timeout no GET ao provedor de IA: {}", e.getMessage());
+            throw FaturaAnaliseException.timeout();
+        } catch (FaturaAnaliseException e) {
+            throw e;
+        } catch (Exception e) {
+            log.warn("Falha ao interpretar GET do provedor de IA: {}", e.getMessage());
+            throw FaturaAnaliseException.respostaIaInvalida("");
+        }
     }
 
     private void aguardar(int tentativa) {

@@ -1,7 +1,10 @@
 package com.npl.na_ponta_do_lapis.web.controller;
 
+import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.entity.enums.Papel;
 import com.npl.na_ponta_do_lapis.service.admin.AdminPainelService;
+import com.npl.na_ponta_do_lapis.service.fatura.ia.ConfiguracaoIaService;
+import com.npl.na_ponta_do_lapis.service.fatura.ia.ProvedorIa;
 import com.npl.na_ponta_do_lapis.web.dto.admin.AdminDTOs.*;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,10 +13,12 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping({"/admin", "/v1/admin"})
@@ -22,9 +27,11 @@ import java.util.List;
 public class AdminController {
 
     private final AdminPainelService adminPainelService;
+    private final ConfiguracaoIaService configuracaoIaService;
 
-    public AdminController(AdminPainelService adminPainelService) {
+    public AdminController(AdminPainelService adminPainelService, ConfiguracaoIaService configuracaoIaService) {
         this.adminPainelService = adminPainelService;
+        this.configuracaoIaService = configuracaoIaService;
     }
 
     @GetMapping("/dashboard/resumo")
@@ -164,6 +171,46 @@ public class AdminController {
             HttpServletRequest request
     ) {
         return ResponseEntity.ok(adminPainelService.atualizarConquista(id, req, extrairIp(request)));
+    }
+
+    // --- Modelos e Telemetria de IA ---
+
+    @GetMapping("/ia/configuracoes")
+    public ResponseEntity<ConfiguracaoIaService.AdminIaPainelDTO> obterConfiguracoesIa(
+            @RequestParam(defaultValue = "30") int dias,
+            @AuthenticationPrincipal Usuario admin
+    ) {
+        return ResponseEntity.ok(configuracaoIaService.obterPainelAdmin(dias, admin));
+    }
+
+    @PutMapping("/ia/configuracoes/{provedor}")
+    public ResponseEntity<ConfiguracaoIaService.ProvedorIaConfigDTO> atualizarModeloIa(
+            @PathVariable ProvedorIa provedor,
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal Usuario admin,
+            HttpServletRequest request
+    ) {
+        String modelo = body != null ? body.get("modelo") : null;
+        return ResponseEntity.ok(configuracaoIaService.atualizarModelo(provedor, modelo, admin, extrairIp(request)));
+    }
+
+    @PostMapping("/ia/modelos-disponiveis")
+    public ResponseEntity<List<ConfiguracaoIaService.ModeloDisponivelDTO>> listarModelosDisponiveisIa(
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal Usuario admin
+    ) {
+        String provedorRaw = body != null ? body.get("provedor") : null;
+        if (provedorRaw == null || provedorRaw.isBlank()) {
+            return ResponseEntity.badRequest().build();
+        }
+        ProvedorIa provedor;
+        try {
+            provedor = ProvedorIa.valueOf(provedorRaw.trim().toUpperCase(java.util.Locale.ROOT));
+        } catch (IllegalArgumentException ex) {
+            return ResponseEntity.badRequest().build();
+        }
+        String apiKey = body.get("apiKey");
+        return ResponseEntity.ok(configuracaoIaService.listarModelosDisponiveis(provedor, admin, apiKey));
     }
 
     // --- Comunicação ---

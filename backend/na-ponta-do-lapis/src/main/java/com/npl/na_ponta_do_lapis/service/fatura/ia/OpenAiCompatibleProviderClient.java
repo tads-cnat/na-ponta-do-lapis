@@ -3,6 +3,8 @@ package com.npl.na_ponta_do_lapis.service.fatura.ia;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,7 @@ import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 public class OpenAiCompatibleProviderClient implements IaProviderClient {
 
     private final IaHttpClient httpClient;
+    private final ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider;
 
     @Value("${fatura.ia.openai.model:gpt-4.1-mini}")
     private String modeloOpenAi;
@@ -24,7 +27,13 @@ public class OpenAiCompatibleProviderClient implements IaProviderClient {
     private String modeloGroq;
 
     public OpenAiCompatibleProviderClient(IaHttpClient httpClient) {
+        this(httpClient, null);
+    }
+
+    @Autowired
+    public OpenAiCompatibleProviderClient(IaHttpClient httpClient, ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider) {
         this.httpClient = httpClient;
+        this.configuracaoIaProvider = configuracaoIaProvider;
     }
 
     @Override
@@ -85,6 +94,10 @@ public class OpenAiCompatibleProviderClient implements IaProviderClient {
     }
 
     private String modelo(ProvedorIa provedor) {
+        ConfiguracaoIaService cfg = configuracaoIaProvider != null ? configuracaoIaProvider.getIfAvailable() : null;
+        if (cfg != null) {
+            return cfg.obterModeloAtivo(provedor);
+        }
         return switch (provedor) {
             case OPENAI -> modeloOpenAi;
             case DEEPSEEK -> modeloDeepSeek;

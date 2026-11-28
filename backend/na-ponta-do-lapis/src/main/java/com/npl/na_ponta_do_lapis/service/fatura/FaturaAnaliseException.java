@@ -91,6 +91,12 @@ public class FaturaAnaliseException extends RuntimeException {
                 "O serviço de IA retornou uma resposta que não pôde ser interpretada. " + detalhe);
     }
 
+    public static FaturaAnaliseException modeloDescontinuado(String detalheTecnico) {
+        String sufixo = (detalheTecnico != null && !detalheTecnico.isBlank()) ? " (" + detalheTecnico + ")" : "";
+        return new FaturaAnaliseException(HttpStatus.BAD_GATEWAY, "MODELO_DESCONTINUADO",
+                "O modelo de IA configurado não está mais disponível neste provedor. O administrador foi alertado para atualizar o modelo." + sufixo);
+    }
+
     public static FaturaAnaliseException provedorIndisponivel() {
         return new FaturaAnaliseException(HttpStatus.SERVICE_UNAVAILABLE, "PROVEDOR_INDISPONIVEL",
                 "O serviço de IA está temporariamente indisponível. Tente novamente em alguns instantes.");

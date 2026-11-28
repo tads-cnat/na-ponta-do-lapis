@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
+  DestroyRef,
   ElementRef,
   HostListener,
   Injector,
@@ -12,6 +13,7 @@ import {
   signal,
   untracked,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PrimeNGModuleModule } from '../../primeNg.module';
@@ -412,7 +414,15 @@ export class ConsultorIaComponent implements OnDestroy {
     { label: 'Groq', value: 'GROQ' },
   ];
 
+  private readonly destroyRef = inject(DestroyRef);
+
   constructor() {
+    this.integracoesService.chavesIaAlteradas$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.carregarContextoInicial();
+      });
+
     effect(() => {
       const aberto = this.consultorService.aberto();
       untracked(() => {
@@ -851,11 +861,19 @@ export class ConsultorIaComponent implements OnDestroy {
 
     this.integracoesService.listarChavesIa().subscribe({
       next: (chaves) => {
-        this.chavesSalvas.set(chaves || []);
-        if (!this.chaveSelecionadaId && chaves?.length) {
-          const padrao = chaves.find((c) => c.padrao);
-          if (padrao) {
+        const lista = chaves || [];
+        this.chavesSalvas.set(lista);
+        if (lista.length > 0) {
+          this.pedirChave.set(false);
+          const aindaExiste = lista.some((c) => c.id === this.chaveSelecionadaId);
+          if (!this.chaveSelecionadaId || !aindaExiste) {
+            const padrao = lista.find((c) => c.padrao) ?? lista[0];
             this.chaveSelecionadaId = padrao.id;
+          }
+        } else {
+          this.chaveSelecionadaId = null;
+          if (!this.status()?.temChavePlataforma) {
+            this.pedirChave.set(true);
           }
         }
       },

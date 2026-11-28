@@ -138,6 +138,46 @@ export interface AdminConquistaResumo {
   totalDesbloqueios: number;
 }
 
+export interface AdminModeloDisponivel {
+  id: string;
+  nomeExibicao: string;
+}
+
+export interface AdminMetricaFluxoIa {
+  total: number;
+  sucessos: number;
+  falhas: number;
+  taxaSucesso: number;
+  tempoMedioMs: number;
+}
+
+export interface AdminProvedorIaConfig {
+  provedor: string;
+  nomeExibicao: string;
+  modeloAtivo: string;
+  modeloPadraoEnv: string;
+  customizadoNoBanco: boolean;
+  atualizadoEm: string | null;
+  atualizadoPor: string | null;
+  alertaModeloDescontinuado: boolean;
+  ultimoErroModelo: string | null;
+  ultimoErroEm: string | null;
+  totalExecucoes30d: number;
+  sucessos30d: number;
+  taxaSucesso30d: number;
+  adminPossuiChaveSalva: boolean;
+  modelosDisponiveis?: AdminModeloDisponivel[];
+  modelosConsultadosEm?: string | null;
+}
+
+export interface AdminIaPainel {
+  periodoDias: number;
+  faturas: AdminMetricaFluxoIa;
+  grafith: AdminMetricaFluxoIa;
+  alertasAtivos: number;
+  provedores: AdminProvedorIaConfig[];
+}
+
 export interface AdminAuditLog {
   id: number;
   adminUsuarioId: number;
@@ -279,6 +319,22 @@ export class AdminApiService {
 
   atualizarConquista(id: string, payload: Omit<AdminConquistaResumo, 'totalDesbloqueios'>): Observable<AdminConquistaResumo> {
     return this.http.put<AdminConquistaResumo>(`${this.baseUrl}/conquistas/${id}`, payload);
+  }
+
+  obterConfiguracoesIa(dias = 30): Observable<AdminIaPainel> {
+    const params = new HttpParams().set('dias', String(dias));
+    return this.http.get<AdminIaPainel>(`${this.baseUrl}/ia/configuracoes`, { params });
+  }
+
+  atualizarModeloIa(provedor: string, modelo: string): Observable<AdminProvedorIaConfig> {
+    return this.http.put<AdminProvedorIaConfig>(`${this.baseUrl}/ia/configuracoes/${provedor}`, { modelo });
+  }
+
+  listarModelosDisponiveisIa(provedor: string, apiKey?: string): Observable<AdminModeloDisponivel[]> {
+    return this.http.post<AdminModeloDisponivel[]>(`${this.baseUrl}/ia/modelos-disponiveis`, {
+      provedor,
+      apiKey: apiKey?.trim() || '',
+    });
   }
 
   enviarNotificacao(payload: {

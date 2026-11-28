@@ -93,6 +93,12 @@ public class ApiExceptionHandler {
         return ResponseEntity.status(ex.getStatusCode()).body(new ErrorResponse(msg));
     }
 
+    @ExceptionHandler(com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException.class)
+    public ResponseEntity<ErrorResponse> handleFaturaAnalise(com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException ex) {
+        HttpStatus status = ex.getStatus() != null ? ex.getStatus() : HttpStatus.BAD_REQUEST;
+        return ResponseEntity.status(status).body(new ErrorResponse(ex.getMessage()));
+    }
+
     @ExceptionHandler({NotFoundException.class, ContaIdNaoExisteException.class, UsuarioIdNaoExisteException.class})
     public ResponseEntity<ErrorResponse> handleNotFound(RuntimeException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

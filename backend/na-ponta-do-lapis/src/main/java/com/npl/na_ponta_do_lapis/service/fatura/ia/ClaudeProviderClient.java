@@ -4,6 +4,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +16,24 @@ import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 public class ClaudeProviderClient implements IaProviderClient {
 
     private final IaHttpClient httpClient;
+    private final ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider;
 
     @Value("${fatura.ia.claude.model:claude-sonnet-4-5}")
     private String modelo;
 
     public ClaudeProviderClient(IaHttpClient httpClient) {
+        this(httpClient, null);
+    }
+
+    @Autowired
+    public ClaudeProviderClient(IaHttpClient httpClient, ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider) {
         this.httpClient = httpClient;
+        this.configuracaoIaProvider = configuracaoIaProvider;
+    }
+
+    private String modeloAtivo() {
+        ConfiguracaoIaService cfg = configuracaoIaProvider != null ? configuracaoIaProvider.getIfAvailable() : null;
+        return cfg != null ? cfg.obterModeloAtivo(ProvedorIa.CLAUDE) : modelo;
     }
 
     @Override
@@ -30,7 +44,7 @@ public class ClaudeProviderClient implements IaProviderClient {
     @Override
     public String completar(ProvedorIa provedor, String apiKey, String prompt) {
         Map<String, Object> corpo = Map.of(
-                "model", modelo,
+                "model", modeloAtivo(),
                 "max_tokens", 8192,
                 "temperature", 0,
                 "messages", List.of(Map.of(
@@ -45,7 +59,7 @@ public class ClaudeProviderClient implements IaProviderClient {
     @Override
     public String completarChat(ProvedorIa provedor, String apiKey, String systemPrompt, String userMessage) {
         Map<String, Object> corpo = Map.of(
-                "model", modelo,
+                "model", modeloAtivo(),
                 "max_tokens", 1200,
                 "temperature", 0.3,
                 "system", systemPrompt,
@@ -62,7 +76,7 @@ public class ClaudeProviderClient implements IaProviderClient {
     public String completarComPdf(ProvedorIa provedor, String apiKey, String prompt, byte[] pdf) {
         String base64 = Base64.getEncoder().encodeToString(pdf);
         Map<String, Object> corpo = Map.of(
-                "model", modelo,
+                "model", modeloAtivo(),
                 "max_tokens", 8192,
                 "temperature", 0,
                 "messages", List.of(Map.of(
