@@ -4,8 +4,11 @@ import com.npl.na_ponta_do_lapis.entity.ChaveIaUsuario;
 import com.npl.na_ponta_do_lapis.entity.Usuario;
 import com.npl.na_ponta_do_lapis.repository.ChaveIaUsuarioRepository;
 import com.npl.na_ponta_do_lapis.service.crypto.CryptoService;
+import com.npl.na_ponta_do_lapis.service.fatura.ia.ConfiguracaoIaService;
 import com.npl.na_ponta_do_lapis.web.dto.ChaveIaRequestDTO;
 import com.npl.na_ponta_do_lapis.web.dto.ChaveIaResponseDTO;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +20,19 @@ public class ChaveIaServiceImpl implements ChaveIaService {
 
     private final ChaveIaUsuarioRepository repository;
     private final CryptoService cryptoService;
+    private final ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider;
 
     public ChaveIaServiceImpl(ChaveIaUsuarioRepository repository, CryptoService cryptoService) {
+        this(repository, cryptoService, null);
+    }
+
+    @Autowired
+    public ChaveIaServiceImpl(ChaveIaUsuarioRepository repository,
+                              CryptoService cryptoService,
+                              ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider) {
         this.repository = repository;
         this.cryptoService = cryptoService;
+        this.configuracaoIaProvider = configuracaoIaProvider;
     }
 
     @Override
@@ -28,6 +40,7 @@ public class ChaveIaServiceImpl implements ChaveIaService {
     public List<ChaveIaResponseDTO> listarChaves(Usuario usuario) {
         return repository.findByUsuarioIdOrderByCriadoEmDesc(usuario.getId())
                 .stream()
+                .sorted(java.util.Comparator.comparing(ChaveIaUsuario::isPadrao).reversed())
                 .map(this::converterParaResponse)
                 .toList();
     }
@@ -123,6 +136,8 @@ public class ChaveIaServiceImpl implements ChaveIaService {
     private ChaveIaResponseDTO converterParaResponse(ChaveIaUsuario c) {
         String chaveDecifrada = cryptoService.decrypt(c.getChaveCriptografada());
         String mascarada = cryptoService.mask(chaveDecifrada);
+        ConfiguracaoIaService cfg = configuracaoIaProvider != null ? configuracaoIaProvider.getIfAvailable() : null;
+        String modeloAtivo = cfg != null ? cfg.obterModeloAtivo(c.getProvedor()) : null;
 
         return new ChaveIaResponseDTO(
                 c.getId(),
@@ -132,7 +147,8 @@ public class ChaveIaServiceImpl implements ChaveIaService {
                 mascarada,
                 c.isPadrao(),
                 c.getProvedor().isSuportaPdf(),
-                c.getCriadoEm()
+                c.getCriadoEm(),
+                modeloAtivo
         );
     }
 }

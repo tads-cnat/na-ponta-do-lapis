@@ -10,10 +10,14 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.npl.na_ponta_do_lapis.entity.ExecucaoIaLog;
 import com.npl.na_ponta_do_lapis.service.TipoCategoraService;
+import com.npl.na_ponta_do_lapis.service.fatura.ia.ConfiguracaoIaService;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaParser;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.FaturaIaService;
 import com.npl.na_ponta_do_lapis.service.fatura.ia.ProvedorIa;
@@ -40,6 +44,7 @@ public class FaturaAnaliseService {
     private final FaturaOcrService ocrService;
     private final FaturaIaService iaService;
     private final TipoCategoraService tipoCategoriaService;
+    private final ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider;
 
     @Value("${fatura.ocr.min-chars:40}")
     private int minCaracteresTexto;
@@ -52,11 +57,22 @@ public class FaturaAnaliseService {
                                 FaturaOcrService ocrService,
                                 FaturaIaService iaService,
                                 TipoCategoraService tipoCategoriaService) {
+        this(regexService, sanitizerService, ocrService, iaService, tipoCategoriaService, null);
+    }
+
+    @Autowired
+    public FaturaAnaliseService(FaturaRegexService regexService,
+                                FaturaSanitizerService sanitizerService,
+                                FaturaOcrService ocrService,
+                                FaturaIaService iaService,
+                                TipoCategoraService tipoCategoriaService,
+                                ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider) {
         this.regexService = regexService;
         this.sanitizerService = sanitizerService;
         this.ocrService = ocrService;
         this.iaService = iaService;
         this.tipoCategoriaService = tipoCategoriaService;
+        this.configuracaoIaProvider = configuracaoIaProvider;
     }
 
     public FaturaAnaliseResponseDTO analisar(MultipartFile arquivo,
@@ -131,7 +147,8 @@ public class FaturaAnaliseService {
             }
 
             log.info("Envio multimodal de PDF autorizado pelo usuário (provedor={}).", provedor);
-            FaturaIaParser.ResultadoIa resultado = iaService.analisarPdf(provedor, apiKey, bytes, categorias());
+            FaturaIaParser.ResultadoIa resultado = executarComTelemetria(provedor,
+                    () -> iaService.analisarPdf(provedor, apiKey, bytes, categorias()));
             return montarResposta(resultado.transacoes(), resultado.valorTotalFatura(), resultado.emissor(),
                     pdfEscaneado, ocrUtilizado, true, null);
         }
@@ -151,8 +168,9 @@ public class FaturaAnaliseService {
             textoSanitizado = textoSanitizado.substring(0, maxCaracteresIa);
         }
 
-        FaturaIaParser.ResultadoIa resultadoIa = iaService.analisarTexto(
-                provedor, apiKey, textoSanitizado, categorias(), FaturaIaService.ContextoFaturaIa.vazio());
+        String textoFinal = textoSanitizado;
+        FaturaIaParser.ResultadoIa resultadoIa = executarComTelemetria(provedor,
+                () -> iaService.analisarTexto(provedor, apiKey, textoFinal, categorias(), FaturaIaService.ContextoFaturaIa.vazio()));
 
         String emissor = resultadoIa.emissor();
         if (emissor == null || emissor.isBlank()) {
@@ -165,6 +183,34 @@ public class FaturaAnaliseService {
 
         return montarResposta(resultadoIa.transacoes(), total, emissor,
                 false, ocrUtilizado, false, null);
+    }
+
+    private FaturaIaParser.ResultadoIa executarComTelemetria(
+            ProvedorIa provedor,
+            java.util.function.Supplier<FaturaIaParser.ResultadoIa> acao
+    ) {
+        long inicio = System.currentTimeMillis();
+        ConfiguracaoIaService cfg = configuracaoIaProvider != null ? configuracaoIaProvider.getIfAvailable() : null;
+        try {
+            FaturaIaParser.ResultadoIa res = acao.get();
+            if (cfg != null) {
+                cfg.registrarExecucao(ExecucaoIaLog.TipoExecucao.FATURA, provedor, true, 200, null, null, System.currentTimeMillis() - inicio);
+            }
+            return res;
+        } catch (FaturaAnaliseException ex) {
+            if (cfg != null) {
+                cfg.registrarExecucao(
+                        ExecucaoIaLog.TipoExecucao.FATURA,
+                        provedor,
+                        false,
+                        ex.getStatus() != null ? ex.getStatus().value() : null,
+                        ex.getCodigo(),
+                        ex.getMessage(),
+                        System.currentTimeMillis() - inicio
+                );
+            }
+            throw ex;
+        }
     }
 
     private String identificarEmissor(String texto) {

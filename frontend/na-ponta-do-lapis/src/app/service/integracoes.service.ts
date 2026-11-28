@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject, tap } from 'rxjs';
 import { environment } from '@env';
 import {
   IChaveIaRequest,
@@ -15,6 +15,8 @@ import {
 })
 export class IntegracoesService {
   private readonly baseUrl = environment.apiBaseUrl;
+  private readonly chavesIaAlteradasSubject = new Subject<void>();
+  public readonly chavesIaAlteradas$ = this.chavesIaAlteradasSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
@@ -57,15 +59,21 @@ export class IntegracoesService {
   }
 
   public cadastrarChaveIa(payload: IChaveIaRequest): Observable<IChaveIaResponse> {
-    return this.http.post<IChaveIaResponse>(`${this.baseUrl}/integracoes/ia/chaves`, payload);
+    return this.http
+      .post<IChaveIaResponse>(`${this.baseUrl}/integracoes/ia/chaves`, payload)
+      .pipe(tap(() => this.chavesIaAlteradasSubject.next()));
   }
 
-  public definirChaveIaPadrao(id: number): Observable<IChaveIaResponse> {
-    return this.http.put<IChaveIaResponse>(`${this.baseUrl}/integracoes/ia/chaves/${id}/padrao`, {});
+  public definirChaveIaPadrao(id: number): Observable<void> {
+    return this.http
+      .patch<void>(`${this.baseUrl}/integracoes/ia/chaves/${id}/padrao`, {})
+      .pipe(tap(() => this.chavesIaAlteradasSubject.next()));
   }
 
   public excluirChaveIa(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/integracoes/ia/chaves/${id}`);
+    return this.http
+      .delete<void>(`${this.baseUrl}/integracoes/ia/chaves/${id}`)
+      .pipe(tap(() => this.chavesIaAlteradasSubject.next()));
   }
 }
 

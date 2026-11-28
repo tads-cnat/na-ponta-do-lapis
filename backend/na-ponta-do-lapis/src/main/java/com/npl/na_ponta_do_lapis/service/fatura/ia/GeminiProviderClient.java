@@ -4,6 +4,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -14,12 +16,24 @@ import com.npl.na_ponta_do_lapis.service.fatura.FaturaAnaliseException;
 public class GeminiProviderClient implements IaProviderClient {
 
     private final IaHttpClient httpClient;
+    private final ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider;
 
     @Value("${fatura.ia.gemini.model:gemini-2.5-flash}")
     private String modelo;
 
     public GeminiProviderClient(IaHttpClient httpClient) {
+        this(httpClient, null);
+    }
+
+    @Autowired
+    public GeminiProviderClient(IaHttpClient httpClient, ObjectProvider<ConfiguracaoIaService> configuracaoIaProvider) {
         this.httpClient = httpClient;
+        this.configuracaoIaProvider = configuracaoIaProvider;
+    }
+
+    private String modeloAtivo() {
+        ConfiguracaoIaService cfg = configuracaoIaProvider != null ? configuracaoIaProvider.getIfAvailable() : null;
+        return cfg != null ? cfg.obterModeloAtivo(ProvedorIa.GEMINI) : modelo;
     }
 
     @Override
@@ -102,8 +116,9 @@ public class GeminiProviderClient implements IaProviderClient {
             configuracao.put("temperature", 0.3);
         }
         configuracao.put("maxOutputTokens", maxTokens);
-        // O orçamento zero de "thinking" só é aceito pelos modelos Flash.
-        if (modelo != null && modelo.toLowerCase(java.util.Locale.ROOT).contains("flash")) {
+        String atual = modeloAtivo();
+        // thinkingBudget=0 só é suportado pelo Gemini 2.5 Flash (Gemini 2.0 e 3.x rejeitam com HTTP 400).
+        if (atual != null && atual.toLowerCase(java.util.Locale.ROOT).contains("2.5-flash")) {
             configuracao.put("thinkingConfig", Map.of("thinkingBudget", 0));
         }
         return configuracao;
@@ -111,7 +126,7 @@ public class GeminiProviderClient implements IaProviderClient {
 
     private String url() {
         return "https://generativelanguage.googleapis.com/v1beta/models/"
-                + modelo + ":generateContent";
+                + modeloAtivo() + ":generateContent";
     }
 
     // A chave vai no cabeçalho (e não na query string) para não vazar em logs,

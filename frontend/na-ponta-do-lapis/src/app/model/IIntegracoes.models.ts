@@ -7,6 +7,7 @@ export interface IChaveIaResponse {
   chaveMascarada: string;
   padrao: boolean;
   dataCriacao: string;
+  modeloAtivo?: string | null;
 }
 
 export interface IChaveIaRequest {

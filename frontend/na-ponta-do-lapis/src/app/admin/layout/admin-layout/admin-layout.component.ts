@@ -81,17 +81,6 @@ import { IconComponent } from '../../../shared/components/icon/icon.component';
             <i class="pi pi-arrow-left text-sm w-5 text-center shrink-0"></i>
             <span class="truncate" [class.lg:hidden]="!sidebarAberta()">Voltar ao App</span>
           </a>
-          <button
-            type="button"
-            (click)="sair()"
-            [pTooltip]="!sidebarAberta() ? 'Sair da conta' : ''"
-            tooltipPosition="right"
-            class="h-[44px] flex items-center gap-3 px-4 rounded-xl text-sm font-medium text-rose-300 hover:bg-rose-500/20 hover:text-rose-200 border-0 bg-transparent transition-colors cursor-pointer text-left"
-            [class.lg:justify-center]="!sidebarAberta()"
-            [class.lg:px-0]="!sidebarAberta()">
-            <i class="pi pi-sign-out text-sm w-5 text-center shrink-0"></i>
-            <span class="truncate" [class.lg:hidden]="!sidebarAberta()">Sair da conta</span>
-          </button>
         </div>
       </aside>
 
@@ -118,25 +107,37 @@ import { IconComponent } from '../../../shared/components/icon/icon.component';
               Painel Administrativo
             </span>
           </div>
-          <a
-            routerLink="/app/perfil"
-            title="Ir para o perfil"
-            class="flex items-center gap-2.5 px-1.5 sm:px-2.5 py-1 rounded-xl cursor-pointer no-underline hover:bg-purple-100/60 transition-colors min-w-0">
-            <img
-              class="h-9 w-9 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover shrink-0"
-              [src]="usuarioLogado()?.fotoPerfil || 'user_anonimo.png'"
-              referrerpolicy="no-referrer"
-              (error)="usarFotoPadrao($event)"
-              [alt]="usuarioLogado()?.nome || adminEmail" />
-            <div class="hidden sm:flex flex-col min-w-0">
-              <span class="text-sm font-semibold text-slate-800 truncate max-w-[180px] leading-tight">
-                {{ nomeExibicao() }}
-              </span>
-              <span class="text-[11px] text-slate-500 truncate max-w-[220px] leading-tight">
-                {{ usuarioLogado()?.email || adminEmail }}
-              </span>
-            </div>
-          </a>
+          <div class="flex items-center gap-2 min-w-0">
+            <a
+              routerLink="/app/perfil"
+              title="Ir para o perfil"
+              class="flex items-center gap-2.5 px-1.5 sm:px-2.5 py-1 rounded-xl cursor-pointer no-underline hover:bg-purple-100/60 transition-colors min-w-0">
+              <img
+                class="h-9 w-9 rounded-full border-2 border-[#EEC046] shadow-2xs object-cover shrink-0"
+                [src]="usuarioLogado()?.fotoPerfil || 'user_anonimo.png'"
+                referrerpolicy="no-referrer"
+                (error)="usarFotoPadrao($event)"
+                [alt]="usuarioLogado()?.nome || adminEmail" />
+              <div class="hidden sm:flex flex-col min-w-0">
+                <span class="text-sm font-semibold text-slate-800 truncate max-w-[180px] leading-tight">
+                  {{ nomeExibicao() }}
+                </span>
+                <span class="text-[11px] text-slate-500 truncate max-w-[220px] leading-tight">
+                  {{ usuarioLogado()?.email || adminEmail }}
+                </span>
+              </div>
+            </a>
+
+            <button
+              type="button"
+              aria-label="Sair da conta"
+              pTooltip="Sair da conta"
+              tooltipPosition="bottom"
+              (click)="sair()"
+              class="flex w-9 h-9 items-center justify-center rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 border-0 bg-transparent transition-colors cursor-pointer shrink-0">
+              <i class="pi pi-sign-out text-sm"></i>
+            </button>
+          </div>
         </header>
 
         <main class="flex-1 p-4 lg:p-8 max-w-7xl w-full mx-auto">
@@ -159,7 +160,7 @@ export class AdminLayoutComponent implements OnInit, OnDestroy {
     { label: 'Dashboard', icon: 'pi-chart-line', route: '/admin/dashboard', exact: true },
     { label: 'Usuários', icon: 'pi-users', route: '/admin/usuarios', exact: false },
     { label: 'Famílias', icon: 'pi-home', route: '/admin/familias', exact: false },
-    { label: 'Catálogos Globais', icon: 'pi-tags', route: '/admin/catalogos', exact: false },
+    { label: 'Catálogos & IA', icon: 'pi-tags', route: '/admin/catalogos', exact: false },
     { label: 'Comunicação', icon: 'pi-bell', route: '/admin/comunicacao', exact: false },
     { label: 'Auditoria', icon: 'pi-history', route: '/admin/auditoria', exact: false },
   ];

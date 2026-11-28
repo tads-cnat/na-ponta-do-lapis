@@ -12,7 +12,20 @@ public record ChaveIaResponseDTO(
         String chaveMascarada,
         boolean padrao,
         boolean suportaPdf,
-        LocalDateTime criadoEm
+        LocalDateTime criadoEm,
+        String modeloAtivo
 ) {
+    public ChaveIaResponseDTO(
+            Long id,
+            String apelido,
+            ProvedorIa provedor,
+            String nomeProvedor,
+            String chaveMascarada,
+            boolean padrao,
+            boolean suportaPdf,
+            LocalDateTime criadoEm
+    ) {
+        this(id, apelido, provedor, nomeProvedor, chaveMascarada, padrao, suportaPdf, criadoEm, null);
+    }
 }
 
